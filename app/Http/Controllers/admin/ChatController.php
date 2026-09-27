@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\ChatConversation;
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller
 {
@@ -20,10 +22,11 @@ class ChatController extends Controller
         // 1. Tìm kiếm chủ động theo từ khóa (tên, email, sđt)
         if ($request->filled('search')) {
             $keyword = trim($request->search);
+
             return User::where('id', '!=', $adminId)
                 ->where(function ($q) use ($keyword) {
                     $q->where('name', 'like', "%{$keyword}%")
-                      ->orWhere('email', 'like', "%{$keyword}%");
+                        ->orWhere('email', 'like', "%{$keyword}%");
                 })
                 ->select('id', 'name', 'email')
                 ->limit(20)
@@ -85,15 +88,7 @@ class ChatController extends Controller
      */
     public function getMessages($userId)
     {
-        $adminId = Auth::id();
-
-        return Message::with('sender')
-            ->where(function ($q) use ($userId, $adminId) {
-                $q->where('sender_id', $userId)->where('receiver_id', $adminId);
-            })
-            ->orWhere(function ($q) use ($userId, $adminId) {
-                $q->where('sender_id', $adminId)->where('receiver_id', $userId);
-            })
+        return Message::conversation((int) $userId)->with('sender:id,name,role')
             ->orderBy('created_at', 'asc')
             ->get();
     }
@@ -106,15 +101,21 @@ class ChatController extends Controller
         // Kiểm tra dữ liệu đầu vào
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'message' => 'required'
+            'message' => 'required|string|max:5000',
         ]);
 
-        $message = Message::create([
-            'sender_id'   => Auth::id(),
-            'receiver_id' => $request->user_id,
-            'content'     => $request->message,
-            'is_read'     => true, // Admin gửi thì mặc định là đã đọc (hoặc xử lý sau)
-        ]);
+        $message = DB::transaction(function () use ($request) {
+            User::whereKey($request->user_id)->lockForUpdate()->first();
+            ChatConversation::updateOrCreate(['user_id' => $request->user_id], ['human_mode' => true]);
+            Message::where('sender_id', $request->user_id)->where('ai_status', 'pending')->update(['ai_status' => 'skipped']);
+
+            return Message::create([
+                'sender_id' => Auth::id(),
+                'receiver_id' => $request->user_id,
+                'content' => $request->message,
+                'is_read' => true,
+            ]);
+        });
 
         return response()->json($message);
     }

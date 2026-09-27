@@ -116,7 +116,9 @@ Route::middleware(['auth'])->prefix('user')->name('user.')->group(function () {
     Route::post('/orders/{order}/confirm-payment', [UserOrderController::class, 'confirmPayment'])->name('orders.confirm.payment');
 
     // Lab 7: Livechat User (PDF Trang 7-8)
-    Route::post('/chat/send', [UserChatController::class, 'send'])->name('chat.send');
+    Route::post('/chat/send', [UserChatController::class, 'send'])->middleware('throttle:15,1')->name('chat.send');
+    Route::get('/chat/status', [UserChatController::class, 'status'])->name('chat.status');
+    Route::post('/chat/mode', [UserChatController::class, 'mode'])->middleware('throttle:15,1')->name('chat.mode');
     Route::get('/chat/messages', [UserChatController::class, 'getMessages'])->name('chat.messages');
 });
 

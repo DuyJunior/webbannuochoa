@@ -911,8 +911,8 @@
                         </div>`;
                     } else {
                         messages.forEach(msg => {
-                            let isAdmin = (msg.sender_id == "{{ Auth::id() }}");
-                            let senderName = isAdmin ? "Bạn (Admin)" : (msg.sender ? msg.sender.name : "Khách hàng");
+                            let isAdmin = msg.is_ai || msg.sender?.role === 'admin';
+                            let senderName = msg.is_ai ? "Trợ lý AI · Groq" : (msg.sender_id == "{{ Auth::id() }}" ? "Bạn (Admin)" : (msg.sender ? msg.sender.name : "Khách hàng"));
                             let rowClass = isAdmin ? "msg-admin" : "msg-customer";
                             let timeStr = formatChatTime(msg.created_at);
 
@@ -921,7 +921,7 @@
                                     <span class="msg-author">${escapeHtml(senderName)}</span>
                                     <span class="msg-time">${timeStr}</span>
                                 </div>
-                                <div style="margin-top:2px;">${escapeHtml(msg.content)}</div>
+                                <div style="margin-top:2px; white-space:pre-wrap; overflow-wrap:anywhere;">${escapeHtml(msg.content)}</div>
                             </div>`;
                         });
                     }
