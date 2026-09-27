@@ -50,6 +50,8 @@
                         <td class="text-center">
                             @if($user->role === 'admin')
                                 <span class="badge badge-danger px-3 py-1 font-weight-bold" style="border-radius: 12px;">Quản trị viên</span>
+                            @elseif($user->role === 'livestream_staff')
+                                <span class="badge badge-primary px-3 py-1 font-weight-bold" style="border-radius: 12px;">Nhân viên livestream</span>
                             @else
                                 <span class="badge badge-info px-3 py-1 font-weight-bold" style="border-radius: 12px;">Khách hàng</span>
                             @endif

@@ -414,7 +414,7 @@
 
     {{-- Sidebar --}}
     <aside class="admin-sidebar" id="admin-sidebar">
-        <a href="{{ route('admin.dashboard') }}" class="sidebar-brand">
+        <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('admin.livestreams.index') }}" class="sidebar-brand">
             <div class="brand-icon">@include('partials.icon', ['name' => 'flower', 'size' => 24])</div>
             <div class="brand-text">
                 <strong>Ha Thu</strong>
@@ -423,6 +423,7 @@
         </a>
 
         <ul class="sidebar-menu" style="padding-top:12px;">
+            @if(Auth::user()->role === 'admin')
             <li class="sidebar-section-label">Tổng quan</li>
             <li>
                 <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
@@ -478,6 +479,12 @@
                 </a>
             </li>
 
+            @endif
+            <li>
+                <a href="{{ route('admin.livestreams.index') }}" class="{{ request()->routeIs('admin.livestreams.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-video"></i><span>Livestream</span>
+                </a>
+            </li>
             <hr class="sidebar-divider">
             <li>
                 <a href="{{ route('home') }}" target="_blank">
@@ -492,7 +499,7 @@
                 <div class="admin-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}</div>
                 <div class="admin-meta">
                     <div class="name">{{ Auth::user()->name ?? 'Admin' }}</div>
-                    <div class="role">Quản trị viên</div>
+                    <div class="role">{{ Auth::user()->role === 'admin' ? 'Quản trị viên' : 'Nhân viên livestream' }}</div>
                 </div>
             </div>
             <form method="POST" action="{{ route('admin.logout') }}">
@@ -540,6 +547,7 @@
         </main>
     </div>
 
+    @if(Auth::user()->role === 'admin')
     {{-- LAB 7: ADMIN LIVECHAT POPUP (PDF Trang 13 - 14 + Chủ động nhắn tin) --}}
     <div id="admin-chat-box">
         <button id="chat-toggle" class="btn btn-dark shadow">💬 Chat Khách hàng</button>
@@ -719,6 +727,7 @@
         white-space: nowrap;
     }
     </style>
+    @endif
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>

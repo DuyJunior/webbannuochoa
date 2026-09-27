@@ -1,0 +1,13 @@
+.ht-live-follow{position:fixed;z-index:1100;right:20px;bottom:20px;width:min(350px,calc(100vw - 28px));overflow:hidden;border:1px solid #d9abbc;border-radius:19px;background:#fff;color:#49303c;box-shadow:0 18px 65px rgba(43,21,34,.34);font-family:'Be Vietnam Pro',sans-serif}
+.ht-live-follow[hidden],.ht-live-follow [hidden]{display:none!important}
+.ht-live-follow-top{height:37px;background:#432a38;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 9px 0 14px}
+.ht-live-follow-top span{font-size:10px;letter-spacing:.11em;font-weight:800}
+.ht-live-follow-top button{border:0;background:transparent;color:#fff;font-size:25px;line-height:1;cursor:pointer;padding:2px 7px}
+.ht-live-follow-stage{aspect-ratio:16/9;position:relative;background:radial-gradient(circle at 50% 35%,#6c4559,#261c25);display:grid;place-items:center}
+.ht-live-follow-stage video,.ht-live-follow-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:contain}
+.ht-live-follow-stage p{color:#fff;font-size:12px;text-align:center;line-height:1.5;padding:18px;margin:0}
+.ht-live-follow-bottom{padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ht-live-follow-bottom strong{font:400 16px/1.2 Georgia,serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ht-live-follow-bottom div{display:flex;gap:6px;flex:none}
+.ht-live-follow-bottom a,.ht-live-follow-bottom button{border:1px solid #e4bfce;border-radius:99px;padding:6px 10px;background:#fff6f9;color:#9d3c60;text-decoration:none;font-size:10px;font-weight:800;white-space:nowrap;cursor:pointer}
+@media(max-width:640px){.ht-live-follow{right:10px;bottom:10px;width:min(300px,calc(100vw - 20px))}.ht-live-follow-bottom{padding:10px}.ht-live-follow-bottom strong{font-size:14px}}

@@ -13,6 +13,11 @@ class User extends Authenticatable implements MustVerifyEmail
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
+    public function canManageLivestreams(): bool
+    {
+        return in_array($this->role, ['admin', 'livestream_staff'], true);
+    }
+
     /**
      * The attributes that are mass assignable.
      *

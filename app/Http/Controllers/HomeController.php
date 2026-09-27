@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Livestream;
 use App\Models\Perfume;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -68,6 +69,9 @@ class HomeController extends Controller
 
         $totalPerfumes = $genderCounts->sum();
 
-        return view('home', compact('perfumes', 'categories', 'genderCounts', 'totalPerfumes'));
+        $livestream = Livestream::query()->where('status', 'live')->latest('id')->first();
+        $onAir = $livestream && ($livestream->source === 'youtube' || $livestream->isBrowserOnAir());
+
+        return view('home', compact('perfumes', 'categories', 'genderCounts', 'totalPerfumes', 'livestream', 'onAir'));
     }
 }

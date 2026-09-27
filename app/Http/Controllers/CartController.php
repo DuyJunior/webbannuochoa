@@ -134,12 +134,19 @@ class CartController extends Controller
             $unitPrice += 50000;
         }
 
-        $isStandardDefault = !$hasGift && !$hasEngrave && (!$request->has('volume_ml') || $volumeMl == ($perfume->volume_ml ?: 100));
+        $liveProduct = $request->session()->get('live_product', []);
+        $clickedAt = (int) ($liveProduct['clicked_at'] ?? 0);
+        $livestreamId = (int) ($liveProduct['perfume_id'] ?? 0) === $perfume->id
+            && $clickedAt <= now()->timestamp
+            && $clickedAt >= now()->subHours(2)->timestamp
+            ? (int) ($liveProduct['livestream_id'] ?? 0) : null;
+
+        $isStandardDefault = !$livestreamId && !$hasGift && !$hasEngrave && (!$request->has('volume_ml') || $volumeMl == ($perfume->volume_ml ?: 100));
 
         if ($isStandardDefault) {
             $itemKey = (string) $perfume->id;
         } else {
-            $itemKey = 'item_' . $perfume->id . '_' . $volumeMl . ($hasGift ? '_gift' : '') . ($engraveText ? '_' . md5($engraveText) : '');
+            $itemKey = 'item_' . $perfume->id . '_' . $volumeMl . ($hasGift ? '_gift' : '') . ($engraveText ? '_' . md5($engraveText) : '') . ($livestreamId ? '_live_' . $livestreamId : '');
         }
 
         $cart = $request->session()->get('cart', []);
@@ -157,6 +164,7 @@ class CartController extends Controller
                     'has_engrave' => $hasEngrave,
                     'engrave_text' => $engraveText,
                     'unit_price' => $unitPrice,
+                    'livestream_id' => $livestreamId,
                 ];
             }
             $request->session()->put('cart', $cart);
@@ -186,6 +194,7 @@ class CartController extends Controller
                 'has_engrave' => $hasEngrave,
                 'engrave_text' => $engraveText,
                 'unit_price' => $unitPrice,
+                'livestream_id' => $livestreamId,
             ];
         }
 
@@ -293,6 +302,7 @@ class CartController extends Controller
                 $hasGift = (bool) ($itemData['has_gift'] ?? false);
                 $engraveText = $itemData['engrave_text'] ?? null;
                 $unitPrice = (float) ($itemData['unit_price'] ?? 0);
+                $livestreamId = $itemData['livestream_id'] ?? null;
             } else {
                 $perfumeId = (int) $itemKey;
                 $quantity = (int) $itemData;
@@ -300,6 +310,7 @@ class CartController extends Controller
                 $hasGift = false;
                 $engraveText = null;
                 $unitPrice = 0;
+                $livestreamId = null;
             }
 
             $product = Perfume::find($perfumeId);
@@ -336,6 +347,7 @@ class CartController extends Controller
                 'volume_ml' => $volumeMl,
                 'addon_gift' => $hasGift,
                 'engrave_text' => $engraveText,
+                'livestream_id' => $livestreamId,
             ];
         }
 

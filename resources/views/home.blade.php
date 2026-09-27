@@ -15,6 +15,15 @@
         });
 @endphp
 
+<section id="home-live-banner" class="store-container ht-home-live" data-state-url="{{ route('livestream.state') }}" data-current-id="{{ $onAir ? $livestream->id : '' }}" @unless($onAir) hidden @endunless aria-live="polite">
+    <div>
+        <span class="ht-home-live-badge">● ĐANG TRỰC TIẾP</span>
+        <strong>{{ $onAir ? $livestream->title : 'Ha Thu đang livestream' }}</strong>
+        <span>Xem và trò chuyện cùng Ha Thu ngay trên website.</span>
+    </div>
+    <a class="ht-button" href="{{ route('livestream.show') }}">Xem livestream →</a>
+</section>
+
 @if(!$isFiltered)
 <section class="ht-hero">
     <div class="store-container ht-hero-grid">
@@ -94,6 +103,7 @@
     </div>
 </section>
 @endif
+
 @endif
 
 <section class="store-container ht-products-section" id="san-pham">
@@ -623,3 +633,7 @@
 </style>
 @endpush
 @endsection
+
+@push('scripts')
+<script defer src="{{ asset('js/livestream-home.js') }}"></script>
+@endpush

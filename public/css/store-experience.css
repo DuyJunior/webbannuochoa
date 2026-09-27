@@ -8,3 +8,11 @@
 
 .ht-related-section{padding-bottom:80px;margin-top:20px}.ht-related-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}.ht-related-card{display:block;text-decoration:none;color:#3e2f37;border-radius:16px;overflow:hidden;background:#fff;border:1px solid #f0e0e6;transition:transform .22s cubic-bezier(0.34,1.56,0.64,1),box-shadow .22s}.ht-related-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px #d4849530}.ht-related-img{position:relative;aspect-ratio:1;overflow:hidden;background:#fff8fa}.ht-related-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}.ht-related-card:hover .ht-related-img img{transform:scale(1.06)}.ht-related-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:400 48px Georgia,serif;color:#d4a0b4}.ht-related-badge{position:absolute;top:10px;right:10px;background:#e91e63;color:#fff;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px}.ht-related-info{padding:14px 16px 18px}.ht-related-brand{display:block;font-size:11px;color:#b07490;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.ht-related-name{display:block;font-size:14.5px;font-weight:700;margin-bottom:8px;line-height:1.35}.ht-related-price{display:flex;align-items:center;gap:8px}.ht-related-current{color:#c2476a;font-weight:700;font-size:15px}.ht-related-old{color:#b0909a;font-size:12.5px}@media(max-width:900px){.ht-related-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.ht-related-grid{grid-template-columns:repeat(2,1fr);gap:12px}}
 
+/* Livestream invitation on the home page. */
+.ht-home-live { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 24px; margin-bottom: 24px; padding: 22px 28px; border: 1px solid #e9a7b8; border-radius: 18px; background: #fff0f4; }
+.ht-home-live[hidden] { display: none; }
+.ht-home-live > div { display: grid; gap: 5px; }
+.ht-home-live-badge { color: #b72f56; font-size: 12px; font-weight: 800; letter-spacing: .1em; }
+.ht-home-live strong { color: #3f2731; font-size: 20px; }
+.ht-home-live > div > span:last-child { color: #765e68; }
+@media (max-width: 640px) { .ht-home-live { align-items: stretch; flex-direction: column; padding: 20px; } .ht-home-live .ht-button { text-align: center; } }

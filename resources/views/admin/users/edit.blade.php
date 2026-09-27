@@ -46,6 +46,7 @@
             <select name="role" class="form-control form-select" required>
                 <option value="user" {{ old('role', $user->role) === 'user' ? 'selected' : '' }}>Khách hàng (User)</option>
                 <option value="admin" {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Quản trị viên (Admin)</option>
+                <option value="livestream_staff" {{ old('role', $user->role) === 'livestream_staff' ? 'selected' : '' }}>Nhân viên livestream</option>
             </select>
         </div>
 

@@ -19,6 +19,7 @@ class OrderItem extends Model
         'volume_ml',
         'addon_gift',
         'engrave_text',
+        'livestream_id',
     ];
 
     protected function casts(): array
@@ -38,6 +39,11 @@ class OrderItem extends Model
     public function perfume(): BelongsTo
     {
         return $this->belongsTo(Perfume::class, 'perfume_id');
+    }
+
+    public function livestream(): BelongsTo
+    {
+        return $this->belongsTo(Livestream::class);
     }
 
     /**

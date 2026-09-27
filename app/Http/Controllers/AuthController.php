@@ -14,8 +14,11 @@ class AuthController extends Controller
     public function showRegistrationForm()
     {
         if (Auth::check()) {
-            if (Auth::user()->role === 'admin') {
-                return redirect()->route('admin.dashboard');
+            if (Auth::user()->canManageLivestreams()) {
+                return redirect()->route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'admin.livestreams.index');
+            }
+            if (!Auth::user()->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
             }
             return redirect()->route('home');
         }
@@ -29,6 +32,9 @@ class AuthController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'password' => 'required|confirmed|min:6',
+        ], [
+            'email.unique' => 'Email này đã được đăng ký. Vui lòng đăng nhập; nếu chưa xác thực, bạn có thể gửi lại liên kết xác thực.',
+            'email.email' => 'Vui lòng nhập địa chỉ email hợp lệ.',
         ]);
 
         $user = User::create([
@@ -51,8 +57,11 @@ class AuthController extends Controller
     public function showLoginForm()
     {
         if (Auth::check()) {
-            if (Auth::user()->role === 'admin') {
-                return redirect()->route('admin.dashboard');
+            if (Auth::user()->canManageLivestreams()) {
+                return redirect()->route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'admin.livestreams.index');
+            }
+            if (!Auth::user()->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice');
             }
             return redirect()->route('home');
         }
@@ -70,9 +79,14 @@ class AuthController extends Controller
         if (Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
 
-            if (Auth::user()->role === 'admin') {
-                return redirect()->intended(route('admin.dashboard'))
-                    ->with('success', 'Xin chào Admin! Đã đăng nhập vào trang quản trị.');
+            if (Auth::user()->canManageLivestreams()) {
+                return redirect()->intended(route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'admin.livestreams.index'))
+                    ->with('success', 'Đăng nhập thành công.');
+            }
+
+            if (!Auth::user()->hasVerifiedEmail()) {
+                return redirect()->route('verification.notice')
+                    ->with('message', 'Tài khoản của bạn chưa xác thực email. Vui lòng kiểm tra hộp thư hoặc bấm gửi lại liên kết bên dưới.');
             }
 
             return redirect()->intended(route('welcome'))
@@ -102,8 +116,8 @@ class AuthController extends Controller
     public function showAdminLoginForm()
     {
         if (Auth::check()) {
-            if (Auth::user()->role === 'admin') {
-                return redirect()->route('admin.dashboard');
+            if (Auth::user()->canManageLivestreams()) {
+                return redirect()->route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'admin.livestreams.index');
             }
             return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang quản trị viên!');
         }
@@ -120,7 +134,7 @@ class AuthController extends Controller
         ]);
 
         if (Auth::attempt($request->only('email', 'password'))) {
-            if (Auth::user()->role !== 'admin') {
+            if (!Auth::user()->canManageLivestreams()) {
                 Auth::logout();
                 return back()->withErrors([
                     'email' => 'Bạn không có quyền truy cập trang quản trị.',
@@ -128,8 +142,8 @@ class AuthController extends Controller
             }
 
             $request->session()->regenerate();
-            return redirect()->intended(route('admin.dashboard'))
-                ->with('success', 'Xin chào Admin! Đăng nhập trang quản trị thành công.');
+            return redirect()->intended(route(Auth::user()->role === 'admin' ? 'admin.dashboard' : 'admin.livestreams.index'))
+                ->with('success', 'Đăng nhập trang quản trị thành công.');
         }
 
         return back()->withErrors([

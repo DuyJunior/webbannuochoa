@@ -21,7 +21,7 @@
                 <div>
                     <h3 class="h5 font-weight-bold mb-1 text-dark">{{ $user->name }}</h3>
                     <span class="badge {{ $user->role === 'admin' ? 'badge-danger' : 'badge-info' }} px-3 py-1" style="border-radius: 20px;">
-                        {{ $user->role === 'admin' ? 'Quản trị viên (Admin)' : 'Khách hàng (User)' }}
+                        {{ $user->role === 'admin' ? 'Quản trị viên (Admin)' : ($user->role === 'livestream_staff' ? 'Nhân viên livestream' : 'Khách hàng (User)') }}
                     </span>
                 </div>
             </div>

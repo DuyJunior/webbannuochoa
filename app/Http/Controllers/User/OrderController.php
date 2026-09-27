@@ -143,6 +143,7 @@ class OrderController extends Controller
                 $volumeMl = (int) ($itemData['volume_ml'] ?? 100);
                 $hasGift = (bool) ($itemData['has_gift'] ?? false);
                 $engraveText = $itemData['engrave_text'] ?? null;
+                $livestreamId = $itemData['livestream_id'] ?? null;
             } else {
                 $perfumeId = (int) $key;
                 $quantity = (int) $itemData;
@@ -150,6 +151,7 @@ class OrderController extends Controller
                 $volumeMl = 100;
                 $hasGift = false;
                 $engraveText = null;
+                $livestreamId = null;
             }
 
             $product = $products->get($perfumeId);
@@ -171,6 +173,7 @@ class OrderController extends Controller
                 'volume_ml' => $volumeMl,
                 'addon_gift' => $hasGift,
                 'engrave_text' => $engraveText,
+                'livestream_id' => $livestreamId,
             ];
         }
 
@@ -239,6 +242,7 @@ class OrderController extends Controller
                     'volume_ml' => $item['volume_ml'],
                     'addon_gift' => $item['addon_gift'],
                     'engrave_text' => $item['engrave_text'],
+                    'livestream_id' => $item['livestream_id'],
                 ]);
             }
 

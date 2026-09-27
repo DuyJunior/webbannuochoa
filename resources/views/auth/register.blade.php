@@ -21,6 +21,9 @@
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
+                @if($errors->has('email'))
+                    <div style="margin-top:8px"><a href="{{ route('login') }}">Đăng nhập để tiếp tục hoặc gửi lại email xác thực →</a></div>
+                @endif
             </div>
         @endif
 

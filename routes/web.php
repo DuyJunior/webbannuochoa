@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PerfumeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\StoreExperienceController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\Admin\AdminController;
@@ -12,17 +13,28 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\VideoController;
+use App\Http\Controllers\Admin\LivestreamController as AdminLivestreamController;
+use App\Http\Controllers\LivestreamController;
+use App\Http\Controllers\LivekitRoomController;
+use App\Http\Controllers\LivestreamProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
 // ============================================================
 // TRANG CHỦ & CỬA HÀNG - Giữ nguyên từ Lab 01 & 02
 // ============================================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/livestream', [LivestreamController::class, 'show'])->name('livestream.show');
+Route::get('/livestream/state', [LivestreamController::class, 'state'])->name('livestream.state');
+Route::get('/livestream/{livestream}/products', [LivestreamProductController::class, 'index'])->name('livestream.products');
+Route::get('/livestream/{livestream}/products/{perfume}', [LivestreamProductController::class, 'openProduct'])->name('livestream.products.open');
+Route::get('/livestream/{livestream}/messages', [\App\Http\Controllers\LivestreamInteractionController::class, 'messages'])->middleware('throttle:120,1')->name('livestream.messages');
+Route::post('/livestream/{livestream}/messages', [\App\Http\Controllers\LivestreamInteractionController::class, 'send'])->middleware('throttle:10,1')->name('livestream.messages.send');
+Route::post('/livestream/{livestream}/presence', [\App\Http\Controllers\LivestreamInteractionController::class, 'presence'])->middleware('throttle:6,1')->name('livestream.presence');
+Route::post('/livestream/{livestream}/viewer-token', [LivekitRoomController::class, 'viewerToken'])->middleware('throttle:600,1')->name('livestream.viewer-token');
 Route::get('/chon-huong', [StoreExperienceController::class, 'finder'])->name('store.finder');
 Route::get('/so-sanh', [StoreExperienceController::class, 'compare'])->name('store.compare');
 Route::get('/cam-nang', [JournalController::class, 'index'])->name('store.journal');
@@ -140,16 +152,15 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-// Xử lý link xác nhận (từ email)
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-    return redirect()->route('welcome'); // Redirect về trang chủ
-})->middleware(['auth', 'signed'])->name('verification.verify');
+// Liên kết đã ký xác thực trực tiếp, kể cả khi mở email trên trình duyệt khác.
+Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+    ->middleware(['signed', 'throttle:6,1'])
+    ->name('verification.verify');
 
 // Gửi lại email xác nhận
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Verification link sent!');
+    return back()->with('message', 'Đã gửi lại liên kết xác thực. Vui lòng kiểm tra hộp thư của bạn.');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // ============================================================
@@ -160,8 +171,8 @@ Route::post('/email/verification-notification', function (Request $request) {
 // Đăng nhập / Đăng xuất Admin
 Route::get('/admin', function () {
     if (auth()->check()) {
-        if (auth()->user()->role === 'admin') {
-            return redirect()->route('admin.dashboard');
+        if (auth()->user()->canManageLivestreams()) {
+            return redirect()->route(auth()->user()->role === 'admin' ? 'admin.dashboard' : 'admin.livestreams.index');
         }
         return redirect()->route('home')->with('error', 'Bạn không có quyền truy cập vào trang quản trị viên!');
     }
@@ -170,6 +181,21 @@ Route::get('/admin', function () {
 Route::get('/admin/login', [AuthController::class, 'showAdminLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('admin.login.post');
 Route::post('/admin/logout', [AuthController::class, 'adminLogout'])->name('admin.logout');
+
+Route::middleware(['auth', 'livestream.staff'])->prefix('admin')->group(function () {
+    Route::delete('/livestreams/{livestream}/messages/{message}', [\App\Http\Controllers\LivestreamInteractionController::class, 'hide'])->name('admin.livestreams.messages.hide');
+    Route::patch('/livestreams/{livestream}/pin', [LivestreamProductController::class, 'pin'])->name('admin.livestreams.pin');
+    Route::get('/livestreams/{livestream}/report', [AdminLivestreamController::class, 'report'])->name('admin.livestreams.report');
+    Route::post('/livestreams/{livestream}/products', [LivestreamProductController::class, 'store'])->name('admin.livestreams.products.store');
+    Route::delete('/livestreams/{livestream}/products/{perfume}', [LivestreamProductController::class, 'destroy'])->name('admin.livestreams.products.destroy');
+    Route::get('/livestreams/{livestream}/studio', [LivekitRoomController::class, 'studio'])->name('admin.livestreams.studio');
+    Route::post('/livestreams/{livestream}/host-token', [LivekitRoomController::class, 'hostToken'])->middleware('throttle:30,1')->name('admin.livestreams.host-token');
+    Route::post('/livestreams/{livestream}/begin', [LivekitRoomController::class, 'begin'])->name('admin.livestreams.begin');
+    Route::post('/livestreams/{livestream}/heartbeat', [LivekitRoomController::class, 'heartbeat'])->middleware('throttle:12,1')->name('admin.livestreams.heartbeat');
+    Route::post('/livestreams/{livestream}/finish', [LivekitRoomController::class, 'finish'])->name('admin.livestreams.finish');
+    Route::patch('/livestreams/{livestream}/status', [AdminLivestreamController::class, 'changeStatus'])->name('admin.livestreams.status');
+    Route::resource('/livestreams', AdminLivestreamController::class, ['as' => 'admin'])->except(['show']);
+});
 
 // Khu vực quản trị (yêu cầu đăng nhập với quyền admin)
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
@@ -207,5 +233,3 @@ Route::get('/lich-su-don-hang', [UserOrderController::class, 'orderHistory'])->m
 Route::middleware(['auth'])->group(function () {
     Route::get('/products/{product}', [ProductController::class, 'show_normal'])->name('products.show');
 });
-
-

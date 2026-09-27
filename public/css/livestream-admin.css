@@ -1,0 +1,109 @@
+.boutique-admin .live-admin{max-width:1350px;margin:auto;color:#422c37}
+.boutique-admin .live-admin-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;background:linear-gradient(120deg,#fff,#fff1f5);border:1px solid #f1d9e3;border-radius:22px;padding:30px 34px;margin-bottom:22px;box-shadow:0 12px 38px rgba(122,51,77,.06)}
+.boutique-admin .live-admin-kicker{font-size:11px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:#b34d70;margin:0 0 10px}
+.boutique-admin .live-admin-hero h2{font:400 clamp(26px,3vw,38px)/1.2 Georgia,serif;margin:0 0 10px;color:#3a2932}
+.boutique-admin .live-admin-hero p:last-child{margin:0;color:#7e6570;font-size:13px;line-height:1.7;max-width:650px}
+.boutique-admin .live-admin-actions{display:flex;gap:10px;flex-wrap:wrap;flex-shrink:0}
+.boutique-admin .live-admin-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 17px;border-radius:10px;text-decoration:none!important;border:1px solid #e8c4d1;background:#fff;color:#a94368;font-weight:700;font-size:12px;min-height:42px;cursor:pointer;white-space:nowrap}
+.boutique-admin .live-admin-btn:hover{background:#fff5f8;color:#842d50}
+.boutique-admin .live-admin-btn--primary{background:#ae4568;border-color:#ae4568;color:#fff}.boutique-admin .live-admin-btn--primary:hover{background:#913456;color:#fff}
+.boutique-admin .live-admin-btn--danger{color:#b13556;border-color:#e9c4d0}.boutique-admin .live-admin-btn--danger:hover{background:#fff0f4;color:#922e4e}
+.boutique-admin .live-admin-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px}.boutique-admin .live-admin-metric{background:#fff;border:1px solid #f0dce4;border-radius:16px;padding:19px 22px}.boutique-admin .live-admin-metric span{display:block;color:#917482;font-size:12px;font-weight:600}.boutique-admin .live-admin-metric strong{display:block;font:400 31px Georgia,serif;color:#ad4267;margin-top:3px}
+.boutique-admin .live-admin-current{display:flex;align-items:center;justify-content:space-between;gap:20px;background:#3c2532;color:#fff;border-radius:18px;padding:23px 28px;margin-bottom:22px}.boutique-admin .live-admin-current strong{display:block;font-size:16px}.boutique-admin .live-admin-current p{color:#efd8e2;font-size:12px;margin:5px 0 0}.boutique-admin .live-admin-current .live-admin-btn{border-color:#fff;background:#fff;color:#7d3350}
+.boutique-admin .live-admin-panel{background:#fff;border:1px solid #efdae2;border-radius:18px;padding:25px;box-shadow:0 6px 28px rgba(92,40,61,.04)}.boutique-admin .live-admin-panel-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}.boutique-admin .live-admin-panel h3{font-size:18px;font-weight:700;margin:0;color:#3c2933}.boutique-admin .live-admin-panel-heading small{color:#9b7987}
+.boutique-admin .live-admin-table{width:100%;border-collapse:collapse}.boutique-admin .live-admin-table th{text-align:left;color:#987989;text-transform:uppercase;font-size:10px;letter-spacing:.1em;padding:12px;border-bottom:1px solid #efdee5}.boutique-admin .live-admin-table td{padding:17px 12px;border-bottom:1px solid #f4e7ec;font-size:12px;vertical-align:middle}.boutique-admin .live-admin-table tr:last-child td{border-bottom:0}.boutique-admin .live-admin-table strong{display:block;font-size:13px;color:#3c2932}.boutique-admin .live-admin-table small{color:#a18b95}.boutique-admin .live-admin-table-actions{display:flex;flex-wrap:wrap;gap:6px}.boutique-admin .live-admin-table-actions form{margin:0}.boutique-admin .live-admin-table-actions .live-admin-btn{padding:7px 10px;min-height:34px;font-size:11px}.boutique-admin .live-admin-badge{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:99px;font-size:11px;font-weight:700;background:#f9f0f3;color:#9d4b68;white-space:nowrap}.boutique-admin .live-admin-badge--on{background:#fce6ed;color:#ab2d58}.boutique-admin .live-admin-badge--ended{background:#f1f0f1;color:#7c7479}
+.boutique-admin .live-admin-empty{text-align:center;padding:45px 16px;color:#876b77}.boutique-admin .live-admin-empty i{display:block;font-size:32px;color:#bb7892;margin-bottom:13px}.boutique-admin .live-admin-empty strong{display:block;color:#4a303d;font-size:17px;margin-bottom:6px}
+.boutique-admin .live-admin-form-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(240px,.7fr);align-items:start;gap:20px}.boutique-admin .live-admin-form-card,.boutique-admin .live-admin-help{background:#fff;border:1px solid #efdce4;border-radius:18px;padding:27px;box-shadow:0 7px 25px rgba(95,42,64,.04)}.boutique-admin .live-admin-form-card h2{font:400 29px Georgia,serif;margin:2px 0 24px;color:#3b2933}.boutique-admin .live-admin-field{margin-bottom:20px}.boutique-admin .live-admin-field label{display:block;font-size:12px;font-weight:700;color:#503b45;margin-bottom:8px}.boutique-admin .live-admin-field :is(input,textarea,select){display:block;width:100%;border:1px solid #e8d5de;border-radius:10px;padding:12px 14px;background:#fff;color:#44313a;font-size:13px;min-height:45px}.boutique-admin .live-admin-field :is(input,textarea,select):focus{outline:2px solid #e9adc4;outline-offset:1px}.boutique-admin .live-admin-field textarea{resize:vertical;min-height:105px}.boutique-admin .live-admin-field small{display:block;line-height:1.6;color:#987c89;margin-top:7px}.boutique-admin .live-admin-form-row{display:grid;grid-template-columns:1fr 1fr;gap:15px}.boutique-admin .live-admin-help{background:#fff8fa;position:sticky;top:20px}.boutique-admin .live-admin-help h3{font-size:15px;font-weight:800;color:#513543;margin-bottom:16px}.boutique-admin .live-admin-help ol{padding-left:20px;margin:0}.boutique-admin .live-admin-help li{font-size:12px;line-height:1.7;color:#725966;margin-bottom:12px}.boutique-admin .live-admin-help p{font-size:11px;line-height:1.6;color:#8a6979;border-top:1px solid #eddae2;padding-top:12px;margin:10px 0 0}
+@media(max-width:1000px){.boutique-admin .live-admin-hero{align-items:flex-start;flex-direction:column}.boutique-admin .live-admin-form-grid{grid-template-columns:1fr}.boutique-admin .live-admin-help{position:static}}
+@media(max-width:680px){.boutique-admin .live-admin-hero{padding:23px 20px}.boutique-admin .live-admin-actions{width:100%}.boutique-admin .live-admin-actions .live-admin-btn{flex:1}.boutique-admin .live-admin-metrics{gap:7px}.boutique-admin .live-admin-metric{padding:14px 11px}.boutique-admin .live-admin-metric strong{font-size:24px}.boutique-admin .live-admin-current{align-items:flex-start;flex-direction:column}.boutique-admin .live-admin-panel{padding:18px}.boutique-admin .live-admin-form-card,.boutique-admin .live-admin-help{padding:20px}.boutique-admin .live-admin-form-row{grid-template-columns:1fr;gap:0}}
+
+/* Browser livestream studio */
+.live-studio-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(280px,.85fr);gap:24px;margin-top:24px}
+.live-studio-preview{position:relative;min-height:430px;background:linear-gradient(145deg,#281c25,#543744);border-radius:24px;overflow:hidden;box-shadow:0 20px 50px rgba(75,31,54,.15)}
+.live-studio-preview video{display:block;width:100%;height:100%;min-height:430px;object-fit:cover;transform:scaleX(-1)}
+.live-studio-placeholder{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:18px;color:#e9acbc;font-size:80px}
+.live-studio-placeholder span{font-size:16px;color:#fff}
+.live-studio-placeholder[hidden]{display:none}
+.live-studio-pill{position:absolute;top:18px;left:18px;padding:9px 14px;background:rgba(255,255,255,.9);color:#5a3444;border-radius:99px;font-weight:700;font-size:13px}
+.live-studio-pill--on{background:#bc365e;color:white}
+.live-studio-controls{background:#fff;border:1px solid #f3d5df;border-radius:24px;padding:30px;box-shadow:0 16px 36px rgba(94,49,67,.06)}
+.live-studio-controls h3{font-family:Georgia,serif;font-size:29px;color:#432c35;margin:14px 0}
+.live-studio-controls p{line-height:1.65;color:#72535f}
+.live-studio-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:24px 0}
+.live-studio-buttons button:first-child,.live-studio-buttons button:last-child{grid-column:1/-1}
+.live-studio-buttons button:disabled{opacity:.5;cursor:not-allowed}
+.live-studio-note{font-size:13px;border-top:1px solid #f2e1e7;padding-top:18px}
+.live-studio-controls label{display:block;font-size:13px;font-weight:700;color:#66414e;margin:16px 0 8px}
+.live-studio-controls input{width:100%;border:1px solid #efd4de;border-radius:10px;padding:10px;color:#614456}
+.live-studio-error{color:#b52d4f!important}
+@media(max-width:850px){.live-studio-grid{grid-template-columns:1fr}.live-studio-preview,.live-studio-preview video{min-height:280px}}
+.boutique-admin .live-admin-mode{border:0;padding:0;margin:0 0 24px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.boutique-admin .live-admin-mode legend{grid-column:1/-1;float:none;width:auto;font-size:12px;font-weight:700;color:#503b45;margin-bottom:8px}
+.boutique-admin .live-admin-mode-card{display:flex;align-items:flex-start;gap:11px;padding:16px;border:1px solid #ead0db;border-radius:14px;background:#fffafb;cursor:pointer;margin:0}
+.boutique-admin .live-admin-mode-card:has(input:checked){border-color:#b84970;background:#fff0f5;box-shadow:0 0 0 2px rgba(184,73,112,.08)}
+.boutique-admin .live-admin-mode-card input{width:17px;height:17px;flex:none;margin-top:2px;accent-color:#ae4568}
+.boutique-admin .live-admin-mode-card strong{display:block;font-size:13px;color:#49303d}
+.boutique-admin .live-admin-mode-card small{display:block;font-size:11px;line-height:1.55;color:#866b78;margin-top:4px}
+.boutique-admin .live-admin-badge--overdue{background:#fff1e7;color:#a35c20}
+.boutique-admin .live-admin-field[hidden]{display:none}
+@media(max-width:680px){.boutique-admin .live-admin-mode{grid-template-columns:1fr}}
+
+/* Product selection and quick editing during a broadcast. */
+.boutique-admin .live-product-options{max-height:330px;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:10px;padding:3px}
+.boutique-admin .live-product-choice{display:flex;align-items:center;gap:10px;border:1px solid #f0dce4;border-radius:12px;padding:9px;background:#fffafb;cursor:pointer;margin:0}
+.boutique-admin .live-product-choice:has(input:checked){border-color:#b54b70;background:#fff0f5}
+.boutique-admin .live-product-choice[hidden]{display:none}
+.boutique-admin .live-product-choice input{width:17px;min-height:17px;flex:none;accent-color:#ae4568}
+.boutique-admin .live-product-choice img{width:42px;height:47px;object-fit:contain}
+.boutique-admin .live-product-choice strong,.boutique-admin .live-product-choice small{display:block;line-height:1.4}
+.boutique-admin .live-product-choice small{margin:3px 0 0;color:#946d7f}
+.boutique-admin .live-studio-products{margin-top:24px}
+.boutique-admin .live-studio-product-form{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:15px 0}
+.boutique-admin .live-studio-product-form label{font-size:12px;font-weight:700;color:#553b47}
+.boutique-admin .live-studio-product-form select{flex:1;min-width:220px;padding:10px 12px;border:1px solid #e8ced9;border-radius:10px;background:#fff;color:#49323d;min-height:42px}
+.boutique-admin .live-studio-product-message{min-height:18px;color:#9f4568;font-size:12px;margin:0 0 10px}
+.boutique-admin .live-product-empty{color:#886b78;font-size:13px;margin:0}
+.boutique-admin .live-studio-product-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.boutique-admin .live-studio-product-item{display:flex;align-items:center;gap:12px;border:1px solid #f1e0e7;border-radius:13px;padding:10px;background:#fffafb}
+.boutique-admin .live-studio-product-item img,.boutique-admin .live-product-fallback{width:47px;height:55px;object-fit:contain;display:grid;place-items:center;background:#fff0f5;border-radius:8px;color:#bc7290;font-size:28px;flex:none}
+.boutique-admin .live-studio-product-item div{min-width:0;flex:1}.boutique-admin .live-studio-product-item strong,.boutique-admin .live-studio-product-item small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.boutique-admin .live-studio-product-item strong{font-size:12px;color:#523744}.boutique-admin .live-studio-product-item small{font-size:11px;color:#987b89}
+@media(max-width:680px){.boutique-admin .live-product-options{grid-template-columns:1fr}.boutique-admin .live-studio-product-form{align-items:stretch;flex-direction:column}.boutique-admin .live-studio-product-form select{width:100%}}
+
+/* Sales report stays visible after a broadcast has ended. */
+.boutique-admin .live-revenue-panel{background:linear-gradient(125deg,#3c2633,#694051);color:#fff;border-radius:20px;padding:25px 28px;margin-bottom:22px}
+.boutique-admin .live-revenue-panel .live-admin-panel-heading{align-items:end;margin-bottom:20px}
+.boutique-admin .live-revenue-panel h3{font:400 28px Georgia,serif;margin:4px 0 0;color:#fff}
+.boutique-admin .live-revenue-panel .live-admin-panel-heading small{color:#f1d9e3;max-width:350px;line-height:1.6}
+.boutique-admin .live-revenue-panel .live-admin-kicker{color:#f4b8cb}
+.boutique-admin .live-revenue-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.boutique-admin .live-revenue-grid>div{padding:18px;border:1px solid rgba(255,255,255,.2);border-radius:14px;background:rgba(255,255,255,.08)}
+.boutique-admin .live-revenue-grid span,.boutique-admin .live-revenue-grid small{display:block;color:#f0d7e1;font-size:12px}
+.boutique-admin .live-revenue-grid strong{display:block;color:#fff;font:400 clamp(22px,2.8vw,32px) Georgia,serif;margin:7px 0}
+.boutique-admin .live-revenue-panel>p{color:#efcfda;font-size:11px;margin:16px 0 0;line-height:1.5}
+@media(max-width:680px){.boutique-admin .live-revenue-panel{padding:20px}.boutique-admin .live-revenue-panel .live-admin-panel-heading{align-items:start;flex-direction:column}.boutique-admin .live-revenue-grid{grid-template-columns:1fr}}
+
+.boutique-admin .live-local-note{margin:0 0 18px;padding:13px 17px;border-radius:12px;background:#fff6e8;border:1px solid #f0d5aa;color:#89591e;font-size:12px;line-height:1.6}
+.boutique-admin .live-local-note strong{display:block}
+.boutique-admin .live-studio-bottom{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.85fr);gap:24px;margin-top:24px}
+.boutique-admin .live-studio-bottom .live-chat{height:360px;min-height:0;max-height:none;border-radius:20px}
+.boutique-admin .live-studio-tip{border:1px solid #f0dce4;border-radius:20px;padding:26px;background:linear-gradient(145deg,#fff,#fff4f7)}
+.boutique-admin .live-studio-tip h3{font:400 25px Georgia,serif;color:#49313d;margin:7px 0 14px}
+.boutique-admin .live-studio-tip p{font-size:12px;line-height:1.8;color:#765d68}
+.boutique-admin .live-studio-product-item--pinned{border-color:#bb6b89;background:#fff2f6}
+.boutique-admin .live-admin-btn--pinned{background:#a94368;color:#fff;border-color:#a94368}
+.boutique-admin .live-studio-product-item .live-admin-btn{padding:7px 10px;min-height:34px;font-size:11px}
+.boutique-admin .live-studio-product-item{min-width:0;flex-wrap:wrap}
+.boutique-admin .live-studio-product-item>div{min-width:110px}
+.boutique-admin .live-studio-product-item>.live-admin-btn{flex:none}
+.boutique-admin .live-funnel{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:22px}
+.boutique-admin .live-funnel>div{border:1px solid #f0dce4;background:#fff;border-radius:16px;padding:18px 20px}
+.boutique-admin .live-funnel span{font-size:11px;color:#987787;display:block}
+.boutique-admin .live-funnel strong{font:400 30px Georgia,serif;color:#a83e63;display:block;margin:7px 0}
+.boutique-admin .live-funnel small{font-size:11px;color:#a08993}
+.boutique-admin .live-report-products{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.boutique-admin .live-report-product{border:1px solid #f1dfe6;background:#fffafd;padding:15px;border-radius:13px}
+.boutique-admin .live-report-product strong,.boutique-admin .live-report-product span{display:block}
+.boutique-admin .live-report-product strong{font-size:12px;color:#523642;margin-bottom:7px}
+.boutique-admin .live-report-product span{font-size:11px;color:#987787}
+@media(max-width:950px){.boutique-admin .live-studio-bottom{grid-template-columns:1fr}}
+@media(max-width:600px){.boutique-admin .live-funnel{grid-template-columns:1fr}.boutique-admin .live-studio-tip{padding:20px}}

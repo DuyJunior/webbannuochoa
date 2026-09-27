@@ -11,7 +11,7 @@
             </div>
             <h1 class="luxury-auth-title">Xác thực Email</h1>
             <p class="luxury-auth-subtitle" style="margin-top: 8px;">
-                Cảm ơn bạn đã đăng ký tài khoản! Trước khi bắt đầu, vui lòng kiểm tra hộp thư email và nhấn vào liên kết xác thực chúng tôi vừa gửi.
+                Vui lòng kiểm tra hộp thư và nhấn vào liên kết xác thực. Nếu liên kết cũ đã hết hạn, bạn có thể yêu cầu gửi lại bên dưới.
             </p>
         </div>
 
