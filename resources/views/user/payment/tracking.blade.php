@@ -46,7 +46,7 @@
             </form>
 
             <div class="tracking-hint">
-                💡 <em>Mẹo: Bạn có thể nhập một trong hai thông tin (Số điện thoại hoặc Mã GHN) để tra cứu nhanh.</em>
+                💡 <em>Chỉ tra cứu các đơn thuộc tài khoản đang đăng nhập. Nhập số điện thoại hoặc mã đơn / mã GHN của bạn.</em>
             </div>
         </div>
 
@@ -164,7 +164,7 @@
                                                     @endif
                                                 </div>
                                                 <div class="item-info-mini">
-                                                    <strong>{{ $prod->name ?? 'Nước hoa' }}</strong>
+                                                    <strong>{{ $item->product_name ?? $prod->name ?? 'Nước hoa' }}</strong>
                                                     <small>x{{ $item->quantity }} · {{ number_format($item->price, 0, ',', '.') }}₫</small>
                                                 </div>
                                             </div>

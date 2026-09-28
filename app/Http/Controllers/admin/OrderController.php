@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\Perfume;
+use App\Services\OrderInventoryService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -82,8 +83,8 @@ class OrderController extends Controller
         $source = DB::table('orders')->leftJoin('payment_transactions as payment', function ($join) use ($paymentId) {
             $join->on('payment.order_id', '=', 'orders.id')->where('payment.id', '=', $paymentId);
         })->select('orders.*')
-        ->selectRaw("COALESCE(payment.gateway, CASE WHEN orders.status IN ('cod_ordered', 'cod_paid') THEN 'cod' WHEN orders.status IN ('paid', 'paid_momo') THEN 'momo' ELSE 'unknown' END) as gateway")
-        ->selectRaw("COALESCE(payment.status, CASE WHEN orders.status = 'cod_ordered' THEN 'pending' WHEN orders.status IN ('cod_paid', 'paid_momo') THEN 'paid' ELSE orders.status END) as payment_status");
+            ->selectRaw("COALESCE(payment.gateway, CASE WHEN orders.status IN ('cod_ordered', 'cod_paid') THEN 'cod' WHEN orders.status IN ('paid', 'paid_momo') THEN 'momo' ELSE 'unknown' END) as gateway")
+            ->selectRaw("COALESCE(payment.status, CASE WHEN orders.status = 'cod_ordered' THEN 'pending' WHEN orders.status IN ('cod_paid', 'paid_momo') THEN 'paid' ELSE orders.status END) as payment_status");
 
         $query = Order::query()->fromSub($source, 'orders');
 
@@ -97,10 +98,10 @@ class OrderController extends Controller
             $search = trim($filters['search']);
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%'.$search.'%')
-                  ->orWhere('customer_name', 'like', '%'.$search.'%')
-                  ->orWhere('phone', 'like', '%'.$search.'%')
-                  ->orWhere('ghn_order_code', 'like', '%'.$search.'%')
-                  ->orWhereHas('items.perfume', fn ($perfumes) => $perfumes->where('name', 'like', '%'.$search.'%'));
+                    ->orWhere('customer_name', 'like', '%'.$search.'%')
+                    ->orWhere('phone', 'like', '%'.$search.'%')
+                    ->orWhere('ghn_order_code', 'like', '%'.$search.'%')
+                    ->orWhereHas('items.perfume', fn ($perfumes) => $perfumes->where('name', 'like', '%'.$search.'%'));
 
                 if (preg_match('/^(?:#|DH)?0*(\d+)$/i', $search, $matches)) {
                     $q->orWhere('orders.id', $matches[1]);
@@ -124,6 +125,7 @@ class OrderController extends Controller
             $tab['count'] = $key === 'all'
                 ? $shippingCounts->sum()
                 : collect($tab['statuses'])->sum(fn ($status) => $shippingCounts->get($status, 0));
+
             return $tab;
         });
 
@@ -169,7 +171,9 @@ class OrderController extends Controller
 
         $viewName = view()->exists('admin.orders.show') ? 'admin.orders.show' : 'admin.order.show';
 
-        return view($viewName, compact('order'));
+        $inventoryMovements = DB::table('inventory_movements')->where('order_id', $order->id)->orderBy('id')->get();
+
+        return view($viewName, compact('order', 'inventoryMovements'));
     }
 
     public function update(Request $request, $id): RedirectResponse
@@ -177,18 +181,18 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         $request->validate([
-            'status' => ['nullable', 'string'],
-            'shipping_status' => ['nullable', 'string'],
+            'status' => ['nullable', Rule::in(['pending', 'confirmed', 'paid', 'paid_momo', 'cod_ordered', 'cod_paid', 'completed', 'cancelled'])],
+            'shipping_status' => ['nullable', Rule::in(['pending', 'not_shipped', 'processing', 'ready_to_pick', 'picking', 'picked', 'storing', 'transporting', 'sorting', 'delivering', 'delivered', 'return', 'returning', 'returned', 'return_transporting', 'return_sorting', 'cancelled'])],
         ]);
 
         $newStatus = $request->input('status');
         $newShippingStatus = $request->input('shipping_status');
 
         // Tự động đồng bộ trạng thái giao hàng và trạng thái đơn
-        if ($newShippingStatus === 'delivered' && (!$newStatus || $newStatus === 'pending')) {
+        if ($newShippingStatus === 'delivered' && (! $newStatus || $newStatus === 'pending')) {
             $newStatus = 'completed';
         }
-        if ($newStatus === 'completed' && (!$newShippingStatus || $newShippingStatus === 'pending')) {
+        if ($newStatus === 'completed' && (! $newShippingStatus || $newShippingStatus === 'pending')) {
             $newShippingStatus = 'delivered';
         }
         if ($newStatus === 'cancelled' || $newShippingStatus === 'cancelled') {
@@ -205,37 +209,31 @@ class OrderController extends Controller
         $oldStatus = $order->status;
 
         try {
-            DB::transaction(function () use ($order, $oldStatus, $newStatus, $newShippingStatus) {
-                if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
-                    foreach ($order->items as $item) {
-                        if ($item->perfume) {
-                            $item->perfume->increment('stock', $item->quantity);
-                        }
-                    }
-                } elseif ($oldStatus === 'cancelled' && $newStatus && $newStatus !== 'cancelled') {
-                    foreach ($order->items as $item) {
-                        if ($item->perfume) {
-                            $perfume = Perfume::query()->lockForUpdate()->find($item->perfume_id);
-                            if (!$perfume || $perfume->stock < $item->quantity) {
-                                throw new \Exception("Sản phẩm '{$item->perfume->name}' không đủ tồn kho để khôi phục.");
-                            }
-                            $perfume->decrement('stock', $item->quantity);
-                        }
-                    }
+            DB::transaction(function () use ($order, $newStatus, $newShippingStatus) {
+                $order = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
+                $this->guardTransition($order, $newStatus, $newShippingStatus);
+                if ($newStatus === 'cancelled') {
+                    app(OrderInventoryService::class)->release($order);
+                    $order->paymentTransactions()->where('status', 'paid')->update(['status' => 'refund_pending']);
+                    $order->paymentTransactions()->whereIn('status', ['pending', 'initiated'])->update(['status' => 'cancelled']);
                 }
 
                 $updates = [];
-                if ($newStatus) $updates['status'] = $newStatus;
-                if ($newShippingStatus) $updates['shipping_status'] = $newShippingStatus;
+                if ($newStatus) {
+                    $updates['status'] = $newStatus;
+                }
+                if ($newShippingStatus) {
+                    $updates['shipping_status'] = $newShippingStatus;
+                }
 
-                if (!empty($updates)) {
+                if (! empty($updates)) {
                     $order->update($updates);
                 }
 
                 if ($newShippingStatus === 'delivered' || $newStatus === 'completed') {
                     DB::table('payment_transactions')
                         ->where('order_id', $order->id)
-                        ->where('status', 'pending')
+                        ->where('status', 'pending')->where('gateway', 'cod')
                         ->update(['status' => 'paid', 'updated_at' => now()]);
                 }
             });
@@ -254,15 +252,15 @@ class OrderController extends Controller
         $request->validate([
             'order_ids' => ['required', 'array', 'min:1'],
             'order_ids.*' => ['integer', 'exists:orders,id'],
-            'bulk_status' => ['nullable', 'string'],
-            'bulk_shipping_status' => ['nullable', 'string'],
+            'bulk_status' => ['nullable', Rule::in(['pending', 'confirmed', 'completed', 'cancelled'])],
+            'bulk_shipping_status' => ['nullable', Rule::in(['pending', 'ready_to_pick', 'picking', 'delivering', 'delivered', 'returned', 'cancelled'])],
         ]);
 
         $orderIds = $request->input('order_ids', []);
         $bulkStatus = $request->input('bulk_status');
         $bulkShippingStatus = $request->input('bulk_shipping_status');
 
-        if (!$bulkStatus && !$bulkShippingStatus) {
+        if (! $bulkStatus && ! $bulkShippingStatus) {
             return back()->with('error', 'Vui lòng chọn trạng thái cần cập nhật hàng loạt.');
         }
 
@@ -276,16 +274,17 @@ class OrderController extends Controller
             // Kiểm tra ràng buộc Lab 8: Không cho hủy nếu đang giao
             if (($bulkStatus === 'cancelled' || $bulkShippingStatus === 'cancelled') && in_array($order->shipping_status, $deliveringStatuses)) {
                 $skippedDeliveringCount++;
+
                 continue;
             }
 
             $orderStatus = $bulkStatus;
             $orderShipping = $bulkShippingStatus;
 
-            if ($orderShipping === 'delivered' && (!$orderStatus || $orderStatus === 'pending')) {
+            if ($orderShipping === 'delivered' && (! $orderStatus || $orderStatus === 'pending')) {
                 $orderStatus = 'completed';
             }
-            if ($orderStatus === 'completed' && (!$orderShipping || $orderShipping === 'pending')) {
+            if ($orderStatus === 'completed' && (! $orderShipping || $orderShipping === 'pending')) {
                 $orderShipping = 'delivered';
             }
             if ($orderStatus === 'cancelled' || $orderShipping === 'cancelled') {
@@ -295,39 +294,74 @@ class OrderController extends Controller
 
             $oldStatus = $order->status;
 
-            DB::transaction(function () use ($order, $oldStatus, $orderStatus, $orderShipping) {
-                if ($orderStatus === 'cancelled' && $oldStatus !== 'cancelled') {
-                    foreach ($order->items as $item) {
-                        if ($item->perfume) {
-                            $item->perfume->increment('stock', $item->quantity);
-                        }
+            try {
+                DB::transaction(function () use ($order, $orderStatus, $orderShipping) {
+                    $order = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
+                    $this->guardTransition($order, $orderStatus, $orderShipping);
+                    if ($orderStatus === 'cancelled') {
+                        app(OrderInventoryService::class)->release($order);
+                        $order->paymentTransactions()->where('status', 'paid')->update(['status' => 'refund_pending']);
+                        $order->paymentTransactions()->whereIn('status', ['pending', 'initiated'])->update(['status' => 'cancelled']);
                     }
-                }
 
-                $data = [];
-                if ($orderStatus) $data['status'] = $orderStatus;
-                if ($orderShipping) $data['shipping_status'] = $orderShipping;
+                    $data = [];
+                    if ($orderStatus) {
+                        $data['status'] = $orderStatus;
+                    }
+                    if ($orderShipping) {
+                        $data['shipping_status'] = $orderShipping;
+                    }
 
-                if (!empty($data)) {
-                    $order->update($data);
-                }
+                    if (! empty($data)) {
+                        $order->update($data);
+                    }
 
-                if ($orderShipping === 'delivered' || $orderStatus === 'completed') {
-                    DB::table('payment_transactions')
-                        ->where('order_id', $order->id)
-                        ->where('status', 'pending')
-                        ->update(['status' => 'paid', 'updated_at' => now()]);
-                }
-            });
+                    if ($orderShipping === 'delivered' || $orderStatus === 'completed') {
+                        DB::table('payment_transactions')
+                            ->where('order_id', $order->id)
+                            ->where('status', 'pending')->where('gateway', 'cod')
+                            ->update(['status' => 'paid', 'updated_at' => now()]);
+                    }
+                });
 
+            } catch (ValidationException $e) {
+                $skippedDeliveringCount++;
+
+                continue;
+            }
             $updatedCount++;
         }
 
         $message = "Đã cập nhật trạng thái thành công cho {$updatedCount} đơn hàng.";
         if ($skippedDeliveringCount > 0) {
-            $message .= " (Bỏ qua {$skippedDeliveringCount} đơn hàng đang giao vì không thể hủy theo quy định).";
+            $message .= " (Bỏ qua {$skippedDeliveringCount} đơn hàng không cho phép chuyển sang trạng thái đã chọn).";
         }
 
         return back()->with('success', $message);
+    }
+
+    private function guardTransition(Order $order, ?string $status, ?string $shipping): void
+    {
+        $ranks = ['pending' => 0, 'not_shipped' => 0, 'processing' => 1, 'ready_to_pick' => 2,
+            'picking' => 3, 'picked' => 4, 'storing' => 5, 'transporting' => 5, 'sorting' => 5, 'delivering' => 6, 'delivered' => 7,
+            'return' => 8, 'returning' => 8, 'return_transporting' => 8, 'return_sorting' => 8, 'returned' => 9];
+        if ($shipping && isset($ranks[$shipping], $ranks[$order->shipping_status]) && $ranks[$shipping] < $ranks[$order->shipping_status]) {
+            throw ValidationException::withMessages(['shipping_status' => 'Không thể lùi trạng thái giao hàng để mở lại hoặc hủy đơn đang giao.']);
+        }
+        if (($status === 'cancelled' || $shipping === 'cancelled') && $order->ghn_order_code && ! $order->is_demo) {
+            throw ValidationException::withMessages(['status' => 'Đơn đã có vận đơn thật. Cần xác nhận hủy với đơn vị vận chuyển trước; không hoàn kho bằng thao tác cập nhật trạng thái.']);
+        }
+        if ((! $status || $status === $order->status) && (! $shipping || $shipping === $order->shipping_status)) {
+            return;
+        }
+        $terminal = in_array($order->status, ['cancelled', 'completed'], true) ||
+            in_array($order->shipping_status, ['delivered', 'returned', 'cancelled'], true);
+        if ($terminal && (($status && $status !== $order->status) || ($shipping && $shipping !== $order->shipping_status))) {
+            throw ValidationException::withMessages(['status' => 'Đơn đã kết thúc không được mở lại; hãy tạo đơn mới.']);
+        }
+        if (($status === 'cancelled' || $shipping === 'cancelled') &&
+            ! in_array($order->shipping_status, [null, 'pending', 'not_shipped', 'ready_to_pick'], true)) {
+            throw ValidationException::withMessages(['status' => 'Đơn đang xử lý giao hàng không thể hủy tại đây.']);
+        }
     }
 }

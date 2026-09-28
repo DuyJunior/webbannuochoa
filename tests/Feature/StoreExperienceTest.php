@@ -50,6 +50,9 @@ class StoreExperienceTest extends TestCase
         $perfume = $this->perfume(['stock' => 0]);
         $this->actingAs($user)->post(route('store.wishlist.toggle', $perfume))->assertRedirect();
         $this->assertDatabaseHas('wishlists', ['user_id' => $user->id, 'perfume_id' => $perfume->id]);
+        $purchase = Order::create(['user_id' => $user->id, 'customer_name' => 'Khách',
+            'phone' => '0900000000', 'address' => 'Hà Nội', 'total_price' => 1200000, 'status' => 'completed']);
+        $purchase->items()->create(['perfume_id' => $perfume->id, 'quantity' => 1, 'price' => 1200000]);
         $this->actingAs($user)->post(route('store.review', $perfume), [
             'rating' => 5, 'body' => 'Mùi hoa hồng nhẹ nhàng và dễ dùng mỗi ngày.',
         ])->assertRedirect();

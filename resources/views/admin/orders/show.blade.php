@@ -9,6 +9,8 @@
 @endsection
 
 @section('content')
+@include('partials.order-timeline')
+@include('partials.inventory-movements')
 <div class="row">
     <!-- Left Column: Items and Customer Info -->
     <div class="col-lg-8 mb-4">
@@ -34,7 +36,7 @@
                                     <div class="d-flex align-items-center">
                                         <div class="mr-3" style="width: 55px; height: 55px; border-radius: 8px; overflow: hidden; background: #f1f5f9; display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">
                                             @if($item->perfume && $item->perfume->image_src)
-                                                <img src="{{ $item->perfume->image_src }}" alt="{{ $item->perfume->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                <img src="{{ $item->perfume->image_src }}" alt="{{ $item->product_name ?? $item->perfume->name }}" style="width: 100%; height: 100%; object-fit: cover;">
                                             @else
                                                 <i class="fa-solid fa-image text-muted" style="font-size: 1.2rem;"></i>
                                             @endif
@@ -42,7 +44,7 @@
                                         <div>
                                             @if($item->perfume)
                                                 <a href="{{ route('admin.products.show', $item->perfume_id) }}" class="font-weight-bold text-dark text-decoration-none">
-                                                    {{ $item->perfume->name }}
+                                                    {{ $item->product_name ?? $item->perfume->name }}
                                                 </a>
                                                 <div class="text-muted small mt-1">
                                                     <span>Thương hiệu: <strong>{{ $item->perfume->brand }}</strong></span>

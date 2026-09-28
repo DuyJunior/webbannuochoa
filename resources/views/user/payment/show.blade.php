@@ -3,6 +3,7 @@
 @section('title', 'Chi tiết đơn hàng #' . $order->id . ' · Ha Thu Perfume')
 
 @section('content')
+@include('partials.order-timeline')
 <div class="order-detail-page">
     <div class="store-container">
         {{-- Breadcrumb --}}
@@ -112,7 +113,7 @@
                                     @endif
                                 </div>
                                 <div class="detail-item-info">
-                                    <h4>{{ $prod->name ?? 'Nước hoa cao cấp' }}</h4>
+                                    <h4>{{ $item->product_name ?? $prod->name ?? 'Nước hoa cao cấp' }}</h4>
                                     <div class="detail-item-meta">
                                         <span>Dung tích: {{ $item->volume_ml ?? 100 }}ml</span>
                                         @if($item->addon_gift)

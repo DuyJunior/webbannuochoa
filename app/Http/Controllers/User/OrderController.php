@@ -8,15 +8,18 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PaymentTransaction;
 use App\Models\Perfume;
+use App\Services\CartQuoteService;
 use App\Services\GHNOrderService;
 use App\Services\GHNService;
 use App\Services\LoyaltyService;
-use Illuminate\Validation\ValidationException;
+use App\Services\OrderInventoryService;
+use App\Support\DemoMode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
 {
@@ -30,71 +33,52 @@ class OrderController extends Controller
             return redirect()->route('cart.index')->with('error', 'Giỏ hàng đang trống.');
         }
 
-        // Lấy danh sách sản phẩm từ Cart
-        $perfumeIds = collect($cart)->map(function ($item, $key) {
-            return is_array($item) ? ($item['perfume_id'] ?? null) : (int) $key;
-        })->filter()->unique()->values();
-
-        $products = Perfume::whereIn('id', $perfumeIds)->get()->keyBy('id');
-
-        $cartItems = collect($cart)->map(function ($itemData, $itemKey) use ($products) {
-            if (is_array($itemData)) {
-                $perfumeId = (int) ($itemData['perfume_id'] ?? 0);
-                $quantity = (int) ($itemData['quantity'] ?? 1);
-                $unitPrice = isset($itemData['unit_price']) ? (float) $itemData['unit_price'] : null;
-                $volumeMl = $itemData['volume_ml'] ?? 100;
-            } else {
-                $perfumeId = (int) $itemKey;
-                $quantity = (int) $itemData;
-                $unitPrice = null;
-                $volumeMl = 100;
-            }
-
-            $product = $products->get($perfumeId);
-            if (!$product) {
-                return null;
-            }
-
-            if ($unitPrice === null) {
-                $unitPrice = (float) ($product->sale_price ?? $product->price);
-            }
-
-            $itemWeight = $product->getWeightForVolume($volumeMl);
+        try {
+            $quote = app(CartQuoteService::class)->quote($cart);
+        } catch (ValidationException $exception) {
+            return redirect()->route('cart.index')->withErrors($exception->errors());
+        }
+        $products = Perfume::whereKey(array_column($quote['items'], 'perfume_id'))->get()->keyBy('id');
+        $cartItems = collect($quote['items'])->map(function ($item) use ($products) {
+            $product = $products[$item['perfume_id']];
+            $weight = $item['stock_components'] ? 50 * count($item['stock_components']) : $product->getWeightForVolume($item['volume_ml']);
 
             return [
-                'product' => $product,
-                'quantity' => $quantity,
-                'price' => $unitPrice,
-                'total' => $unitPrice * $quantity,
-                'volume_ml' => $volumeMl,
-                'weight' => $itemWeight,
-                'total_weight' => $itemWeight * $quantity,
+                'product' => $product, 'quantity' => $item['quantity'],
+                'price' => $item['price'], 'total' => $item['price'] * $item['quantity'],
+                'volume_ml' => $item['volume_ml'], 'weight' => $weight,
+                'total_weight' => $weight * $item['quantity'],
             ];
-        })->filter()->values();
-
-        $totalPrice = $cartItems->sum('total');
-        $totalWeight = $cartItems->sum('total_weight');
+        });
+        $totalPrice = $quote['total'];
+        $totalWeight = $quote['weight'];
 
         $loyaltyBalance = LoyaltyService::balance(Auth::id());
         $availableCoupons = Coupon::where('is_active', true)->orderBy('minimum_order')->get()
             ->filter(fn (Coupon $coupon) => $coupon->isAvailableFor((int) $totalPrice));
+
         return view('user.payment.index', compact('cart', 'cartItems', 'totalPrice', 'totalWeight', 'loyaltyBalance', 'availableCoupons'));
     }
 
     public function processPayment(Request $request, GHNService $ghn, GHNOrderService $ghnOrderService)
     {
-        if (!$request->has('name') && $request->has('customer_name')) {
+        $request->validate(['checkout_key' => 'nullable|uuid']);
+        $checkoutKey = $request->input('checkout_key');
+        if ($checkoutKey && ($existing = Order::where('user_id', Auth::id())->where('checkout_key', $checkoutKey)->first())) {
+            return redirect()->route('orders.show', $existing);
+        }
+        if (! $request->has('name') && $request->has('customer_name')) {
             $request->merge(['name' => $request->customer_name]);
         }
 
-        if (!$request->filled('payment_method')) {
+        if (! $request->filled('payment_method')) {
             $request->merge(['payment_method' => 'cod']);
         }
 
         if ($request->has('phone')) {
-            $cleanPhone = preg_replace('/[^0-9]/', '', (string)$request->phone);
+            $cleanPhone = preg_replace('/[^0-9]/', '', (string) $request->phone);
             if (str_starts_with($cleanPhone, '84') && strlen($cleanPhone) === 11) {
-                $cleanPhone = '0' . substr($cleanPhone, 2);
+                $cleanPhone = '0'.substr($cleanPhone, 2);
             }
             $request->merge(['phone' => $cleanPhone]);
         }
@@ -124,62 +108,10 @@ class OrderController extends Controller
             return redirect()->route('user.cart.index')->with('error', 'Không thể thanh toán vì giỏ hàng trống.');
         }
 
-        // 1. Tính tổng tiền hàng và tổng khối lượng sản phẩm
-        $perfumeIds = collect($cart)->map(function ($item, $key) {
-            return is_array($item) ? ($item['perfume_id'] ?? $item['id'] ?? null) : (int) $key;
-        })->filter()->unique()->values();
-
-        $products = Perfume::whereIn('id', $perfumeIds)->get()->keyBy('id');
-
-        $orderItemsData = [];
-        $subtotal = 0;
-        $totalWeight = 0;
-
-        foreach ($cart as $key => $itemData) {
-            if (is_array($itemData)) {
-                $perfumeId = (int) ($itemData['perfume_id'] ?? $itemData['id'] ?? 0);
-                $quantity = (int) ($itemData['quantity'] ?? 1);
-                $unitPrice = isset($itemData['unit_price']) ? (float) $itemData['unit_price'] : (isset($itemData['price']) ? (float) $itemData['price'] : null);
-                $volumeMl = (int) ($itemData['volume_ml'] ?? 100);
-                $hasGift = (bool) ($itemData['has_gift'] ?? false);
-                $engraveText = $itemData['engrave_text'] ?? null;
-                $livestreamId = $itemData['livestream_id'] ?? null;
-            } else {
-                $perfumeId = (int) $key;
-                $quantity = (int) $itemData;
-                $unitPrice = null;
-                $volumeMl = 100;
-                $hasGift = false;
-                $engraveText = null;
-                $livestreamId = null;
-            }
-
-            $product = $products->get($perfumeId);
-            if (!$product) continue;
-
-            if ($unitPrice === null) {
-                $unitPrice = (float) ($product->sale_price ?? $product->price);
-            }
-
-            $itemWeight = $product->getWeightForVolume($volumeMl);
-            $subtotal += $unitPrice * $quantity;
-            $totalWeight += $itemWeight * (int) $quantity;
-
-            $orderItemsData[] = [
-                'perfume_id' => $product->id,
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-                'price' => $unitPrice,
-                'volume_ml' => $volumeMl,
-                'addon_gift' => $hasGift,
-                'engrave_text' => $engraveText,
-                'livestream_id' => $livestreamId,
-            ];
-        }
-
-        if (empty($orderItemsData)) {
-            return redirect()->route('user.cart.index')->with('error', 'Không thể thanh toán vì giỏ hàng trống.');
-        }
+        $quote = app(CartQuoteService::class)->quote($cart);
+        $orderItemsData = $quote['items'];
+        $subtotal = $quote['total'];
+        $totalWeight = $quote['weight'];
 
         if ($totalWeight <= 0) {
             $totalWeight = (int) config('services.ghn.default_weight', 200);
@@ -192,13 +124,19 @@ class OrderController extends Controller
             'to_ward_code' => (string) $request->to_ward_code,
         ], $ghn->packageParameters($totalWeight)));
 
+        if (($feeResponse['code'] ?? null) != 200 || ! isset($feeResponse['data']['total'])) {
+            throw ValidationException::withMessages(['shipping' => 'Chưa lấy được phí giao hàng. Vui lòng thử lại, đơn hàng chưa được tạo.']);
+        }
         $shippingFee = (isset($feeResponse['code']) && $feeResponse['code'] == 200)
             ? (int) $feeResponse['data']['total']
             : 0;
 
         // Khóa hàng dữ liệu liên quan để tránh dùng mã hay điểm quá giới hạn khi đặt cùng lúc.
-        $order = DB::transaction(function () use ($request, $shippingFee, $subtotal, $orderItemsData) {
+        $order = DB::transaction(function () use ($request, $shippingFee, $subtotal, $orderItemsData, $checkoutKey) {
             DB::table('users')->where('id', Auth::id())->lockForUpdate()->first();
+            if ($checkoutKey && ($existing = Order::where('user_id', Auth::id())->where('checkout_key', $checkoutKey)->first())) {
+                return $existing;
+            }
             $couponCode = strtoupper(trim((string) $request->input('coupon_code', '')));
             $coupon = $couponCode ? Coupon::where('code', $couponCode)->lockForUpdate()->first() : null;
             if ($couponCode && (! $coupon || ! $coupon->isAvailableFor((int) $subtotal))) {
@@ -212,6 +150,10 @@ class OrderController extends Controller
             }
             $finalTotal = max(0, $subtotal + $shippingFee - $discount - $points * 1000);
             $order = Order::create([
+                'checkout_key' => $checkoutKey,
+                'payment_expires_at' => $request->payment_method === 'cod' ? null : now()->addMinutes(30),
+                'inventory_status' => 'unreserved',
+                'is_demo' => DemoMode::enabled(),
                 'user_id' => Auth::id(),
                 'name' => $request->name,
                 'customer_name' => $request->name,
@@ -243,43 +185,40 @@ class OrderController extends Controller
                     'addon_gift' => $item['addon_gift'],
                     'engrave_text' => $item['engrave_text'],
                     'livestream_id' => $item['livestream_id'],
+                    'stock_components' => $item['stock_components'],
                 ]);
             }
 
+            app(OrderInventoryService::class)->reserve($order);
+            PaymentTransaction::create([
+                'order_id' => $order->id,
+                'gateway' => $request->payment_method === 'cod' ? 'cod' : 'momo',
+                'amount' => $order->total_price, 'status' => 'pending',
+            ]);
+
             return $order;
         });
+
+        if (! $order->wasRecentlyCreated) {
+            return redirect()->route('orders.show', $order);
+        }
 
         // Xóa session giỏ hàng
         session()->forget('cart');
 
         // 4. Phân luồng thanh toán theo đúng tài liệu Lab 06
         if (in_array($request->payment_method, ['momo', 'atm_domestic', 'atm_international'], true)) {
-            PaymentTransaction::create([
-                'order_id' => $order->id,
-                'gateway' => 'momo',
-                'amount' => $order->total_price,
-                'status' => 'pending',
-            ]);
-
-            return redirect()->route('user.orders.momo.start', [
+            return redirect()->route($order->is_demo ? 'user.orders.payment.pending' : 'user.orders.momo.start', [
                 'order' => $order,
                 'method' => $request->payment_method,
             ]);
         }
 
-        PaymentTransaction::create([
-            'order_id' => $order->id,
-            'gateway' => 'cod',
-            'amount' => $order->total_price,
-            'status' => 'pending',
-            'message' => 'Thanh toán khi nhận hàng',
-        ]);
-
         // --- NHÁNH COD: TẠO VẬN ĐƠN GHN NGAY LẬP TỨC ---
         $order->load('items.product');
         $ghnOrderResponse = $ghnOrderService->create($order);
 
-        if (($ghnOrderResponse['code'] ?? null) == 200 && !empty($ghnOrderResponse['data']['order_code'])) {
+        if (($ghnOrderResponse['code'] ?? null) == 200 && ! empty($ghnOrderResponse['data']['order_code'])) {
             $order->update([
                 'status' => 'cod_ordered',
                 'ghn_order_code' => $ghnOrderResponse['data']['order_code'],
@@ -287,7 +226,7 @@ class OrderController extends Controller
             ]);
 
             return redirect()->route('orders.show', $order->id)
-                ->with('success', 'Đặt hàng thành công! Mã vận đơn GHN: ' . $ghnOrderResponse['data']['order_code']);
+                ->with('success', 'Đặt hàng thành công! Mã vận đơn GHN: '.$ghnOrderResponse['data']['order_code']);
         }
 
         Log::error('GHN COD Order Failed: ', $ghnOrderResponse ?? []);
@@ -299,6 +238,7 @@ class OrderController extends Controller
 
     public function paymentPending(Order $order)
     {
+        abort_unless(DemoMode::enabled() && $order->is_demo, 404);
         if ($order->user_id !== Auth::id()) {
             abort(403);
         }
@@ -315,7 +255,7 @@ class OrderController extends Controller
         } else {
             $lastTransaction = $order->paymentTransactions()->latest()->first();
             $payMethod = $lastTransaction?->gateway
-                ?? session('atm_pay_method_' . $order->id, 'atm_domestic');
+                ?? session('atm_pay_method_'.$order->id, 'atm_domestic');
         }
 
         return view('user.payment.pending', compact('order', 'payMethod'));
@@ -323,83 +263,29 @@ class OrderController extends Controller
 
     public function confirmPayment(Order $order, Request $request, GHNOrderService $ghnOrderService)
     {
-        if ($order->user_id !== Auth::id()) {
-            abort(403);
+        abort_unless($order->user_id === Auth::id(), 403);
+        abort_unless(DemoMode::enabled() && $order->is_demo, 404);
+        $data = $request->validate(['scenario' => 'required|in:success,declined,insufficient,limit']);
+        if ($data['scenario'] !== 'success') {
+            return back()->with('error', 'DEMO: giao dịch bị từ chối ('.$data['scenario'].'). Không có tiền thật bị trừ.');
         }
-
-        $gateway = $request->input('gateway', 'atm_domestic');
-        $gatewayNames = [
-            'atm_domestic' => 'Thẻ ATM Nội Địa (Napas)',
-            'atm_international' => 'Thẻ Quốc Tế (Visa/Mastercard)',
-            'momo' => 'Ví MoMo',
-        ];
-        $gatewayName = $gatewayNames[$gateway] ?? 'Trực tuyến';
-
-        // Kiểm tra 4 trường hợp thẻ test theo đúng tài liệu Lab 06:
-        $cardNum = preg_replace('/\D/', '', (string) $request->input('card_number', ''));
-
-        if (str_ends_with($cardNum, '0026')) {
-            return redirect()->route('user.orders.index')
-                ->with('error', '✕ Thanh toán thất bại: Thẻ ' . ($cardNum ?: '9704 0000 0000 0026') . ' đã bị khóa bởi ngân hàng. Vui lòng bấm "Thanh toán lại" để chọn thẻ khác.');
-        }
-
-        if (str_ends_with($cardNum, '0034')) {
-            return redirect()->route('user.orders.index')
-                ->with('error', '✕ Thanh toán thất bại: Số dư tài khoản không đủ tiền để thanh toán đơn hàng. Vui lòng bấm "Thanh toán lại" để thử lại.');
-        }
-
-        if (str_ends_with($cardNum, '0042')) {
-            return redirect()->route('user.orders.index')
-                ->with('error', '✕ Thanh toán thất bại: Giao dịch vượt quá hạn mức thanh toán cho phép của thẻ. Vui lòng bấm "Thanh toán lại" để thử lại.');
-        }
-
-        // 1. Xóa session giỏ hàng
-        session()->forget('cart');
-
-        // 2. Tạo vận đơn GHN trả trước (cod_amount = 0) nếu chưa có
-        $ghnMsg = '';
-        $updateData = [
-            'status' => 'paid',
-            'shipping_status' => 'processing',
-        ];
-
-        if (!$order->ghn_order_code) {
-            $order->load('items.product');
-            $ghnOrderResponse = $ghnOrderService->create($order, true);
-
-            if (($ghnOrderResponse['code'] ?? null) == 200 && !empty($ghnOrderResponse['data']['order_code'])) {
-                $updateData['ghn_order_code'] = $ghnOrderResponse['data']['order_code'];
-                $updateData['shipping_status'] = 'ready_to_pick';
-                $ghnMsg = ' (Mã vận đơn GHN: ' . $ghnOrderResponse['data']['order_code'] . ')';
+        DB::transaction(function () use ($order) {
+            $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
+            if ($locked->paymentTransactions()->where('status', 'paid')->exists()) {
+                return;
             }
-        }
-
-        $order->update($updateData);
-
-        // 3. Cập nhật hoặc tạo PaymentTransaction
-        if (Schema::hasTable('payment_transactions')) {
-            $tx = $order->paymentTransactions()->latest()->first();
-            if ($tx) {
-                $tx->update([
-                    'status' => 'paid',
-                    'paid_at' => now(),
-                    'gateway' => $gateway,
-                    'message' => 'Thanh toán thành công qua ' . $gatewayName,
-                ]);
-            } else {
-                PaymentTransaction::create([
-                    'order_id' => $order->id,
-                    'gateway' => $gateway,
-                    'amount' => $order->total_price,
-                    'status' => 'paid',
-                    'paid_at' => now(),
-                    'message' => 'Thanh toán thành công qua ' . $gatewayName,
-                ]);
+            if (in_array($locked->status, ['cancelled', 'completed'], true)) {
+                throw ValidationException::withMessages(['payment' => 'Không thể thanh toán đơn đã hủy hoặc hoàn tất.']);
             }
-        }
+            $locked->paymentTransactions()->whereIn('status', ['pending', 'initiated'])->update(['status' => 'cancelled']);
+            $locked->paymentTransactions()->create([
+                'gateway' => 'demo', 'amount' => $locked->total_price, 'status' => 'paid',
+                'paid_at' => now(), 'message' => 'DEMO LOCAL — không thu tiền thật',
+            ]);
+            $locked->update(['status' => 'paid', 'shipping_status' => 'ready_to_pick']);
+        });
 
-        return redirect()->route('user.orders.index')
-            ->with('success', '✓ Đã thanh toán đơn hàng #' . $order->id . ' qua ' . $gatewayName . ' thành công!' . $ghnMsg);
+        return redirect()->route('orders.show', $order)->with('success', 'DEMO: thanh toán mô phỏng thành công. Không thu tiền thật.');
     }
 
     public function orderHistory()
@@ -421,7 +307,7 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
-        if ($order->user_id !== Auth::id() && (!Auth::user() || !Auth::user()->is_admin)) {
+        if ($order->user_id !== Auth::id() && (! Auth::user() || Auth::user()->role !== 'admin')) {
             abort(403);
         }
 
@@ -442,18 +328,23 @@ class OrderController extends Controller
         abort_unless($order->user_id === Auth::id(), 403);
         $allowedStatuses = ['pending', 'ready_to_pick'];
 
-        if (!in_array($order->shipping_status, $allowedStatuses, true)) {
+        if (! in_array($order->shipping_status, $allowedStatuses, true)) {
             return back()->with('error', 'Đơn hàng không còn ở trạng thái có thể hủy.');
         }
 
         if ($order->ghn_order_code) {
             $response = $ghn->cancelOrder([$order->ghn_order_code]);
             if (($response['code'] ?? null) !== 200) {
-                return back()->with('error', 'GHN không cho phép hủy vận đơn này: ' . ($response['message'] ?? ''));
+                return back()->with('error', 'GHN không cho phép hủy vận đơn này: '.($response['message'] ?? ''));
             }
         }
 
         DB::transaction(function () use ($order) {
+            $order = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
+            if (! in_array($order->shipping_status, ['pending', 'ready_to_pick'], true)) {
+                throw ValidationException::withMessages(['order' => 'Đơn hàng không còn ở trạng thái có thể hủy.']);
+            }
+            app(OrderInventoryService::class)->release($order);
             $order->update([
                 'status' => 'cancelled',
                 'shipping_status' => 'cancelled',
@@ -498,6 +389,8 @@ class OrderController extends Controller
 
     public function trackingSearch(Request $request)
     {
+        abort_unless(Auth::check(), 401);
+        $request->validate(['keyword' => 'nullable|string|max:100', 'phone' => 'nullable|string|max:20']);
         $keyword = trim((string) $request->input('keyword', ''));
         $phone = trim((string) $request->input('phone', ''));
 
@@ -505,30 +398,30 @@ class OrderController extends Controller
             return back()->with('error', 'Vui lòng nhập Mã đơn hàng / Mã GHN hoặc Số điện thoại để tra cứu.')->withInput();
         }
 
-        $query = Order::query()->with(['items.product']);
+        $query = Order::query()->where('user_id', Auth::id())->with(['items.product']);
 
-        if (!empty($phone)) {
+        if (! empty($phone)) {
             $cleanPhone = preg_replace('/[^0-9]/', '', $phone);
             $query->where(function ($q) use ($phone, $cleanPhone) {
                 $q->where('phone', 'like', "%{$phone}%");
-                if (!empty($cleanPhone)) {
+                if (! empty($cleanPhone)) {
                     $q->orWhereRaw("REPLACE(REPLACE(phone, ' ', ''), '-', '') LIKE ?", ["%{$cleanPhone}%"]);
                 }
             });
         }
 
-        if (!empty($keyword)) {
+        if (! empty($keyword)) {
             $cleanKeyword = ltrim($keyword, '#');
             $query->where(function ($q) use ($keyword, $cleanKeyword) {
                 if (is_numeric($cleanKeyword)) {
                     $q->where('id', (int) $cleanKeyword);
                 }
                 $q->orWhere('ghn_order_code', 'like', "%{$keyword}%")
-                  ->orWhere('ghn_order_code', 'like', "%{$cleanKeyword}%");
+                    ->orWhere('ghn_order_code', 'like', "%{$cleanKeyword}%");
             });
         }
 
-        $orders = $query->orderByDesc('created_at')->get();
+        $orders = $query->orderByDesc('created_at')->limit(50)->get();
 
         $myRecentOrders = collect();
         if (Auth::check()) {

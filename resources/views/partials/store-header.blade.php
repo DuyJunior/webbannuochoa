@@ -17,6 +17,7 @@
                     <summary class="ht-header-action">@include('partials.icon', ['name' => 'user']) <span>Tài khoản</span></summary>
                     <div class="ht-account-menu">
                         <strong>Chào, {{ Auth::user()->name }}</strong>
+                        <a href="{{ route('account.edit') }}">Thông tin & đổi mật khẩu</a>
                         <a href="{{ route('orders.index') }}">Đơn mua của tôi</a>
                         <a href="{{ route('store.wardrobe') }}">💎 Tủ nước hoa của tôi</a>
                         <a href="{{ route('store.wishlist') }}">Mùi hương yêu thích</a>

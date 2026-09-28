@@ -6,6 +6,7 @@
 @section('content')
 <div class="container-fluid p-0">
     <div class="d-flex justify-content-between align-items-center mb-3">
+        <a class="btn btn-outline-secondary" href="{{ route('admin.reports.export', request()->query()) }}">Tải CSV theo bộ lọc</a>
         <h2 class="h4 font-weight-bold text-dark mb-0">Báo cáo doanh thu</h2>
     </div>
 
@@ -29,6 +30,13 @@
     {{-- BỘ LỌC BÁO CÁO TOÀN DIỆN (THEO YÊU CẦU NGƯỜI DÙNG) --}}
     <div class="admin-card mb-4 filter-box shadow-sm">
         <form method="GET" action="{{ route('admin.reports.index') }}" id="reportFilterForm">
+            <label>Loại dữ liệu
+                <select name="mode" class="form-control">
+                    <option value="real" @selected(($filters['mode'] ?? 'real') === 'real')>Đơn thực (loại trừ demo)</option>
+                    <option value="demo" @selected(($filters['mode'] ?? '') === 'demo')>Chỉ đơn demo</option>
+                </select>
+            </label>
+            <p>Số liệu tổng thu của đơn đã thanh toán, bao gồm phí giao hàng; không phải lợi nhuận. Đơn demo được thống kê riêng.</p>
             {{-- Hàng 1: Các nút mốc thời gian nhanh (Presets) --}}
             <div class="mb-3 d-flex align-items-center flex-wrap gap-2">
                 <span class="small font-weight-bold text-muted mr-1"><i class="fa-regular fa-clock mr-1"></i> Mốc nhanh:</span>

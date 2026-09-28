@@ -89,12 +89,15 @@
             </label>
             <label class="field">
                 <span>Tồn kho Chiết (10ml)</span>
-                <input type="number" name="stock_10ml" value="{{ old('stock_10ml', $perfume->stock_10ml ?? '') }}" min="0" placeholder="Tự động tính nếu để trống">
+                <input type="number" name="stock_10ml" value="{{ old('stock_10ml', $perfume->stock_10ml ?? '') }}" min="0" placeholder="Chưa nhập kho: 0">
                 @error('stock_10ml')<small class="field-error">{{ $message }}</small>@enderror
             </label>
             <label class="field">
                 <span>Tồn kho Chai vừa (50ml)</span>
-                <input type="number" name="stock_50ml" value="{{ old('stock_50ml', $perfume->stock_50ml ?? '') }}" min="0" placeholder="Tự động tính nếu để trống">
+                <input type="number" name="stock_50ml" value="{{ old('stock_50ml', $perfume->stock_50ml ?? '') }}" min="0" placeholder="Chưa nhập kho: 0">
+                <label style="display:block;margin-top:12px">Kho mẫu thử 5ml (Discovery Box)</label>
+                <input class="form-control" type="number" name="stock_5ml" min="0" value="{{ old('stock_5ml', $perfume->stock_5ml ?? 0) }}">
+                <small>Nhập số lượng thực tế từng dung tích. Không tự quy đổi từ chai lớn.</small>
                 @error('stock_50ml')<small class="field-error">{{ $message }}</small>@enderror
             </label>
         </div>

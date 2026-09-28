@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\Perfume;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -17,6 +18,7 @@ class PerfumeCrudTest extends TestCase
     {
         parent::setUp();
         $this->withoutVite();
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
     }
 
     public function test_product_list_can_be_viewed(): void
@@ -73,7 +75,7 @@ class PerfumeCrudTest extends TestCase
         $response = $this->delete(route('perfumes.destroy', $perfume));
 
         $response->assertRedirect(route('perfumes.index'));
-        $this->assertDatabaseMissing('perfumes', ['id' => $perfume->id]);
+        $this->assertSoftDeleted('perfumes', ['id' => $perfume->id]);
     }
 
     public function test_sale_price_cannot_exceed_list_price(): void

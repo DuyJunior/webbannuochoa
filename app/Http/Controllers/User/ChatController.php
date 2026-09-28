@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ReplyToCustomerMessage;
 use App\Models\ChatConversation;
 use App\Models\Message;
+use App\Models\Perfume;
 use App\Models\User;
 use App\Services\AiChatService;
 use Illuminate\Http\Request;
@@ -54,9 +55,25 @@ class ChatController extends Controller
 
     public function getMessages()
     {
-        return response()->json(Message::conversation(Auth::id())
+        $messages = Message::conversation(Auth::id())
             ->with(['sender:id,name,role', 'receiver:id,name,role'])
-            ->latest('id')->limit(100)->get()->reverse()->values());
+            ->latest('id')->limit(100)->get()->reverse()->values();
+        $products = Perfume::where('is_active', true)->get();
+        foreach ($messages as $message) {
+            // Cards only for exact catalog names mentioned by AI; URLs/prices never come from AI text.
+            $message->setAttribute('products', $message->is_ai ? $products
+                ->filter(fn ($product) => mb_stripos($message->content, $product->name) !== false)
+                ->take(3)->map(fn ($product) => [
+                    'id' => $product->id, 'name' => $product->name,
+                    'price' => (int) ($product->sale_price ?? $product->price),
+                    'volume_ml' => (int) $product->volume_ml,
+                    'in_stock' => $product->getStockForVolume() > 0,
+                    'image' => $product->image_src,
+                    'url' => route('perfumes.show', $product),
+                ])->values()->all() : []);
+        }
+
+        return response()->json($messages);
     }
 
     public function status(AiChatService $ai)

@@ -6,12 +6,13 @@ use App\Models\Order;
 
 class GHNOrderService
 {
-    public function __construct(private GHNService $ghn)
-    {
-    }
+    public function __construct(private GHNService $ghn) {}
 
     public function create(Order $order, bool $isPaid = false): array
     {
+        if ($order->is_demo) {
+            return ['code' => 200, 'data' => ['order_code' => 'DEMO-'.$order->id]];
+        }
         // Tự động nhận diện nếu đơn hàng đã được thanh toán (MoMo / Online)
         $isPaid = $isPaid || $order->status === 'paid';
 
@@ -20,13 +21,15 @@ class GHNOrderService
 
         foreach ($order->items as $item) {
             $product = $item->product ?? $item->perfume;
-            $itemWeight = (method_exists($product, 'getWeightForVolume') && $product)
+            $itemWeight = ($product && method_exists($product, 'getWeightForVolume'))
                 ? $product->getWeightForVolume($item->volume_ml)
                 : (int) ($product?->weight ?? 200);
-            if ($itemWeight <= 0) $itemWeight = 200;
+            if ($itemWeight <= 0) {
+                $itemWeight = 200;
+            }
             $weight += $itemWeight * (int) $item->quantity;
             $items[] = [
-                'name' => $product->name ?? 'Sản phẩm',
+                'name' => $item->product_name ?? $product->name ?? 'Sản phẩm',
                 'quantity' => (int) $item->quantity,
                 'price' => (int) $item->price,
                 'weight' => $itemWeight,
@@ -36,10 +39,10 @@ class GHNOrderService
         $pkg = $this->ghn->packageParameters($weight);
 
         return $this->ghn->createOrder([
-            // 1: Người gửi trả cước (Shop trả phí ship). 
+            // 1: Người gửi trả cước (Shop trả phí ship).
             // Khi đã thanh toán Online/MoMo: payment_type_id = 1 và cod_amount = 0 => Shipper KHÔNG thu bất kỳ tiền nào của người nhận (Tổng thu = 0đ)
             'payment_type_id' => 1,
-            'note' => 'Đơn hàng #' . $order->id . ($isPaid ? ' (ĐÃ THANH TOÁN ONLINE MOMO - KHÔNG THU TIỀN KHÁCH)' : ' (Thu tiền COD khi nhận hàng)'),
+            'note' => 'Đơn hàng #'.$order->id.($isPaid ? ' (ĐÃ THANH TOÁN ONLINE MOMO - KHÔNG THU TIỀN KHÁCH)' : ' (Thu tiền COD khi nhận hàng)'),
             'required_note' => 'KHONGCHOXEMHANG',
             'to_name' => $order->name ?? $order->customer_name,
             'to_phone' => $order->phone,

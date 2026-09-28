@@ -156,13 +156,13 @@
                     $volume100 = (int) ($perfume->volume_ml ?: 100);
                     
                     // Tính giá theo dung tích đẹp mắt
-                    $price10ml = round(($baseFullPrice * 0.22) / 10000) * 10000;
-                    $price50ml = round(($baseFullPrice * 0.65) / 10000) * 10000;
+                    $price10ml = app(\App\Services\CartQuoteService::class)->unitPrice($perfume, 10);
+                    $price50ml = app(\App\Services\CartQuoteService::class)->unitPrice($perfume, 50);
                     $priceFull = $baseFullPrice;
 
                     // Số lượng tồn kho theo từng dung tích riêng biệt
-                    $stock10ml = (int) $perfume->stock_10ml;
-                    $stock50ml = (int) $perfume->stock_50ml;
+                    $stock10ml = $perfume->getStockForVolume(10);
+                    $stock50ml = $perfume->getStockForVolume(50);
                     $stockFull = (int) $perfume->stock_100ml;
                 @endphp
 
@@ -189,6 +189,7 @@
                             <span class="option-sub" id="volumeSelectedLabel">{{ $volume100 }}ml (Fullbox Nguyên Seal) · Còn {{ $stockFull }} chai</span>
                         </div>
                         <div class="volume-options-grid">
+                            @if($volume100 !== 10)
                             {{-- Option 10ml Chiết --}}
                             <label class="volume-card-option" data-volume="10" data-stock="{{ $stock10ml }}" data-desc="Chiết Travel Spray" data-price="{{ $price10ml }}" data-oldprice="{{ round($price10ml * 1.25 / 10000) * 10000 }}">
                                 <input type="radio" name="volume_ml" value="10">
@@ -205,6 +206,8 @@
                                 </div>
                             </label>
 
+                            @endif
+                            @if($volume100 !== 50)
                             {{-- Option 50ml --}}
                             <label class="volume-card-option" data-volume="50" data-stock="{{ $stock50ml }}" data-desc="Chai Vừa Phải" data-price="{{ $price50ml }}" data-oldprice="{{ round($price50ml * 1.2 / 10000) * 10000 }}">
                                 <input type="radio" name="volume_ml" value="50">
@@ -222,6 +225,7 @@
                             </label>
 
                             {{-- Option Fullsize (Default) --}}
+                            @endif
                             <label class="volume-card-option active" data-volume="{{ $volume100 }}" data-stock="{{ $stockFull }}" data-desc="Fullbox Nguyên Seal" data-price="{{ $priceFull }}" data-oldprice="{{ $originalFullPrice }}">
                                 <input type="radio" name="volume_ml" value="{{ $volume100 }}" checked>
                                 <div class="volume-card-badge best-seller">Bán chạy nhất ★</div>

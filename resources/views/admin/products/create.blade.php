@@ -153,11 +153,14 @@
                     </div>
                     <div class="col-md-4 form-group">
                         <label for="stock_10ml" class="font-weight-bold" style="font-size:0.9rem;">Kho Chiết 10ml</label>
-                        <input type="number" name="stock_10ml" id="stock_10ml" class="form-control" value="{{ old('stock_10ml') }}" min="0" placeholder="Tự tính">
+                        <input type="number" name="stock_10ml" id="stock_10ml" class="form-control" value="{{ old('stock_10ml') }}" min="0" placeholder="Chưa nhập kho: 0">
                     </div>
                     <div class="col-md-4 form-group">
                         <label for="stock_50ml" class="font-weight-bold" style="font-size:0.9rem;">Kho Chai 50ml</label>
-                        <input type="number" name="stock_50ml" id="stock_50ml" class="form-control" value="{{ old('stock_50ml') }}" min="0" placeholder="Tự tính">
+                        <input type="number" name="stock_50ml" id="stock_50ml" class="form-control" value="{{ old('stock_50ml') }}" min="0" placeholder="Chưa nhập kho: 0">
+                <label style="display:block;margin-top:12px">Kho mẫu thử 5ml (Discovery Box)</label>
+                <input class="form-control" type="number" name="stock_5ml" min="0" value="{{ old('stock_5ml', $product->stock_5ml ?? 0) }}">
+                <small>Nhập số lượng thực tế từng dung tích. Không tự quy đổi từ chai lớn.</small>
                     </div>
                 </div>
 

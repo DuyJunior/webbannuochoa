@@ -33,6 +33,7 @@
 
         <form method="POST" action="{{ route('payment.process') }}" id="checkoutPaymentForm" class="checkout-grid-container">
             @csrf
+            <input type="hidden" name="checkout_key" value="{{ old('checkout_key', (string) \Illuminate\Support\Str::uuid()) }}">
             <input type="hidden" id="total_price_input" value="{{ $totalPrice }}">
 
             {{-- Cột Trái: Thông tin nhận hàng & Địa chỉ GHN --}}

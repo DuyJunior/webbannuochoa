@@ -8,7 +8,7 @@
     <header class="ht-member-header">
         <span class="ht-badge-pill">💎 CHƯƠNG TRÌNH KHÁCH HÀNG THÂN THIẾT</span>
         <h1 class="ht-member-title">Đặc Quyền Thành Viên <em>Ha Thu Club</em></h1>
-        <p class="ht-member-subtitle">Càng gắn bó, ưu đãi càng lớn. Tích lũy điểm thưởng và nâng hạng thẻ để nhận chiết khấu trực tiếp, quà tặng sample và gói quà cao cấp trọn đời.</p>
+        <p class="ht-member-subtitle">100.000đ chi tiêu hợp lệ tích 1 điểm; 1 điểm giảm 1.000đ, tối đa 20% tiền hàng sau mã giảm giá. Chỉ tính đơn hoàn tất và đã thanh toán; đơn cũ nhập vào không có giao dịch được tính khi đã hoàn tất. Đơn hủy hoặc hoàn trả không tích điểm. Điểm demo và điểm thật được tách riêng.</p>
     </header>
 
     <div class="ht-member-top-grid">
@@ -20,7 +20,7 @@
             </div>
             <div class="card-middle-row">
                 <span class="card-tier-badge">{{ $tier['badge'] }} {{ $tier['name'] }}</span>
-                <span class="card-discount-tag">Giảm {{ $tier['discount_percent'] }}% Mọi Đơn</span>
+                <span class="card-discount-tag">{{ $tier['point_rate'] }}</span>
             </div>
             <div class="card-bottom-row">
                 <div class="holder-info">
@@ -74,8 +74,8 @@
 
     {{-- Tier Comparison Perks Table --}}
     <section class="ht-tier-perks-section">
-        <h2 class="section-title">So Sánh Đặc Quyền Các Hạng Thẻ</h2>
-        <p class="section-sub">Ưu đãi tự động kích hoạt ngay khi tài khoản của bạn đạt đủ điều kiện chi tiêu tích lũy.</p>
+        <h2 class="section-title">Các Mốc Thành Viên</h2>
+        <p class="section-sub">Hạng thẻ ghi nhận mức chi tiêu. Hiện tất cả các hạng áp dụng cùng chính sách điểm, chưa có giảm giá tự động theo hạng.</p>
 
         <div class="perks-cards-grid">
             {{-- Hạng Bạc --}}
@@ -87,10 +87,7 @@
                     <span class="cond">Chi tiêu dưới 1.500.000₫</span>
                 </div>
                 <ul class="perks-list">
-                    <li>✓ Tích lũy 2% điểm thưởng quy đổi tiền mặt</li>
-                    <li>✓ Tặng voucher 50.000₫ tháng sinh nhật</li>
-                    <li>✓ Tham gia Vòng quay may mắn mỗi tuần</li>
-                    <li>✓ Nhận thông báo sớm các đợt Flash Sale</li>
+                    @foreach($tier['perks'] as $perk)<li>✓ {{ $perk }}</li>@endforeach
                 </ul>
             </div>
 
@@ -103,11 +100,7 @@
                     <span class="cond">Chi tiêu từ 1.500.000₫ đến 5.000.000₫</span>
                 </div>
                 <ul class="perks-list">
-                    <li><strong>✓ Giảm trực tiếp 5% mọi đơn hàng</strong></li>
-                    <li>✓ Tích lũy 5% điểm thưởng mỗi hóa đơn</li>
-                    <li>✓ Tặng 01 Sample chiết cao cấp mỗi đơn</li>
-                    <li>✓ Ưu đãi giảm 15% trong tháng sinh nhật</li>
-                    <li>✓ Đổi quà điểm thưởng không giới hạn</li>
+                    @foreach($tier['perks'] as $perk)<li>✓ {{ $perk }}</li>@endforeach
                 </ul>
             </div>
 
@@ -120,12 +113,7 @@
                     <span class="cond">Chi tiêu tích lũy trên 5.000.000₫</span>
                 </div>
                 <ul class="perks-list">
-                    <li><strong>✓ Giảm trực tiếp 10% trọn đời mọi đơn</strong></li>
-                    <li>✓ Tích lũy 10% điểm thưởng mua sắm</li>
-                    <li>✓ Miễn phí 100% Gói quà cao cấp & Thiệp lụa</li>
-                    <li>✓ Miễn phí vận chuyển Hỏa Tốc toàn quốc</li>
-                    <li>✓ Tặng 02 Sample độc quyền bộ sưu tập mới</li>
-                    <li>✓ Fragrance Concierge tư vấn mùi hương 1-1</li>
+                    @foreach($tier['perks'] as $perk)<li>✓ {{ $perk }}</li>@endforeach
                 </ul>
             </div>
         </div>

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,6 +15,7 @@ class CategoryCrudTest extends TestCase
     {
         parent::setUp();
         $this->withoutVite();
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
     }
 
     public function test_category_crud_flow_works(): void

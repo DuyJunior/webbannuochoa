@@ -62,7 +62,7 @@
 
     function renderMessages(messages, forceScroll) {
         if (!Array.isArray(messages)) throw new Error('Không tải được lịch sử chat.');
-        const signature = JSON.stringify(messages.map((m) => [m.id, m.content, m.is_ai]));
+        const signature = JSON.stringify(messages.map((m) => [m.id, m.content, m.is_ai, m.products]));
         if (signature === rendered) {
             if (forceScroll) scroll.scrollTop = scroll.scrollHeight;
             return;
@@ -88,7 +88,39 @@
             time.className = 'bubble-time';
             const date = new Date(message.created_at);
             time.textContent = Number.isNaN(date.getTime()) ? '' : date.toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
-            bubble.append(text, time);
+            bubble.append(text);
+            if (message.is_ai && Array.isArray(message.products)) {
+                for (const product of message.products.slice(0, 3)) {
+                    const target = new URL(product.url, window.location.origin);
+                    if (target.origin !== window.location.origin) continue;
+                    const card = document.createElement('a');
+                    card.href = target.href;
+                    card.style.cssText = 'display:flex;gap:10px;align-items:center;margin-top:12px;padding:10px;border:1px solid #e7d8c5;border-radius:12px;color:inherit;text-decoration:none;background:#fff';
+                    if (product.image) {
+                        const imageUrl = new URL(product.image, window.location.origin);
+                        if (['http:', 'https:'].includes(imageUrl.protocol)) {
+                            const image = document.createElement('img');
+                            image.src = imageUrl.href;
+                            image.alt = product.name;
+                            image.loading = 'lazy';
+                            image.width = 56; image.height = 68;
+                            image.style.objectFit = 'contain';
+                            card.append(image);
+                        }
+                    }
+                    const detail = document.createElement('div');
+                    const name = document.createElement('strong');
+                    name.textContent = product.name;
+                    const price = document.createElement('div');
+                    price.textContent = Number(product.price).toLocaleString('vi-VN') + 'đ · ' + product.volume_ml + 'ml';
+                    const action = document.createElement('small');
+                    action.textContent = product.in_stock ? 'Xem sản phẩm →' : 'Tạm hết dung tích này · Xem chi tiết →';
+                    detail.append(name, price, action);
+                    card.append(detail);
+                    bubble.append(card);
+                }
+            }
+            bubble.append(time);
             row.append(bubble);
             fragment.append(row);
         }

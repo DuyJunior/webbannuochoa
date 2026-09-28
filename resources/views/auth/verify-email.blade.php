@@ -30,6 +30,13 @@
         @endif
 
         <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
+            @if (\App\Support\DemoMode::enabled() && config('mail.default') === 'log')
+                <p>DEMO LOCAL: email đang ghi vào log, không gửi ra hộp thư thật. Nút dưới mô phỏng mở liên kết xác thực của tài khoản đang đăng nhập.</p>
+                <form method="POST" action="{{ route('verification.demo') }}">
+                    @csrf
+                    <button class="luxury-auth-btn" type="submit">Mở thư xác thực demo</button>
+                </form>
+            @endif
             <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
                 <button type="submit" class="luxury-auth-btn">

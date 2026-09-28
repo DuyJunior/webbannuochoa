@@ -12,6 +12,9 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
+        'checkout_key', 'payment_expires_at',
+        'inventory_status',
+        'is_demo',
         'user_id',
         'customer_name',
         'name',
@@ -38,6 +41,8 @@ class Order extends Model
     protected function casts(): array
     {
         return [
+            'payment_expires_at' => 'datetime',
+            'is_demo' => 'boolean',
             'total_price' => 'decimal:0',
             'ghn_total_fee' => 'integer',
             'to_district_id' => 'integer',
@@ -52,7 +57,7 @@ class Order extends Model
     public function setNameAttribute(?string $value): void
     {
         $this->attributes['name'] = $value;
-        if (!isset($this->attributes['customer_name']) || empty($this->attributes['customer_name'])) {
+        if (! isset($this->attributes['customer_name']) || empty($this->attributes['customer_name'])) {
             $this->attributes['customer_name'] = $value;
         }
     }
@@ -60,9 +65,36 @@ class Order extends Model
     public function setCustomerNameAttribute(?string $value): void
     {
         $this->attributes['customer_name'] = $value;
-        if (!isset($this->attributes['name']) || empty($this->attributes['name'])) {
+        if (! isset($this->attributes['name']) || empty($this->attributes['name'])) {
             $this->attributes['name'] = $value;
         }
+    }
+
+    protected static function booted(): void
+    {
+        static::created(fn (Order $order) => $order->recordEvent(true));
+        static::updated(function (Order $order) {
+            if ($order->wasChanged(['status', 'shipping_status'])) {
+                $order->recordEvent();
+            }
+        });
+    }
+
+    private function recordEvent(bool $created = false): void
+    {
+        $this->events()->create([
+            'actor_id' => auth()->id(),
+            'from_status' => $created ? null : $this->getRawOriginal('status'),
+            'to_status' => $this->status,
+            'from_shipping' => $created ? null : $this->getRawOriginal('shipping_status'),
+            'to_shipping' => $this->shipping_status,
+            'created_at' => now(),
+        ]);
+    }
+
+    public function events(): HasMany
+    {
+        return $this->hasMany(OrderEvent::class)->orderBy('id');
     }
 
     public function user(): BelongsTo

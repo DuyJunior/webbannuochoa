@@ -44,13 +44,9 @@ class AiChatService
                 'concentration' => $product->concentration,
                 'description' => Str::limit(strip_tags($product->description ?? ''), 180),
                 // Same volume prices as CartController; do not invent discounts.
-                'variants' => collect([10, 50, 100])->map(fn ($volume) => [
+                'variants' => collect(array_unique([10, 50, (int) ($product->volume_ml ?: 100)]))->map(fn ($volume) => [
                     'volume_ml' => $volume,
-                    'price_vnd' => match ($volume) {
-                        10 => max(20000, (int) (round($base * .22 / 10000) * 10000)),
-                        50 => (int) (round($base * .65 / 10000) * 10000),
-                        default => $base,
-                    },
+                    'price_vnd' => app(CartQuoteService::class)->unitPrice($product, $volume),
                     'stock' => $product->getStockForVolume($volume),
                 ])->all(),
             ];

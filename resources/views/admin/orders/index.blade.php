@@ -214,8 +214,8 @@
                                 <td>
                                     <div class="order-items-snippet">
                                         @foreach($order->items as $item)
-                                            <div class="item-line small text-truncate" style="max-width: 260px;" title="{{ $item->perfume?->name ?? 'Nước hoa' }}">
-                                                <span class="text-dark font-weight-500">{{ $item->perfume?->name ?? 'Sản phẩm' }}</span>
+                                            <div class="item-line small text-truncate" style="max-width: 260px;" title="{{ $item->product_name ?? $item->perfume?->name ?? 'Nước hoa' }}">
+                                                <span class="text-dark font-weight-500">{{ $item->product_name ?? $item->perfume?->name ?? 'Sản phẩm' }}</span>
                                                 <span class="text-muted">× {{ $item->quantity }}</span>
                                                 @if($item->volume_ml)
                                                     <span class="text-primary" style="font-size: 0.72rem;">({{ $item->volume_ml }}ml)</span>

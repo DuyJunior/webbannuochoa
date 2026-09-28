@@ -26,6 +26,15 @@
         </div>
     @endif
 
+    @foreach ($unavailableItems as $unavailable)
+        <div class="cart-alert-error" role="alert">
+            <div><strong>{{ $unavailable['name'] }}</strong><br>{{ $unavailable['reason'] }}</div>
+            <form method="POST" action="{{ route('cart.remove', $unavailable['item_key']) }}">
+                @csrf @method('DELETE')
+                <button class="btn-item-remove" type="submit">Xóa sản phẩm không khả dụng</button>
+            </form>
+        </div>
+    @endforeach
     @if ($items->isEmpty())
         <div class="cart-empty-box">
             <div class="empty-icon">🛍️</div>
@@ -38,9 +47,9 @@
         <div class="cart-freeship-banner">
             <div class="freeship-content">
                 <span class="freeship-icon">🚚</span>
-                <span>Đơn hàng của bạn đủ điều kiện <strong>MIỄN PHÍ VẬN CHUYỂN</strong> toàn quốc!</span>
+                <span>Phí vận chuyển được tính theo địa chỉ nhận hàng ở bước thanh toán.</span>
             </div>
-            <span class="freeship-tag">Freeship 0₫</span>
+            <span class="freeship-tag">Phí được báo trước khi đặt</span>
         </div>
 
         <div class="cart-main-grid">

@@ -62,6 +62,11 @@
     <main class="public-main" id="main-content" tabindex="-1">
         @if(session('success') && !request()->routeIs('login'))<div class="store-container public-flash" role="status">✓ {{ session('success') }}</div>@endif
         @if(session('error'))<div class="store-container public-flash alert-danger" role="alert">{{ session('error') }}</div>@endif
+        @if(\App\Support\DemoMode::enabled())
+            <div role="status" style="padding:10px 20px;text-align:center;background:#fff3d9;color:#734b13;font-size:13px">
+                BẢN DEMO BÀI TẬP · Không thu tiền thật · Giao hàng mô phỏng · AI cần Internet
+            </div>
+        @endif
         @yield('content')
     </main>
     @include('partials.store-footer')
@@ -88,10 +93,12 @@
         <script defer src="{{ asset('js/livestream-follow.js') }}"></script>
     @endunless
     @unless(request()->routeIs('livestream.*'))
-        @include('partials.social-float')
-        @include('partials.discount-popup')
+        @unless(request()->routeIs('account.*', 'payment.*', 'user.payment.*'))
+            @include('partials.social-float')
+            @include('partials.discount-popup')
+            @include('partials.lucky-wheel')
+        @endunless
         @include('partials.chat_popup')
-        @include('partials.lucky-wheel')
         @include('partials.video_modal')
     @endunless
     {{-- Shared theme follows the existing page-specific styles. --}}

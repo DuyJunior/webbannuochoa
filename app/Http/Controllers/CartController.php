@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Perfume;
+use App\Services\CartQuoteService;
+use App\Services\OrderInventoryService;
+use App\Support\DemoMode;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -14,14 +19,15 @@ class CartController extends Controller
     public function index(Request $request): View
     {
         $cart = $request->session()->get('cart', []);
-        
+
         $perfumeIds = collect($cart)->map(function ($item, $key) {
             return is_array($item) ? ($item['perfume_id'] ?? null) : (int) $key;
         })->filter()->unique()->values();
 
         $products = Perfume::query()->whereKey($perfumeIds)->get()->keyBy('id');
 
-        $items = collect($cart)->map(function ($itemData, $itemKey) use ($products) {
+        $unavailableItems = [];
+        $items = collect($cart)->map(function ($itemData, $itemKey) use ($products, &$unavailableItems) {
             if (is_array($itemData)) {
                 $perfumeId = (int) ($itemData['perfume_id'] ?? 0);
                 $quantity = (int) ($itemData['quantity'] ?? 1);
@@ -41,40 +47,38 @@ class CartController extends Controller
             }
 
             $product = $products->get($perfumeId);
-            if (! $product) {
-                return null;
-            }
-
-            if ($volumeMl === 0) {
+            if ($volumeMl === 0 && $product) {
                 $volumeMl = (int) ($product->volume_ml ?: 100);
             }
 
-            if ($unitPrice === null) {
-                $basePrice = (float) ($product->sale_price ?? $product->price);
-                if ($volumeMl === 10) {
-                    $unitPrice = round(($basePrice * 0.22) / 10000) * 10000;
-                    if ($unitPrice < 20000) $unitPrice = 20000;
-                } elseif ($volumeMl === 50) {
-                    $unitPrice = round(($basePrice * 0.65) / 10000) * 10000;
-                } else {
-                    $unitPrice = $basePrice;
+            try {
+                $quoted = app(CartQuoteService::class)->quote([$itemKey => $itemData])['items'][0];
+                $components = $quoted['stock_components'] ?: [['perfume_id' => $product->id, 'volume_ml' => $quoted['volume_ml']]];
+                foreach ($components as $component) {
+                    $stockProduct = Perfume::find($component['perfume_id']);
+                    if (! $stockProduct || $stockProduct->getStockForVolume($component['volume_ml']) < $quantity) {
+                        throw ValidationException::withMessages(['cart' => 'Không đủ tồn kho cho số lượng đã chọn. Hãy xóa và chọn lại số lượng.']);
+                    }
                 }
-                if ($hasGift) {
-                    $unitPrice += 50000;
-                }
+            } catch (ValidationException $exception) {
+                $unavailableItems[] = ['item_key' => (string) $itemKey, 'name' => $product?->name ?? 'Sản phẩm đã ngừng bán', 'reason' => collect($exception->errors())->flatten()->first()];
+
+                return null;
             }
+            $unitPrice = $quoted['price'];
+            $volumeMl = $quoted['volume_ml'];
 
             $isDiscovery = (bool) ($itemData['is_discovery_box'] ?? false);
             $customTitle = $itemData['title'] ?? null;
             if ($isDiscovery) {
                 $volumeLabel = 'Hộp Thử Mùi Discovery Box';
-                $engraveText = 'Các mùi đã chọn: ' . ($itemData['sample_names'] ?? '');
+                $engraveText = 'Các mùi đã chọn: '.($itemData['sample_names'] ?? '');
             } elseif ($volumeMl === 10) {
                 $volumeLabel = '10ml (Chiết Travel Spray)';
             } elseif ($volumeMl === 50) {
                 $volumeLabel = '50ml (Chai Vừa Phải)';
             } else {
-                $volumeLabel = $volumeMl . 'ml (Fullbox Nguyên Seal)';
+                $volumeLabel = $volumeMl.'ml (Fullbox Nguyên Seal)';
             }
 
             return [
@@ -95,7 +99,7 @@ class CartController extends Controller
 
         $subtotal = $items->sum('line_total');
 
-        return view('cart.index', compact('items', 'subtotal'));
+        return view('cart.index', compact('items', 'subtotal', 'unavailableItems'));
     }
 
     public function add(Request $request, Perfume $perfume): RedirectResponse
@@ -110,9 +114,10 @@ class CartController extends Controller
         ]);
 
         $volumeMl = (int) ($request->input('volume_ml') ?: ($perfume->volume_ml ?: 100));
+        app(CartQuoteService::class)->unitPrice($perfume, $volumeMl);
         $availableStock = $perfume->getStockForVolume($volumeMl);
 
-        if (! $perfume->is_active || $availableStock < 1) {
+        if (! $perfume->is_active || $availableStock < (int) $validated['quantity']) {
             return back()->withErrors(['quantity' => "Dung tích {$volumeMl}ml hiện đang hết hàng."]);
         }
 
@@ -120,19 +125,7 @@ class CartController extends Controller
         $engraveText = $request->filled('engrave_text') ? trim((string) $request->input('engrave_text')) : null;
         $hasEngrave = ($request->filled('addon_engrave') && $request->input('addon_engrave') !== '0') || ($engraveText !== null && $engraveText !== '');
 
-        $basePrice = (float) ($perfume->sale_price ?? $perfume->price);
-        if ($volumeMl === 10) {
-            $unitPrice = round(($basePrice * 0.22) / 10000) * 10000;
-            if ($unitPrice < 20000) $unitPrice = 20000;
-        } elseif ($volumeMl === 50) {
-            $unitPrice = round(($basePrice * 0.65) / 10000) * 10000;
-        } else {
-            $unitPrice = $basePrice;
-        }
-
-        if ($hasGift) {
-            $unitPrice += 50000;
-        }
+        $unitPrice = app(CartQuoteService::class)->unitPrice($perfume, $volumeMl, $hasGift);
 
         $liveProduct = $request->session()->get('live_product', []);
         $clickedAt = (int) ($liveProduct['clicked_at'] ?? 0);
@@ -141,12 +134,12 @@ class CartController extends Controller
             && $clickedAt >= now()->subHours(2)->timestamp
             ? (int) ($liveProduct['livestream_id'] ?? 0) : null;
 
-        $isStandardDefault = !$livestreamId && !$hasGift && !$hasEngrave && (!$request->has('volume_ml') || $volumeMl == ($perfume->volume_ml ?: 100));
+        $isStandardDefault = ! $livestreamId && ! $hasGift && ! $hasEngrave && (! $request->has('volume_ml') || $volumeMl == ($perfume->volume_ml ?: 100));
 
         if ($isStandardDefault) {
             $itemKey = (string) $perfume->id;
         } else {
-            $itemKey = 'item_' . $perfume->id . '_' . $volumeMl . ($hasGift ? '_gift' : '') . ($engraveText ? '_' . md5($engraveText) : '') . ($livestreamId ? '_live_' . $livestreamId : '');
+            $itemKey = 'item_'.$perfume->id.'_'.$volumeMl.($hasGift ? '_gift' : '').($engraveText ? '_'.md5($engraveText) : '').($livestreamId ? '_live_'.$livestreamId : '');
         }
 
         $cart = $request->session()->get('cart', []);
@@ -168,6 +161,7 @@ class CartController extends Controller
                 ];
             }
             $request->session()->put('cart', $cart);
+
             return redirect()->route('cart.index');
         }
 
@@ -219,7 +213,7 @@ class CartController extends Controller
             $perfume = Perfume::find($cart[$itemKey]['perfume_id']);
             $vol = (int) ($cart[$itemKey]['volume_ml'] ?? 100);
             $availableStock = $perfume ? $perfume->getStockForVolume($vol) : 0;
-            if ($perfume && $validated['quantity'] > $availableStock) {
+            if (! $perfume || ! $perfume->is_active || $validated['quantity'] > $availableStock) {
                 return back()->withErrors(['quantity' => "Số lượng chọn vượt quá tồn kho hiện có của dung tích {$vol}ml (còn {$availableStock} chai)."]);
             }
             $cart[$itemKey]['quantity'] = $validated['quantity'];
@@ -249,9 +243,9 @@ class CartController extends Controller
     public function checkout(Request $request): RedirectResponse
     {
         if ($request->has('phone')) {
-            $cleanPhone = preg_replace('/[^0-9]/', '', (string)$request->phone);
+            $cleanPhone = preg_replace('/[^0-9]/', '', (string) $request->phone);
             if (str_starts_with($cleanPhone, '84') && strlen($cleanPhone) === 11) {
-                $cleanPhone = '0' . substr($cleanPhone, 2);
+                $cleanPhone = '0'.substr($cleanPhone, 2);
             }
             $request->merge(['phone' => $cleanPhone]);
         }
@@ -291,70 +285,17 @@ class CartController extends Controller
             $selectedKeys = array_keys($cart);
         }
 
-        $totalPrice = 0;
-        $orderItemsData = [];
-
-        foreach ($selectedCart as $itemKey => $itemData) {
-            if (is_array($itemData)) {
-                $perfumeId = (int) ($itemData['perfume_id'] ?? 0);
-                $quantity = (int) ($itemData['quantity'] ?? 1);
-                $volumeMl = (int) ($itemData['volume_ml'] ?? 100);
-                $hasGift = (bool) ($itemData['has_gift'] ?? false);
-                $engraveText = $itemData['engrave_text'] ?? null;
-                $unitPrice = (float) ($itemData['unit_price'] ?? 0);
-                $livestreamId = $itemData['livestream_id'] ?? null;
-            } else {
-                $perfumeId = (int) $itemKey;
-                $quantity = (int) $itemData;
-                $volumeMl = 100;
-                $hasGift = false;
-                $engraveText = null;
-                $unitPrice = 0;
-                $livestreamId = null;
-            }
-
-            $product = Perfume::find($perfumeId);
-            if (! $product || ! $product->is_active || $product->stock < $quantity) {
-                return back()->withErrors(['cart' => 'Một sản phẩm đã hết hàng hoặc không còn đủ số lượng.']);
-            }
-
-            if ($volumeMl === 0) {
-                $volumeMl = (int) ($product->volume_ml ?: 100);
-            }
-
-            if ($unitPrice <= 0) {
-                $basePrice = (float) ($product->sale_price ?? $product->price);
-                if ($volumeMl === 10) {
-                    $unitPrice = round(($basePrice * 0.22) / 10000) * 10000;
-                    if ($unitPrice < 20000) $unitPrice = 20000;
-                } elseif ($volumeMl === 50) {
-                    $unitPrice = round(($basePrice * 0.65) / 10000) * 10000;
-                } else {
-                    $unitPrice = $basePrice;
-                }
-                if ($hasGift) {
-                    $unitPrice += 50000;
-                }
-            }
-
-            $lineTotal = $unitPrice * $quantity;
-            $totalPrice += $lineTotal;
-
-            $orderItemsData[] = [
-                'perfume_id' => $product->id,
-                'quantity' => $quantity,
-                'price' => $unitPrice,
-                'volume_ml' => $volumeMl,
-                'addon_gift' => $hasGift,
-                'engrave_text' => $engraveText,
-                'livestream_id' => $livestreamId,
-            ];
-        }
+        $quote = app(CartQuoteService::class)->quote($selectedCart);
+        $totalPrice = $quote['total'];
+        $orderItemsData = $quote['items'];
 
         DB::transaction(function () use ($validated, $totalPrice, $orderItemsData) {
             // Create Order
-            $order = \App\Models\Order::create([
-                'user_id' => auth()->id(), // nullable
+            $order = Order::create([
+                'user_id' => auth()->id(),
+                'inventory_status' => 'unreserved',
+                'is_demo' => DemoMode::enabled(),
+                'shipping_status' => 'pending',
                 'customer_name' => $validated['customer_name'],
                 'phone' => $validated['phone'],
                 'address' => $validated['address'],
@@ -366,18 +307,10 @@ class CartController extends Controller
                 'gift_delivery_date' => $validated['gift_delivery_date'] ?? null,
             ]);
 
-            // Save order items & decrement stock
             foreach ($orderItemsData as $itemData) {
-                $product = Perfume::query()->lockForUpdate()->find($itemData['perfume_id']);
-                if ($product->stock < $itemData['quantity']) {
-                    throw ValidationException::withMessages([
-                        'cart' => 'Số lượng tồn kho sản phẩm ' . $product->name . ' không đủ.',
-                    ]);
-                }
-                $product->decrement('stock', $itemData['quantity']);
-
                 $order->items()->create($itemData);
             }
+            app(OrderInventoryService::class)->reserve($order);
         });
 
         // Xóa những sản phẩm đã chọn thanh toán khỏi giỏ hàng
@@ -402,20 +335,23 @@ class CartController extends Controller
         $validated = $request->validate([
             'size' => ['required', 'in:3,5'],
             'perfume_ids' => ['required', 'array'],
-            'perfume_ids.*' => ['required', 'exists:perfumes,id'],
+            'perfume_ids.*' => ['required', 'distinct', 'exists:perfumes,id'],
         ]);
 
         $size = (int) $validated['size'];
         $selectedIds = array_slice($validated['perfume_ids'], 0, $size);
-        if (count($selectedIds) < 3) {
-            return back()->withErrors(['discovery' => 'Vui lòng chọn ít nhất 3 mẫu chiết cho Hộp thử mùi.']);
+        if (count($selectedIds) !== $size) {
+            return back()->withErrors(['discovery' => 'Vui lòng chọn đủ số mẫu chiết cho Hộp thử mùi.']);
         }
 
-        $perfumes = Perfume::whereIn('id', $selectedIds)->get();
+        $perfumes = Perfume::whereIn('id', $selectedIds)->where('is_active', true)->get();
+        if ($perfumes->count() !== $size) {
+            return back()->withErrors(['discovery' => 'Có mẫu thử đã ngừng bán. Vui lòng chọn lại.']);
+        }
         $price = $size === 5 ? 299000 : 199000;
         $names = $perfumes->pluck('name')->join(', ');
 
-        $itemKey = 'discovery_box_' . \Illuminate\Support\Str::random(8);
+        $itemKey = 'discovery_box_'.Str::random(8);
         $cart = $request->session()->get('cart', []);
 
         $cart[$itemKey] = [

@@ -19,6 +19,14 @@ class ReportController extends Controller
      */
     private function parseFilters(Request $request): array
     {
+        $request->validate([
+            'date_from' => 'nullable|date_format:Y-m-d',
+            'date_to' => ['nullable', 'date_format:Y-m-d', ...($request->filled('date_from') ? ['after_or_equal:date_from'] : [])],
+            'category_id' => 'nullable|integer|exists:categories,id',
+            'gateway' => 'nullable|in:cod,momo,demo',
+            'preset' => 'nullable|in:today,yesterday,7days,30days,this_month,last_month,this_year',
+            'mode' => 'nullable|in:real,demo',
+        ]);
         $preset = $request->get('preset', '');
         $dateFrom = $request->get('date_from');
         $dateTo = $request->get('date_to');
@@ -57,6 +65,7 @@ class ReportController extends Controller
         }
 
         return [
+            'mode' => $request->get('mode', 'real'),
             'preset' => $preset,
             'date_from' => $dateFrom,
             'date_to' => $dateTo,
@@ -73,7 +82,7 @@ class ReportController extends Controller
             ->orderByRaw("CASE WHEN status IN ('paid', 'refund_pending', 'refunded') THEN 0 ELSE 1 END")
             ->orderByDesc('id')->limit(1);
 
-        $query = Order::query()->where('orders.created_at', '<=', now())
+        $query = Order::query()->where('orders.is_demo', ($filters['mode'] ?? 'real') === 'demo')->where('orders.created_at', '<=', now())
             ->where('orders.status', '!=', 'cancelled')
             ->whereNotIn('orders.shipping_status', ['cancelled', 'return', 'returned'])
             ->where(function (Builder $query) use ($paymentStatus) {
@@ -85,15 +94,15 @@ class ReportController extends Controller
             });
 
         // 1. Bộ lọc khoảng ngày tạo đơn
-        if (!empty($filters['date_from'])) {
+        if (! empty($filters['date_from'])) {
             $query->where('orders.created_at', '>=', Carbon::parse($filters['date_from'])->startOfDay());
         }
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $query->where('orders.created_at', '<', Carbon::parse($filters['date_to'])->addDay()->startOfDay());
         }
 
         // 2. Bộ lọc cổng thanh toán (gateway: cod | momo)
-        if (!empty($filters['gateway'])) {
+        if (! empty($filters['gateway'])) {
             $g = $filters['gateway'];
             $gatewaySub = DB::table('payment_transactions')->select('gateway')
                 ->whereColumn('order_id', 'orders.id')->where('status', 'paid')->orderByDesc('id')->limit(1);
@@ -112,7 +121,7 @@ class ReportController extends Controller
         }
 
         // 3. Bộ lọc theo Danh mục sản phẩm (category_id)
-        if (!empty($filters['category_id'])) {
+        if (! empty($filters['category_id'])) {
             $catId = $filters['category_id'];
             $query->whereExists(function ($sub) use ($catId) {
                 $sub->select(DB::raw(1))
@@ -133,7 +142,7 @@ class ReportController extends Controller
             ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
             ->whereIn('order_items.order_id', $this->paidOrders($filters)->select('orders.id'));
 
-        if (!empty($filters['category_id'])) {
+        if (! empty($filters['category_id'])) {
             $query->where('products.category_id', $filters['category_id']);
         }
 
@@ -165,6 +174,22 @@ class ReportController extends Controller
             ])->values();
     }
 
+    public function export(Request $request)
+    {
+        $query = $this->paidOrders($this->parseFilters($request))->orderBy('orders.id');
+
+        return response()->streamDownload(function () use ($query) {
+            $file = fopen('php://output', 'w');
+            fwrite($file, "\xEF\xBB\xBF");
+            fputcsv($file, ['Mã đơn', 'Ngày tạo', 'Tổng thu (VND)', 'Phí giao hàng', 'Giảm giá', 'Điểm dùng', 'Loại']);
+            foreach ($query->cursor() as $order) {
+                fputcsv($file, [$order->id, $order->created_at->format('Y-m-d H:i'), $order->total_price,
+                    $order->ghn_total_fee, $order->discount_amount, $order->points_used, $order->is_demo ? 'DEMO' : 'Thực']);
+            }
+            fclose($file);
+        }, 'doanh-thu-'.now()->format('Ymd-His').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
     public function index(Request $request): View
     {
         $filters = $this->parseFilters($request);
@@ -172,11 +197,11 @@ class ReportController extends Controller
 
         $categoryRevenue = $this->categoryRevenue($filters);
 
-        $totalOrdersQuery = Order::where('created_at', '<=', now());
-        if (!empty($filters['date_from'])) {
+        $totalOrdersQuery = Order::where('is_demo', ($filters['mode'] ?? 'real') === 'demo')->where('created_at', '<=', now());
+        if (! empty($filters['date_from'])) {
             $totalOrdersQuery->where('created_at', '>=', Carbon::parse($filters['date_from'])->startOfDay());
         }
-        if (!empty($filters['date_to'])) {
+        if (! empty($filters['date_to'])) {
             $totalOrdersQuery->where('created_at', '<', Carbon::parse($filters['date_to'])->addDay()->startOfDay());
         }
         $totalOrders = $totalOrdersQuery->count();
@@ -208,7 +233,7 @@ class ReportController extends Controller
         $byYear = $this->periodRevenue($daily, 'year');
 
         // Dynamic chart range if filtered by date or default to 30 days
-        if (!empty($filters['date_from']) && !empty($filters['date_to'])) {
+        if (! empty($filters['date_from']) && ! empty($filters['date_to'])) {
             $startDay = Carbon::parse($filters['date_from'])->startOfDay();
             $endDay = Carbon::parse($filters['date_to'])->startOfDay();
             $dayCount = min(90, max(1, $startDay->diffInDays($endDay) + 1));

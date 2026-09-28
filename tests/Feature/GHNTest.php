@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Perfume;
 use App\Models\User;
 use App\Services\GHNService;
@@ -266,17 +265,18 @@ class GHNTest extends TestCase
         $this->assertEquals('cancelled', $order->status);
     }
 
-    public function test_guest_can_access_order_tracking_page(): void
+    public function test_guest_tracking_redirects_to_login(): void
     {
         $response = $this->get(route('orders.tracking'));
-        $response->assertOk()
-            ->assertSee('Đơn hàng của bạn đến đâu rồi?')
-            ->assertSee('Mã đơn hàng hoặc Mã vận đơn GHN');
+        $response->assertRedirect(route('login'));
     }
 
-    public function test_guest_can_search_order_by_code_or_phone(): void
+    public function test_owner_can_search_order_by_code_or_phone(): void
     {
+        $user = User::factory()->create();
+        $this->actingAs($user);
         $order = Order::create([
+            'user_id' => $user->id,
             'name' => 'Khách Vãng Lai',
             'phone' => '0988776655',
             'address' => '456 Cầu Giấy, Hà Nội',
@@ -306,4 +306,3 @@ class GHNTest extends TestCase
             ->assertSee('Khách Vãng Lai');
     }
 }
-

@@ -83,7 +83,7 @@
                                             @endif
                                         </div>
                                         <div class="item-mini-info">
-                                            <span class="item-mini-name">{{ $prod->name ?? 'Nước hoa cao cấp' }}</span>
+                                            <span class="item-mini-name">{{ $item->product_name ?? $prod->name ?? 'Nước hoa cao cấp' }}</span>
                                             <div class="item-mini-meta">
                                                 <span>{{ $item->volume_ml ? $item->volume_ml.'ml' : '100ml' }}</span>
                                                 <span class="meta-dot">·</span>

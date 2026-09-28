@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Perfume;
 use App\Models\PerfumeReview;
 use App\Models\ScentWardrobe;
 use App\Models\User;
-use App\Services\ScentFinder;
 use App\Services\LoyaltyService;
-use Illuminate\Http\JsonResponse;
+use App\Services\ScentFinder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -30,6 +29,7 @@ class StoreExperienceController extends Controller
             Perfume::where('is_active', true)->get(),
             $data['style'] ?? null, $data['occasion'] ?? null, $data['gender'] ?? null
         ) : collect();
+
         return view('store.finder', compact('recommended'));
     }
 
@@ -51,7 +51,7 @@ class StoreExperienceController extends Controller
         if ($hasResult) {
             $perfumes = Perfume::where('is_active', true)->with('category')->get();
             $recommendations = $perfumes->map(function (Perfume $p) use ($personality, $weather, $occasion, $note, $gender) {
-                $text = mb_strtolower($p->name . ' ' . $p->brand . ' ' . $p->description . ' ' . ($p->category->name ?? ''));
+                $text = mb_strtolower($p->name.' '.$p->brand.' '.$p->description.' '.($p->category->name ?? ''));
                 $score = 60; // base score
 
                 // Gender match
@@ -100,6 +100,7 @@ class StoreExperienceController extends Controller
                 }
 
                 $p->match_score = min(99, $score + ($p->id % 5));
+
                 return $p;
             })->sortByDesc('match_score')->take(4)->values();
         }
@@ -113,6 +114,7 @@ class StoreExperienceController extends Controller
     public function discoveryBox(): View
     {
         $perfumes = Perfume::where('is_active', true)->with('category')->orderBy('brand')->get();
+
         return view('store.discovery-box', compact('perfumes'));
     }
 
@@ -165,6 +167,7 @@ class StoreExperienceController extends Controller
     public function removeFromWardrobe(Request $request, int $id): RedirectResponse
     {
         ScentWardrobe::where('user_id', $request->user()->id)->where('id', $id)->delete();
+
         return back()->with('success', 'Đã xóa mùi hương khỏi Tủ cá nhân.');
     }
 
@@ -189,20 +192,32 @@ class StoreExperienceController extends Controller
 
         // Tính các chỉ số so sánh (độ ngọt, độ tươi, độ lưu hương, tỏa hương, giá/ml)
         foreach ($perfumes as $perfume) {
-            $desc = mb_strtolower($perfume->description . ' ' . $perfume->name . ' ' . ($perfume->category->name ?? ''));
-            
+            $desc = mb_strtolower($perfume->description.' '.$perfume->name.' '.($perfume->category->name ?? ''));
+
             // Sweetness (1-10)
             $sweet = 5;
-            if (str_contains($desc, 'vanilla') || str_contains($desc, 'caramel') || str_contains($desc, 'ngọt') || str_contains($desc, 'kẹo')) $sweet += 4;
-            if (str_contains($desc, 'hoa hồng') || str_contains($desc, 'mật ong')) $sweet += 2;
-            if (str_contains($desc, 'tươi') || str_contains($desc, 'chanh') || str_contains($desc, 'cam')) $sweet -= 2;
+            if (str_contains($desc, 'vanilla') || str_contains($desc, 'caramel') || str_contains($desc, 'ngọt') || str_contains($desc, 'kẹo')) {
+                $sweet += 4;
+            }
+            if (str_contains($desc, 'hoa hồng') || str_contains($desc, 'mật ong')) {
+                $sweet += 2;
+            }
+            if (str_contains($desc, 'tươi') || str_contains($desc, 'chanh') || str_contains($desc, 'cam')) {
+                $sweet -= 2;
+            }
             $perfume->metric_sweetness = max(2, min(10, $sweet));
 
             // Freshness (1-10)
             $fresh = 5;
-            if (str_contains($desc, 'tươi') || str_contains($desc, 'cam') || str_contains($desc, 'chanh') || str_contains($desc, 'bergamot') || str_contains($desc, 'biển')) $fresh += 4;
-            if (str_contains($desc, 'xanh') || str_contains($desc, 'bạc hà')) $fresh += 2;
-            if (str_contains($desc, 'gỗ') || str_contains($desc, 'trầm') || str_contains($desc, 'ấm')) $fresh -= 2;
+            if (str_contains($desc, 'tươi') || str_contains($desc, 'cam') || str_contains($desc, 'chanh') || str_contains($desc, 'bergamot') || str_contains($desc, 'biển')) {
+                $fresh += 4;
+            }
+            if (str_contains($desc, 'xanh') || str_contains($desc, 'bạc hà')) {
+                $fresh += 2;
+            }
+            if (str_contains($desc, 'gỗ') || str_contains($desc, 'trầm') || str_contains($desc, 'ấm')) {
+                $fresh -= 2;
+            }
             $perfume->metric_freshness = max(2, min(10, $fresh));
 
             // Longevity
@@ -286,6 +301,7 @@ class StoreExperienceController extends Controller
         $ids = DB::table('wishlists')->where('user_id', $request->user()->id)->pluck('perfume_id');
         $perfumes = Perfume::whereIn('id', $ids)->where('is_active', true)->get();
         $alerts = DB::table('stock_alerts')->where('user_id', $request->user()->id)->pluck('perfume_id')->all();
+
         return view('store.wishlist', compact('perfumes', 'alerts'));
     }
 
@@ -300,12 +316,20 @@ class StoreExperienceController extends Controller
             DB::table('wishlists')->insert($key + ['created_at' => now(), 'updated_at' => now()]);
             $message = 'Đã lưu mùi hương yêu thích.';
         }
+
         return back()->with('success', $message);
     }
 
     public function review(Request $request, Perfume $perfume): RedirectResponse
     {
         abort_unless($perfume->is_active, 404);
+        $purchased = Order::where('user_id', $request->user()->id)
+            ->where('status', '!=', 'cancelled')
+            ->where(fn ($query) => $query->where('status', 'completed')->orWhere('shipping_status', 'delivered'))
+            ->whereHas('items', fn ($items) => $items->where('perfume_id', $perfume->id))->exists();
+        if (! $purchased) {
+            return back()->withErrors(['review' => 'Bạn chỉ có thể đánh giá sản phẩm đã mua và nhận hàng thành công.']);
+        }
         $data = $request->validate([
             'rating' => 'required|integer|between:1,5',
             'body' => 'required|string|min:10|max:2000',
@@ -319,6 +343,7 @@ class StoreExperienceController extends Controller
             $review->image_path = 'images/reviews/'.$name;
         }
         $review->fill(['rating' => $data['rating'], 'body' => $data['body']])->save();
+
         return back()->with('success', 'Cảm ơn bạn đã chia sẻ cảm nhận.');
     }
 
@@ -330,6 +355,7 @@ class StoreExperienceController extends Controller
         }
         $key = ['user_id' => $request->user()->id, 'perfume_id' => $perfume->id];
         DB::table('stock_alerts')->updateOrInsert($key, ['notified_at' => null, 'updated_at' => now(), 'created_at' => now()]);
+
         return back()->with('success', 'Đã lưu yêu cầu. Chúng tôi sẽ báo khi sản phẩm có hàng.');
     }
 

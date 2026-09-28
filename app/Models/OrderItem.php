@@ -11,6 +11,8 @@ class OrderItem extends Model
     use HasFactory;
 
     protected $fillable = [
+        'product_name', 'product_brand',
+        'stock_components',
         'order_id',
         'perfume_id',
         'product_id',
@@ -25,6 +27,7 @@ class OrderItem extends Model
     protected function casts(): array
     {
         return [
+            'stock_components' => 'array',
             'price' => 'decimal:0',
             'volume_ml' => 'integer',
             'addon_gift' => 'boolean',
@@ -38,7 +41,7 @@ class OrderItem extends Model
 
     public function perfume(): BelongsTo
     {
-        return $this->belongsTo(Perfume::class, 'perfume_id');
+        return $this->belongsTo(Perfume::class, 'perfume_id')->withTrashed();
     }
 
     public function livestream(): BelongsTo
@@ -51,7 +54,16 @@ class OrderItem extends Model
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Perfume::class, 'perfume_id');
+        return $this->belongsTo(Perfume::class, 'perfume_id')->withTrashed();
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (OrderItem $item) {
+            $product = Perfume::withTrashed()->find($item->perfume_id);
+            $item->product_name ??= $product?->name ?? 'Sản phẩm';
+            $item->product_brand ??= $product?->brand;
+        });
     }
 
     public function setProductIdAttribute($value): void

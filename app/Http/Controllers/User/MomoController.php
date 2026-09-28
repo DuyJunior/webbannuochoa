@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\PaymentTransaction;
 use App\Services\GHNOrderService;
 use App\Services\MomoService;
+use App\Support\DemoMode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,11 @@ class MomoController extends Controller
             abort(403);
         }
 
+        if ($order->is_demo) {
+            abort_unless(DemoMode::enabled(), 404);
+
+            return redirect()->route('user.orders.payment.pending', $order);
+        }
         $method = $request->query('method', 'momo');
         $requestType = match ($method) {
             'captureWallet', 'qr' => 'captureWallet',
@@ -36,6 +42,11 @@ class MomoController extends Controller
             abort(403);
         }
 
+        if ($order->is_demo) {
+            abort_unless(DemoMode::enabled(), 404);
+
+            return redirect()->route('user.orders.payment.pending', $order);
+        }
         $method = $request->query('method', 'momo');
         $requestType = match ($method) {
             'captureWallet', 'qr' => 'captureWallet',
@@ -52,6 +63,11 @@ class MomoController extends Controller
             abort(403);
         }
 
+        if ($order->is_demo) {
+            abort_unless(DemoMode::enabled(), 404);
+
+            return redirect()->route('user.orders.payment.pending', $order);
+        }
         $order->load('items.product');
 
         // Tạo transaction và lấy URL MoMo
@@ -69,7 +85,7 @@ class MomoController extends Controller
             'has_signature' => $request->has('signature'),
         ]);
 
-        if (!$momo->isValidSuccessfulResponse($request->all())) {
+        if (! $momo->isValidSuccessfulResponse($request->all())) {
             Log::warning('MoMo callback rejected', [
                 'result_code' => $request->input('resultCode'),
                 'order_id' => $request->input('orderId'),
@@ -81,15 +97,15 @@ class MomoController extends Controller
             }
 
             $resultCode = (string) $request->input('resultCode');
-            $errorMsg = match($resultCode) {
+            $errorMsg = match ($resultCode) {
                 '1006' => 'Thanh toán thất bại: Thẻ của bạn đã bị khóa bởi ngân hàng.',
                 '1005' => 'Thanh toán thất bại: Số dư tài khoản không đủ để thanh toán.',
                 '1004' => 'Thanh toán thất bại: Giao dịch vượt quá hạn mức thanh toán của thẻ.',
                 '1001' => 'Thanh toán thất bại: Giao dịch bị người dùng hủy bỏ.',
-                default => 'Thanh toán MoMo không thành công (' . ($request->input('message') ?? 'Lỗi giao dịch') . ').'
+                default => 'Thanh toán MoMo không thành công ('.($request->input('message') ?? 'Lỗi giao dịch').').'
             };
 
-            return redirect()->route('user.orders.index')->with('error', '✕ ' . $errorMsg . ' Bạn có thể nhấn "Thanh toán lại" để tiếp tục.');
+            return redirect()->route('user.orders.index')->with('error', '✕ '.$errorMsg.' Bạn có thể nhấn "Thanh toán lại" để tiếp tục.');
         }
 
         $result = $this->completePayment($request->all(), $ghnOrders, $momo);
@@ -118,6 +134,8 @@ class MomoController extends Controller
 
     private function newTransaction(Order $order): PaymentTransaction
     {
+        abort_if($order->is_demo || in_array($order->status, ['cancelled', 'completed', 'paid', 'paid_momo', 'cod_paid'], true)
+            || $order->paymentTransactions()->whereIn('status', ['paid', 'refund_pending', 'refunded'])->exists(), 409, 'Đơn hàng không thể thanh toán lại.');
         $existing = PaymentTransaction::where('order_id', $order->id)
             ->where('gateway', 'momo')
             ->whereNull('gateway_order_id')
@@ -154,16 +172,33 @@ class MomoController extends Controller
                 ->lockForUpdate()
                 ->first();
 
-            if (!$transaction) {
+            if (! $transaction) {
                 return 'invalid';
             }
 
             $order = Order::lockForUpdate()->find($transaction->order_id);
 
-            if (!$order) {
+            if (! $order) {
                 return 'invalid';
             }
 
+            if ($order->is_demo) {
+                return 'invalid';
+            }
+            if ((int) $transaction->amount !== (int) ($payload['amount'] ?? 0)) {
+                return 'invalid';
+            }
+            if ($order->status === 'cancelled') {
+                if (! in_array($transaction->status, ['refund_pending', 'refunded'], true)) {
+                    $momo->markPaid($transaction, $payload);
+                    $transaction->update(['status' => 'refund_pending']);
+                }
+
+                return 'refund_pending';
+            }
+            if ($order->status === 'completed') {
+                return 'already_created';
+            }
             if ($order->ghn_order_code) {
                 return 'already_created';
             }
@@ -174,6 +209,7 @@ class MomoController extends Controller
 
             if ((int) $transaction->amount !== (int) ($payload['amount'] ?? 0)) {
                 $momo->markFailed($transaction, $payload);
+
                 return 'invalid';
             }
 
@@ -183,7 +219,7 @@ class MomoController extends Controller
             return ['create', $order->id];
         });
 
-        if (!is_array($result)) {
+        if (! is_array($result)) {
             return (string) $result;
         }
 
@@ -215,8 +251,13 @@ class MomoController extends Controller
             ->where('gateway_order_id', $payload['orderId'] ?? '')
             ->first();
 
-        if ($transaction && $transaction->status !== 'paid') {
-            $momo->markFailed($transaction, $payload);
+        if ($transaction) {
+            DB::transaction(function () use ($transaction, $momo, $payload) {
+                $locked = PaymentTransaction::whereKey($transaction->id)->lockForUpdate()->firstOrFail();
+                if (in_array($locked->status, ['pending', 'initiated'], true)) {
+                    $momo->markFailed($locked, $payload);
+                }
+            });
         }
     }
 }
