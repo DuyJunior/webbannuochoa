@@ -90,7 +90,7 @@
             const state = await response.json();
             if (!state.on_air || String(state.livestream_id) !== followedId) return stop();
             root.hidden = false;
-            title.textContent = state.title || 'Ha Thu đang livestream';
+            title.textContent = state.title || 'Soopi đang livestream';
             if (state.source === 'youtube') {
                 if (youtube.hidden) {
                     youtube.src = state.embed_url + '?autoplay=1&mute=1';

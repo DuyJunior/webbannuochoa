@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Lịch sử đơn hàng · Ha Thu Perfume')
+@section('title', 'Lịch sử đơn hàng · Soopi')
 
 @section('content')
 <div class="orders-history-page">
@@ -25,7 +25,7 @@
             <div class="empty-orders-card">
                 <div class="empty-icon">📦</div>
                 <h3>Bạn chưa có đơn hàng nào</h3>
-                <p>Hãy khám phá bộ sưu tập nước hoa cao cấp tại Ha Thu Perfume và đặt hàng ngay hôm nay!</p>
+                <p>Hãy khám phá bộ sưu tập nước hoa cao cấp tại Soopi và đặt hàng ngay hôm nay!</p>
                 <a href="{{ route('home') }}#san-pham" class="btn-shop-now">Khám phá sản phẩm</a>
             </div>
         @else

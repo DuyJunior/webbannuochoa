@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Quản trị') · Ha Thu Perfume</title>
+    <title>@yield('title', 'Quản trị') · Soopi</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -417,7 +417,7 @@
         <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('admin.livestreams.index') }}" class="sidebar-brand">
             <div class="brand-icon">@include('partials.icon', ['name' => 'flower', 'size' => 24])</div>
             <div class="brand-text">
-                <strong>Ha Thu</strong>
+                <strong>Soopi</strong>
                 <span>Admin Panel</span>
             </div>
         </a>
@@ -476,6 +476,16 @@
                 <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
                     <i class="fa-solid fa-chart-line"></i>
                     <span>Báo cáo</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.finance.index') }}" class="{{ request()->routeIs('admin.finance.index') ? 'active' : '' }}">
+                    <i class="fa-solid fa-wallet"></i><span>Thống kê tài chính</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('admin.finance.transactions') }}" class="{{ request()->routeIs('admin.finance.transactions') ? 'active' : '' }}">
+                    <i class="fa-solid fa-money-bill-transfer"></i><span>Giao dịch thanh toán</span>
                 </a>
             </li>
 

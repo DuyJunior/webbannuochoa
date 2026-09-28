@@ -1,9 +1,9 @@
 @extends('layouts.store')
 
-@section('title', 'Câu hỏi thường gặp · Ha Thu Perfume Studio')
+@section('title', 'Câu hỏi thường gặp · Soopi')
 
 @push('styles')
-<meta name="description" content="Giải đáp mọi thắc mắc về nước hoa chính hãng, đổi trả, giao hàng và thanh toán tại Ha Thu Perfume Studio.">
+<meta name="description" content="Giải đáp mọi thắc mắc về nước hoa chính hãng, đổi trả, giao hàng và thanh toán tại Soopi.">
 <style>
 /* ── FAQ PAGE ── */
 .ht-faq-page {
@@ -180,7 +180,7 @@
     <header>
         <span class="ht-eyebrow">HỖ TRỢ KHÁCH HÀNG</span>
         <h1>Câu hỏi thường gặp</h1>
-        <p>Giải đáp mọi thắc mắc để bạn an tâm mua hàng tại Ha Thu Perfume Studio.</p>
+        <p>Giải đáp mọi thắc mắc để bạn an tâm mua hàng tại Soopi.</p>
     </header>
 
     <div class="ht-faq-tabs" role="tablist">
@@ -197,11 +197,11 @@
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Ha Thu Perfume có bán nước hoa chính hãng 100% không?
+                Soopi có bán nước hoa chính hãng 100% không?
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Có. Ha Thu Perfume Studio chỉ kinh doanh nước hoa <strong>chính hãng 100%</strong>, được nhập trực tiếp từ nhà phân phối ủy quyền hoặc nhập khẩu chính ngạch từ Pháp, Ý và các nước sản xuất. Mỗi sản phẩm đều có tem kiểm định và hóa đơn nguồn gốc rõ ràng.
+                Có. Soopi chỉ kinh doanh nước hoa <strong>chính hãng 100%</strong>, được nhập trực tiếp từ nhà phân phối ủy quyền hoặc nhập khẩu chính ngạch từ Pháp, Ý và các nước sản xuất. Mỗi sản phẩm đều có tem kiểm định và hóa đơn nguồn gốc rõ ràng.
             </div></div>
         </div>
 
@@ -218,13 +218,13 @@
                     <li>Mùi hương tồn lưu lâu, nồng độ ổn định qua từng xịt</li>
                     <li>Hộp giấy in sắc nét, nắp chai khớp chặt, không rỉ nước</li>
                 </ul>
-                Ha Thu cam kết hoàn tiền 100% nếu sản phẩm được xác nhận không chính hãng.
+                Soopi cam kết hoàn tiền 100% nếu sản phẩm được xác nhận không chính hãng.
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Ha Thu có cho phép xịt thử trước khi mua không?
+                Soopi có cho phép xịt thử trước khi mua không?
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
@@ -239,7 +239,7 @@
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Ha Thu giao hàng trong bao lâu?
+                Soopi giao hàng trong bao lâu?
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
@@ -289,7 +289,7 @@
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Ha Thu hỗ trợ những phương thức thanh toán nào?
+                Soopi hỗ trợ những phương thức thanh toán nào?
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
@@ -318,7 +318,7 @@
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Hoàn toàn an toàn. Giao dịch MoMo được xử lý trực tiếp qua cổng thanh toán chính thức của MoMo với mã hóa SSL. Ha Thu không lưu trữ thông tin thẻ hay tài khoản ví của bạn.
+                Hoàn toàn an toàn. Giao dịch MoMo được xử lý trực tiếp qua cổng thanh toán chính thức của MoMo với mã hóa SSL. Soopi không lưu trữ thông tin thẻ hay tài khoản ví của bạn.
             </div></div>
         </div>
     </div>
@@ -329,11 +329,11 @@
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Chính sách đổi trả của Ha Thu như thế nào?
+                Chính sách đổi trả của Soopi như thế nào?
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Ha Thu chấp nhận đổi/trả trong vòng <strong>7 ngày</strong> kể từ ngày nhận hàng nếu:
+                Soopi chấp nhận đổi/trả trong vòng <strong>7 ngày</strong> kể từ ngày nhận hàng nếu:
                 <ul>
                     <li>Sản phẩm bị lỗi do nhà sản xuất (nứt vỡ, rỉ chai, mùi không đúng)</li>
                     <li>Giao nhầm sản phẩm so với đơn đặt hàng</li>
@@ -350,9 +350,9 @@
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
                 <strong>Bước 1:</strong> Chụp ảnh/video sản phẩm lỗi rõ ràng.<br>
-                <strong>Bước 2:</strong> Liên hệ Ha Thu qua Zalo hoặc inbox fanpage Facebook kèm mã đơn hàng và ảnh minh chứng.<br>
+                <strong>Bước 2:</strong> Liên hệ Soopi qua Zalo hoặc inbox fanpage Facebook kèm mã đơn hàng và ảnh minh chứng.<br>
                 <strong>Bước 3:</strong> Đội ngũ sẽ phản hồi trong vòng 24 giờ và hướng dẫn các bước tiếp theo.<br><br>
-                Chi phí giao hàng hoàn trả do Ha Thu chi trả nếu lỗi từ phía cửa hàng.
+                Chi phí giao hàng hoàn trả do Soopi chi trả nếu lỗi từ phía cửa hàng.
             </div></div>
         </div>
     </div>
@@ -399,7 +399,7 @@
     <div class="ht-faq-cta">
         <span style="font-size:32px;">💬</span>
         <h2>Vẫn còn thắc mắc?</h2>
-        <p>Đội ngũ Ha Thu luôn sẵn sàng hỗ trợ bạn — nhanh chóng, tận tâm.</p>
+        <p>Đội ngũ Soopi luôn sẵn sàng hỗ trợ bạn — nhanh chóng, tận tâm.</p>
         <div class="ht-faq-social-links">
             <a class="ht-faq-social-link zalo" href="https://zalo.me/0123456789" target="_blank" rel="noopener">
                 <svg width="18" height="18" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="white" fill-opacity=".25"/><text x="5" y="28" font-size="22" font-family="Arial" font-weight="bold" fill="white">Z</text></svg>

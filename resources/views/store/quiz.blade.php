@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Trắc Nghiệm Mùi Hương · Tìm Dấu Ấn Hương Thơm Của Bạn | Ha Thu Perfume')
+@section('title', 'Trắc Nghiệm Mùi Hương · Tìm Dấu Ấn Hương Thơm Của Bạn | Soopi')
 @section('meta_description', 'Khám phá mùi hương hoàn hảo dành riêng cho bạn qua bài trắc nghiệm tính cách, thời tiết, dịp dùng và nhóm hương ưa thích.')
 
 @section('content')
@@ -8,7 +8,7 @@
     <header class="ht-quiz-hero">
         <span class="ht-badge-pill">🌸 TRẮC NGHIỆM CHỌN HƯƠNG</span>
         <h1 class="ht-quiz-title">Tìm <em>Dấu Ấn Mùi Hương</em> Thuộc Về Riêng Bạn</h1>
-        <p class="ht-quiz-subtitle">Chỉ 4 câu hỏi trực giác trong 60 giây, thuật toán mùi hương của Ha Thu sẽ tìm ra những chai nước hoa hòa hợp nhất với thần thái và tâm hồn bạn.</p>
+        <p class="ht-quiz-subtitle">Chỉ 4 câu hỏi trực giác trong 60 giây, thuật toán mùi hương của Soopi sẽ tìm ra những chai nước hoa hòa hợp nhất với thần thái và tâm hồn bạn.</p>
     </header>
 
     @if(!$hasResult)
@@ -226,7 +226,7 @@
     <div class="ht-quiz-results-wrap">
         <div class="ht-quiz-result-hero">
             <span class="result-celebration">🎉 CHÚC MỪNG BẠN!</span>
-            <h2>Ha Thu Đã Tìm Thấy Mùi Hương Hoàn Hảo Cho Bạn</h2>
+            <h2>Soopi Đã Tìm Thấy Mùi Hương Hoàn Hảo Cho Bạn</h2>
             <p class="result-analysis">
                 Dựa trên lựa chọn của bạn: phong cách <strong>{{ match($personality) { 'charming' => 'Quyến rũ bí ẩn', 'elegant' => 'Tinh tế thanh lịch', 'fresh' => 'Tươi vui năng động', default => 'Trầm ấm uy quyền' } }}</strong>, 
                 thích hợp trong tiết trời <strong>{{ match($weather) { 'cool' => 'mát mẻ se lạnh', 'hot' => 'nắng ấm', 'ac' => 'phòng điều hòa', default => 'buổi tối thoáng đãng' } }}</strong> 

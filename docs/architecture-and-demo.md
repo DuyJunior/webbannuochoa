@@ -1,4 +1,4 @@
-# Thiết kế thành phần — Web bán nước hoa Hạ Thu
+# Thiết kế thành phần — Web bán nước hoa Soopi
 
 Tài liệu mô tả mã nguồn hiện tại; không coi phần mô phỏng là tích hợp thanh toán/giao hàng thật.
 

@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'Livestream nước hoa · Ha Thu Perfume')
-@section('meta_description', 'Xem livestream thử mùi nước hoa, nhận gợi ý chọn hương và khám phá sản phẩm tại Ha Thu Perfume.')
+@section('title', 'Livestream nước hoa · Soopi')
+@section('meta_description', 'Xem livestream thử mùi nước hoa, nhận gợi ý chọn hương và khám phá sản phẩm tại Soopi.')
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/livestream.css') }}">
@@ -13,9 +13,9 @@
          data-current-id="{{ $livestream?->id }}"
          data-on-air="{{ $livestream && (($livestream->source === 'youtube' && $livestream->status === 'live') || $livestream->isBrowserOnAir()) ? '1' : '0' }}">
     <header class="ht-live-hero">
-        <span class="ht-live-eyebrow">Ha Thu Perfume Studio</span>
+        <span class="ht-live-eyebrow">Soopi</span>
         <h1 id="ht-live-heading">Chuyện hương <em>trực tiếp</em></h1>
-        <p>Thử mùi cùng Ha Thu, lắng nghe câu chuyện phía sau mỗi hương thơm và tìm ra chai nước hoa dành cho bạn.</p>
+        <p>Thử mùi cùng Soopi, lắng nghe câu chuyện phía sau mỗi hương thơm và tìm ra chai nước hoa dành cho bạn.</p>
     </header>
 
     @if($livestream)
@@ -72,7 +72,7 @@
         <div class="ht-live-empty">
             <div class="ht-live-empty-icon" aria-hidden="true">✿</div>
             <h2>Hẹn bạn ở buổi phát tiếp theo</h2>
-            <p>Hiện chưa có lịch livestream. Trong lúc chờ đợi, bạn có thể khám phá những mùi hương được yêu thích tại Ha Thu.</p>
+            <p>Hiện chưa có lịch livestream. Trong lúc chờ đợi, bạn có thể khám phá những mùi hương được yêu thích tại Soopi.</p>
             <a class="ht-live-button" href="{{ route('home') }}#san-pham">Khám phá nước hoa →</a>
         </div>
     @endif

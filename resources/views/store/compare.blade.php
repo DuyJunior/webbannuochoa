@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'So Sánh Chi Tiết Nước Hoa · Độ Ngọt, Độ Tươi, Độ Lưu Hương | Ha Thu Perfume')
+@section('title', 'So Sánh Chi Tiết Nước Hoa · Độ Ngọt, Độ Tươi, Độ Lưu Hương | Soopi')
 @section('meta_description', 'So sánh trực quan các dòng nước hoa theo độ ngọt, độ tươi mát, độ tỏa hương, độ lưu hương và giá trị trên từng ml.')
 
 @section('content')

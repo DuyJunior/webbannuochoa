@@ -326,7 +326,7 @@ class CartController extends Controller
 
         return redirect()->route('home')->with(
             'success',
-            'Đặt hàng thành công! Ha Thu Perfume sẽ liên hệ '.$validated['customer_name'].' qua số '.$validated['phone'].'.'
+            'Đặt hàng thành công! Soopi sẽ liên hệ '.$validated['customer_name'].' qua số '.$validated['phone'].'.'
         );
     }
 

@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'Mùi Hương Hôm Nay (Scent of the Day) · ' . $perfume->name . ' | Ha Thu Perfume')
-@section('meta_description', 'Khám phá nốt hương được Ha Thu tuyển chọn cho ngày hôm nay: ' . $perfume->name . ' kèm ưu đãi độc quyền giảm 10% với mã ' . $todayCode)
+@section('title', 'Mùi Hương Hôm Nay (Scent of the Day) · ' . $perfume->name . ' | Soopi')
+@section('meta_description', 'Khám phá nốt hương được Soopi tuyển chọn cho ngày hôm nay: ' . $perfume->name . ' kèm ưu đãi độc quyền giảm 10% với mã ' . $todayCode)
 
 @section('content')
 <div class="store-container ht-sotd-page">
@@ -29,7 +29,7 @@
             <div class="sotd-quote-box">
                 <span class="quote-mark">“</span>
                 <p class="quote-text">{{ $quote }}</p>
-                <span class="quote-author">— Ha Thu Perfume Inspiration</span>
+                <span class="quote-author">— Soopi Inspiration</span>
             </div>
 
             <span class="sotd-brand">{{ $perfume->brand }}</span>

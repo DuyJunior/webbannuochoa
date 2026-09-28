@@ -100,7 +100,7 @@
                 <span style="color: var(--pink-dark);"><i class="fa-solid fa-shield-heart"></i></span>
                 Thông tin quản trị viên
             </h5>
-            <p class="text-muted mb-3" style="font-size:0.88rem;">Tài khoản quản lý cửa hàng Ha Thu Perfume.</p>
+            <p class="text-muted mb-3" style="font-size:0.88rem;">Tài khoản quản lý cửa hàng Soopi.</p>
             <div class="table-responsive">
                 <table class="table table-borderless" style="font-size:0.92rem;">
                     <tr style="border-bottom: 1px solid var(--border);">
@@ -121,7 +121,7 @@
                     </tr>
                     <tr>
                         <td class="text-muted" style="padding: 10px 0;">Hệ thống:</td>
-                        <td style="padding: 10px 0; font-weight: 600; color: var(--pink-dark);">Ha Thu Perfume Studio (Laravel 11)</td>
+                        <td style="padding: 10px 0; font-weight: 600; color: var(--pink-dark);">Soopi (Laravel 11)</td>
                     </tr>
                 </table>
             </div>

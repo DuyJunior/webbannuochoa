@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Tủ Nước Hoa Cá Nhân (Scent Wardrobe) | Ha Thu Perfume')
+@section('title', 'Tủ Nước Hoa Cá Nhân (Scent Wardrobe) | Soopi')
 @section('meta_description', 'Bộ sưu tập mùi hương cá nhân hóa của bạn theo từng dịp: Đi làm, Hẹn hò, Đi tiệc và Thường ngày.')
 
 @section('content')

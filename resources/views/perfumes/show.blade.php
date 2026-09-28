@@ -1,9 +1,9 @@
 @php use Illuminate\Support\Str; @endphp
 @extends('layouts.store')
 
-@section('title', $perfume->name.' · '.$perfume->brand.' · Ha Thu Perfume Studio')
-@section('meta_description', Str::limit(strip_tags($perfume->description ?: 'Mua '.$perfume->name.' của '.$perfume->brand.' chính hãng tại Ha Thu Perfume Studio. Giao hàng toàn quốc, đổi trả 7 ngày.'), 155))
-@section('meta_keywords', $perfume->name.', '.$perfume->brand.', nước hoa chính hãng, '.$perfume->concentration.', Ha Thu Perfume')
+@section('title', $perfume->name.' · '.$perfume->brand.' · Soopi')
+@section('meta_description', Str::limit(strip_tags($perfume->description ?: 'Mua '.$perfume->name.' của '.$perfume->brand.' chính hãng tại Soopi. Giao hàng toàn quốc, đổi trả 7 ngày.'), 155))
+@section('meta_keywords', $perfume->name.', '.$perfume->brand.', nước hoa chính hãng, '.$perfume->concentration.', Soopi')
 @if($perfume->image_src)
     @section('og_image', $perfume->image_src)
 @endif
@@ -29,7 +29,7 @@
             'availability' => $perfume->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
             'seller' => [
                 '@type' => 'Organization',
-                'name' => 'Ha Thu Perfume Studio',
+                'name' => 'Soopi',
             ],
         ],
         'aggregateRating' => ($averageRating > 0 && $reviews->total() > 0) ? [
@@ -348,7 +348,7 @@
             <div>
                 <span class="ht-eyebrow">CÂU CHUYỆN MÙI HƯƠNG</span>
                 <h2 id="scent-story-title">Một dấu ấn <em>rất riêng.</em></h2>
-                <p>{{ $perfume->description ?: 'Khám phá mùi hương này cùng Ha Thu Perfume Studio. Nếu bạn cần thêm thông tin về các nốt hương, hãy nhắn cho cửa hàng để được tư vấn.' }}</p>
+                <p>{{ $perfume->description ?: 'Khám phá mùi hương này cùng Soopi. Nếu bạn cần thêm thông tin về các nốt hương, hãy nhắn cho cửa hàng để được tư vấn.' }}</p>
             </div>
             <dl>
                 <div><dt>Thương hiệu</dt><dd>{{ $perfume->brand }}</dd></div>
@@ -403,7 +403,7 @@
                         </div>
                     </div>
                     <h4>{{ $pvid->title }}</h4>
-                    <p>{{ $pvid->description ?: 'Chuyên gia mùi hương của Ha Thu đánh giá chi tiết độ lưu hương thực tế trên da.' }}</p>
+                    <p>{{ $pvid->description ?: 'Chuyên gia mùi hương của Soopi đánh giá chi tiết độ lưu hương thực tế trên da.' }}</p>
                 </div>
                 @endforeach
             </div>

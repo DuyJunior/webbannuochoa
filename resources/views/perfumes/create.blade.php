@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Thêm sản phẩm · Ha Thu Perfume')
+@section('title', 'Thêm sản phẩm · Soopi')
 
 @section('content')
     <section class="store-container public-form-page">

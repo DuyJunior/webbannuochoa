@@ -1,10 +1,10 @@
 @extends('layouts.store')
-@section('title', 'Tìm hương dành cho bạn · Ha Thu Perfume')
+@section('title', 'Tìm hương dành cho bạn · Soopi')
 @section('content')
 <section class="store-container ht-feature-page">
     <span class="ht-eyebrow">MỘT CHÚT THẤU HIỂU</span>
     <h1>Tìm mùi hương <em>của riêng bạn.</em></h1>
-    <p>Chọn ba điều bạn thích. Ha Thu sẽ gợi ý từ những chai nước hoa đang có tại cửa hàng.</p>
+    <p>Chọn ba điều bạn thích. Soopi sẽ gợi ý từ những chai nước hoa đang có tại cửa hàng.</p>
     <form action="{{ route('store.finder') }}" method="GET" class="ht-feature-panel ht-finder-form">
         <label>Phong cách mùi hương
             <select name="style"><option value="">Mình muốn khám phá</option><option value="hoa" @selected(request('style') === 'hoa')>Hoa cỏ dịu dàng</option><option value="go" @selected(request('style') === 'go')>Gỗ thanh lịch</option><option value="vanilla" @selected(request('style') === 'vanilla')>Vanilla ngọt ấm</option><option value="tuoi" @selected(request('style') === 'tuoi')>Tươi mát</option><option value="am" @selected(request('style') === 'am')>Ấm áp</option></select>

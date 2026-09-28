@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Ha Thu Perfume · Hương thơm của riêng bạn')
+@section('title', 'Soopi · Hương thơm của riêng bạn')
 
 @section('content')
 @php
@@ -18,8 +18,8 @@
 <section id="home-live-banner" class="store-container ht-home-live" data-state-url="{{ route('livestream.state') }}" data-current-id="{{ $onAir ? $livestream->id : '' }}" @unless($onAir) hidden @endunless aria-live="polite">
     <div>
         <span class="ht-home-live-badge">● ĐANG TRỰC TIẾP</span>
-        <strong>{{ $onAir ? $livestream->title : 'Ha Thu đang livestream' }}</strong>
-        <span>Xem và trò chuyện cùng Ha Thu ngay trên website.</span>
+        <strong>{{ $onAir ? $livestream->title : 'Soopi đang livestream' }}</strong>
+        <span>Xem và trò chuyện cùng Soopi ngay trên website.</span>
     </div>
     <a class="ht-button" href="{{ route('livestream.show') }}">Xem livestream →</a>
 </section>
@@ -28,7 +28,7 @@
 <section class="ht-hero">
     <div class="store-container ht-hero-grid">
         <div class="ht-hero-copy">
-            <span class="ht-eyebrow"><span class="ht-small-line"></span> THẾ GIỚI HƯƠNG THƠM CỦA HA THU</span>
+            <span class="ht-eyebrow"><span class="ht-small-line"></span> THẾ GIỚI HƯƠNG THƠM CỦA SOOPI</span>
             <h1>Một chút hương,<br>một chút <em>thương.</em></h1>
             <p>Để mỗi ngày đều có một dấu ấn thật riêng.<br>Khám phá những mùi hương được yêu, dành cho phiên bản đẹp nhất của bạn.</p>
             <div class="ht-hero-actions">
@@ -43,7 +43,7 @@
                 <a class="ht-photo-label" href="{{ route('home', ['search' => 'Dior']) }}#san-pham"><span>HƯƠNG HOA ĐƯỢC YÊU<STRONG>Miss Dior Blooming Bouquet</STRONG></span>@include('partials.icon', ['name' => 'arrow'])</a>
             </div>
             <span class="ht-hero-side-note">A LITTLE SCENT, A LITTLE LOVE.</span>
-            <div class="ht-photo-caption"><span>THE HA THU EDIT</span><span>Nhẹ nhàng. Tinh tế. Rất riêng.</span></div>
+            <div class="ht-photo-caption"><span>THE SOOPI EDIT</span><span>Nhẹ nhàng. Tinh tế. Rất riêng.</span></div>
         </div>
     </div>
 </section>
@@ -54,7 +54,7 @@
     <div>@include('partials.icon', ['name' => 'heart', 'size' => 25])<span><strong>Tư vấn tận tâm</strong><small>Cùng bạn chọn hương phù hợp</small></span></div>
 </div>
 
-{{-- ── NỔI BẬT: HA THU FRAGRANCE SHORTS (VIDEO TRẢI NGHIỆM 30S) ── --}}
+{{-- ── NỔI BẬT: SOOPI FRAGRANCE SHORTS (VIDEO TRẢI NGHIỆM 30S) ── --}}
 @php
     $homeVideos = \App\Models\Video::with('perfume')->where('is_active', true)->whereIn('placement', ['home', 'all'])->orderBy('sort_order')->take(8)->get();
 @endphp
@@ -63,7 +63,7 @@
     <div class="ht-shorts-header">
         <div class="ht-shorts-title-wrap">
             <span class="ht-shorts-live-pill"><span class="pulse-dot"></span> VIDEO REVIEW 30S</span>
-            <h2>Ha Thu Fragrance Shorts</h2>
+            <h2>Soopi Fragrance Shorts</h2>
             <p>Trải nghiệm chân thật: Unboxing, độ tỏa hương và góc quay cận cảnh từng chai nước hoa.</p>
         </div>
         <div class="ht-shorts-nav-hint">
@@ -108,7 +108,7 @@
 
 <section class="store-container ht-products-section" id="san-pham">
     <div class="ht-section-heading">
-        <div><span class="ht-eyebrow">{{ $isFiltered ? 'KHÁM PHÁ CÙNG HA THU' : 'NHỮNG MÙI HƯƠNG ĐÁNG THỬ' }}</span><h2>{{ $collectionTitle }}</h2>
+        <div><span class="ht-eyebrow">{{ $isFiltered ? 'KHÁM PHÁ CÙNG SOOPI' : 'NHỮNG MÙI HƯƠNG ĐÁNG THỬ' }}</span><h2>{{ $collectionTitle }}</h2>
             @if(request()->filled('search'))<p>Kết quả cho “{{ request('search') }}” · {{ $perfumes->count() }} sản phẩm hiển thị</p>
             @else<p>Mỗi mùi hương, một cách để thể hiện chính mình.</p>@endif
         </div>
@@ -192,7 +192,7 @@
 </section>
 <section class="store-container ht-story">
     <div class="ht-story-image"><img src="{{ asset('images/perfume-hero.jpg') }}" alt="Bộ sưu tập nước hoa được đặt bên những đóa hoa trắng" loading="lazy" width="900" height="600"></div>
-    <div class="ht-story-copy"><span class="ht-eyebrow">TỪ HA THU, VỚI YÊU THƯƠNG</span><h2>Một món quà nhỏ.<br>Một cảm xúc <em>thật lâu.</em></h2><p>Tặng người thương, hay dành tặng chính mình. Một chai nước hoa là lời nhắn dịu dàng, gói ghém những điều đôi khi khó nói thành lời.</p><a class="ht-button ht-button-light" href="{{ route('home', ['sort' => 'sale']) }}#san-pham">Chọn một món quà @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a><span class="ht-story-signature">with love, Ha Thu</span></div>
+    <div class="ht-story-copy"><span class="ht-eyebrow">TỪ SOOPI, VỚI YÊU THƯƠNG</span><h2>Một món quà nhỏ.<br>Một cảm xúc <em>thật lâu.</em></h2><p>Tặng người thương, hay dành tặng chính mình. Một chai nước hoa là lời nhắn dịu dàng, gói ghém những điều đôi khi khó nói thành lời.</p><a class="ht-button ht-button-light" href="{{ route('home', ['sort' => 'sale']) }}#san-pham">Chọn một món quà @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a><span class="ht-story-signature">with love, Soopi</span></div>
 </section>
 
 {{-- ── 1. FLASH SALE COUNTDOWN (ĐỒNG HỒ ĐẾM NGƯỢC GIỚI HẠN) ── --}}

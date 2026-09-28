@@ -11,7 +11,7 @@
 <div class="live-admin">
     <header class="live-admin-hero">
         <div>
-            <p class="live-admin-kicker">Ha Thu · Studio trực tiếp</p>
+            <p class="live-admin-kicker">Soopi · Studio trực tiếp</p>
             <h2>{{ $livestream->title }}</h2>
             <p>Bật camera, kiểm tra hình và tiếng rồi phát trực tiếp trên website.</p>
         </div>

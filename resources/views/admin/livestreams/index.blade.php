@@ -10,7 +10,7 @@
 <div class="live-admin">
     <header class="live-admin-hero">
         <div>
-            <p class="live-admin-kicker">Ha Thu · Studio trực tiếp</p>
+            <p class="live-admin-kicker">Soopi · Studio trực tiếp</p>
             <h2>Quản lý buổi livestream</h2>
             <p>Lên lịch, giới thiệu nước hoa và phát trực tiếp ngay trên website.</p>
         </div>
@@ -70,7 +70,7 @@
                     <tbody>
                     @foreach($livestreams as $livestream)
                         <tr>
-                            <td><strong>{{ $livestream->title }}</strong><small>{{ $livestream->source === 'browser' ? 'Camera trên web' : 'YouTube' }} · {{ $livestream->creator?->name ?? 'Ha Thu' }}</small></td>
+                            <td><strong>{{ $livestream->title }}</strong><small>{{ $livestream->source === 'browser' ? 'Camera trên web' : 'YouTube' }} · {{ $livestream->creator?->name ?? 'Soopi' }}</small></td>
                             <td>{{ $livestream->starts_at?->format('H:i · d/m/Y') ?? 'Chưa đặt lịch' }}</td>
                             <td>
                                 @if($livestream->isOverdue())

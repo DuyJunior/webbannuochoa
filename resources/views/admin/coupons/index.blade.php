@@ -31,7 +31,7 @@
             <div class="row g-3">
                 <div class="col-md-4 col-sm-6 mb-3">
                     <label class="form-label font-weight-bold small text-muted text-uppercase">Mã voucher <span class="text-danger">*</span></label>
-                    <input class="form-control" name="code" value="{{ old('code') }}" placeholder="VD: HATHU50K, VALENTINE..." style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;" required>
+                    <input class="form-control" name="code" value="{{ old('code') }}" placeholder="VD: SOOPI50K, VALENTINE..." style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;" required>
                 </div>
                 <div class="col-md-4 col-sm-6 mb-3">
                     <label class="form-label font-weight-bold small text-muted text-uppercase">Loại giảm giá <span class="text-danger">*</span></label>

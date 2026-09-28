@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Đăng nhập · Ha Thu Perfume')
+@section('title', 'Đăng nhập · Soopi')
 
 @section('content')
 <section class="luxury-auth-section">
@@ -10,7 +10,7 @@
                 @include('partials.icon', ['name' => 'flower', 'size' => 27])
             </div>
             <h1 class="luxury-auth-title">Đăng nhập</h1>
-            <p class="luxury-auth-subtitle">Chào mừng bạn quay trở lại với Ha Thu Perfume</p>
+            <p class="luxury-auth-subtitle">Chào mừng bạn quay trở lại với Soopi</p>
         </div>
 
         @if (session('success'))

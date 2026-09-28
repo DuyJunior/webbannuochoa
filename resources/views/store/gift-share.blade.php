@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Món Quà Mùi Hương Dành Tặng ' . $recipientName . ' · Từ ' . $senderName . ' | Ha Thu Perfume')
+@section('title', 'Món Quà Mùi Hương Dành Tặng ' . $recipientName . ' · Từ ' . $senderName . ' | Soopi')
 @section('meta_description', 'Một món quà mùi hương ngọt ngào và thiệp chúc mừng được gửi trao từ ' . $senderName . ' dành riêng cho ' . $recipientName)
 
 @section('content')
@@ -12,7 +12,7 @@
 
         <div class="ht-gift-letter">
             <div class="letter-stamp">
-                <span>HA THU<br>PARIS</span>
+                <span>SOOPI<br>PERFUME</span>
             </div>
             <div class="letter-header">
                 <span class="to-label">Gửi người thương mến,</span>
@@ -56,7 +56,7 @@
 
         <div class="ht-gift-create-own">
             <h3>Bạn cũng muốn gửi tặng một món quà mùi hương cho bạn bè?</h3>
-            <p>Chọn bất kỳ chai nước hoa nào tại Ha Thu và bấm nút "Gửi tặng bạn bè" để tự tay soạn thiệp chúc mừng nhé!</p>
+            <p>Chọn bất kỳ chai nước hoa nào tại Soopi và bấm nút "Gửi tặng bạn bè" để tự tay soạn thiệp chúc mừng nhé!</p>
             <a href="{{ route('home') }}" class="ht-button ht-button-outline">Khám Phá Cửa Hàng</a>
         </div>
     </div>

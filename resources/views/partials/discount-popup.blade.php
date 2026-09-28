@@ -9,7 +9,7 @@
             </div>
         </div>
         <span class="ht-popup-eyebrow">CHÀO MỪNG BẠN ĐẾN VỚI</span>
-        <h2 id="ht-popup-title" class="ht-popup-brand">Ha Thu<br><em>Perfume Studio</em></h2>
+        <h2 id="ht-popup-title" class="ht-popup-brand">Soopi<br><em>Perfume Studio</em></h2>
         <p class="ht-popup-sub">Giảm ngay <strong>10%</strong> đơn hàng đầu tiên của bạn với mã:</p>
         <div class="ht-popup-code-wrap">
             <span class="ht-popup-code" id="ht-popup-code">HATHUFIRST</span>

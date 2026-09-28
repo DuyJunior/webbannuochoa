@@ -45,7 +45,7 @@
             meta.append(name);
             if (item.is_staff) {
                 const badge = document.createElement('span');
-                badge.textContent = 'Ha Thu';
+                badge.textContent = 'Soopi';
                 meta.append(badge);
             }
             if (root.dataset.hideBase) {

@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Giỏ hàng · Ha Thu Perfume')
+@section('title', 'Giỏ hàng · Soopi')
 
 @section('content')
 <section class="store-container cart-page-modern">
@@ -39,7 +39,7 @@
         <div class="cart-empty-box">
             <div class="empty-icon">🛍️</div>
             <h2>Giỏ hàng của bạn đang trống</h2>
-            <p>Hãy khám phá những tuyệt tác mùi hương chính hãng tại Ha Thu Perfume.</p>
+            <p>Hãy khám phá những tuyệt tác mùi hương chính hãng tại Soopi.</p>
             <a class="btn-empty-shop" href="{{ route('home') }}#san-pham">Khám phá sản phẩm ngay</a>
         </div>
     @else

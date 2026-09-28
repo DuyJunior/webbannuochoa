@@ -19,7 +19,7 @@
             {{-- 1. Phần Vòng Quay (Hiển thị ban đầu) --}}
             <div id="spinMainSection" class="spin-main-section">
                 <div class="spin-card-header">
-                    <span class="spin-eyebrow">🌸 HA THU PERFUME</span>
+                    <span class="spin-eyebrow">🌸 SOOPI PERFUME</span>
                     <h2>Vòng Quay <em>Hương Thơm</em></h2>
                     <p>Quay là trúng voucher giảm giá & quà tặng sample!</p>
                 </div>

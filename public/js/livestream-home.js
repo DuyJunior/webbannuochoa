@@ -9,7 +9,7 @@
             if (!response.ok) return;
             const state = await response.json();
             if (state.on_air && String(state.livestream_id) !== banner.dataset.currentId) {
-                title.textContent = 'Ha Thu đang livestream';
+                title.textContent = 'Soopi đang livestream';
             }
             banner.dataset.currentId = state.on_air ? String(state.livestream_id) : '';
             banner.hidden = !state.on_air;

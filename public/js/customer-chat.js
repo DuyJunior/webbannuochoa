@@ -78,7 +78,7 @@
             if (!mine) {
                 const author = document.createElement('div');
                 author.className = 'bubble-author';
-                author.textContent = message.is_ai ? 'Trợ lý AI · Groq' : 'Nhân viên Hạ Thu';
+                author.textContent = message.is_ai ? 'Trợ lý AI · Groq' : 'Nhân viên Soopi';
                 bubble.append(author);
             }
             const text = document.createElement('div');

@@ -1,13 +1,13 @@
 @extends('layouts.store')
 
-@section('title', 'Đặc Quyền Thành Viên · Hạng ' . $tier['name'] . ' | Ha Thu Perfume')
-@section('meta_description', 'Khám phá thẻ thành viên ảo, hạng VIP, điểm thưởng tích lũy và đặc quyền riêng của bạn tại Ha Thu Perfume Studio.')
+@section('title', 'Đặc Quyền Thành Viên · Hạng ' . $tier['name'] . ' | Soopi')
+@section('meta_description', 'Khám phá thẻ thành viên ảo, hạng VIP, điểm thưởng tích lũy và đặc quyền riêng của bạn tại Soopi.')
 
 @section('content')
 <div class="store-container ht-member-page">
     <header class="ht-member-header">
         <span class="ht-badge-pill">💎 CHƯƠNG TRÌNH KHÁCH HÀNG THÂN THIẾT</span>
-        <h1 class="ht-member-title">Đặc Quyền Thành Viên <em>Ha Thu Club</em></h1>
+        <h1 class="ht-member-title">Đặc Quyền Thành Viên <em>Soopi Club</em></h1>
         <p class="ht-member-subtitle">100.000đ chi tiêu hợp lệ tích 1 điểm; 1 điểm giảm 1.000đ, tối đa 20% tiền hàng sau mã giảm giá. Chỉ tính đơn hoàn tất và đã thanh toán; đơn cũ nhập vào không có giao dịch được tính khi đã hoàn tất. Đơn hủy hoặc hoàn trả không tích điểm. Điểm demo và điểm thật được tách riêng.</p>
     </header>
 
@@ -16,7 +16,7 @@
         <div class="ht-vip-card" style="background: {{ $tier['gradient'] }}; color: {{ $tier['text_color'] }}">
             <div class="card-chip-row">
                 <span class="card-chip"></span>
-                <span class="card-logo">HA THU PERFUME</span>
+                <span class="card-logo">SOOPI PERFUME</span>
             </div>
             <div class="card-middle-row">
                 <span class="card-tier-badge">{{ $tier['badge'] }} {{ $tier['name'] }}</span>

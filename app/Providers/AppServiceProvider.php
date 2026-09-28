@@ -2,7 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\Category;
+use App\Models\Perfume;
+use Illuminate\Http\Middleware\TrustProxies;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,20 +25,22 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Read after configuration is loaded, including when config:cache is enabled.
+        TrustProxies::at(config('deployment.trusted_proxies', []));
         Paginator::useBootstrapFour();
 
-        \Illuminate\Support\Facades\View::composer(['layouts.store', 'home'], function ($view) {
+        View::composer(['layouts.store', 'home'], function ($view) {
             try {
-                if (!isset($view->categories) && \Illuminate\Support\Facades\Schema::hasTable('categories') && \Illuminate\Support\Facades\Schema::hasTable('perfumes')) {
-                    $categories = \App\Models\Category::query()
+                if (! isset($view->categories) && Schema::hasTable('categories') && Schema::hasTable('perfumes')) {
+                    $categories = Category::query()
                         ->withCount(['perfumes' => fn ($query) => $query->where('is_active', true)])
                         ->orderBy('id')
                         ->take(6)
                         ->get();
                     $view->with('categories', $categories);
                 }
-                if (!isset($view->genderCounts) && \Illuminate\Support\Facades\Schema::hasTable('perfumes')) {
-                    $genderCounts = \App\Models\Perfume::query()
+                if (! isset($view->genderCounts) && Schema::hasTable('perfumes')) {
+                    $genderCounts = Perfume::query()
                         ->where('is_active', true)
                         ->selectRaw('gender, count(*) as total')
                         ->groupBy('gender')

@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Đăng ký tài khoản · Ha Thu Perfume')
+@section('title', 'Đăng ký tài khoản · Soopi')
 
 @section('content')
 <section class="luxury-auth-section">
@@ -10,7 +10,7 @@
                 @include('partials.icon', ['name' => 'flower', 'size' => 27])
             </div>
             <h1 class="luxury-auth-title">Đăng ký tài khoản</h1>
-            <p class="luxury-auth-subtitle">Trở thành thành viên Ha Thu Perfume để tận hưởng đặc quyền mua sắm</p>
+            <p class="luxury-auth-subtitle">Trở thành thành viên Soopi để tận hưởng đặc quyền mua sắm</p>
         </div>
 
         @if ($errors->any())

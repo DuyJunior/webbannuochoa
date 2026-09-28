@@ -1,10 +1,10 @@
 <a class="ht-skip-link" href="#main-content">Đến nội dung chính</a>
-<div class="ht-announcement">Một mùi hương đẹp. Một dấu ấn riêng. <span>Khám phá thế giới nước hoa cùng Ha Thu</span></div>
+<div class="ht-announcement">Một mùi hương đẹp. Một dấu ấn riêng. <span>Khám phá thế giới nước hoa cùng Soopi</span></div>
 <header class="ht-header">
     <div class="store-container ht-header-main">
-        <a class="ht-brand" href="{{ route('home') }}" aria-label="Ha Thu Perfume — Trang chủ">
+        <a class="ht-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ">
             <span class="ht-brand-mark">@include('partials.icon', ['name' => 'flower', 'size' => 30])</span>
-            <span class="ht-brand-name">Ha Thu<span>PERFUME STUDIO</span></span>
+            <span class="ht-brand-name">Soopi<span>PERFUME STUDIO</span></span>
         </a>
         <form class="ht-search" method="GET" action="{{ route('home') }}#san-pham" role="search">
             @include('partials.icon', ['name' => 'search'])

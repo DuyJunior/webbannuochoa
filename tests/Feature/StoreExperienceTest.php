@@ -41,7 +41,11 @@ class StoreExperienceTest extends TestCase
             ->assertOk()->assertSee($perfume->name);
         $this->get(route('store.compare', ['ids' => (string) $perfume->id]))
             ->assertOk()->assertSee($perfume->name);
-        $this->get(route('home', ['note' => 'hoa hồng']))->assertOk()->assertSee($perfume->name);
+        $this->get(route('home', ['note' => 'hoa hồng']))
+            ->assertOk()
+            ->assertSee($perfume->name)
+            ->assertSee('<meta property="og:site_name" content="Soopi">', false)
+            ->assertSee('Soopi<span>PERFUME STUDIO</span>', false);
     }
 
     public function test_customer_can_save_review_and_request_stock_alert(): void

@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Chi tiết đơn hàng #' . $order->id . ' · Ha Thu Perfume')
+@section('title', 'Chi tiết đơn hàng #' . $order->id . ' · Soopi')
 
 @section('content')
 @include('partials.order-timeline')

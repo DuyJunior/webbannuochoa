@@ -1,5 +1,5 @@
 @extends('layouts.store')
-@section('title', 'Mùi hương yêu thích · Ha Thu Perfume')
+@section('title', 'Mùi hương yêu thích · Soopi')
 @section('content')
 <section class="store-container ht-feature-page">
     <span class="ht-eyebrow">BỘ SƯU TẬP CỦA BẠN</span><h1>Mùi hương <em>yêu thích.</em></h1>

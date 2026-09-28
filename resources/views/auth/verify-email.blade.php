@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Xác thực Email · Ha Thu Perfume')
+@section('title', 'Xác thực Email · Soopi')
 
 @section('content')
 <section class="luxury-auth-section">

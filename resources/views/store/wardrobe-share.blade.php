@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'Tủ Nước Hoa Của ' . $user->name . ' | Ha Thu Perfume')
-@section('meta_description', 'Khám phá bộ sưu tập mùi hương cá nhân tinh tế của ' . $user->name . ' tại Ha Thu Perfume Studio.')
+@section('title', 'Tủ Nước Hoa Của ' . $user->name . ' | Soopi')
+@section('meta_description', 'Khám phá bộ sưu tập mùi hương cá nhân tinh tế của ' . $user->name . ' tại Soopi.')
 
 @section('content')
 <div class="store-container ht-wardrobe-share-page">
@@ -11,7 +11,7 @@
         <p class="ht-share-sub">Dưới đây là những nốt hương yêu thích được {{ $user->name }} tuyển chọn và phân loại cẩn thận theo từng khoảnh khắc cuộc sống.</p>
         <div class="share-hero-actions">
             <a href="{{ route('store.quiz') }}" class="ht-button ht-button-outline">Tạo Tủ Nước Hoa Của Riêng Bạn</a>
-            <a href="{{ route('home') }}" class="ht-button ht-button-primary">Khám Phá Cửa Hàng Ha Thu</a>
+            <a href="{{ route('home') }}" class="ht-button ht-button-primary">Khám Phá Cửa Hàng Soopi</a>
         </div>
     </header>
 

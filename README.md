@@ -1,4 +1,4 @@
-# Hạ Thu Perfume — Bài tập lớn web bán nước hoa
+# Soopi — Bài tập lớn web bán nước hoa
 
 Laravel 12 · PHP 8.2+ · Blade/Vite · SQLite (demo) · Groq AI chat.
 
@@ -91,8 +91,19 @@ Phạm vi còn lại: quy trình khách yêu cầu đổi trả/hoàn tiền th�
 
 ## Tài liệu
 
+- [Lab 09 — Finance: chức năng, quy tắc đối soát và kịch bản kiểm thử](docs/finance-lab09.md)
+- [Lab 10 — Docker, Render và Aiven: cấu hình chuẩn bị triển khai](docs/deployment-render-aiven.md)
 - [5 mục thiết kế thành phần, sơ đồ tổng thể và kịch bản bảo vệ](docs/architecture-and-demo.md)
 - [Cấu hình AI](docs/ai-chat-groq.md)
 - [Livestream LiveKit](docs/livestream-livekit.md)
 
 Đây là bản bài tập local, chưa phải hệ thống thương mại đã kiểm định. Hoàn tiền thực, kiểm thử tải đồng thời trên MySQL và vận hành cổng thật cần triển khai/kiểm tra riêng.
+
+## Lab 09 / Lab 10 — cập nhật mã 28/09/2026
+
+- Admin có hai mục mới: **Thống kê tài chính** (`/admin/finance`) và **Giao dịch thanh toán** (`/admin/finance/transactions`). Lọc, phân trang, thống kê và CSV dùng cùng dữ liệu; báo cáo mặc định loại đơn demo và đơn có ngày tạo ở tương lai.
+- Đối soát COD có kiểm tra chuyển trạng thái, chống cập nhật form cũ và lưu lịch sử người thao tác. Ghi nhận hoàn tiền không chuyển tiền và không tự hoàn kho. Giao dịch MoMo không được sửa thủ công qua Finance.
+- Máy đang có dữ liệu: sao lưu bằng `php scripts/backup-sqlite.php`, chạy `php artisan migrate --force`, sau đó `npm ci` và `npm run build`. Dừng Vite của đúng dự án trước `npm ci` nếu Windows báo file native đang bị khóa. Không chạy `migrate:fresh`.
+- Thư mục controller đã chuẩn hóa thành `app/Http/Controllers/Admin` để khớp namespace trên Linux. Dependency frontend có lock đa nền tảng, không còn khai báo trực tiếp package chỉ dành cho Windows.
+- Đã thêm Docker nhiều stage, Nginx/PHP-FPM, worker AI, scheduler, kiểm tra cấu hình production/TLS và ProductionSeeder chạy lại không ghi đè tài khoản/tồn kho. Cấu hình mẫu ở `docker/render.env.example`, không dùng `.env` local làm cấu hình production.
+- **Mới chuẩn bị code, chưa đưa online.** Docker chưa cài trên máy kiểm thử nên chưa xác nhận image chạy trên Linux, MySQL/Aiven hay Render; xem tài liệu Lab 10 để biết phần phải nghiệm thu sau.

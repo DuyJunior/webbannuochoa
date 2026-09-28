@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Kiểm tra đơn hàng · Ha Thu Perfume')
+@section('title', 'Kiểm tra đơn hàng · Soopi')
 
 @section('content')
 <div class="tracking-page-wrapper">
@@ -64,7 +64,7 @@
                     <div class="empty-search-box">
                         <div class="empty-search-icon">🔍</div>
                         <h4>Không tìm thấy đơn hàng phù hợp</h4>
-                        <p>Vui lòng kiểm tra lại Mã đơn hàng, Mã GHN hoặc Số điện thoại bạn đã dùng khi đặt hàng tại Ha Thu Perfume.</p>
+                        <p>Vui lòng kiểm tra lại Mã đơn hàng, Mã GHN hoặc Số điện thoại bạn đã dùng khi đặt hàng tại Soopi.</p>
                         <a href="{{ route('orders.tracking') }}" class="btn-retry-search">Thử lại</a>
                     </div>
                 @else

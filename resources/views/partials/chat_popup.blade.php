@@ -1,8 +1,8 @@
-{{-- LAB 7: LUXURY BOUTIQUE CHAT POPUP (Ha Thu Perfume Studio) --}}
+{{-- LAB 7: LUXURY BOUTIQUE CHAT POPUP (Soopi) --}}
 @auth
 <div id="chat-box" class="boutique-chat-wrapper">
     {{-- Nút bấm mở chat nổi --}}
-    <button id="chat-toggle" class="chat-floating-btn" type="button" aria-label="Mở tư vấn Hạ Thu Perfume" aria-controls="chat-popup" aria-expanded="false">
+    <button id="chat-toggle" class="chat-floating-btn" type="button" aria-label="Mở tư vấn Soopi" aria-controls="chat-popup" aria-expanded="false">
         <span class="chat-btn-pulse"></span>
         <span class="chat-icon-wrap">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -23,7 +23,7 @@
                     <span class="avatar-status-pip"></span>
                 </div>
                 <div class="chat-header-meta">
-                    <div id="chat-header-title" class="chat-title">Hạ Thu Perfume Studio</div>
+                    <div id="chat-header-title" class="chat-title">Soopi</div>
                     <div class="chat-subtitle">
                         <span class="live-indicator"></span>
                         <span id="chat-assistant-label">Tư vấn mùi hương và đơn hàng</span>
@@ -49,7 +49,7 @@
         <div id="chat-messages" class="chat-messages-scroll" tabindex="0">
             <div class="chat-welcome-card">
                 <div class="welcome-flower">🌸</div>
-                <div class="welcome-heading">Chào mừng bạn đến với Hạ Thu Perfume!</div>
+                <div class="welcome-heading">Chào mừng bạn đến với Soopi!</div>
                 <div class="welcome-text">Hãy nhắn nhu cầu chọn mùi hương hoặc câu hỏi về đơn hàng. Bạn có thể chọn gặp nhân viên bất cứ lúc nào.</div>
                 <div class="quick-chips-group">
                     <button type="button" class="quick-chip-btn" data-text="Shop tư vấn giúp mình mùi hương nữ nhẹ nhàng, đi làm hàng ngày với ạ! 🌸">
@@ -92,7 +92,7 @@
 </div>
 @else
 <div id="chat-box" class="boutique-chat-wrapper">
-    <a href="{{ route('login') }}" id="chat-toggle" class="chat-floating-btn guest-btn" title="Đăng nhập để chat trực tiếp với chuyên gia mùi hương Ha Thu">
+    <a href="{{ route('login') }}" id="chat-toggle" class="chat-floating-btn guest-btn" title="Đăng nhập để chat trực tiếp với chuyên gia mùi hương Soopi">
         <span class="chat-btn-pulse"></span>
         <span class="chat-icon-wrap">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

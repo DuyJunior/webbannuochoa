@@ -1,8 +1,8 @@
 @extends('layouts.store')
-@section('title', 'Tài khoản của tôi · Ha Thu Perfume')
+@section('title', 'Tài khoản của tôi · Soopi')
 @section('content')
 <section class="store-container account-settings">
-    <header><p>HA THU PERFUME · TÀI KHOẢN</p><h1>Thông tin của tôi</h1><p>Cập nhật tên hiển thị và quản lý mật khẩu đăng nhập.</p></header>
+    <header><p>SOOPI PERFUME · TÀI KHOẢN</p><h1>Thông tin của tôi</h1><p>Cập nhật tên hiển thị và quản lý mật khẩu đăng nhập.</p></header>
     @if(session('success'))<p role="status" class="account-notice">{{ session('success') }}</p>@endif
     @if($errors->any())<div role="alert" class="account-notice"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
     <div class="account-grid">

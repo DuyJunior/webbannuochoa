@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Thanh toán MoMo · Ha Thu Perfume')
+@section('title', 'Thanh toán MoMo · Soopi')
 
 @section('content')
 <div class="momo-qr-page">

@@ -234,7 +234,8 @@ class PerfumeCatalogSeeder extends Seeder
         ];
 
         foreach ($products as $product) {
-            Perfume::updateOrCreate(['slug' => $product['slug']], $product);
+            // Never reset edited prices, stock, or resurrect an archived product on deploy.
+            Perfume::withTrashed()->firstOrCreate(['slug' => $product['slug']], $product);
         }
     }
 }

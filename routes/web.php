@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\ChatController as AdminChatController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Admin\LivestreamController as AdminLivestreamController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
@@ -234,6 +235,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('/categories', CategoryController::class, ['as' => 'admin']);
     Route::post('/orders/bulk-update', [OrderController::class, 'bulkUpdate'])->name('admin.orders.bulk_update');
     Route::resource('/orders', OrderController::class, ['as' => 'admin'])->only(['index', 'show', 'update']);
+
+    // Lab 9: Finance and COD reconciliation.
+    Route::get('/finance', [FinanceController::class, 'index'])->name('admin.finance.index');
+    Route::get('/finance/transactions', [FinanceController::class, 'transactions'])->name('admin.finance.transactions');
+    Route::get('/finance/export', [FinanceController::class, 'export'])->name('admin.finance.export');
+    Route::patch('/finance/{order}/status', [FinanceController::class, 'updateStatus'])->middleware('throttle:30,1')->name('admin.finance.update-status');
 
     // Lab 8: Reports (Báo cáo doanh thu & biểu đồ - PDF Trang 7)
     Route::get('/reports', [AdminReportController::class, 'index'])->name('admin.reports.index');

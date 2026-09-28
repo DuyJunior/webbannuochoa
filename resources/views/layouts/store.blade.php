@@ -7,36 +7,36 @@
     <meta name="theme-color" content="#fff6f8">
 
     {{-- SEO: Title & Description --}}
-    <title>@yield('title', 'Ha Thu Perfume · Hương thơm của riêng bạn')</title>
-    <meta name="description" content="@yield('meta_description', 'Ha Thu Perfume Studio — Khám phá nước hoa chính hãng 100%. Giao hàng toàn quốc, đóng gói 3 lớp, hỗ trợ đổi trả trong 7 ngày.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'nước hoa chính hãng, nước hoa nữ, nước hoa nam, Dior, Chanel, YSL, nước hoa Ha Thu')">
+    <title>@yield('title', 'Soopi · Hương thơm của riêng bạn')</title>
+    <meta name="description" content="@yield('meta_description', 'Soopi — Khám phá nước hoa chính hãng 100%. Giao hàng toàn quốc, đóng gói 3 lớp, hỗ trợ đổi trả trong 7 ngày.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'nước hoa chính hãng, nước hoa nữ, nước hoa nam, Dior, Chanel, YSL, nước hoa Soopi')">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url()->current() }}">
 
     {{-- Open Graph (Facebook / Zalo share) --}}
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Ha Thu Perfume Studio">
-    <meta property="og:title" content="@yield('title', 'Ha Thu Perfume · Hương thơm của riêng bạn')">
-    <meta property="og:description" content="@yield('meta_description', 'Ha Thu Perfume Studio — Nước hoa chính hãng, giao toàn quốc.')">
+    <meta property="og:site_name" content="Soopi">
+    <meta property="og:title" content="@yield('title', 'Soopi · Hương thơm của riêng bạn')">
+    <meta property="og:description" content="@yield('meta_description', 'Soopi — Nước hoa chính hãng, giao toàn quốc.')">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:image" content="@yield('og_image', asset('images/og-hathu.jpg'))">
+    <meta property="og:image" content="@yield('og_image', asset('images/perfume-hero.jpg'))">
     <meta property="og:locale" content="vi_VN">
 
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('title', 'Ha Thu Perfume · Hương thơm của riêng bạn')">
-    <meta name="twitter:description" content="@yield('meta_description', 'Ha Thu Perfume Studio — Nước hoa chính hãng, giao toàn quốc.')">
-    <meta name="twitter:image" content="@yield('og_image', asset('images/og-hathu.jpg'))">
+    <meta name="twitter:title" content="@yield('title', 'Soopi · Hương thơm của riêng bạn')">
+    <meta name="twitter:description" content="@yield('meta_description', 'Soopi — Nước hoa chính hãng, giao toàn quốc.')">
+    <meta name="twitter:image" content="@yield('og_image', asset('images/perfume-hero.jpg'))">
 
     {{-- Structured Data: Local Business --}}
     <script type="application/ld+json">
     {!! json_encode([
         '@context' => 'https://schema.org',
         '@type' => 'Store',
-        'name' => 'Ha Thu Perfume Studio',
+        'name' => 'Soopi',
         'description' => 'Cửa hàng nước hoa chính hãng, đa dạng thương hiệu quốc tế.',
         'url' => config('app.url'),
-        'image' => asset('images/og-hathu.jpg'),
+        'image' => asset('images/perfume-hero.jpg'),
         'priceRange' => '₫₫',
         'currenciesAccepted' => 'VND',
         'paymentAccepted' => 'Cash, Credit Card, MoMo',
@@ -82,11 +82,11 @@
             <div class="ht-live-follow-stage">
                 <video id="live-follow-video" autoplay muted playsinline hidden></video>
                 <audio id="live-follow-audio" autoplay></audio>
-                <iframe id="live-follow-youtube" title="Livestream Ha Thu" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen hidden></iframe>
+                <iframe id="live-follow-youtube" title="Livestream Soopi" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen hidden></iframe>
                 <p id="live-follow-message" role="status">Đang kết nối lại buổi live...</p>
             </div>
             <div class="ht-live-follow-bottom">
-                <strong id="live-follow-title">Ha Thu đang livestream</strong>
+                <strong id="live-follow-title">Soopi đang livestream</strong>
                 <div><button id="live-follow-sound" type="button" hidden>Bật tiếng</button><a href="{{ route('livestream.show') }}">Xem lớn ↗</a></div>
             </div>
         </aside>

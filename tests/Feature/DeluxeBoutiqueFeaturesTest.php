@@ -49,7 +49,7 @@ class DeluxeBoutiqueFeaturesTest extends TestCase
             'occasion' => 'date',
             'note' => 'floral',
             'gender' => 'nu',
-        ]))->assertOk()->assertSee('Ha Thu Đã Tìm Thấy Mùi Hương Hoàn Hảo Cho Bạn');
+        ]))->assertOk()->assertSee('Soopi Đã Tìm Thấy Mùi Hương Hoàn Hảo Cho Bạn');
 
         // 2. Hộp thử mùi Discovery Box
         $this->get(route('store.discovery-box'))

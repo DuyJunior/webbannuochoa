@@ -10,7 +10,7 @@
 <div class="live-admin">
     <header class="live-admin-hero">
         <div>
-            <p class="live-admin-kicker">Ha Thu · Studio trực tiếp</p>
+            <p class="live-admin-kicker">Soopi · Studio trực tiếp</p>
             <h2>{{ $livestream->exists ? 'Chỉnh sửa buổi phát' : 'Tạo buổi phát mới' }}</h2>
             <p>Chọn lên sóng ngay hoặc hẹn giờ để khách biết trước buổi phát.</p>
         </div>

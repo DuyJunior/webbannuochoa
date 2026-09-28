@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Danh mục nước hoa · Ha Thu Perfume')
+@section('title', 'Danh mục nước hoa · Soopi')
 
 @section('content')
     <section class="store-container public-manage-page" style="max-width: 1200px; margin: 30px auto; padding: 0 20px;">
@@ -14,7 +14,7 @@
                     🌸 Tuyển tập nhóm hương đặc sắc
                 </span>
                 <h1 style="font-size: 1.85rem; font-weight: 700; color: #2d1a22; margin: 0 0 6px;">Quản lý danh mục</h1>
-                <p style="color: #7a4b5a; font-size: 0.92rem; margin: 0;">Khám phá và quản lý các nhóm hương thơm độc đáo tại Ha Thu Perfume.</p>
+                <p style="color: #7a4b5a; font-size: 0.92rem; margin: 0;">Khám phá và quản lý các nhóm hương thơm độc đáo tại Soopi.</p>
             </div>
             <div class="manage-heading-actions" style="display: flex; gap: 10px;">
                 <a class="btn" href="{{ route('perfumes.index') }}" style="background: #fff; border: 1.5px solid rgba(232,114,138,.3); color: #c94d68; padding: 10px 18px; border-radius: 999px; font-size: 13px; font-weight: 600; text-decoration: none; transition: all .2s;">

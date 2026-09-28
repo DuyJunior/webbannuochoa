@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Sửa '.$perfume->name.' · Ha Thu Perfume')
+@section('title', 'Sửa '.$perfume->name.' · Soopi')
 
 @section('content')
     <section class="store-container public-form-page">

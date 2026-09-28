@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Thanh toán & Giao hàng GHN · Ha Thu Perfume')
+@section('title', 'Thanh toán & Giao hàng GHN · Soopi')
 
 @section('content')
 <div class="checkout-page-wrapper">
@@ -15,7 +15,7 @@
         </nav>
 
         <div class="checkout-header-title">
-            <span class="badge-tag">Ha Thu Delivery</span>
+            <span class="badge-tag">Soopi Delivery</span>
             <h1>Hoàn tất đơn hàng</h1>
             <p>Tính cước phí vận chuyển chính xác thời gian thực qua Giao Hàng Nhanh (GHN)</p>
         </div>

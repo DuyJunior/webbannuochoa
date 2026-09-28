@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Ha Thu · Perfume Studio')</title>
+    <title>@yield('title', 'Soopi · Perfume Studio')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,7 +138,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm py-2">
     <a class="navbar-brand store-brand" href="{{ route('home') }}">
         <span>🌸</span>
-        <strong>Ha Thu<small>Perfume Studio</small></strong>
+        <strong>Soopi<small>Perfume Studio</small></strong>
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
