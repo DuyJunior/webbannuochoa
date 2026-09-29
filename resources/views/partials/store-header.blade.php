@@ -1,5 +1,4 @@
 <a class="ht-skip-link" href="#main-content">Đến nội dung chính</a>
-<div class="ht-announcement">Một mùi hương đẹp. Một dấu ấn riêng. <span>Khám phá thế giới nước hoa cùng Soopi</span></div>
 <header class="ht-header">
     <div class="store-container ht-header-main">
         <a class="ht-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ">

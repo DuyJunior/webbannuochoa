@@ -14,9 +14,6 @@
 .boutique-store .public-flash{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;border-radius:6px;margin-bottom:20px}
 .boutique-store .public-flash.alert-danger{background:#fff1f2;border-color:#fecdd3;color:#be123c}
 .ht-icon{display:inline-block;flex-shrink:0;vertical-align:middle}
-/* ANNOUNCEMENT */
-.ht-announcement{min-height:34px;padding:7px 20px;background:#faedf2;color:#795260;text-align:center;font-size:11px;letter-spacing:.04em}
-.ht-announcement span{margin-left:22px;padding-left:22px;border-left:1px solid #dcbac7}
 /* HEADER */
 .ht-header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.98);border-bottom:1px solid var(--ht-line-light);backdrop-filter:blur(12px)}
 .ht-header-main{display:grid;grid-template-columns:240px minmax(180px,1fr) auto;align-items:center;gap:48px;min-height:98px}
@@ -301,7 +298,6 @@
 .boutique-store .store-products{grid-template-columns:repeat(3,minmax(0,1fr))}}
 /* RESPONSIVE 800 */
 @media(max-width:800px){
-.ht-announcement span{display:none}
 .ht-header-main{min-height:80px;grid-template-columns:190px 1fr auto;gap:16px}
 .ht-brand-name{font-size:32px}
 .ht-brand-mark{width:42px;height:42px}
@@ -335,7 +331,6 @@
 @media(max-width:600px){
 .boutique-store .store-container{width:calc(100% - 36px)}
 .boutique-store [id]{scroll-margin-top:195px}
-.ht-announcement{font-size:10px;min-height:30px}
 .ht-header-main{grid-template-columns:1fr auto;gap:0 18px;padding-top:13px;padding-bottom:12px}
 .ht-brand-name{font-size:30px}
 .ht-brand-mark{width:39px;height:39px}
