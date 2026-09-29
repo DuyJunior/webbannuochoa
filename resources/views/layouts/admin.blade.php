@@ -407,9 +407,11 @@
             border-color: var(--border);
         }
     </style>
+    @vite(['resources/css/admin-boutique.css', 'resources/js/admin-boutique.js'])
     @yield('styles')
 </head>
 <body class="boutique-admin">
+    <a class="studio-skip-link" href="#admin-main">Đến nội dung chính</a>
     <button type="button" class="ht-admin-backdrop" aria-label="Đóng menu quản trị" hidden></button>
 
     {{-- Sidebar --}}
@@ -418,95 +420,15 @@
             <div class="brand-icon">@include('partials.icon', ['name' => 'flower', 'size' => 24])</div>
             <div class="brand-text">
                 <strong>Soopi</strong>
-                <span>Admin Panel</span>
+                <span>MANAGEMENT STUDIO</span>
             </div>
         </a>
 
-        <ul class="sidebar-menu" style="padding-top:12px;">
-            @if(Auth::user()->role === 'admin')
-            <li class="sidebar-section-label">Tổng quan</li>
-            <li>
-                <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chart-pie"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-
-            <li class="sidebar-section-label" style="padding-top:14px;">Quản lý</li>
-            <li>
-                <a href="{{ route('admin.products.index') }}" class="{{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-spray-can-sparkles"></i>
-                    <span>Sản phẩm</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.categories.index') }}" class="{{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-layer-group"></i>
-                    <span>Danh mục</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-receipt"></i>
-                    <span>Đơn hàng</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.coupons.index') }}" class="{{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-ticket"></i><span>Mã ưu đãi</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.articles.index') }}" class="{{ request()->routeIs('admin.articles.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-book-open"></i><span>Cẩm nang</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.videos.index') }}" class="{{ request()->routeIs('admin.videos.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-clapperboard"></i><span>Video & Shorts</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-users"></i>
-                    <span>Người dùng</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>Báo cáo</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.finance.index') }}" class="{{ request()->routeIs('admin.finance.index') ? 'active' : '' }}">
-                    <i class="fa-solid fa-wallet"></i><span>Thống kê tài chính</span>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('admin.finance.transactions') }}" class="{{ request()->routeIs('admin.finance.transactions') ? 'active' : '' }}">
-                    <i class="fa-solid fa-money-bill-transfer"></i><span>Giao dịch thanh toán</span>
-                </a>
-            </li>
-
-            @endif
-            <li>
-                <a href="{{ route('admin.livestreams.index') }}" class="{{ request()->routeIs('admin.livestreams.*') ? 'active' : '' }}">
-                    <i class="fa-solid fa-video"></i><span>Livestream</span>
-                </a>
-            </li>
-            <hr class="sidebar-divider">
-            <li>
-                <a href="{{ route('home') }}" target="_blank">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    <span>Xem cửa hàng</span>
-                </a>
-            </li>
-        </ul>
+        @include('partials.admin-navigation')
 
         <div class="sidebar-footer">
             <div class="admin-user-info">
-                <div class="admin-avatar">{{ strtoupper(substr(Auth::user()->name ?? 'A', 0, 1)) }}</div>
+                <div class="admin-avatar">{{ mb_strtoupper(mb_substr(Auth::user()->name ?? 'A', 0, 1)) }}</div>
                 <div class="admin-meta">
                     <div class="name">{{ Auth::user()->name ?? 'Admin' }}</div>
                     <div class="role">{{ Auth::user()->role === 'admin' ? 'Quản trị viên' : 'Nhân viên livestream' }}</div>
@@ -526,7 +448,7 @@
         <header class="admin-topbar">
             <div class="topbar-left"><button type="button" class="ht-admin-toggle" aria-label="Mở menu quản trị" aria-controls="admin-sidebar" aria-expanded="false">@include('partials.icon', ['name' => 'menu'])<span>Menu</span></button>
                 <div>
-                    <h1>@yield('page_title', 'Quản trị hệ thống')</h1>
+                    <span class="studio-topbar-kicker">SOOPI / QUẢN TRỊ</span><h1>@yield('page_title', 'Quản trị hệ thống')</h1>
                 </div>
             </div>
             <div class="topbar-right">
@@ -534,11 +456,11 @@
                     <i class="fa-regular fa-calendar"></i>
                     {{ date('d/m/Y') }}
                 </div>
-                <span class="topbar-badge">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) Online</span>
+                <a class="studio-store-link" href="{{ route('home') }}" target="_blank" rel="noopener"><span>Xem cửa hàng</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
             </div>
         </header>
 
-        <main class="admin-content-area">
+        <main class="admin-content-area" id="admin-main" tabindex="-1">
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
                     <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
@@ -560,7 +482,7 @@
     @if(Auth::user()->role === 'admin')
     {{-- LAB 7: ADMIN LIVECHAT POPUP (PDF Trang 13 - 14 + Chủ động nhắn tin) --}}
     <div id="admin-chat-box">
-        <button id="chat-toggle" class="btn btn-dark shadow">@include('partials.icon', ['name' => 'chat', 'size' => '1em']) Chat Khách hàng</button>
+        <button id="chat-toggle" class="btn btn-dark shadow">@include('partials.icon', ['name' => 'chat', 'size' => '1em']) <span>Tin nhắn</span></button>
         <div id="chat-popup" class="card shadow-lg" style="display:none;">
             <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-2 px-3">
                 <div class="d-flex align-items-center gap-2">
@@ -988,6 +910,6 @@
         }, 3000);
     });
     </script>
-@vite(['resources/css/admin-boutique.css', 'resources/js/admin-boutique.js'])
+
 </body>
 </html>

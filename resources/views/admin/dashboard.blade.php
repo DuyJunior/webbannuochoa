@@ -1,131 +1,92 @@
 @extends('layouts.admin')
-
-@section('title', 'Dashboard')
-@section('page_title', 'Bảng điều khiển (Dashboard)')
-
+@section('title', 'Tổng quan')
+@section('page_title', 'Tổng quan cửa hàng')
 @section('content')
-<div class="row">
-    <div class="col-md-3 mb-4">
-        <div class="admin-card" style="border-left: 4px solid var(--pink-main); background: #ffffff;">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div style="font-size: 2.1rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px;">{{ \App\Models\Product::count() }}</div>
-                    <div class="text-muted font-weight-500" style="font-size: 0.85rem; margin-top: 2px;">Tổng sản phẩm</div>
-                </div>
-                <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--pink-soft); color: var(--pink-dark); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; border: 1px solid var(--border);">
-                    <i class="fa-solid fa-spray-can-sparkles"></i>
-                </div>
+<div class="studio-dashboard">
+    <section class="studio-welcome">
+        <div class="studio-welcome-copy">
+            <span class="studio-eyebrow">SOOPI · KHÔNG GIAN QUẢN TRỊ</span>
+            <h2>Chăm chút từng chi tiết.<br><em>Lan tỏa từng hương thơm.</em></h2>
+            <p>Chào {{ Auth::user()->name }}. Cùng bắt đầu với những điều quan trọng của cửa hàng hôm nay.</p>
+            <div class="studio-welcome-actions">
+                <a href="{{ route('admin.orders.index', ['tab' => 'pending']) }}" class="btn btn-primary">Xử lý đơn hàng <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                <a href="{{ route('admin.products.create') }}" class="studio-text-link"><i class="fa-solid fa-plus" aria-hidden="true"></i> Thêm sản phẩm</a>
             </div>
         </div>
-    </div>
-    <div class="col-md-3 mb-4">
-        <div class="admin-card" style="border-left: 4px solid #f472b6; background: #ffffff;">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div style="font-size: 2.1rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px;">{{ \App\Models\Order::count() }}</div>
-                    <div class="text-muted font-weight-500" style="font-size: 0.85rem; margin-top: 2px;">Tổng đơn hàng</div>
-                </div>
-                <div style="width: 48px; height: 48px; border-radius: 12px; background: #fdf2f8; color: #db2777; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; border: 1px solid rgba(244,114,182,.25);">
-                    <i class="fa-solid fa-receipt"></i>
-                </div>
+        <figure class="studio-welcome-photo">
+            <img src="{{ asset('images/admin/unsplash-perfume.jpg') }}" alt="Chai nước hoa Prada Candy màu hồng bên hoa giấy trắng" width="1000" height="1500" fetchpriority="high">
+            <figcaption><span>THE ART OF FRAGRANCE</span><a href="https://unsplash.com/photos/MoPGCgHPS6I" target="_blank" rel="noopener noreferrer">Dário Gomes / Unsplash</a></figcaption>
+        </figure>
+    </section>
+    <section class="studio-metrics" aria-label="Số liệu tổng quan toàn thời gian">
+        @foreach([
+            ['label' => 'Giá trị đơn hàng', 'value' => number_format($stats['value'], 0, ',', '.'), 'unit' => '₫', 'note' => 'Toàn thời gian · Không gồm đơn hủy', 'icon' => 'wallet', 'url' => route('admin.finance.index')],
+            ['label' => 'Tổng đơn hàng', 'value' => number_format($stats['orders']), 'unit' => '', 'note' => 'Tất cả đơn hàng của cửa hàng', 'icon' => 'bag-shopping', 'url' => route('admin.orders.index')],
+            ['label' => 'Cần xử lý', 'value' => number_format($stats['pending']), 'unit' => '', 'note' => 'Chờ xử lý hoặc tạo vận đơn', 'icon' => 'clock', 'url' => route('admin.orders.index', ['tab' => 'pending'])],
+            ['label' => 'Bộ sưu tập', 'value' => number_format($stats['products']), 'unit' => '', 'note' => $stats['activeProducts'].' sản phẩm đang được mở bán', 'icon' => 'spray-can-sparkles', 'url' => route('admin.products.index')],
+        ] as $metric)
+            <a class="studio-metric" href="{{ $metric['url'] }}">
+                <div class="studio-metric-top"><span>{{ $metric['label'] }}</span><i class="fa-solid fa-{{ $metric['icon'] }}" aria-hidden="true"></i></div>
+                <strong>{{ $metric['value'] }} <small>{{ $metric['unit'] }}</small></strong>
+                <span class="studio-metric-note">{{ $metric['note'] }}</span>
+            </a>
+        @endforeach
+    </section>
+    <div class="studio-dashboard-grid">
+        <section class="studio-panel studio-chart-panel">
+            <div class="studio-panel-heading"><div><span class="studio-eyebrow">NHỊP KINH DOANH</span><h3>Giá trị đơn hàng</h3></div>
+                <nav class="studio-segment" aria-label="Khoảng thời gian thống kê">
+                    @foreach([7, 30] as $period)
+                        <a href="{{ route('admin.dashboard', ['days' => $period]) }}" @if($days === $period) aria-current="page" @endif>{{ $period }} ngày</a>
+                    @endforeach
+                </nav>
             </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-4">
-        <div class="admin-card" style="border-left: 4px solid #fb7185; background: #ffffff;">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div style="font-size: 2.1rem; font-weight: 800; color: var(--text-dark); letter-spacing: -0.5px;">{{ \App\Models\Order::where('status', 'pending')->count() }}</div>
-                    <div class="text-muted font-weight-500" style="font-size: 0.85rem; margin-top: 2px;">Đơn chờ xử lý</div>
-                </div>
-                <div style="width: 48px; height: 48px; border-radius: 12px; background: #fff1f2; color: #e11d48; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; border: 1px solid rgba(251,113,133,.25);">
-                    <i class="fa-solid fa-clock"></i>
-                </div>
+            <div class="studio-chart-total">{{ number_format($chart->sum('amount'), 0, ',', '.') }} <span>₫</span></div>
+            <p class="studio-muted">{{ $chart->sum('count') }} đơn · {{ $chart->first()['date'] }} – {{ $chart->last()['date'] }} · Không gồm đơn hủy</p>
+            <div class="studio-bar-chart" role="img" aria-label="Biểu đồ giá trị đơn hàng trong {{ $days }} ngày; chi tiết số liệu ở bảng bên dưới">
+                @php($chartMax = max(1, $chart->max('amount')))
+                @foreach($chart as $point)
+                    <div class="studio-chart-column" title="{{ $point['date'] }}: {{ number_format($point['amount'], 0, ',', '.') }} đ · {{ $point['count'] }} đơn">
+                        <div class="studio-chart-track"><span style="height:{{ $point['amount'] > 0 ? max(2, round($point['amount'] / $chartMax * 100)) : 0 }}%"></span></div>
+                        <span class="studio-chart-label">{{ $days === 7 || $loop->first || $loop->last || $loop->iteration % 5 === 0 ? $point['date'] : '' }}</span>
+                    </div>
+                @endforeach
             </div>
-        </div>
-    </div>
-    <div class="col-md-3 mb-4">
-        <div class="admin-card" style="border-left: 4px solid var(--pink-dark); background: #ffffff;">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div style="font-size: 1.65rem; font-weight: 800; color: var(--text-dark); line-height: 2.2rem;">{{ number_format(\App\Models\Order::where('status', '!=', 'cancelled')->sum('total_price'), 0, ',', '.') }} đ</div>
-                    <div class="text-muted font-weight-500" style="font-size: 0.85rem; margin-top: 2px;">Doanh thu ước tính</div>
-                </div>
-                <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--pink-pale); color: var(--pink-dark); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; border: 1px solid var(--border);">
-                    <i class="fa-solid fa-hand-holding-dollar"></i>
-                </div>
+            @if($chart->sum('count') === 0)<p class="studio-chart-empty">Chưa có đơn hàng trong khoảng thời gian này.</p>@endif
+            <details class="studio-chart-details"><summary>Xem số liệu từng ngày</summary><div class="studio-chart-data"><table><thead><tr><th>Ngày</th><th>Số đơn</th><th>Giá trị</th></tr></thead><tbody>@foreach($chart as $point)<tr><td>{{ $point['date'] }}</td><td>{{ $point['count'] }}</td><td>{{ number_format($point['amount'], 0, ',', '.') }} ₫</td></tr>@endforeach</tbody></table></div></details>
+        </section>
+        <section class="studio-panel studio-tasks">
+            <div class="studio-panel-heading"><div><span class="studio-eyebrow">TẬP TRUNG HÔM NAY</span><h3>Góc vận hành</h3></div><i class="fa-solid fa-sliders" aria-hidden="true"></i></div>
+            <a class="studio-task" href="{{ route('admin.orders.index', ['tab' => 'pending']) }}"><span class="studio-task-icon"><i class="fa-solid fa-box" aria-hidden="true"></i></span><span><strong>Đơn hàng cần xử lý</strong><small>{{ $stats['pending'] }} đơn đang chờ bạn</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <a class="studio-task" href="{{ route('admin.livestreams.index') }}"><span class="studio-task-icon"><i class="fa-solid fa-video" aria-hidden="true"></i></span><span><strong>Không gian livestream</strong><small>Lên lịch, phát sóng và tư vấn</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <a class="studio-task" href="{{ route('admin.coupons.index') }}"><span class="studio-task-icon"><i class="fa-solid fa-ticket" aria-hidden="true"></i></span><span><strong>Ưu đãi cho khách hàng</strong><small>Quản lý các mã khuyến mãi</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            <div class="studio-note"><i class="fa-regular fa-heart" aria-hidden="true"></i><p>Một trải nghiệm tốt bắt đầu từ những điều nhỏ nhất.</p><span>THE SOOPI WAY</span></div>
+        </section>
+        <section class="studio-panel studio-recent">
+            <div class="studio-panel-heading"><div><span class="studio-eyebrow">CẬP NHẬT MỚI</span><h3>Đơn hàng gần đây</h3></div><a class="studio-text-link" href="{{ route('admin.orders.index') }}">Tất cả <span aria-hidden="true">↗</span></a></div>
+            <div class="studio-recent-list">
+                @forelse($recentOrders as $order)
+                    <a href="{{ route('admin.orders.show', $order) }}" class="studio-recent-row">
+                        <span class="studio-order-mark"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i></span>
+                        <span class="studio-recent-person"><strong>{{ $order->name ?? 'Khách hàng' }}</strong><small>#DH{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }} · {{ $order->created_at->format('d/m · H:i') }}</small></span>
+                        <span class="studio-recent-value"><strong>{{ number_format($order->total_price, 0, ',', '.') }} ₫</strong><small>{{ ['pending' => 'Chờ xử lý', 'confirmed' => 'Đã xác nhận', 'paid' => 'Đã thanh toán', 'paid_momo' => 'Đã thanh toán', 'cod_ordered' => 'Đơn COD', 'cod_paid' => 'Đã thu COD', 'completed' => 'Hoàn thành', 'cancelled' => 'Đã hủy'][$order->status] ?? $order->status }}</small></span><span aria-hidden="true">↗</span>
+                    </a>
+                @empty
+                    <p class="studio-empty">Chưa có đơn hàng. Những đơn hàng đầu tiên sẽ xuất hiện tại đây.</p>
+                @endforelse
             </div>
-        </div>
+        </section>
+        <section class="studio-panel studio-stock">
+            <div class="studio-panel-heading"><div><span class="studio-eyebrow">CHĂM SÓC BỘ SƯU TẬP</span><h3>Lưu ý tồn kho</h3></div><i class="fa-solid fa-spray-can-sparkles" aria-hidden="true"></i></div>
+            <p class="studio-muted">Sản phẩm đang bán còn tối đa 5 chai nguyên dung tích.</p>
+            @forelse($lowStock as $product)
+                <a class="studio-stock-row" href="{{ route('admin.products.edit', $product) }}"><span><strong>{{ $product->name }}</strong><small>{{ $product->brand }} · {{ $product->volume_ml }} ml</small></span><b>{{ $product->stock }}</b></a>
+            @empty
+                <div class="studio-stock-clear"><i class="fa-solid fa-check" aria-hidden="true"></i><strong>Tồn kho đang ổn</strong><p>Chưa có sản phẩm nào dưới ngưỡng cảnh báo này.</p></div>
+            @endforelse
+            <a href="{{ route('admin.products.index') }}" class="studio-text-link">Quản lý bộ sưu tập <span aria-hidden="true">→</span></a>
+        </section>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6 mb-4">
-        <div class="admin-card h-100">
-            <h5 class="font-weight-bold mb-2" style="color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
-                <span style="color: var(--pink-main);"><i class="fa-solid fa-compass"></i></span>
-                Lối tắt quản trị
-            </h5>
-            <p class="text-muted mb-4" style="font-size:0.88rem;">Truy cập nhanh các chức năng quản lý danh mục, sản phẩm và đơn hàng.</p>
-            
-            <div class="d-flex flex-column" style="gap: 12px;">
-                <a href="{{ route('admin.products.index') }}" class="btn btn-outline-pink text-left py-3 px-4 d-flex justify-content-between align-items-center" style="border-radius: 10px; font-weight: 600;">
-                    <span style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fa-solid fa-spray-can-sparkles" style="color: var(--pink-dark);"></i>
-                        <span>Quản lý danh sách sản phẩm</span>
-                    </span>
-                    <i class="fa-solid fa-chevron-right" style="font-size: 12px; opacity: 0.7;"></i>
-                </a>
-                <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-pink text-left py-3 px-4 d-flex justify-content-between align-items-center" style="border-radius: 10px; font-weight: 600;">
-                    <span style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fa-solid fa-layer-group" style="color: var(--pink-dark);"></i>
-                        <span>Quản lý danh mục nước hoa</span>
-                    </span>
-                    <i class="fa-solid fa-chevron-right" style="font-size: 12px; opacity: 0.7;"></i>
-                </a>
-                <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-pink text-left py-3 px-4 d-flex justify-content-between align-items-center" style="border-radius: 10px; font-weight: 600;">
-                    <span style="display: flex; align-items: center; gap: 10px;">
-                        <i class="fa-solid fa-receipt" style="color: var(--pink-dark);"></i>
-                        <span>Quản lý danh sách đơn hàng</span>
-                    </span>
-                    <i class="fa-solid fa-chevron-right" style="font-size: 12px; opacity: 0.7;"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-6 mb-4">
-        <div class="admin-card h-100">
-            <h5 class="font-weight-bold mb-2" style="color: var(--text-dark); display: flex; align-items: center; gap: 8px;">
-                <span style="color: var(--pink-dark);"><i class="fa-solid fa-shield-heart"></i></span>
-                Thông tin quản trị viên
-            </h5>
-            <p class="text-muted mb-3" style="font-size:0.88rem;">Tài khoản quản lý cửa hàng Soopi.</p>
-            <div class="table-responsive">
-                <table class="table table-borderless" style="font-size:0.92rem;">
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td class="text-muted" width="140" style="padding: 10px 0;">Họ và tên:</td>
-                        <td class="font-weight-bold" style="padding: 10px 0; color: var(--text-dark);">{{ Auth::user()->name }}</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td class="text-muted" style="padding: 10px 0;">Email:</td>
-                        <td class="font-weight-bold" style="padding: 10px 0; color: var(--text-dark);">{{ Auth::user()->email }}</td>
-                    </tr>
-                    <tr style="border-bottom: 1px solid var(--border);">
-                        <td class="text-muted" style="padding: 10px 0;">Vai trò:</td>
-                        <td style="padding: 10px 0;">
-                            <span class="badge" style="background: var(--pink-pale); color: var(--pink-dark); font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(232,114,138,.3);">
-                                @include('partials.icon', ['name' => 'flower', 'size' => '1em']) QUẢN TRỊ VIÊN
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-muted" style="padding: 10px 0;">Hệ thống:</td>
-                        <td style="padding: 10px 0; font-weight: 600; color: var(--pink-dark);">Soopi (Laravel 11)</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
+    <footer class="studio-dashboard-footer">SOOPI STUDIO <span>Chăm chút mỗi ngày. Phát triển dài lâu.</span></footer>
 </div>
 @endsection

@@ -79,7 +79,7 @@ class LivestreamPermissionTest extends TestCase
         $this->patch(route('admin.livestreams.status', $stream), ['status' => 'ended'])
             ->assertRedirect(route('admin.livestreams.index'));
         $this->assertSame('ended', $stream->fresh()->status);
-        $this->get(route('livestream.show'))->assertOk()->assertSee('Hẹn bạn ở buổi phát tiếp theo');
+        $this->get(route('livestream.show'))->assertOk()->assertSeeText('Hẹn bạn ở buổi phát tiếp theo');
     }
     public function test_livestream_staff_login_opens_only_their_work_area(): void
     {

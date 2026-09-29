@@ -4,7 +4,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "livekit": "scratch\\livekit\\livekit-server.exe --dev"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

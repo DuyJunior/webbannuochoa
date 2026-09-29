@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý đơn hàng · Lab 8')
+@section('title', 'Quản lý đơn hàng')
 @section('page_title', 'Quản lý đơn hàng')
 
 @section('content')
 <div class="admin-orders-container">
     {{-- 1. BỘ LỌC TABS THEO QUY CHUẨN LAB 8 (PDF Trang 1, 6) --}}
     <div class="order-tabs-wrapper mb-3">
-        <div class="nav-tabs-scroll">
+        <div class="nav-tabs-scroll" aria-label="Lọc theo trạng thái đơn hàng">
             @foreach($tabs as $tabKey => $tabItem)
                 @php
                     $isActive = ($activeTab === $tabKey);
@@ -17,7 +17,7 @@
                     }
                     $tabUrl = route('admin.orders.index', $urlParams);
                 @endphp
-                <a href="{{ $tabUrl }}" class="order-tab-btn {{ $isActive ? 'active' : '' }} tab-{{ $tabItem['color'] }}">
+                <a href="{{ $tabUrl }}" @if($isActive) aria-current="page" @endif class="order-tab-btn {{ $isActive ? 'active' : '' }} tab-{{ $tabItem['color'] }}">
                     <span>{{ $tabItem['label'] }}</span>
                     <span class="tab-badge {{ $isActive ? 'badge-active' : '' }}">{{ $tabItem['count'] }}</span>
                 </a>
@@ -32,80 +32,62 @@
                 <input type="hidden" name="tab" value="{{ request('tab') }}">
             @endif
 
-            <div class="row g-2 align-items-center">
-                {{-- Ô tìm kiếm --}}
-                <div class="col-lg-4 col-md-6 mb-2">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white border-right-0 text-muted">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </span>
-                        </div>
-                        <input type="text" name="search" class="form-control border-left-0" 
-                               placeholder="Mã đơn (#DH...), khách hàng, SĐT, tên nước hoa..." 
-                               value="{{ request('search') }}">
-                    </div>
+            <div class="order-filter-grid">
+                <div class="order-filter-field order-filter-search">
+                    <label for="order-search">Tìm đơn hàng</label>
+                    <input id="order-search" type="search" name="search" class="form-control" placeholder="Mã đơn, khách hàng, số điện thoại…" value="{{ request('search') }}">
                 </div>
-
-                {{-- Lọc thanh toán --}}
-                <div class="col-lg-2 col-md-3 col-6 mb-2">
-                    <select name="payment_status" class="form-control form-select">
-                        <option value="">-- Tất cả thanh toán --</option>
+                <div class="order-filter-field">
+                    <label for="order-payment">Thanh toán</label>
+                    <select id="order-payment" name="payment_status" class="form-control">
+                        <option value="">Tất cả trạng thái</option>
                         @foreach($paymentLabels as $pKey => $pLabel)
-                            <option value="{{ $pKey }}" {{ request('payment_status') === $pKey ? 'selected' : '' }}>{{ $pLabel }}</option>
+                            <option value="{{ $pKey }}" @selected(request('payment_status') === $pKey)>{{ $pLabel }}</option>
                         @endforeach
                     </select>
                 </div>
-
-                {{-- Lọc cổng thanh toán --}}
-                <div class="col-lg-2 col-md-3 col-6 mb-2">
-                    <select name="gateway" class="form-control form-select">
-                        <option value="">-- Cổng (COD / MoMo) --</option>
-                        <option value="cod" {{ request('gateway') === 'cod' ? 'selected' : '' }}>Tiền mặt (COD)</option>
-                        <option value="momo" {{ request('gateway') === 'momo' ? 'selected' : '' }}>Ví MoMo</option>
+                <div class="order-filter-field">
+                    <label for="order-gateway">Phương thức</label>
+                    <select id="order-gateway" name="gateway" class="form-control">
+                        <option value="">Tất cả phương thức</option>
+                        <option value="cod" @selected(request('gateway') === 'cod')>Tiền mặt (COD)</option>
+                        <option value="momo" @selected(request('gateway') === 'momo')>Ví MoMo</option>
                     </select>
                 </div>
-
-                {{-- Ngày bắt đầu --}}
-                <div class="col-lg-2 col-md-3 col-6 mb-2">
-                    <input type="date" name="date_from" class="form-control" title="Từ ngày" value="{{ request('date_from') }}">
+                <div class="order-filter-field">
+                    <label for="order-date-from">Từ ngày</label>
+                    <input id="order-date-from" type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
                 </div>
-
-                {{-- Ngày kết thúc --}}
-                <div class="col-lg-2 col-md-3 col-6 mb-2">
-                    <input type="date" name="date_to" class="form-control" title="Đến ngày" value="{{ request('date_to') }}">
+                <div class="order-filter-field">
+                    <label for="order-date-to">Đến ngày</label>
+                    <input id="order-date-to" type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
+                </div>
+                <div class="order-filter-field order-filter-limit">
+                    <label for="order-per-page">Số đơn / trang</label>
+                    <select id="order-per-page" name="per_page" class="form-control">
+                        @foreach([25, 50, 100] as $limit)
+                            <option value="{{ $limit }}" @selected(request('per_page', 25) == $limit)>{{ $limit }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="order-filter-field order-filter-sort">
+                    <label for="order-sort">Sắp xếp</label>
+                    <select id="order-sort" name="sort" class="form-control">
+                        <option value="newest" @selected(request('sort', 'newest') === 'newest')>Mới nhất</option>
+                        <option value="oldest" @selected(request('sort') === 'oldest')>Cũ nhất</option>
+                        <option value="amount_desc" @selected(request('sort') === 'amount_desc')>Giá trị cao nhất</option>
+                        <option value="amount_asc" @selected(request('sort') === 'amount_asc')>Giá trị thấp nhất</option>
+                    </select>
                 </div>
             </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-2 flex-wrap gap-2 pt-2 border-top">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="small text-muted font-weight-bold">Hiển thị:</span>
-                    <select name="per_page" class="form-control form-control-sm" style="width: 80px;" onchange="document.getElementById('orderFilterForm').submit()">
-                        <option value="25" {{ request('per_page', 25) == 25 ? 'selected' : '' }}>25</option>
-                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                        <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                    </select>
-                    <span class="small text-muted ml-2">Sắp xếp:</span>
-                    <select name="sort" class="form-control form-control-sm" style="width: 140px;" onchange="document.getElementById('orderFilterForm').submit()">
-                        <option value="newest" {{ request('sort', 'newest') === 'newest' ? 'selected' : '' }}>Mới nhất</option>
-                        <option value="oldest" {{ request('sort') === 'oldest' ? 'selected' : '' }}>Cũ nhất</option>
-                        <option value="amount_desc" {{ request('sort') === 'amount_desc' ? 'selected' : '' }}>Giá trị cao nhất</option>
-                        <option value="amount_asc" {{ request('sort') === 'amount_asc' ? 'selected' : '' }}>Giá trị thấp nhất</option>
-                    </select>
-                </div>
-
-                <div class="d-flex gap-2 align-items-center">
+            <div class="order-filter-footer">
+                <span class="order-result-count"><strong>{{ number_format($orders->total()) }}</strong> đơn hàng phù hợp</span>
+                <div class="order-filter-actions">
                     @if(request()->anyFilled(['search', 'payment_status', 'gateway', 'date_from', 'date_to', 'shipping_status']))
-                        <a href="{{ route('admin.orders.index', request('tab') ? ['tab' => request('tab')] : []) }}" class="btn btn-light btn-sm text-danger mr-2">
-                            <i class="fa-solid fa-xmark"></i> Xóa lọc
-                        </a>
+                        <a href="{{ route('admin.orders.index', request('tab') ? ['tab' => request('tab')] : []) }}" class="btn btn-light">Xóa bộ lọc</a>
                     @endif
-                    <button type="submit" class="btn btn-primary btn-sm px-3" style="background:#db2777; border-color:#db2777;">
-                        <i class="fa-solid fa-filter mr-1"></i> Áp dụng bộ lọc
-                    </button>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="window.print()">
-                        <i class="fa-solid fa-file-export mr-1"></i> Xuất trang này
-                    </button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="fa-solid fa-print" aria-hidden="true"></i> In danh sách</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter" aria-hidden="true"></i> Áp dụng bộ lọc</button>
                 </div>
             </div>
         </form>
@@ -154,25 +136,20 @@
         {{-- 4. BẢNG DANH SÁCH ĐƠN HÀNG (PDF Trang 6) --}}
         <div class="admin-card p-0 overflow-hidden shadow-sm">
             <div class="table-responsive">
-                <table class="table table-hover table-admin align-middle mb-0">
-                    <thead class="bg-light text-muted" style="font-size: 0.8rem; letter-spacing: 0.3px; text-transform: uppercase;">
+                <table class="table table-hover table-admin align-middle mb-0 {{ $orders->isNotEmpty() ? 'order-table-populated' : 'order-table-empty' }}">
+                    @if($orders->isNotEmpty())
+                    <thead>
                         <tr>
-                            {{-- Checkbox chọn tất cả --}}
-                            <th width="40" class="text-center">
-                                <input type="checkbox" id="selectAllOrders" title="Tích chọn tất cả đơn hàng trên trang này" style="width: 17px; height: 17px; cursor: pointer;">
-                            </th>
-                            <th width="120">Mã đơn hàng</th>
-                            <th width="120">Ngày tạo</th>
-                            <th>Sản phẩm</th>
-                            <th width="120" class="text-right">Tổng tiền</th>
-                            <th width="110" class="text-right">COD cần thu</th>
-                            <th width="170">Khách hàng</th>
-                            <th width="120">Mã vận đơn</th>
-                            <th width="160">Trạng thái GHN</th>
-                            <th width="90">Đơn vị</th>
-                            <th width="80" class="text-center">Thao tác</th>
+                            <th class="order-select-cell"><label class="order-select-all"><input type="checkbox" id="selectAllOrders" aria-label="Chọn tất cả đơn hàng trên trang"><span>Chọn tất cả</span></label></th>
+                            <th class="order-meta-cell" scope="col">Đơn hàng</th>
+                            <th class="order-customer-cell" scope="col">Khách hàng</th>
+                            <th class="order-products-cell" scope="col">Sản phẩm</th>
+                            <th class="order-payment-cell" scope="col">Thanh toán</th>
+                            <th class="order-shipping-cell" scope="col">Vận chuyển</th>
+                            <th class="order-actions-cell" scope="col"><span class="sr-only">Thao tác</span></th>
                         </tr>
                     </thead>
+                    @endif
                     <tbody>
                         @forelse ($orders as $order)
                             @php
@@ -183,118 +160,65 @@
                                     'failed', 'cancelled' => 'badge-danger',
                                     default => 'badge-secondary',
                                 };
+                                $shStatus = $order->shipping_status ?? 'pending';
+                                $dotColor = match($shStatus) {
+                                    'delivered' => '#15803d',
+                                    'delivering', 'transporting', 'sorting', 'picked' => '#a16207',
+                                    'ready_to_pick', 'picking' => '#0e7490',
+                                    'return', 'returning', 'returned' => '#c2410c',
+                                    'cancelled' => '#b91c1c',
+                                    default => '#64748b'
+                                };
                             @endphp
                             <tr class="order-row-item" data-delivering="{{ $isDelivering ? '1' : '0' }}">
-                                {{-- Checkbox chọn dòng này --}}
-                                <td class="text-center">
-                                    <input type="checkbox" name="order_ids[]" value="{{ $order->id }}" class="order-checkbox" style="width: 17px; height: 17px; cursor: pointer;">
+                                <td class="order-select-cell">
+                                    <input type="checkbox" name="order_ids[]" value="{{ $order->id }}" class="order-checkbox" aria-label="Chọn đơn hàng {{ $order->id }}">
                                 </td>
-
-                                {{-- Mã đơn hàng & Badge thanh toán --}}
-                                <td>
-                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="font-weight-bold text-dark text-decoration-none">
-                                        #DH{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}
-                                    </a>
-                                    <div class="mt-1">
-                                        <span class="badge {{ $paymentBadgeClass }}" style="font-size: 0.68rem; letter-spacing: 0.3px;">
-                                            {{ $paymentLabels[$order->payment_status] ?? strtoupper($order->status) }}
-                                        </span>
-                                    </div>
+                                <td class="order-meta-cell">
+                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="order-code">#DH{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</a>
+                                    <time class="order-secondary" datetime="{{ $order->created_at->toIso8601String() }}">{{ $order->created_at->format('d/m/Y') }}<br> {{ $order->created_at->format('H:i') }}</time>
                                 </td>
-
-                                {{-- Ngày tạo đơn --}}
-                                <td class="text-muted small">
-                                    <div>{{ $order->created_at->format('d/m/Y') }}</div>
-                                    <div style="font-size: 0.76rem;">{{ $order->created_at->format('H:i') }}</div>
+                                <td class="order-customer-cell" data-label="Khách hàng">
+                                    <strong class="order-customer-name">{{ $order->name ?? $order->customer_name }}</strong>
+                                    <span class="order-secondary">{{ $order->phone }}</span>
+                                    @if($order->user_id)
+                                        <button type="button" class="order-chat-link" data-user-id="{{ $order->user_id }}" data-customer-name="{{ $order->name ?? $order->customer_name }}" onclick="openChatWithUser(Number(this.dataset.userId), this.dataset.customerName)">@include('partials.icon', ['name' => 'chat', 'size' => '1em']) Nhắn tin</button>
+                                    @endif
                                 </td>
-
-                                {{-- Sản phẩm trong đơn --}}
-                                <td>
+                                <td class="order-products-cell" data-label="Sản phẩm">
                                     <div class="order-items-snippet">
-                                        @foreach($order->items as $item)
-                                            <div class="item-line small text-truncate" style="max-width: 260px;" title="{{ $item->product_name ?? $item->perfume?->name ?? 'Nước hoa' }}">
-                                                <span class="text-dark font-weight-500">{{ $item->product_name ?? $item->perfume?->name ?? 'Sản phẩm' }}</span>
-                                                <span class="text-muted">× {{ $item->quantity }}</span>
-                                                @if($item->volume_ml)
-                                                    <span class="text-primary" style="font-size: 0.72rem;">({{ $item->volume_ml }}ml)</span>
-                                                @endif
+                                        @foreach($order->items->take(2) as $item)
+                                            <div class="order-product-line">
+                                                <span>{{ $item->product_name ?? $item->perfume?->name ?? 'Sản phẩm' }}</span>
+                                                <span class="order-secondary">× {{ $item->quantity }} @if($item->volume_ml) · {{ $item->volume_ml }} ml @endif</span>
                                             </div>
                                         @endforeach
-                                    </div>
-                                </td>
-
-                                {{-- Tổng tiền --}}
-                                <td class="text-right font-weight-bold text-dark">
-                                    {{ number_format($order->total_price, 0, ',', '.') }} đ
-                                </td>
-
-                                {{-- COD cần thu --}}
-                                <td class="text-right text-muted font-weight-500">
-                                    @if(in_array($order->payment_status, ['paid', 'paid_momo']))
-                                        <span class="text-success">0 đ</span>
-                                    @else
-                                        {{ number_format($order->total_price, 0, ',', '.') }} đ
-                                    @endif
-                                </td>
-
-                                {{-- Tên khách hàng & SĐT --}}
-                                <td>
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <span class="font-weight-bold text-dark" style="font-size: 0.88rem;">{{ $order->name ?? $order->customer_name }}</span>
-                                        @if($order->user_id)
-                                            <button type="button" class="btn btn-sm btn-outline-success py-0 px-1 ml-1" style="font-size: 0.72rem; border-radius: 4px;" onclick="openChatWithUser({{ $order->user_id }}, '{{ addslashes($order->name ?? $order->customer_name) }}')" title="Nhắn tin cho khách hàng này">
-                                                @include('partials.icon', ['name' => 'chat', 'size' => '1em']) Chat
-                                            </button>
+                                        @if($order->items->count() > 2)
+                                            <a class="order-more-items" href="{{ route('admin.orders.show', $order->id) }}">+ {{ $order->items->count() - 2 }} sản phẩm khác</a>
                                         @endif
                                     </div>
-                                    <div class="small text-muted"><i class="fa-solid fa-phone mr-1"></i>{{ $order->phone }}</div>
                                 </td>
-
-                                {{-- Mã vận đơn GHN --}}
-                                <td>
+                                <td class="order-payment-cell" data-label="Thanh toán">
+                                    <strong class="order-amount">{{ number_format($order->total_price, 0, ',', '.') }} đ</strong>
+                                    <span class="badge {{ $paymentBadgeClass }} order-payment-badge">{{ $paymentLabels[$order->payment_status] ?? strtoupper($order->status) }}</span>
+                                    <span class="order-secondary">COD cần thu: <span class="order-cod">{{ number_format(in_array($order->payment_status, ['paid', 'paid_momo']) ? 0 : $order->total_price, 0, ',', '.') }} đ</span></span>
+                                </td>
+                                <td class="order-shipping-cell" data-label="Vận chuyển">
+                                    <span class="order-shipping-status" style="color: {{ $dotColor }}"><span class="order-status-dot" aria-hidden="true"></span>{{ $shippingLabels[$shStatus] ?? $shStatus }}</span>
                                     @if($order->ghn_order_code)
-                                        <span class="badge badge-light border text-primary font-weight-bold px-2 py-1" style="font-family: monospace;">
-                                            {{ $order->ghn_order_code }}
-                                        </span>
+                                        <span class="order-secondary">GHN Express</span>
+                                        <span class="order-tracking-code">{{ $order->ghn_order_code }}</span>
                                     @else
-                                        <span class="text-muted small">Chưa tạo vận đơn</span>
+                                        <span class="order-secondary">Chưa tạo vận đơn</span>
                                     @endif
                                 </td>
-
-                                {{-- Trạng thái giao hàng (Badge màu tương ứng) --}}
-                                <td>
-                                    @php
-                                        $shStatus = $order->shipping_status ?? 'pending';
-                                        $dotColor = match($shStatus) {
-                                            'delivered' => '#16a34a',
-                                            'delivering', 'transporting', 'sorting', 'picked' => '#f59e0b',
-                                            'ready_to_pick', 'picking' => '#06b6d4',
-                                            'return', 'returning', 'returned' => '#ea580c',
-                                            'cancelled' => '#dc2626',
-                                            default => '#64748b'
-                                        };
-                                    @endphp
-                                    <span class="d-inline-flex align-items-center gap-1 small font-weight-bold" style="color: {{ $dotColor }};">
-                                        <span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:{{ $dotColor }}; margin-right:4px;"></span>
-                                        {{ $shippingLabels[$shStatus] ?? $shStatus }}
-                                    </span>
-                                </td>
-
-                                {{-- Đơn vị VC --}}
-                                <td class="small font-weight-bold text-secondary">
-                                    {{ $order->ghn_order_code ? 'GHN Express' : '—' }}
-                                </td>
-
-                                {{-- Nút thao tác --}}
-                                <td class="text-center">
-                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="btn btn-outline-primary btn-sm px-2 py-1" title="Xem chi tiết đơn hàng">
-                                        <i class="fa-solid fa-eye"></i> Chi tiết
-                                    </a>
+                                <td class="order-actions-cell">
+                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="order-detail-link" aria-label="Chi tiết đơn hàng {{ $order->id }}">Chi tiết <span aria-hidden="true">→</span></a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="11" class="text-center py-5 text-muted">
+                                <td colspan="7" class="text-center text-muted order-empty-state">
                                     <i class="fa-solid fa-box-open mb-2" style="font-size: 2.2rem; opacity: 0.3;"></i>
                                     <div>Không tìm thấy đơn hàng nào phù hợp với bộ lọc hiện tại.</div>
                                 </td>
@@ -318,78 +242,80 @@
 </div>
 
 <style>
-/* ── LAB 8: TABS & ORDER MANAGEMENT LUXURY STYLES ── */
-.order-tabs-wrapper {
-    overflow-x: auto;
-    padding-bottom: 4px;
+.admin-orders-container{min-width:0;max-width:100%;font-size:13px}
+.admin-orders-container .order-tabs-wrapper{margin-bottom:18px!important}
+.admin-orders-container .nav-tabs-scroll{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.admin-orders-container .order-tab-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:10px 13px;background:#fff;border:1px solid #efdee5;border-radius:10px;color:#765765;font-size:12px;font-weight:600;text-decoration:none;line-height:1.4}
+.admin-orders-container .order-tab-btn:hover{background:#fff3f7;border-color:#dba9bb}
+.admin-orders-container .order-tab-btn.active{background:#a83d5d;border-color:#a83d5d;color:#fff}
+.admin-orders-container .tab-badge{display:grid;place-items:center;min-width:24px;height:24px;padding:0 6px;border-radius:7px;background:#f9edf2;color:#9c4968;font-size:11px;font-variant-numeric:tabular-nums}
+.admin-orders-container .tab-badge.badge-active{background:#ffffff30;color:#fff}
+.admin-orders-container .filter-box{padding:20px;border-radius:12px;margin-bottom:20px!important}
+.order-filter-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.order-filter-field{grid-column:span 3;min-width:0}
+.order-filter-search{grid-column:span 6}
+.order-filter-limit{grid-column:span 3}
+.order-filter-sort{grid-column:span 3}
+.order-filter-field label{display:block;margin:0 0 7px;color:#765765;font-size:12px;font-weight:600;line-height:1.4}
+.boutique-admin .admin-orders-container .form-control{height:42px;min-height:42px;width:100%;font-size:13px;padding:9px 11px;border-radius:8px;line-height:1.4;color:#49343e;background-color:#fff;min-width:0}
+.order-filter-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid #f1e3e9;margin-top:19px;padding-top:16px}
+.order-result-count{color:#8d7480;font-size:12px}
+.order-result-count strong{color:#a83d5d;font-variant-numeric:tabular-nums}
+.order-filter-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.boutique-admin .order-filter-actions .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;min-height:40px;padding:0 14px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap}
+.admin-orders-container .table-responsive{max-width:100%;overflow:visible}
+.admin-orders-container .order-table-populated{width:100%;min-width:0;table-layout:fixed}
+.boutique-admin .admin-orders-container .table-admin thead th{padding:14px 10px;white-space:normal;font-size:11px;line-height:1.4;letter-spacing:.03em;border-top:0}
+.boutique-admin .admin-orders-container .table-admin td{padding:16px 10px;vertical-align:top;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+.order-table-populated .order-select-cell{width:4%;text-align:center}
+.order-table-populated .order-meta-cell{width:13%}
+.order-table-populated .order-customer-cell{width:18%}
+.order-table-populated .order-products-cell{width:22%}
+.order-table-populated .order-payment-cell{width:17%}
+.order-table-populated .order-shipping-cell{width:18%}
+.order-table-populated .order-actions-cell{width:8%;text-align:right}
+.order-select-all{margin:0;display:inline-flex;align-items:center;gap:8px}
+.order-select-all span{display:none}
+.order-select-all input,.order-checkbox{width:16px;height:16px;accent-color:#a83d5d;cursor:pointer}
+.order-code,.order-customer-name,.order-amount{display:block;color:#38282e;font-weight:600}
+.order-code{white-space:nowrap}
+.order-secondary{display:block;font-size:11px;color:#82717a;margin-top:4px;line-height:1.5}
+.order-amount,.order-cod{font-variant-numeric:tabular-nums}
+.order-payment-badge{display:inline-block;max-width:100%;white-space:normal;font-size:10px;font-weight:500;line-height:1.4;margin-top:6px;padding:3px 6px}
+.order-product-line+.order-product-line{margin-top:8px}
+.order-product-line .order-secondary{margin-top:2px}
+.order-chat-link,.order-more-items{display:inline-flex;align-items:center;gap:4px;background:none;border:0;padding:0;color:#a83d5d;font-size:11px;margin-top:6px}
+.order-shipping-status{display:flex;align-items:baseline;gap:5px;font-size:11px;font-weight:600}
+.order-status-dot{flex:0 0 6px;width:6px;height:6px;border-radius:50%;background:currentColor}
+.order-tracking-code{display:block;font-family:monospace;font-size:11px;margin-top:2px;color:#735864}
+.order-detail-link{display:inline-flex;align-items:center;justify-content:center;gap:4px;white-space:nowrap;color:#a83d5d;font-size:11px;font-weight:600;padding:5px 0}
+.order-detail-link:hover,.order-chat-link:hover,.order-more-items:hover{color:#7f2947;text-decoration:underline}
+@media(max-width:1100px){
+    .admin-orders-container .order-table-populated,.order-table-populated thead,.order-table-populated tbody{display:block;width:100%}
+    .order-table-populated thead tr{display:block}
+    .order-table-populated thead th:not(.order-select-cell){display:none}
+    .boutique-admin .admin-orders-container .order-table-populated thead .order-select-cell{display:block;width:100%;text-align:left;padding:14px 18px}
+    .order-select-all span{display:inline}
+    .order-table-populated .order-row-item{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 24px;padding:18px;position:relative;border-top:1px solid #efdee5}
+    .boutique-admin .admin-orders-container .order-row-item td{display:block;width:auto;padding:0;border:0;min-width:0}
+    .order-row-item .order-select-cell{position:absolute;right:18px;top:20px}
+    .order-row-item .order-meta-cell{grid-column:1/-1;padding-right:30px!important}
+    .order-meta-cell time br{display:none}
+    .order-meta-cell time{word-spacing:4px}
+    .order-row-item td[data-label]::before{content:attr(data-label);display:block;color:#9b7b8b;font-size:10px;font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+    .order-row-item .order-actions-cell{grid-column:1/-1;text-align:right;border-top:1px solid #f3e8ed!important;padding-top:10px!important}
+    .order-detail-link{padding:7px 12px;border:1px solid #ecd1dc;border-radius:6px}
 }
-.nav-tabs-scroll {
-    display: flex;
-    gap: 8px;
-    white-space: nowrap;
-}
-.order-tab-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 30px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #475569;
-    text-decoration: none !important;
-    transition: all 0.2s ease;
-}
-.order-tab-btn:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-    color: #0f172a;
-}
-.order-tab-btn.active {
-    background: #db2777;
-    border-color: #db2777;
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(219, 39, 119, 0.25);
-}
-.tab-badge {
-    background: #f1f5f9;
-    color: #475569;
-    padding: 2px 8px;
-    border-radius: 9999px;
-    font-size: 0.74rem;
-    font-weight: 700;
-}
-.tab-badge.badge-active {
-    background: rgba(255, 255, 255, 0.28);
-    color: #ffffff;
-}
-
-/* Bulk Action Bar */
-.bulk-action-bar {
-    background: #fff1f2;
-    border: 1px solid #fecdd3;
-    border-radius: 12px;
-    padding: 12px 18px;
-    margin-bottom: 16px;
-    animation: fadeIn 0.2s ease;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.table-admin th {
-    border-top: none;
-    font-weight: 600;
-}
-.table-admin td {
-    vertical-align: middle;
-}
-.order-row-item:hover {
-    background-color: #fdf2f8 !important;
-}
+@media(max-width:420px){.order-table-populated .order-row-item{gap:14px}.order-detail-link{width:100%}}
+.admin-orders-container .order-row-item:hover{background:#fff8fa}
+.boutique-admin .admin-orders-container .table-admin td.order-empty-state{padding:54px 20px;line-height:1.8;border-top:0;background:#fff}
+.admin-orders-container .order-empty-state i{display:block;margin:0 auto 14px!important;color:#c492a5;opacity:1!important}
+.admin-orders-container .bulk-action-bar{background:#fff1f5;border:1px solid #edccd8;border-radius:12px;padding:16px;margin-bottom:18px}
+.admin-orders-container .bulk-action-bar .d-flex{gap:10px;flex-wrap:wrap}
+@media(min-width:1600px){.admin-orders-container .nav-tabs-scroll{grid-template-columns:repeat(8,minmax(0,1fr))}}
+@media(max-width:1150px){.order-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.order-filter-field{grid-column:span 1}.order-filter-search{grid-column:1/-1}}
+@media(max-width:600px){.admin-orders-container .nav-tabs-scroll{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-orders-container .filter-box{padding:16px}.order-filter-grid{gap:14px 10px}.order-filter-footer{align-items:stretch;flex-direction:column}.order-filter-actions .btn{flex:1}.boutique-admin .admin-orders-container .form-control{font-size:14px}}
+@media(max-width:380px){.order-filter-field{grid-column:1/-1}}
 </style>
 
 <script>

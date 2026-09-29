@@ -7,7 +7,7 @@
 {{-- Thống kê nhanh --}}
 <div class="row mb-2">
     <div class="col-md-4 mb-3">
-        <div class="admin-card py-3 px-4 mb-0" style="border-left: 4px solid #2563eb;">
+        <div class="admin-card py-3 px-4 mb-0" >
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Tổng sản phẩm</div>
@@ -18,7 +18,7 @@
         </div>
     </div>
     <div class="col-md-4 mb-3">
-        <div class="admin-card py-3 px-4 mb-0" style="border-left: 4px solid #10b981;">
+        <div class="admin-card py-3 px-4 mb-0" >
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Đang hoạt động</div>
@@ -29,7 +29,7 @@
         </div>
     </div>
     <div class="col-md-4 mb-3">
-        <div class="admin-card py-3 px-4 mb-0" style="border-left: 4px solid #ef4444;">
+        <div class="admin-card py-3 px-4 mb-0" >
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Sắp hết hàng (≤5)</div>
@@ -67,27 +67,23 @@
 
     {{-- Table --}}
     <div class="table-responsive">
-        <table class="table table-hover table-admin">
+        <table class="table table-hover table-admin studio-product-table">
             <thead>
                 <tr>
-                    <th width="70">ID</th>
-                    <th>Sản phẩm</th>
-                    <th>Thương hiệu</th>
-                    <th>Danh mục</th>
+                    <th class="studio-product-column">Sản phẩm</th>
                     <th>Giá niêm yết</th>
                     <th>Tồn kho</th>
                     <th>Trạng thái</th>
-                    <th width="200" class="text-center">Thao tác</th>
+                    <th class="text-center studio-product-actions">Thao tác</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($products as $product)
                     <tr>
-                        <td class="font-weight-bold text-muted">#{{ $product->id }}</td>
                         <td>
                             <div class="d-flex align-items-center">
                                 @if($product->image_url)
-                                    <img src="{{ asset($product->image_url) }}" alt="{{ $product->name }}" style="width: 42px; height: 42px; object-fit: cover; border-radius: 6px;" class="mr-3 border">
+                                    <img src="{{ asset($product->image_url) }}" alt="{{ $product->name }}" style="width: 48px; height: 60px; object-fit: contain; border-radius: 8px; flex-shrink:0;" loading="lazy" class="mr-3 border">
                                 @else
                                     <div class="mr-3 border rounded bg-light d-flex align-items-center justify-content-center text-muted" style="width: 42px; height: 42px;">
                                         <i class="fa-solid fa-image"></i>
@@ -95,21 +91,18 @@
                                 @endif
                                 <div>
                                     <strong style="color:#0f172a;">{{ $product->name }}</strong>
+                                    <div class="studio-product-meta">#{{ $product->id }} · {{ $product->brand }} · {{ optional($product->category)->name ?? 'Chưa phân loại' }}</div>
                                     <div class="text-muted" style="font-size:0.8rem;">
                                         {{ $product->volume_ml }}ml · {{ $product->weight ? $product->weight . 'g · ' : '' }}{{ ucfirst($product->gender) }}
                                     </div>
                                 </div>
                             </div>
                         </td>
-                        <td>{{ $product->brand }}</td>
-                        <td>
-                            <span class="badge badge-light border">{{ optional($product->category)->name ?? 'Chưa phân loại' }}</span>
-                        </td>
                         <td class="font-weight-bold text-primary">
                             {{ number_format($product->price, 0, ',', '.') }}₫
                         </td>
                         <td>
-                            <div class="d-flex flex-column" style="gap: 3px; font-size: 0.8rem; min-width: 135px;">
+                            <div class="d-flex flex-column" style="gap: 3px; font-size: 0.8rem; min-width: 0;">
                                 <div class="d-flex align-items-center justify-content-between">
                                     <span class="text-muted"><i class="fa-solid fa-vial mr-1 text-info"></i>10ml:</span>
                                     <span class="badge {{ $product->stock_10ml > 5 ? 'badge-light border' : 'badge-danger' }} font-weight-bold ml-1">{{ $product->stock_10ml }} chai</span>
@@ -149,7 +142,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="text-center py-5 text-muted">
+                        <td colspan="5" class="text-center py-5 text-muted">
                             <i class="fa-regular fa-folder-open mb-2" style="font-size:2rem; color:#cbd5e1; display:block;"></i>
                             Không tìm thấy sản phẩm nào.
                         </td>

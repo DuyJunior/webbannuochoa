@@ -70,10 +70,20 @@
         </section>
     @else
         <div class="ht-live-empty">
-            <div class="ht-live-empty-icon" aria-hidden="true">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</div>
-            <h2>Hẹn bạn ở buổi phát tiếp theo</h2>
-            <p>Hiện chưa có lịch livestream. Trong lúc chờ đợi, bạn có thể khám phá những mùi hương được yêu thích tại Soopi.</p>
-            <a class="ht-live-button" href="{{ route('home') }}#san-pham">Khám phá nước hoa →</a>
+            <div class="ht-live-empty-copy">
+                <span class="ht-live-eyebrow">Studio đang chuẩn bị</span>
+                <h2>Hẹn bạn ở buổi phát <em>tiếp theo.</em></h2>
+                <p>Chưa có lịch livestream mới. Trong lúc chờ, hãy tìm mùi hương hợp với mình hoặc khám phá những chai nước hoa được yêu thích tại Soopi.</p>
+                <div class="ht-live-empty-actions">
+                    <a class="ht-live-button" href="{{ route('store.quiz') }}">Chọn hương của bạn →</a>
+                    <a class="ht-live-text-link" href="{{ route('home') }}#san-pham">Xem bộ sưu tập</a>
+                </div>
+                <span class="ht-live-empty-footnote">✿ Một chút hương, một chút thương.</span>
+            </div>
+            <div class="ht-live-empty-visual">
+                <img src="{{ asset('images/perfume-hero.jpg') }}" alt="Bộ sưu tập nước hoa và hoa trắng của Soopi" loading="lazy">
+                <span>THE SOOPI LIVE EDIT</span>
+            </div>
         </div>
     @endif
 </section>
