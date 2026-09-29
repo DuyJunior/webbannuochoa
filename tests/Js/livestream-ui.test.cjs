@@ -95,7 +95,9 @@ test('viewer attaches existing video without waiting for a new track event', asy
             RoomEvent: { TrackSubscribed: 'subscribed', TrackUnsubscribed: 'unsubscribed',
                 Reconnecting: 'reconnecting', Reconnected: 'reconnected', Disconnected: 'disconnected' },
         }, addEventListener() {} },
-        document: { getElementById: (id) => elements[id], querySelector: () => ({ content: 'csrf' }) },
+        document: { getElementById: (id) => elements[id], querySelector: () => ({ content: 'csrf' }), dispatchEvent() {} },
+        Event: class Event { constructor(type) { this.type = type; } },
+        sessionStorage: { getItem: () => null },
         fetch: async () => ({ ok: true, json: async () => ({ server_url: 'wss://test', participant_token: 'token' }) }),
     };
     vm.runInNewContext(script('livestream-viewer.js'), context);

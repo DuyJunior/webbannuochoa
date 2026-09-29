@@ -1,0 +1,169 @@
+name: Docker CI and VPS deployment
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy after tests/build (also requires DEPLOY_ENABLED=true)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# Never interrupt an in-progress production migration or deployment.
+concurrency:
+  group: soopi-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Build PHP test image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          target: test
+          load: true
+          tags: soopi:test
+          cache-from: type=gha,scope=php-test
+          cache-to: type=gha,scope=php-test,mode=max
+      - name: PHP tests in Docker
+        run: docker run --rm soopi:test
+      - name: JavaScript tests in Docker
+        run: docker run --rm -v "$PWD:/app:ro" -w /app node:22-bookworm-slim node --test tests/Js/livestream-ui.test.cjs
+      - name: Check deployment scripts
+        run: |
+          bash -n docker/deploy.sh docker/setup-proxy.sh
+          docker run --rm -v "$PWD:/mnt:ro" koalaman/shellcheck:v0.10.0 /mnt/docker/deploy.sh /mnt/docker/setup-proxy.sh
+      - name: Build production image for integration test
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          target: production
+          load: true
+          tags: soopi:ci
+          cache-from: type=gha,scope=production
+          cache-to: type=gha,scope=production,mode=max
+      - name: MySQL, migration, login and assets smoke test
+        env:
+          APP_IMAGE: soopi:ci
+          APP_PORT: '18002'
+          COMPOSE_PROJECT_NAME: soopi-ci
+        run: |
+          set -euo pipefail
+          docker run --rm -v "$PWD:/setup" --entrypoint php soopi:ci docker/init-env.php local
+          docker compose -f compose.yaml -f compose.local.yaml up -d --no-build --wait --wait-timeout 180
+          docker run --rm --network host -v "$PWD/.github/scripts/smoke.php:/tmp/smoke.php:ro" --entrypoint php soopi:ci /tmp/smoke.php http://localhost:18002
+      - name: Clean up isolated CI containers
+        if: always()
+        env:
+          APP_IMAGE: soopi:ci
+          APP_PORT: '18002'
+          COMPOSE_PROJECT_NAME: soopi-ci
+        run: |
+          if [ -f .env ]; then
+            docker compose -f compose.yaml -f compose.local.yaml down --volumes
+          fi
+
+  publish:
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    outputs:
+      digest: ${{ steps.image.outputs.digest }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+      - name: Docker Hub login
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Publish tested production image
+        id: image
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          target: production
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/webbannuochoa:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/webbannuochoa:main
+          cache-from: type=gha,scope=production
+          cache-to: type=gha,scope=production,mode=max
+
+  deploy:
+    needs: publish
+    if: >-
+      github.ref == 'refs/heads/main' && vars.DEPLOY_ENABLED == 'true' &&
+      (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy))
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    concurrency:
+      group: soopi-production
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Set up pinned SSH connection
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_HOST_KEY: ${{ vars.VPS_SSH_HOST_KEY }}
+          VPS_PORT: ${{ vars.VPS_PORT || '22' }}
+        run: |
+          set -euo pipefail
+          [[ "$VPS_HOST" =~ ^[a-zA-Z0-9.:-]+$ ]]
+          [[ "$VPS_USERNAME" =~ ^[a-z_][a-z0-9_-]*$ ]]
+          [[ "$VPS_PORT" =~ ^[0-9]+$ ]]
+          [[ "$VPS_HOST_KEY" == ssh-ed25519\ * ]]
+          install -d -m 700 "$HOME/.ssh"
+          printf '%s\n' "$VPS_SSH_KEY" > "$HOME/.ssh/soopi_key"
+          chmod 600 "$HOME/.ssh/soopi_key"
+          printf 'soopi-vps %s\n' "$VPS_HOST_KEY" > "$HOME/.ssh/known_hosts"
+          cat > "$HOME/.ssh/config" <<EOF
+          Host soopi-vps
+            HostName $VPS_HOST
+            User $VPS_USERNAME
+            Port $VPS_PORT
+            IdentityFile ~/.ssh/soopi_key
+            IdentitiesOnly yes
+            HostKeyAlias soopi-vps
+            StrictHostKeyChecking yes
+            BatchMode yes
+            ConnectTimeout 15
+          EOF
+      - name: Upload project-specific release and deploy by digest
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          IMAGE_DIGEST: ${{ needs.publish.outputs.digest }}
+        run: |
+          set -euo pipefail
+          [[ "$DOCKERHUB_USERNAME" =~ ^[a-z0-9][a-z0-9_-]*$ ]]
+          [[ "$IMAGE_DIGEST" =~ ^sha256:[a-f0-9]{64}$ ]]
+          release="/home/hieu/soopi/releases/$GITHUB_SHA"
+          # The validated release path is intentionally expanded on the runner.
+          # shellcheck disable=SC2029
+          ssh soopi-vps "test \"\$(cat /home/hieu/soopi/.deployment-owner)\" = duyd92689-debug/webbannuochoa && test ! -L /home/hieu/soopi && mkdir -p '$release/docker'"
+          scp compose.yaml compose.host.yaml "soopi-vps:$release/"
+          scp docker/deploy.sh "soopi-vps:$release/docker/"
+          image="docker.io/$DOCKERHUB_USERNAME/webbannuochoa@$IMAGE_DIGEST"
+          # Only validated image/path/username values are expanded on the runner.
+          # shellcheck disable=SC2029
+          printf '%s' "$DOCKERHUB_TOKEN" | ssh soopi-vps "bash '$release/docker/deploy.sh' '$image' '$release' '$DOCKERHUB_USERNAME'"
+      - name: Remove runner SSH key
+        if: always()
+        run: rm -f "$HOME/.ssh/soopi_key"

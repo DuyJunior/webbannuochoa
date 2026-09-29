@@ -2,6 +2,14 @@
 
 Laravel 12 · PHP 8.2+ · Blade/Vite · SQLite (demo) · Groq AI chat.
 
+## Chạy hoàn toàn bằng Docker (khuyến nghị)
+
+Không cần cài PHP, Composer, Node hay XAMPP trên máy. Đã bổ sung Compose cho
+local và VPS (MySQL, volume giữ dữ liệu/ảnh, Caddy HTTPS), cùng target chạy test
+trong Docker. Xem [hướng dẫn Docker local và VPS](docs/docker-vps.md).
+CI/CD cho `soopi.site`: [GitHub Actions và VPS hiện tại](docs/github-actions.md).
+Các lệnh cài PHP trực tiếp bên dưới là cách chạy cũ, không cần dùng khi chạy Docker.
+
 ## Chạy trên máy Windows khác
 
 Cần Git, PHP với pdo_sqlite/sqlite3/mbstring/openssl/curl, Composer, Node.js/npm trên PATH.
@@ -106,4 +114,4 @@ Phạm vi còn lại: quy trình khách yêu cầu đổi trả/hoàn tiền th�
 - Máy đang có dữ liệu: sao lưu bằng `php scripts/backup-sqlite.php`, chạy `php artisan migrate --force`, sau đó `npm ci` và `npm run build`. Dừng Vite của đúng dự án trước `npm ci` nếu Windows báo file native đang bị khóa. Không chạy `migrate:fresh`.
 - Thư mục controller đã chuẩn hóa thành `app/Http/Controllers/Admin` để khớp namespace trên Linux. Dependency frontend có lock đa nền tảng, không còn khai báo trực tiếp package chỉ dành cho Windows.
 - Đã thêm Docker nhiều stage, Nginx/PHP-FPM, worker AI, scheduler, kiểm tra cấu hình production/TLS và ProductionSeeder chạy lại không ghi đè tài khoản/tồn kho. Cấu hình mẫu ở `docker/render.env.example`, không dùng `.env` local làm cấu hình production.
-- **Mới chuẩn bị code, chưa đưa online.** Docker chưa cài trên máy kiểm thử nên chưa xác nhận image chạy trên Linux, MySQL/Aiven hay Render; xem tài liệu Lab 10 để biết phần phải nghiệm thu sau.
+- **Chưa đưa online.** Đã build/chạy Linux image và MySQL bằng Docker Desktop, bổ sung cấu hình VPS Compose; xem [kết quả kiểm tra Docker](docs/docker-vps.md). Render/Aiven và HTTPS trên VPS thật chưa được nghiệm thu.

@@ -1,0 +1,89 @@
+name: ${COMPOSE_PROJECT_NAME:-soopi}
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  app:
+    image: ${APP_IMAGE:-soopi:local}
+    build:
+      context: .
+      target: production
+    restart: unless-stopped
+    stop_grace_period: 60s
+    env_file: ${APP_ENV_FILE:-.env}
+    environment:
+      APP_DEPLOYMENT: compose
+      APP_ENV: production
+      APP_DEBUG: "false"
+      DEMO_MODE: "false"
+      LOCAL_DEMO_SEED: "false"
+      APP_KEY: ${APP_KEY:?Generate .env with docker/init-env.php first}
+      APP_URL: ${APP_URL:?Set APP_URL}
+      TRUSTED_PROXIES: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_DATABASE: ${DB_DATABASE:-soopi}
+      DB_USERNAME: ${DB_USERNAME:-soopi}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      DB_URL: ""
+      DB_SOCKET: ""
+      MYSQL_ATTR_SSL_CA: ""
+      SESSION_DRIVER: database
+      SESSION_SECURE_COOKIE: "true"
+      CACHE_STORE: database
+      QUEUE_CONNECTION: database
+      DB_QUEUE_RETRY_AFTER: "90"
+      LOG_CHANNEL: stderr
+      PORT: "10000"
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      RUN_SEEDERS: ${RUN_SEEDERS:-false}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - app_storage:/var/www/html/storage
+      - product_uploads:/var/www/html/public/images/products
+      - video_uploads:/var/www/html/public/images/videos
+      - review_uploads:/var/www/html/public/images/reviews
+    networks:
+      - frontend
+      - database
+    logging: *logging
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    stop_grace_period: 60s
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-soopi}
+      MYSQL_USER: ${DB_USERNAME:-soopi}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql --protocol=TCP -h 127.0.0.1 -u\"$$MYSQL_USER\" \"$$MYSQL_DATABASE\" -e 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+    logging: *logging
+
+networks:
+  frontend:
+  database:
+    internal: true
+
+volumes:
+  mysql_data:
+  app_storage:
+  product_uploads:
+  video_uploads:
+  review_uploads:

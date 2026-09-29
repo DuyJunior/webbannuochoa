@@ -1,0 +1,13 @@
+# For the existing host Nginx. Do not combine with compose.vps.yaml (Caddy).
+services:
+  app:
+    ports:
+      - "127.0.0.1:18082:10000"
+    mem_limit: 512m
+    cpus: 1.0
+  db:
+    mem_limit: 768m
+    cpus: 1.0
+    command:
+      - --innodb-buffer-pool-size=128M
+      - --max-connections=50

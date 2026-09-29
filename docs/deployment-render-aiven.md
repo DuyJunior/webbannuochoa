@@ -1,5 +1,9 @@
 # Lab 10 — Gói triển khai Render + Aiven MySQL
 
+> Cập nhật 29/09/2026: đã chạy Docker local với MySQL và có hướng triển khai
+> [VPS bằng Compose](docker-vps.md). Các ghi chú chưa kiểm chứng bên dưới là trạng
+> thái của bài lab Render/Aiven ban đầu; Render/Aiven vẫn chưa được triển khai.
+
 Gói này chuẩn bị mã và cấu hình để bạn triển khai sau. Chưa tạo dịch vụ, chưa đẩy mã lên GitHub, chưa chạy migration trên Aiven và chưa triển khai website online. Máy chuẩn bị mã chưa có Docker nên việc build/chạy image và kết nối Aiven thực tế vẫn cần được kiểm chứng.
 
 ## Phạm vi và chi phí

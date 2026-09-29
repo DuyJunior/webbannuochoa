@@ -1,0 +1,12 @@
+services:
+  app:
+    environment:
+      APP_ENV: local
+      APP_URL: http://localhost:${APP_PORT:-8002}
+      SESSION_SECURE_COOKIE: "false"
+      TRUSTED_PROXIES: ""
+      DEMO_MODE: "true"
+      LOCAL_DEMO_SEED: "true"
+      RUN_SEEDERS: "false"
+    ports:
+      - "127.0.0.1:${APP_PORT:-8002}:10000"

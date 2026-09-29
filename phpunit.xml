@@ -19,6 +19,8 @@
     </source>
     <php>
         <env name="APP_ENV" value="testing" force="true"/>
+        <!-- Public test-only key; tests never depend on a developer's .env. -->
+        <env name="APP_KEY" value="01234567890123456789012345678901" force="true"/>
         <env name="DEMO_MODE" value="false" force="true"/>
         <env name="AI_CHAT_ENABLED" value="false" force="true"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
