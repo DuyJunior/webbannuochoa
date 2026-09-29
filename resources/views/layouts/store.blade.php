@@ -99,7 +99,6 @@
         @unless(request()->routeIs('account.*', 'payment.*', 'user.payment.*'))
             @include('partials.social-float')
             @include('partials.discount-popup')
-            @include('partials.lucky-wheel')
         @endunless
         @include('partials.chat_popup')
         @include('partials.video_modal')

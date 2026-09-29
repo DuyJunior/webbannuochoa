@@ -156,7 +156,10 @@ class NativeLivestreamTest extends TestCase
             ->assertDontSee('ht-spin-floating-btn')
             ->assertDontSee('ht-social-float')
             ->assertSee('livestream-state.js');
-        $this->get(route('home'))->assertOk()->assertSee('ht-spin-floating-btn');
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertDontSee('ht-spin-floating-btn')
+            ->assertSee('ht-social-float');
     }
     private function claims(string $token): array
     {

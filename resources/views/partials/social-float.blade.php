@@ -4,8 +4,9 @@
         <a href="https://zalo.me/0123456789" target="_blank" rel="noopener"
            class="ht-float-btn ht-float-zalo"
            aria-label="Chat Zalo với Soopi">
-            <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
-                <text x="3" y="29" font-size="26" font-family="Arial" font-weight="bold" fill="white">Z</text>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                <path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9.5 9.5 0 0 1-4-.9L3 21l1.9-5.5a9.5 9.5 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8v.5Z"/>
+                <path d="M8 10h9M8 14h6"/>
             </svg>
             <span class="ht-float-label">Zalo</span>
         </a>
@@ -32,7 +33,7 @@
 /* ── FLOATING SOCIAL BUTTONS ── */
 .ht-social-float {
     position: fixed;
-    left: 20px;
+    right: 24px;
     bottom: 100px;
     z-index: 9000;
     display: flex;
@@ -42,16 +43,18 @@
 .ht-social-float-inner {
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
     gap: 10px;
     animation: ht-float-in .5s cubic-bezier(0.34,1.56,0.64,1) both;
     animation-delay: 1.2s;
 }
 @keyframes ht-float-in {
-    from { opacity: 0; transform: translateX(-30px); }
+    from { opacity: 0; transform: translateX(30px); }
     to   { opacity: 1; transform: translateX(0); }
 }
 .ht-float-btn {
     display: flex;
+    flex-direction: row-reverse;
     align-items: center;
     gap: 0;
     width: 48px;
@@ -67,8 +70,9 @@
     position: relative;
     white-space: nowrap;
 }
-.ht-float-btn:hover {
-    width: 130px;
+.ht-float-btn:hover,
+.ht-float-btn:focus-visible {
+    width: 148px;
     border-radius: 24px;
     box-shadow: 0 8px 24px rgba(0,0,0,.22);
     transform: scale(1.04);
@@ -88,12 +92,13 @@
     max-width: 0;
     overflow: hidden;
     transition: opacity .2s .05s, max-width .28s;
-    padding-right: 0;
+    padding-left: 0;
 }
-.ht-float-btn:hover .ht-float-label {
+.ht-float-btn:hover .ht-float-label,
+.ht-float-btn:focus-visible .ht-float-label {
     opacity: 1;
     max-width: 90px;
-    padding-right: 14px;
+    padding-left: 14px;
 }
 .ht-float-zalo      { background: #0068FF; }
 .ht-float-messenger { background: linear-gradient(135deg, #00B2FF, #006AFF, #7B28FF); }
@@ -102,7 +107,7 @@
 /* Shift on mobile to avoid overlap with chat button */
 @media (max-width: 640px) {
     .ht-social-float {
-        left: 12px;
+        right: 16px;
         bottom: 90px;
     }
     .ht-float-btn { width: 42px; height: 42px; }
