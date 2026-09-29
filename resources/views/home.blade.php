@@ -442,7 +442,15 @@
     align-self: flex-start;
     margin-bottom: 12px;
 }
-.exp-banner-card h3 { font: 600 22px Georgia, serif; color: #2b1f26; margin: 0 0 8px; }
+.boutique-store .exp-banner-card h3 {
+    font-family: var(--ht-sans);
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.45;
+    letter-spacing: normal;
+    color: #2b1f26;
+    margin: 0 0 8px;
+}
 .exp-banner-card p { font-size: 14px; color: #6d5b64; line-height: 1.55; margin: 0 0 20px; }
 
 /* ── LUXURY FRAGRANCE SHORTS SHOWCASE ── */
