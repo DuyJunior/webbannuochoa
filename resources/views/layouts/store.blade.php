@@ -55,6 +55,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @unless(request()->routeIs('livestream.show'))<link rel="stylesheet" href="{{ asset('css/livestream-follow.css') }}">@endunless
     @stack('styles')
+    {{-- Load the shared theme before the browser paints the storefront. --}}
+    @vite('resources/css/boutique.css')
+    <link rel="stylesheet" href="{{ asset('css/store-experience.css') }}">
 </head>
 
 <body class="store-page boutique-store" style="--ht-auth-image:url('{{ asset('images/products/narciso-musc-noir-rose.jpg') }}')">
@@ -101,9 +104,6 @@
         @include('partials.chat_popup')
         @include('partials.video_modal')
     @endunless
-    {{-- Shared theme follows the existing page-specific styles. --}}
-    @vite('resources/css/boutique.css')
-    <link rel="stylesheet" href="{{ asset('css/store-experience.css') }}">
     @stack('scripts')
 </body>
 </html>
