@@ -66,7 +66,7 @@ các thay đổi local), chạy ở root repo bằng shell Linux:
 
 ```sh
 docker build --target production -t soopi:vps .
-docker run --rm --mount "type=bind,source=$(pwd),target=/setup" --entrypoint php soopi:vps docker/init-env.php vps
+docker run --rm --user "$(id -u):$(id -g)" --mount "type=bind,source=$(pwd),target=/setup" --entrypoint php soopi:vps docker/init-env.php vps
 chmod 600 .env
 # Sửa .env bằng trình soạn thảo của bạn trước bước tiếp theo.
 docker compose -f compose.yaml -f compose.vps.yaml config --quiet

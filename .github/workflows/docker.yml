@@ -60,7 +60,7 @@ jobs:
           COMPOSE_PROJECT_NAME: soopi-ci
         run: |
           set -euo pipefail
-          docker run --rm -v "$PWD:/setup" --entrypoint php soopi:ci docker/init-env.php local
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD:/setup" --entrypoint php soopi:ci docker/init-env.php local
           docker compose -f compose.yaml -f compose.local.yaml up -d --no-build --wait --wait-timeout 180
           docker run --rm --network host -v "$PWD/.github/scripts/smoke.php:/tmp/smoke.php:ro" --entrypoint php soopi:ci /tmp/smoke.php http://localhost:18002
       - name: Clean up isolated CI containers
