@@ -938,7 +938,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        shippingFeeText.innerHTML = '<span style="color: #db2777; font-weight: 600;"><span style="display:inline-block; animation: spin 1s linear infinite;">⏳</span> Đang kết nối GHN tính phí...</span>';
+        shippingFeeText.innerHTML = `<span style="color: #db2777; font-weight: 600;"><span style="display:inline-block; animation: spin 1s linear infinite;">@include('partials.icon', ['name' => 'hourglass', 'size' => '1em'])</span> Đang kết nối GHN tính phí...</span>`;
 
         fetch("{{ route('locations.fee') }}", {
             method: 'POST',

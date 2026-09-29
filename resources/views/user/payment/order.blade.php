@@ -131,7 +131,7 @@
                                     @elseif($order->status === 'cod_ordered')
                                         <span class="pay-badge pay-cod">@include('partials.icon', ['name' => 'cash', 'size' => '1em']) Thanh toán khi nhận hàng (COD)</span>
                                     @elseif($order->status === 'pending')
-                                        <span class="pay-badge pay-pending">⏳ Chờ thanh toán</span>
+                                        <span class="pay-badge pay-pending">@include('partials.icon', ['name' => 'hourglass', 'size' => '1em']) Chờ thanh toán</span>
                                     @endif
                                 </div>
                             </div>

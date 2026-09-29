@@ -17,7 +17,7 @@
         </div>
         <div class="live-admin-actions">
             <a class="live-admin-btn" href="{{ route('admin.livestreams.index') }}">← Danh sách</a>
-            <a class="live-admin-btn" href="{{ route('livestream.show') }}" target="_blank" rel="noopener noreferrer">Trang khách xem ↗</a>
+            <a class="live-admin-btn" href="{{ route('livestream.show') }}" target="_blank" rel="noopener noreferrer">Trang khách xem @include('partials.icon', ['name' => 'external', 'size' => '1em'])</a>
         </div>
     </header>
 

@@ -15,7 +15,7 @@
     <form class="live-chat-form" data-live-form>
         <label class="visually-hidden" for="live-chat-input-{{ ($staff ?? false) ? 'studio' : 'viewer' }}">Tin nhắn livestream</label>
         <input id="live-chat-input-{{ ($staff ?? false) ? 'studio' : 'viewer' }}" name="body" maxlength="300" autocomplete="off" placeholder="Viết lời nhắn của bạn..." required>
-        <button type="submit" aria-label="Gửi tin nhắn">Gửi ↗</button>
+        <button type="submit" aria-label="Gửi tin nhắn">Gửi @include('partials.icon', ['name' => 'external', 'size' => '1em'])</button>
     </form>
     <p class="live-chat-hint" data-live-feedback role="status">Bình luận hiển thị công khai trong buổi live.</p>
 </section>

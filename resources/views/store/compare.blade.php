@@ -96,7 +96,7 @@
                     {{-- 3. Độ lưu hương --}}
                     <div class="metric-item">
                         <div class="metric-title-row">
-                            <span class="m-label">⏳ Độ Lưu Hương</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'clock', 'size' => '1em']) Độ Lưu Hương</span>
                             <span class="m-val">{{ $perfume->metric_longevity_hours }}</span>
                         </div>
                         <div class="m-bar-track">

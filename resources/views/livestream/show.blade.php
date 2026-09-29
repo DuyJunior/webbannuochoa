@@ -55,7 +55,7 @@
                     @if($livestream->description)<p class="ht-live-description">{{ $livestream->description }}</p>@endif
                     <div class="ht-live-actions">
                         @if($onAir && $livestream->source === 'youtube')
-                            <a class="ht-live-button" href="https://www.youtube.com/watch?v={{ $livestream->youtube_video_id }}" target="_blank" rel="noopener noreferrer">Trò chuyện trên YouTube ↗</a>
+                            <a class="ht-live-button" href="https://www.youtube.com/watch?v={{ $livestream->youtube_video_id }}" target="_blank" rel="noopener noreferrer">Trò chuyện trên YouTube @include('partials.icon', ['name' => 'external', 'size' => '1em'])</a>
                         @endif
                         <a class="ht-live-text-link" href="{{ route('home') }}">Khám phá nước hoa →</a>
                     </div>

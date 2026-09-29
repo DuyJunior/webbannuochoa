@@ -5,6 +5,7 @@
 @case('bag') <path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/> @break
 @case('user') <circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/> @break
 @case('arrow') <path d="M4 12h16m-6-6 6 6-6 6"/> @break
+@case('external') <path d="M7 17 17 7M7 7h10v10"/> @break
 @case('chevron') <path d="m7 10 5 5 5-5"/> @break
 @case('flower') <path d="M12 12C4 10 3 3 7 3c3 0 5 5 5 9Zm0 0c8-2 9-9 5-9-3 0-5 5-5 9Zm0 0c-8-2-12 3-8 6 3 2 7-3 8-6Zm0 0c8-2 12 3 8 6-3 2-7-3-8-6Zm0 0c-5 6-3 10 0 10s5-4 0-10Z"/> @break
 @case('shield') <path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/> @break
@@ -60,6 +61,8 @@
 @case('cash') <rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 12h.01M18 12h.01"/> @break
 @case('copy') <rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V3H3v13h5"/> @break
 @case('calendar') <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 11h18m-14 4h2m3 0h2"/> @break
+@case('clock') <circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/> @break
+@case('hourglass') <path d="M5 3h14M5 21h14M7 3v4l5 5-5 5v4m10-18v4l-5 5 5 5v4M9 18h6"/> @break
 @case('logout') <path d="M9 3H3v18h6m5-15 6 6-6 6M8 12h12"/> @break
 @case('link') <path d="m10 7 3-3a5 5 0 0 1 7 7l-3 3M7 10l-3 3a5 5 0 0 0 7 7l3-3M8 16l8-8"/> @break
 @case('home') <path d="m2 11 10-9 10 9M5 9v13h5v-7h4v7h5V9"/> @break

@@ -171,7 +171,7 @@
                     </div>
 
                     <div class="momo-timer-box">
-                        <span>⏰</span>
+                        <span>@include('partials.icon', ['name' => 'clock', 'size' => '1em'])</span>
                         <div>
                             <strong>Thời hạn thanh toán</strong>
                             <div id="momo-countdown" class="momo-countdown">15:00</div>

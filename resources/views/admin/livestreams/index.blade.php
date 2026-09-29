@@ -15,7 +15,7 @@
             <p>Lên lịch, giới thiệu nước hoa và phát trực tiếp ngay trên website.</p>
         </div>
         <div class="live-admin-actions">
-            <a class="live-admin-btn" href="{{ route('livestream.show') }}" target="_blank" rel="noopener noreferrer">Trang khách xem ↗</a>
+            <a class="live-admin-btn" href="{{ route('livestream.show') }}" target="_blank" rel="noopener noreferrer">Trang khách xem @include('partials.icon', ['name' => 'external', 'size' => '1em'])</a>
             <a class="live-admin-btn live-admin-btn--primary" href="{{ route('admin.livestreams.create', ['mode' => 'now']) }}">@include('partials.icon', ['name' => 'broadcast', 'size' => '1em']) Livestream ngay</a>
             <a class="live-admin-btn" href="{{ route('admin.livestreams.create', ['mode' => 'schedule']) }}">◷ Đặt lịch phát</a>
         </div>
@@ -50,7 +50,7 @@
     @if($onAir)
         <div class="live-admin-current" role="status">
             <div><strong>● {{ $onAir->isBrowserOnAir() || $onAir->source === 'youtube' ? 'Đang phát' : 'Mất kết nối' }}: {{ $onAir->title }}</strong><p>{{ $onAir->isBrowserOnAir() || $onAir->source === 'youtube' ? 'Khách có thể xem video trên trang livestream.' : 'Nhân viên cần kết nối lại từ studio.' }}</p></div>
-            <a href="{{ $onAir->source === 'browser' ? route('admin.livestreams.studio', $onAir) : route('livestream.show') }}" class="live-admin-btn">{{ $onAir->source === 'browser' ? 'Vào studio' : 'Xem buổi live' }} ↗</a>
+            <a href="{{ $onAir->source === 'browser' ? route('admin.livestreams.studio', $onAir) : route('livestream.show') }}" class="live-admin-btn">{{ $onAir->source === 'browser' ? 'Vào studio' : 'Xem buổi live' }} @include('partials.icon', ['name' => 'external', 'size' => '1em'])</a>
         </div>
     @endif
 

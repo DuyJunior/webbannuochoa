@@ -90,7 +90,7 @@
             </div>
             <div class="ht-live-follow-bottom">
                 <strong id="live-follow-title">Soopi đang livestream</strong>
-                <div><button id="live-follow-sound" type="button" hidden>Bật tiếng</button><a href="{{ route('livestream.show') }}">Xem lớn ↗</a></div>
+                <div><button id="live-follow-sound" type="button" hidden>Bật tiếng</button><a href="{{ route('livestream.show') }}">Xem lớn @include('partials.icon', ['name' => 'external', 'size' => '1em'])</a></div>
             </div>
         </aside>
         <script defer src="{{ asset('js/livestream-follow.js') }}"></script>
