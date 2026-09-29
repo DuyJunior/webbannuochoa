@@ -137,7 +137,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm py-2">
     <a class="navbar-brand store-brand" href="{{ route('home') }}">
-        <span>🌸</span>
+        <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
         <strong>Soopi<small>Perfume Studio</small></strong>
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -158,17 +158,17 @@
                 {{-- Link lịch sử đơn hàng --}}
                 @if(Auth::user()->role === 'user' || Auth::user()->role === 'customer')
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('user.orders.index') }}">📋 Lịch sử đơn</a>
+                        <a class="nav-link" href="{{ route('user.orders.index') }}">@include('partials.icon', ['name' => 'copy', 'size' => '1em']) Lịch sử đơn</a>
                     </li>
                 @endif
 
                 <li class="nav-item">
-                    <span class="nav-link">👤 Xin chào, {{ Auth::user()->name }}</span>
+                    <span class="nav-link">@include('partials.icon', ['name' => 'user', 'size' => '1em']) Xin chào, {{ Auth::user()->name }}</span>
                 </li>
                 <li class="nav-item">
                     <form action="{{ route('logout') }}" method="POST" class="form-inline">
                         @csrf
-                        <button type="submit" class="nav-link-btn nav-link">🚪 Đăng xuất</button>
+                        <button type="submit" class="nav-link-btn nav-link">@include('partials.icon', ['name' => 'logout', 'size' => '1em']) Đăng xuất</button>
                     </form>
                 </li>
             @endauth

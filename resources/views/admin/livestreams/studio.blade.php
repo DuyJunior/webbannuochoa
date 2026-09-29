@@ -41,7 +41,7 @@
          data-ended="{{ $livestream->status === 'ended' ? '1' : '0' }}">
         <section class="live-studio-preview" aria-label="Hình ảnh camera của bạn">
             <video id="live-studio-video" autoplay muted playsinline></video>
-            <div class="live-studio-placeholder" id="live-studio-placeholder">✿<span>Hình ảnh của bạn sẽ hiện ở đây</span></div>
+            <div class="live-studio-placeholder" id="live-studio-placeholder">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])<span>Hình ảnh của bạn sẽ hiện ở đây</span></div>
             <span class="live-studio-pill" id="live-studio-pill">Chưa lên sóng</span>
         </section>
         <aside class="live-studio-controls">
@@ -49,7 +49,7 @@
             <h3>Buổi live của bạn</h3>
             <p id="live-studio-status" role="status">Sẵn sàng kiểm tra camera và micro.</p>
             <div class="live-studio-buttons">
-                <button id="live-studio-start" class="live-admin-btn live-admin-btn--primary" type="button" @disabled(!$configured || $livestream->status === 'ended')>🔴 Livestream ngay</button>
+                <button id="live-studio-start" class="live-admin-btn live-admin-btn--primary" type="button" @disabled(!$configured || $livestream->status === 'ended')>@include('partials.icon', ['name' => 'broadcast', 'size' => '1em']) Livestream ngay</button>
                 <button id="live-studio-mic" class="live-admin-btn" type="button" disabled>Micro: bật</button>
                 <button id="live-studio-camera" class="live-admin-btn" type="button" disabled>Camera: bật</button>
                 <button id="live-studio-end" class="live-admin-btn live-admin-btn--danger" type="button" disabled>Kết thúc buổi live</button>

@@ -14,8 +14,8 @@
             {{-- Video Details & Product Link --}}
             <div class="ht-video-details">
                 <div class="ht-video-meta">
-                    <span class="ht-video-tag">🎬 Video Review</span>
-                    <span class="ht-video-views-badge" id="htVideoViews">🔥 12.4K lượt xem</span>
+                    <span class="ht-video-tag">@include('partials.icon', ['name' => 'video', 'size' => '1em']) Video Review</span>
+                    <span class="ht-video-views-badge">@include('partials.icon', ['name' => 'flame', 'size' => '1em']) <span id="htVideoViews">12.4K lượt xem</span></span>
                 </div>
                 <h3 id="htVideoModalTitle" class="ht-video-title">Tiêu đề video</h3>
                 <p id="htVideoModalDesc" class="ht-video-desc">Mô tả video review...</p>
@@ -31,7 +31,7 @@
                         <div class="perfume-price" id="htVideoPerfumePrice"></div>
                     </div>
                     <a id="htVideoPerfumeLink" href="#" class="ht-video-buy-btn">
-                        Xem & Mua Ngay 🛍️
+                        Xem & Mua Ngay @include('partials.icon', ['name' => 'bag', 'size' => '1em'])
                     </a>
                 </div>
             </div>
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         titleEl.textContent = data.title || 'Video Trải Nghiệm Nước Hoa';
         descEl.textContent = data.desc || '';
-        viewsEl.textContent = '🔥 ' + (data.views || '1.2K') + ' lượt xem';
+        viewsEl.textContent = (data.views || '1.2K') + ' lượt xem';
 
         // Xử lý player (YouTube vs Direct Video)
         const embedUrl = data.embed || data.url || '';

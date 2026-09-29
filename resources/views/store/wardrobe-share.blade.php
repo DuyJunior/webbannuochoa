@@ -6,7 +6,7 @@
 @section('content')
 <div class="store-container ht-wardrobe-share-page">
     <header class="ht-wardrobe-share-hero">
-        <span class="ht-badge-pill">🌸 TỦ NƯỚC HOA CHIA SẺ</span>
+        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) TỦ NƯỚC HOA CHIA SẺ</span>
         <h1 class="ht-share-title">Ghé Thăm Tủ Nước Hoa Của <em>{{ $user->name }}</em></h1>
         <p class="ht-share-sub">Dưới đây là những nốt hương yêu thích được {{ $user->name }} tuyển chọn và phân loại cẩn thận theo từng khoảnh khắc cuộc sống.</p>
         <div class="share-hero-actions">
@@ -23,7 +23,7 @@
     <div class="ht-share-grid">
         @foreach($wardrobeItems as $item)
         <article class="ht-share-card">
-            <div class="card-tag">{{ $item->occasion_label }}</div>
+            <div class="card-tag">@include('partials.icon', ['name' => $item->occasion_icon, 'size' => '1em']) {{ $item->occasion_label }}</div>
             <div class="card-img">
                 <img src="{{ $item->perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $item->perfume->name }}" loading="lazy">
             </div>
@@ -37,8 +37,8 @@
                 @endif
 
                 <div class="scent-brief">
-                    <span>🌸 {{ Str::limit($item->perfume->scent_profile['top']['notes'] ?? 'Tươi mát', 35) }}</span>
-                    <span>🌿 Độ lưu: {{ $item->perfume->scent_profile['longevity']['text'] ?? '8h' }}</span>
+                    <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em']) {{ Str::limit($item->perfume->scent_profile['top']['notes'] ?? 'Tươi mát', 35) }}</span>
+                    <span>@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Độ lưu: {{ $item->perfume->scent_profile['longevity']['text'] ?? '8h' }}</span>
                 </div>
 
                 <div class="card-foot">

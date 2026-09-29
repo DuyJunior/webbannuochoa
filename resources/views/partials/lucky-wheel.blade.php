@@ -1,13 +1,13 @@
 {{-- VÒNG QUAY MAY MẮN NHẬN MÃ GIẢM GIÁ (LUCKY SPIN WHEEL) --}}
 <div id="ht-lucky-spin-wrapper">
     <button type="button" id="ht-spin-floating-btn" title="Vòng quay hương thơm may mắn">
-        <span class="spin-icon">🎡</span>
+        <span class="spin-icon">@include('partials.icon', ['name' => 'wheel', 'size' => '1em'])</span>
         <span class="spin-label">Vòng Quay May Mắn</span>
     </button>
 
     {{-- Modal Vòng Quay --}}
     <div id="ht-spin-modal" class="spin-modal-backdrop" hidden>
-        <button type="button" id="ht-spin-backdrop-close" class="spin-backdrop-close-btn" aria-label="Đóng vòng quay" title="Đóng vòng quay (Esc)">✕ Đóng</button>
+        <button type="button" id="ht-spin-backdrop-close" class="spin-backdrop-close-btn" aria-label="Đóng vòng quay" title="Đóng vòng quay (Esc)">@include('partials.icon', ['name' => 'close', 'size' => '1em']) Đóng</button>
         <div class="spin-modal-card">
             <button type="button" id="ht-spin-close" class="spin-close-btn" aria-label="Đóng vòng quay" title="Đóng vòng quay (Esc)">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -19,7 +19,7 @@
             {{-- 1. Phần Vòng Quay (Hiển thị ban đầu) --}}
             <div id="spinMainSection" class="spin-main-section">
                 <div class="spin-card-header">
-                    <span class="spin-eyebrow">🌸 SOOPI PERFUME</span>
+                    <span class="spin-eyebrow">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) SOOPI PERFUME</span>
                     <h2>Vòng Quay <em>Hương Thơm</em></h2>
                     <p>Quay là trúng voucher giảm giá & quà tặng sample!</p>
                 </div>
@@ -35,7 +35,7 @@
 
             {{-- 2. Phần Kết Quả Trúng Thưởng (Tự động thay thế vòng quay khi trúng, gọn gàng không tràn màn hình) --}}
             <div id="spinResultBox" class="spin-result-box" style="display:none;">
-                <div class="result-confetti">🎉 🎁 🎀</div>
+                <div class="result-confetti">@include('partials.icon', ['name' => 'party', 'size' => '1em']) @include('partials.icon', ['name' => 'gift', 'size' => '1em']) @include('partials.icon', ['name' => 'ribbon', 'size' => '1em'])</div>
                 <h3 id="spinResultTitle">Chúc mừng bạn đã trúng!</h3>
                 <p id="spinResultDesc">Mã ưu đãi đã sẵn sàng. Nhập mã này tại giỏ hàng để nhận ưu đãi:</p>
                 
@@ -45,12 +45,12 @@
                 </div>
 
                 <div class="spin-result-actions">
-                    <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary" id="applySpinShopBtn">🛍️ Mua Sắm Ngay</a>
-                    <button type="button" class="ht-button ht-button-outline" id="closeAfterSpinBtn">✕ Đóng lại</button>
+                    <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary" id="applySpinShopBtn">@include('partials.icon', ['name' => 'bag', 'size' => '1em']) Mua Sắm Ngay</a>
+                    <button type="button" class="ht-button ht-button-outline" id="closeAfterSpinBtn">@include('partials.icon', ['name' => 'close', 'size' => '1em']) Đóng lại</button>
                 </div>
 
                 <div class="mt-3">
-                    <button type="button" id="spinBackToWheelBtn" class="btn-back-to-wheel">🎡 Xem lại vòng quay</button>
+                    <button type="button" id="spinBackToWheelBtn" class="btn-back-to-wheel">@include('partials.icon', ['name' => 'wheel', 'size' => '1em']) Xem lại vòng quay</button>
                 </div>
             </div>
         </div>
@@ -497,7 +497,7 @@
                 isSpinning = false;
                 const reward = rewards[winIndex];
                 if (reward.code) {
-                    resultTitle.textContent = '🎉 Bạn Đã Trúng ' + reward.label + '!';
+                    resultTitle.textContent = ' Bạn Đã Trúng ' + reward.label + '!';
                     resultDesc.textContent = 'Mã ưu đãi đã sẵn sàng. Nhập mã này tại giỏ hàng để nhận giảm giá ngay:';
                     rewardCode.textContent = reward.code;
                     codeRow.style.display = 'flex';

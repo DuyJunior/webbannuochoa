@@ -67,7 +67,7 @@
             <p>Trải nghiệm chân thật: Unboxing, độ tỏa hương và góc quay cận cảnh từng chai nước hoa.</p>
         </div>
         <div class="ht-shorts-nav-hint">
-            <span class="ht-hint-text">Chạm để xem video & đặt mua nhanh 🛍️</span>
+            <span class="ht-hint-text">Chạm để xem video & đặt mua nhanh @include('partials.icon', ['name' => 'bag', 'size' => '1em'])</span>
         </div>
     </div>
     <div class="ht-shorts-grid">
@@ -87,8 +87,8 @@
             <div class="short-thumb">
                 <img src="{{ $vid->thumbnail_src }}" alt="{{ $vid->title }}" loading="lazy">
                 <div class="short-overlay">
-                    <span class="play-btn">▶</span>
-                    <span class="views">🔥 {{ $vid->formatted_views }}</span>
+                    <span class="play-btn">@include('partials.icon', ['name' => 'play', 'size' => '1em'])</span>
+                    <span class="views">@include('partials.icon', ['name' => 'flame', 'size' => '1em']) {{ $vid->formatted_views }}</span>
                     <span class="duration-badge">{{ $vid->duration ?: '0:45' }}</span>
                 </div>
             </div>
@@ -199,7 +199,7 @@
 <section class="store-container ht-flash-sale-section">
     <div class="ht-flash-card">
         <div class="flash-left">
-            <span class="flash-badge">⚡ FLASH SALE ĐẶC BIỆT · GIỚI HẠN 24H</span>
+            <span class="flash-badge">@include('partials.icon', ['name' => 'bolt', 'size' => '1em']) FLASH SALE ĐẶC BIỆT · GIỚI HẠN 24H</span>
             <h2>Bộ Sưu Tập Giới Hạn Mùa Hoa</h2>
             <p>Chỉ áp dụng trong hôm nay cho 20 khách hàng đầu tiên. Tặng kèm hộp quà lụa và 02 mẫu thử 5ml.</p>
             
@@ -213,7 +213,7 @@
 
             <div class="flash-progress-wrap">
                 <div class="progress-bar"><div class="fill" style="width: 78%"></div></div>
-                <span class="progress-text">🔥 Đã bán 78% · Chỉ còn 5 chai cuối cùng</span>
+                <span class="progress-text">@include('partials.icon', ['name' => 'flame', 'size' => '1em']) Đã bán 78% · Chỉ còn 5 chai cuối cùng</span>
             </div>
             
             <div style="margin-top: 18px;">
@@ -232,16 +232,16 @@
 {{-- ── 2. TRẢI NGHIỆM ĐỘC BẢN: QUIZ & HỘP THỬ MÙI BANNERS ── --}}
 <section class="store-container ht-experience-banners">
     <div class="exp-banner-card quiz-card">
-        <span class="exp-badge">🌸 CHỈ MẤT 60 GIÂY</span>
+        <span class="exp-badge">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) CHỈ MẤT 60 GIÂY</span>
         <h3>Trắc Nghiệm Chọn Hương Theo Tính Cách</h3>
         <p>Thuật toán thông minh sẽ gợi ý chai nước hoa phù hợp nhất với thời tiết, dịp dùng và thần thái của riêng bạn.</p>
         <a href="{{ route('store.quiz') }}" class="ht-button ht-button-primary">Làm Trắc Nghiệm Ngay →</a>
     </div>
     <div class="exp-banner-card box-card">
-        <span class="exp-badge">🎁 CHỌN 3 - 5 MẪU CHIẾT</span>
+        <span class="exp-badge">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) CHỌN 3 - 5 MẪU CHIẾT</span>
         <h3>Tự Thiết Kế "Hộp Thử Mùi" (Discovery Box)</h3>
         <p>Trải nghiệm trước khi mua fullbox. Tự tay chọn 3-5 ống chiết cao cấp kèm voucher hoàn tiền 100K.</p>
-        <a href="{{ route('store.discovery-box') }}" class="ht-button ht-button-secondary">Thiết Kế Hộp Thử 📦</a>
+        <a href="{{ route('store.discovery-box') }}" class="ht-button ht-button-secondary">Thiết Kế Hộp Thử @include('partials.icon', ['name' => 'box', 'size' => '1em'])</a>
     </div>
 </section>
 

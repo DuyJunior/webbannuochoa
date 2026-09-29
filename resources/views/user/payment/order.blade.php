@@ -23,7 +23,7 @@
 
         @if($orders->isEmpty())
             <div class="empty-orders-card">
-                <div class="empty-icon">📦</div>
+                <div class="empty-icon">@include('partials.icon', ['name' => 'box', 'size' => '1em'])</div>
                 <h3>Bạn chưa có đơn hàng nào</h3>
                 <p>Hãy khám phá bộ sưu tập nước hoa cao cấp tại Soopi và đặt hàng ngay hôm nay!</p>
                 <a href="{{ route('home') }}#san-pham" class="btn-shop-now">Khám phá sản phẩm</a>
@@ -56,14 +56,14 @@
                                 </span>
                                 @if($order->ghn_order_code)
                                     <span class="ghn-code-pill">
-                                        🚚 GHN: <strong>{{ $order->ghn_order_code }}</strong>
+                                        @include('partials.icon', ['name' => 'truck', 'size' => '1em']) GHN: <strong>{{ $order->ghn_order_code }}</strong>
                                     </span>
                                 @endif
                             </div>
                             <div class="order-status-group">
                                 @if($order->gift_wrap || $order->gift_card || $order->gift_message)
                                     <span class="badge-gift">
-                                        🎁 Quà tặng
+                                        @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Quà tặng
                                     </span>
                                 @endif
                                 <span class="shipping-status-tag {{ $st['class'] }}">{{ $st['text'] }}</span>
@@ -79,7 +79,7 @@
                                             @if($prod && $prod->image_src)
                                                 <img src="{{ $prod->image_src }}" alt="{{ $prod->name }}">
                                             @else
-                                                <span>🌸</span>
+                                                <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
                                             @endif
                                         </div>
                                         <div class="item-mini-info">
@@ -111,7 +111,7 @@
                         <div class="order-card-footer">
                             <div class="order-receiver-info">
                                 <div class="receiver-address">
-                                    <span class="icon-pin">📍</span> 
+                                    <span class="icon-pin">@include('partials.icon', ['name' => 'pin', 'size' => '1em'])</span>
                                     <strong>{{ $order->name }}</strong> ({{ $order->phone }}) 
                                     <span class="addr-text">— {{ $order->address }}</span>
                                 </div>
@@ -122,14 +122,14 @@
                                     @endphp
                                     @if($order->status === 'paid')
                                         @if($gw === 'atm_domestic')
-                                            <span class="pay-badge pay-success">✓ Thẻ ATM Nội Địa (Đã thanh toán)</span>
+                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Thẻ ATM Nội Địa (Đã thanh toán)</span>
                                         @elseif($gw === 'atm_international')
-                                            <span class="pay-badge pay-success">✓ Visa/Mastercard (Đã thanh toán)</span>
+                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Visa/Mastercard (Đã thanh toán)</span>
                                         @else
-                                            <span class="pay-badge pay-success">✓ Ví MoMo (Đã thanh toán)</span>
+                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Ví MoMo (Đã thanh toán)</span>
                                         @endif
                                     @elseif($order->status === 'cod_ordered')
-                                        <span class="pay-badge pay-cod">💵 Thanh toán khi nhận hàng (COD)</span>
+                                        <span class="pay-badge pay-cod">@include('partials.icon', ['name' => 'cash', 'size' => '1em']) Thanh toán khi nhận hàng (COD)</span>
                                     @elseif($order->status === 'pending')
                                         <span class="pay-badge pay-pending">⏳ Chờ thanh toán</span>
                                     @endif

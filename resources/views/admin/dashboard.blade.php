@@ -115,7 +115,7 @@
                         <td class="text-muted" style="padding: 10px 0;">Vai trò:</td>
                         <td style="padding: 10px 0;">
                             <span class="badge" style="background: var(--pink-pale); color: var(--pink-dark); font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(232,114,138,.3);">
-                                🌸 QUẢN TRỊ VIÊN
+                                @include('partials.icon', ['name' => 'flower', 'size' => '1em']) QUẢN TRỊ VIÊN
                             </span>
                         </td>
                     </tr>

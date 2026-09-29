@@ -25,7 +25,7 @@
                 <div class="tracking-input-group">
                     <label for="keyword">Mã đơn hàng hoặc Mã vận đơn GHN</label>
                     <div class="input-with-icon">
-                        <span class="input-icon">🔖</span>
+                        <span class="input-icon">@include('partials.icon', ['name' => 'tag', 'size' => '1em'])</span>
                         <input type="text" id="keyword" name="keyword" value="{{ old('keyword', $keyword ?? '') }}" placeholder="Ví dụ: L8KXW4 hoặc #12">
                     </div>
                 </div>
@@ -33,20 +33,20 @@
                 <div class="tracking-input-group">
                     <label for="phone">Số điện thoại đặt hàng (10 số)</label>
                     <div class="input-with-icon">
-                        <span class="input-icon">📱</span>
+                        <span class="input-icon">@include('partials.icon', ['name' => 'phone', 'size' => '1em'])</span>
                         <input type="tel" id="phone" name="phone" value="{{ old('phone', $phone ?? '') }}" placeholder="Ví dụ: 0901234567" maxlength="10" pattern="0[0-9]{9}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
                     </div>
                 </div>
 
                 <div class="tracking-btn-group">
                     <button type="submit" class="btn-tracking-search">
-                        <span>🔍 Tra cứu đơn hàng</span>
+                        <span>@include('partials.icon', ['name' => 'search', 'size' => '1em']) Tra cứu đơn hàng</span>
                     </button>
                 </div>
             </form>
 
             <div class="tracking-hint">
-                💡 <em>Chỉ tra cứu các đơn thuộc tài khoản đang đăng nhập. Nhập số điện thoại hoặc mã đơn / mã GHN của bạn.</em>
+                @include('partials.icon', ['name' => 'bulb', 'size' => '1em']) <em>Chỉ tra cứu các đơn thuộc tài khoản đang đăng nhập. Nhập số điện thoại hoặc mã đơn / mã GHN của bạn.</em>
             </div>
         </div>
 
@@ -62,7 +62,7 @@
 
                 @if($orders->isEmpty())
                     <div class="empty-search-box">
-                        <div class="empty-search-icon">🔍</div>
+                        <div class="empty-search-icon">@include('partials.icon', ['name' => 'search', 'size' => '1em'])</div>
                         <h4>Không tìm thấy đơn hàng phù hợp</h4>
                         <p>Vui lòng kiểm tra lại Mã đơn hàng, Mã GHN hoặc Số điện thoại bạn đã dùng khi đặt hàng tại Soopi.</p>
                         <a href="{{ route('orders.tracking') }}" class="btn-retry-search">Thử lại</a>
@@ -97,7 +97,7 @@
                                         <span class="order-date">{{ $order->created_at->format('d/m/Y H:i') }}</span>
                                         @if($order->ghn_order_code)
                                             <span class="ghn-badge-code">
-                                                🚚 GHN: <strong>{{ $order->ghn_order_code }}</strong>
+                                                @include('partials.icon', ['name' => 'truck', 'size' => '1em']) GHN: <strong>{{ $order->ghn_order_code }}</strong>
                                             </span>
                                         @endif
                                     </div>
@@ -131,22 +131,22 @@
                                     </div>
                                 @else
                                     <div class="cancelled-notice">
-                                        ⚠️ Đơn hàng này đã được hủy trên hệ thống.
+                                        @include('partials.icon', ['name' => 'warning', 'size' => '1em']) Đơn hàng này đã được hủy trên hệ thống.
                                     </div>
                                 @endif
 
                                 <div class="order-result-body">
                                     <div class="order-customer-details">
                                         <div class="detail-line">
-                                            <span>👤 Người nhận:</span>
+                                            <span>@include('partials.icon', ['name' => 'user', 'size' => '1em']) Người nhận:</span>
                                             <strong>{{ $order->name }}</strong>
                                         </div>
                                         <div class="detail-line">
-                                            <span>📞 Số điện thoại:</span>
+                                            <span>@include('partials.icon', ['name' => 'phone', 'size' => '1em']) Số điện thoại:</span>
                                             <strong>{{ $order->phone }}</strong>
                                         </div>
                                         <div class="detail-line">
-                                            <span>📍 Địa chỉ nhận:</span>
+                                            <span>@include('partials.icon', ['name' => 'pin', 'size' => '1em']) Địa chỉ nhận:</span>
                                             <span>{{ $order->address }}</span>
                                         </div>
                                     </div>
@@ -160,7 +160,7 @@
                                                     @if($prod && $prod->image_src)
                                                         <img src="{{ $prod->image_src }}" alt="{{ $prod->name }}">
                                                     @else
-                                                        <span>🌸</span>
+                                                        <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
                                                     @endif
                                                 </div>
                                                 <div class="item-info-mini">

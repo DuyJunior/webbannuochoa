@@ -37,7 +37,7 @@
                         <legend>Bạn muốn phát khi nào?</legend>
                         <label class="live-admin-mode-card">
                             <input type="radio" name="launch_mode" value="now" @checked($launchMode === 'now')>
-                            <span><strong>🔴 Livestream ngay</strong><small>Chuẩn bị camera và lên sóng từ studio.</small></span>
+                            <span><strong>@include('partials.icon', ['name' => 'broadcast', 'size' => '1em']) Livestream ngay</strong><small>Chuẩn bị camera và lên sóng từ studio.</small></span>
                         </label>
                         <label class="live-admin-mode-card">
                             <input type="radio" name="launch_mode" value="schedule" @checked($launchMode === 'schedule')>

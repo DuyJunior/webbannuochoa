@@ -46,7 +46,7 @@
         <div class="shipping-tracking-banner">
             <div class="tracking-top-bar">
                 <div class="tracking-partner">
-                    <span class="truck-icon">🚚</span>
+                    <span class="truck-icon">@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
                     <div>
                         <strong>Vận chuyển bởi Giao Hàng Nhanh (GHN)</strong>
                         @if($order->ghn_order_code)
@@ -109,7 +109,7 @@
                                     @if($prod && $prod->image_src)
                                         <img src="{{ $prod->image_src }}" alt="{{ $prod->name }}">
                                     @else
-                                        <span>🌸</span>
+                                        <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
                                     @endif
                                 </div>
                                 <div class="detail-item-info">
@@ -117,10 +117,10 @@
                                     <div class="detail-item-meta">
                                         <span>Dung tích: {{ $item->volume_ml ?? 100 }}ml</span>
                                         @if($item->addon_gift)
-                                            <span class="badge-gift">🎁 Hộp quà & Nơ</span>
+                                            <span class="badge-gift">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) Hộp quà & Nơ</span>
                                         @endif
                                         @if($item->engrave_text)
-                                            <span class="badge-engrave">✒️ Khắc tên: "{{ $item->engrave_text }}"</span>
+                                            <span class="badge-engrave">@include('partials.icon', ['name' => 'pen', 'size' => '1em']) Khắc tên: "{{ $item->engrave_text }}"</span>
                                         @endif
                                     </div>
                                     <div class="detail-item-unitprice">
@@ -157,7 +157,7 @@
                             <span class="info-label">Hình thức:</span>
                             <span class="info-value">
                                 @if($order->status === 'paid')
-                                    <strong style="color:#059669;">✓ Ví MoMo (Đã thanh toán)</strong>
+                                    <strong style="color:#059669;">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Ví MoMo (Đã thanh toán)</strong>
                                 @elseif($order->status === 'cod_ordered')
                                     <span>Thanh toán khi nhận hàng (COD)</span>
                                 @else
@@ -170,7 +170,7 @@
                 @if($order->gift_wrap || $order->gift_card || $order->gift_message || $order->gift_delivery_date)
                     <div class="detail-card" style="margin-top: 20px; border: 1px solid rgba(225, 29, 72, 0.25); background: linear-gradient(180deg, #fff5f7 0%, #ffffff 100%);">
                         <h3 class="detail-card-title" style="color: #be123c; display:flex; align-items:center; gap:8px;">
-                            <span>🎁</span> Dịch vụ quà tặng cao cấp
+                            <span>@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</span> Dịch vụ quà tặng cao cấp
                         </h3>
                         <div class="info-list">
                             @if($order->gift_wrap)

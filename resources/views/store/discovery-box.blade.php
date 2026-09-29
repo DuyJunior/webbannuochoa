@@ -6,7 +6,7 @@
 @section('content')
 <div class="store-container ht-discovery-page">
     <header class="ht-discovery-hero">
-        <span class="ht-badge-pill">🎁 BỘ SƯU TẬP TRẢI NGHIỆM</span>
+        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) BỘ SƯU TẬP TRẢI NGHIỆM</span>
         <h1 class="ht-discovery-title">Tự Thiết Kế <em>Hộp Thử Mùi</em> Của Riêng Bạn</h1>
         <p class="ht-discovery-subtitle">Đừng vội mua chai lớn khi chưa thử lên da! Hãy chọn 3 hoặc 5 ống chiết cao cấp (2ml - 5ml) để trải nghiệm trọn vẹn cả ngày dài. Tặng ngay voucher hoàn tiền khi mua fullsize.</p>
     </header>
@@ -36,7 +36,7 @@
             <div class="box-price-info">
                 <span class="label">Tổng giá trị Hộp Thử Mùi:</span>
                 <span class="price" id="boxPriceDisplay">199.000₫</span>
-                <span class="extra-benefit">✓ Đóng hộp nhung quà tặng · Đính kèm bảng ghi chú tầng hương</span>
+                <span class="extra-benefit">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Đóng hộp nhung quà tặng · Đính kèm bảng ghi chú tầng hương</span>
             </div>
             <form action="{{ route('cart.add-discovery-box') }}" method="POST" id="discoveryForm">
                 @csrf
@@ -74,7 +74,7 @@
                     <span class="card-brand">{{ $perfume->brand }}</span>
                     <h3 class="card-name">{{ $perfume->name }}</h3>
                     <p class="card-family">{{ $perfume->category->name ?? 'Nước hoa' }} · {{ ucfirst($perfume->gender) }}</p>
-                    <p class="card-note">🌸 {{ Str::limit($perfume->scent_profile['top']['notes'] ?? 'Tươi mát, thanh lịch', 45) }}</p>
+                    <p class="card-note">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) {{ Str::limit($perfume->scent_profile['top']['notes'] ?? 'Tươi mát, thanh lịch', 45) }}</p>
                 </div>
                 <button type="button" class="ht-button ht-button-light select-sample-btn" data-id="{{ $perfume->id }}">
                     + Cho vào hộp
@@ -406,11 +406,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     <img src="${sample.img}" alt="${sample.name}" class="slot-filled-img">
                     <span class="slot-brand">${sample.brand}</span>
                     <strong class="slot-name">${sample.name}</strong>
-                    <button type="button" class="remove-sample-btn" data-index="${i}">✕ Đổi mùi khác</button>
+                    <button type="button" class="remove-sample-btn" data-index="${i}">@include('partials.icon', ['name' => 'close', 'size' => '1em']) Đổi mùi khác</button>
                 `;
             } else {
                 slot.innerHTML = `
-                    <div class="slot-vial-icon">🧪</div>
+                    <div class="slot-vial-icon">@include('partials.icon', ['name' => 'vial', 'size' => '1em'])</div>
                     <span class="slot-empty-text">+ Chọn mẫu ${i + 1}</span>
                     <span class="slot-empty-num">Khe thử mùi số ${i + 1}</span>
                 `;
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const id = parseInt(b.dataset.id);
             const isSel = selectedSamples.some(s => s.id === id);
             b.classList.toggle('selected', isSel);
-            b.textContent = isSel ? '✓ Đã chọn vào hộp' : '+ Cho vào hộp';
+            b.textContent = isSel ? ' Đã chọn vào hộp' : '+ Cho vào hộp';
         });
     }
 
@@ -485,8 +485,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle removing sample from slot
     boxSlots.addEventListener('click', function (e) {
-        if (e.target.classList.contains('remove-sample-btn')) {
-            const idx = parseInt(e.target.dataset.index);
+        const removeButton = e.target.closest('.remove-sample-btn');
+        if (removeButton) {
+            const idx = parseInt(removeButton.dataset.index);
             selectedSamples.splice(idx, 1);
             renderBox();
         }

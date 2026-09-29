@@ -6,14 +6,14 @@
 @section('content')
 <div class="store-container ht-sotd-page">
     <div class="ht-sotd-date-badge">
-        <span>📅 {{ now()->locale('vi')->isoFormat('dddd, [ngày] D [tháng] M, YYYY') }}</span>
+        <span>@include('partials.icon', ['name' => 'calendar', 'size' => '1em']) {{ now()->locale('vi')->isoFormat('dddd, [ngày] D [tháng] M, YYYY') }}</span>
     </div>
 
     <div class="ht-sotd-hero-card">
         <div class="sotd-image-col">
             <div class="sotd-img-frame">
                 <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" class="sotd-main-img">
-                <span class="sotd-daily-ribbon">⭐ MÙI HƯƠNG HÔM NAY</span>
+                <span class="sotd-daily-ribbon">@include('partials.icon', ['name' => 'star', 'size' => '1em']) MÙI HƯƠNG HÔM NAY</span>
             </div>
             <div class="sotd-coupon-box">
                 <span class="coupon-label">ĐẶC QUYỀN TRONG NGÀY HÔM NAY:</span>
@@ -44,17 +44,17 @@
             {{-- 3 Pyramid Notes --}}
             <div class="sotd-pyramid-grid">
                 <div class="pyramid-item">
-                    <span class="pyramid-icon">🍋</span>
+                    <span class="pyramid-icon">@include('partials.icon', ['name' => 'citrus', 'size' => '1em'])</span>
                     <strong>Hương Đầu</strong>
                     <p>{{ Str::limit($perfume->scent_profile['top']['notes'] ?? 'Tươi mát, thanh khiết', 45) }}</p>
                 </div>
                 <div class="pyramid-item">
-                    <span class="pyramid-icon">🌸</span>
+                    <span class="pyramid-icon">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
                     <strong>Hương Giữa</strong>
                     <p>{{ Str::limit($perfume->scent_profile['heart']['notes'] ?? 'Hoa cỏ kiều diễm', 45) }}</p>
                 </div>
                 <div class="pyramid-item">
-                    <span class="pyramid-icon">🪵</span>
+                    <span class="pyramid-icon">@include('partials.icon', ['name' => 'tree', 'size' => '1em'])</span>
                     <strong>Hương Cuối</strong>
                     <p>{{ Str::limit($perfume->scent_profile['base']['notes'] ?? 'Gỗ trầm sâu lắng', 45) }}</p>
                 </div>

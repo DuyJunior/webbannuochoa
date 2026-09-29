@@ -105,13 +105,13 @@ class MomoController extends Controller
                 default => 'Thanh toán MoMo không thành công ('.($request->input('message') ?? 'Lỗi giao dịch').').'
             };
 
-            return redirect()->route('user.orders.index')->with('error', '✕ '.$errorMsg.' Bạn có thể nhấn "Thanh toán lại" để tiếp tục.');
+            return redirect()->route('user.orders.index')->with('error', $errorMsg.' Bạn có thể nhấn "Thanh toán lại" để tiếp tục.');
         }
 
         $result = $this->completePayment($request->all(), $ghnOrders, $momo);
         $message = in_array($result, ['created', 'already_created'], true)
-            ? '✓ Thanh toán MoMo thành công! Vận đơn GHN đã được khởi tạo.'
-            : '✓ Thanh toán MoMo thành công! Đơn hàng đang được xử lý.';
+            ? 'Thanh toán MoMo thành công! Vận đơn GHN đã được khởi tạo.'
+            : 'Thanh toán MoMo thành công! Đơn hàng đang được xử lý.';
 
         return redirect()->route('user.orders.index')->with('success', $message);
     }

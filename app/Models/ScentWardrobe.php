@@ -30,15 +30,25 @@ class ScentWardrobe extends Model
     public static function occasionLabels(): array
     {
         return [
-            'work' => '💼 Đi làm & Công sở',
-            'date' => '🥂 Hẹn hò & Lãng mạn',
-            'party' => '👑 Tiệc tùng & Sự kiện',
-            'casual' => '🌿 Hằng ngày & Dạo phố',
+            'work' => 'Đi làm & Công sở',
+            'date' => 'Hẹn hò & Lãng mạn',
+            'party' => 'Tiệc tùng & Sự kiện',
+            'casual' => 'Hằng ngày & Dạo phố',
         ];
     }
 
     public function getOccasionLabelAttribute(): string
     {
-        return self::occasionLabels()[$this->occasion] ?? '🌿 Mùi hương yêu thích';
+        return self::occasionLabels()[$this->occasion] ?? 'Mùi hương yêu thích';
+    }
+
+    public function getOccasionIconAttribute(): string
+    {
+        return match ($this->occasion) {
+            'work' => 'briefcase',
+            'date' => 'glass',
+            'party' => 'crown',
+            default => 'leaf',
+        };
     }
 }

@@ -44,9 +44,9 @@ class LoyaltyService
         $spent = self::totalSpent($userId);
         $code = $spent >= 5000000 ? 'premium' : ($spent >= 1500000 ? 'rose' : 'silver');
         $tiers = [
-            'silver' => ['Bạc (Silver Member)', '🥈', '#718096', '#2d3748', '#f7fafc', 0, 1500000, 'Hoa Hồng (Rose Member)'],
-            'rose' => ['Hoa Hồng (Rose Member)', '🌹', '#c2476a', '#4a1525', '#ffe4e6', 1500000, 5000000, 'Hoàng Gia (Premium VIP)'],
-            'premium' => ['Hoàng Gia (Premium VIP)', '👑', '#d4af37', '#1f1b24', '#fef3c7', 5000000, 5000000, null],
+            'silver' => ['Bạc (Silver Member)', 'ribbon', '#718096', '#2d3748', '#f7fafc', 0, 1500000, 'Hoa Hồng (Rose Member)'],
+            'rose' => ['Hoa Hồng (Rose Member)', 'flower', '#c2476a', '#4a1525', '#ffe4e6', 1500000, 5000000, 'Hoàng Gia (Premium VIP)'],
+            'premium' => ['Hoàng Gia (Premium VIP)', 'crown', '#d4af37', '#1f1b24', '#fef3c7', 5000000, 5000000, null],
         ];
         [$name, $badge, $color, $dark, $text, $lower, $upper, $next] = $tiers[$code];
 

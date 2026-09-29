@@ -63,7 +63,7 @@
 <body class="store-page boutique-store" style="--ht-auth-image:url('{{ asset('images/products/narciso-musc-noir-rose.jpg') }}')">
     @include('partials.store-header')
     <main class="public-main" id="main-content" tabindex="-1">
-        @if(session('success') && !request()->routeIs('login'))<div class="store-container public-flash" role="status">✓ {{ session('success') }}</div>@endif
+        @if(session('success') && !request()->routeIs('login'))<div class="store-container public-flash" role="status">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ session('success') }}</div>@endif
         @if(session('error'))<div class="store-container public-flash alert-danger" role="alert">{{ session('error') }}</div>@endif
         @if(\App\Support\DemoMode::enabled())
             <div role="status" style="padding:10px 20px;text-align:center;background:#fff3d9;color:#734b13;font-size:13px">

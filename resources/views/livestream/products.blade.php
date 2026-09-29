@@ -7,10 +7,10 @@
         @foreach($products as $product)
             <article class="ht-live-product-card {{ $product->id === $livestream->pinned_perfume_id ? 'ht-live-product-card--pinned' : '' }}">
                 <div class="ht-live-product-thumb">
-                    @if($product->image_src)<img src="{{ $product->image_src }}" alt="{{ $product->name }}" loading="lazy">@else<span aria-hidden="true">✿</span>@endif
+                    @if($product->image_src)<img src="{{ $product->image_src }}" alt="{{ $product->name }}" loading="lazy">@else<span aria-hidden="true">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>@endif
                 </div>
                 <div class="ht-live-product-info">
-                    @if($product->id === $livestream->pinned_perfume_id)<span class="ht-live-pinned-label">✦ Đang giới thiệu</span>@endif
+                    @if($product->id === $livestream->pinned_perfume_id)<span class="ht-live-pinned-label">@include('partials.icon', ['name' => 'sparkles', 'size' => '1em']) Đang giới thiệu</span>@endif
                     <span class="ht-live-brand">{{ $product->brand }}</span>
                     <h3>{{ $product->name }}</h3>
                     <strong>{{ number_format((float) ($product->sale_price ?? $product->price), 0, ',', '.') }}đ</strong>

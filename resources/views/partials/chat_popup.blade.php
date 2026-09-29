@@ -48,18 +48,18 @@
         {{-- Vùng hiển thị tin nhắn --}}
         <div id="chat-messages" class="chat-messages-scroll" tabindex="0">
             <div class="chat-welcome-card">
-                <div class="welcome-flower">🌸</div>
+                <div class="welcome-flower">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</div>
                 <div class="welcome-heading">Chào mừng bạn đến với Soopi!</div>
                 <div class="welcome-text">Hãy nhắn nhu cầu chọn mùi hương hoặc câu hỏi về đơn hàng. Bạn có thể chọn gặp nhân viên bất cứ lúc nào.</div>
                 <div class="quick-chips-group">
-                    <button type="button" class="quick-chip-btn" data-text="Shop tư vấn giúp mình mùi hương nữ nhẹ nhàng, đi làm hàng ngày với ạ! 🌸">
-                        🌸 Tìm mùi thanh lịch
+                    <button type="button" class="quick-chip-btn" data-text="Shop tư vấn giúp mình mùi hương nữ nhẹ nhàng, đi làm hàng ngày với ạ! ">
+                        @include('partials.icon', ['name' => 'flower', 'size' => '1em']) Tìm mùi thanh lịch
                     </button>
-                    <button type="button" class="quick-chip-btn" data-text="Shop kiểm tra tiến độ đơn hàng gần nhất giúp mình nhé! 📦">
-                        📦 Kiểm tra đơn hàng
+                    <button type="button" class="quick-chip-btn" data-text="Shop kiểm tra tiến độ đơn hàng gần nhất giúp mình nhé! ">
+                        @include('partials.icon', ['name' => 'box', 'size' => '1em']) Kiểm tra đơn hàng
                     </button>
-                    <button type="button" class="quick-chip-btn" data-text="Shop có hỗ trợ khắc tên và gói quà tặng không ạ? 🎁">
-                        🎁 Dịch vụ quà tặng
+                    <button type="button" class="quick-chip-btn" data-text="Shop có hỗ trợ khắc tên và gói quà tặng không ạ? ">
+                        @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Dịch vụ quà tặng
                     </button>
                 </div>
             </div>

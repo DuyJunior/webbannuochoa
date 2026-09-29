@@ -10,7 +10,7 @@
         <span class="live-chat-viewers" title="Số khách đang xem trong khoảng 45 giây gần đây"><span class="live-chat-viewer-dot"></span><span data-live-watching>0</span> đang xem</span>
     </div>
     <div class="live-chat-messages" data-live-messages role="log" aria-live="polite" aria-relevant="additions text">
-        <p class="live-chat-empty">Hãy gửi lời chào hoặc hỏi về mùi hương bạn thích ✿</p>
+        <p class="live-chat-empty">Hãy gửi lời chào hoặc hỏi về mùi hương bạn thích @include('partials.icon', ['name' => 'flower', 'size' => '1em'])</p>
     </div>
     <form class="live-chat-form" data-live-form>
         <label class="visually-hidden" for="live-chat-input-{{ ($staff ?? false) ? 'studio' : 'viewer' }}">Tin nhắn livestream</label>

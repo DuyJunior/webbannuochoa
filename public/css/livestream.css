@@ -1,7 +1,7 @@
 .ht-live-page{padding-block:55px 92px;color:#45313b}
 .ht-live-hero{text-align:center;max-width:760px;margin:0 auto 42px}
 .ht-live-eyebrow{display:inline-flex;align-items:center;gap:8px;color:#af4b70;font-size:11px;font-weight:700;letter-spacing:.17em;text-transform:uppercase}
-.ht-live-eyebrow:before{content:"✿";font-size:18px;line-height:1}
+.ht-live-eyebrow:before{content:"";width:18px;height:18px;background:currentColor;mask:url('/images/icons/flower.svg') center / contain no-repeat}
 .ht-live-hero h1{font:400 clamp(37px,5vw,66px)/1.15 'Playfair Display',Georgia,serif;letter-spacing:0;color:#3c2934;margin:15px 0 13px}
 .ht-live-hero h1 em{color:#bb6585;font-weight:400}
 .ht-live-hero p{font-size:15px;line-height:1.8;color:#75636c;margin:0}

@@ -6,7 +6,7 @@
 @section('content')
 <div class="store-container ht-quiz-page">
     <header class="ht-quiz-hero">
-        <span class="ht-badge-pill">🌸 TRẮC NGHIỆM CHỌN HƯƠNG</span>
+        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) TRẮC NGHIỆM CHỌN HƯƠNG</span>
         <h1 class="ht-quiz-title">Tìm <em>Dấu Ấn Mùi Hương</em> Thuộc Về Riêng Bạn</h1>
         <p class="ht-quiz-subtitle">Chỉ 4 câu hỏi trực giác trong 60 giây, thuật toán mùi hương của Soopi sẽ tìm ra những chai nước hoa hòa hợp nhất với thần thái và tâm hồn bạn.</p>
     </header>
@@ -35,7 +35,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="personality" value="charming" required>
                         <div class="option-card">
-                            <span class="option-icon">🌹</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
                             <strong>Quyến Rũ & Bí Ẩn</strong>
                             <p>Cuốn hút, gợi cảm, để lại vương vấn khó quên trong tâm trí người đối diện.</p>
                         </div>
@@ -43,7 +43,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="personality" value="elegant">
                         <div class="option-card">
-                            <span class="option-icon">🕊️</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'leaf', 'size' => '1em'])</span>
                             <strong>Tinh Tế & Thanh Lịch</strong>
                             <p>Nhẹ nhàng, tao nhã, toát lên phong thái chỉn chu và gu thẩm mỹ đẳng cấp.</p>
                         </div>
@@ -51,7 +51,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="personality" value="fresh">
                         <div class="option-card">
-                            <span class="option-icon">🍋</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'citrus', 'size' => '1em'])</span>
                             <strong>Tươi Vui & Năng Động</strong>
                             <p>Sảng khoái, tràn đầy năng lượng tích cực, tự do như làn gió mùa hạ.</p>
                         </div>
@@ -59,7 +59,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="personality" value="warm">
                         <div class="option-card">
-                            <span class="option-icon">🪵</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'tree', 'size' => '1em'])</span>
                             <strong>Trầm Ấm & Uy Quyền</strong>
                             <p>Chững chạc, tin cậy, vững vàng và mang chiều sâu của sự từng trải.</p>
                         </div>
@@ -81,7 +81,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="weather" value="cool" required>
                         <div class="option-card">
-                            <span class="option-icon">❄️</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'snowflake', 'size' => '1em'])</span>
                             <strong>Mát Mẻ & Se Lạnh</strong>
                             <p>Gió mùa thu đông, những ngày mưa bay hoặc buổi tối trời lành lạnh.</p>
                         </div>
@@ -89,7 +89,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="weather" value="hot">
                         <div class="option-card">
-                            <span class="option-icon">☀️</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'sun', 'size' => '1em'])</span>
                             <strong>Nắng Ấm & Nhiệt Đới</strong>
                             <p>Thời tiết năng động, cần mùi hương nhẹ mát, không gây nồng gắt.</p>
                         </div>
@@ -97,7 +97,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="weather" value="ac">
                         <div class="option-card">
-                            <span class="option-icon">🏢</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'building', 'size' => '1em'])</span>
                             <strong>Phòng Máy Lạnh Suốt Ngày</strong>
                             <p>Môi trường kín, điều hòa 24-26°C, cần mùi hương vừa đủ lan tỏa dễ chịu.</p>
                         </div>
@@ -105,7 +105,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="weather" value="night">
                         <div class="option-card">
-                            <span class="option-icon">🌙</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'moon', 'size' => '1em'])</span>
                             <strong>Không Gian Đêm Thoáng Đãng</strong>
                             <p>Những buổi dạo phố, ngắm thành phố về đêm dưới ánh đèn lung linh.</p>
                         </div>
@@ -127,7 +127,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="occasion" value="work" required>
                         <div class="option-card">
-                            <span class="option-icon">💼</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'briefcase', 'size' => '1em'])</span>
                             <strong>Công Sở & Đi Làm Hằng Ngày</strong>
                             <p>Chuyên nghiệp, lịch sự, tôn trọng không gian chung của đồng nghiệp.</p>
                         </div>
@@ -135,7 +135,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="occasion" value="date">
                         <div class="option-card">
-                            <span class="option-icon">🥂</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'glass', 'size' => '1em'])</span>
                             <strong>Hẹn Hò & Gặp Gỡ Người Ấy</strong>
                             <p>Ngọt ngào, gần gũi, khiến người bên cạnh chỉ muốn tựa sát vào.</p>
                         </div>
@@ -143,7 +143,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="occasion" value="party">
                         <div class="option-card">
-                            <span class="option-icon">👑</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'crown', 'size' => '1em'])</span>
                             <strong>Dạ Tiệc & Sự Kiện Sang Trọng</strong>
                             <p>Tỏa hương xa, nổi bật giữa đám đông, xứng tầm trang phục lộng lẫy.</p>
                         </div>
@@ -151,7 +151,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="occasion" value="casual">
                         <div class="option-card">
-                            <span class="option-icon">🏖️</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'beach', 'size' => '1em'])</span>
                             <strong>Dạo Phố & Du Lịch Cuối Tuần</strong>
                             <p>Thư thái, xả stress, mang lại cảm giác giải phóng tâm trí và tự do.</p>
                         </div>
@@ -173,7 +173,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="note" value="floral" required>
                         <div class="option-card">
-                            <span class="option-icon">🌸</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
                             <strong>Hương Hoa Tươi Sáng (Floral)</strong>
                             <p>Hoa hồng Damask, hoa nhài Sambac, mẫu đơn, hoa linh lan kiều diễm.</p>
                         </div>
@@ -181,7 +181,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="note" value="woody">
                         <div class="option-card">
-                            <span class="option-icon">🪵</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'tree', 'size' => '1em'])</span>
                             <strong>Hương Gỗ Trầm Ấm (Woody)</strong>
                             <p>Tuyết tùng Virginia, đàn hương Mysore, hổ phách và cỏ hương bài sâu lắng.</p>
                         </div>
@@ -189,7 +189,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="note" value="citrus">
                         <div class="option-card">
-                            <span class="option-icon">🍊</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'citrus', 'size' => '1em'])</span>
                             <strong>Cam Chanh Thanh Mát (Citrus & Fresh)</strong>
                             <p>Cam Bergamot Calabria, bưởi hồng, chanh vàng và hương biển khoáng đạt.</p>
                         </div>
@@ -197,7 +197,7 @@
                     <label class="ht-quiz-option">
                         <input type="radio" name="note" value="sweet">
                         <div class="option-card">
-                            <span class="option-icon">🍦</span>
+                            <span class="option-icon">@include('partials.icon', ['name' => 'candy', 'size' => '1em'])</span>
                             <strong>Vani & Ngọt Ấm (Gourmand / Amber)</strong>
                             <p>Hạt vani Madagascar, hạnh nhân, caramel và đậu Tonka béo ngậy êm ái.</p>
                         </div>
@@ -225,7 +225,7 @@
     {{-- KẾT QUẢ QUIZ --}}
     <div class="ht-quiz-results-wrap">
         <div class="ht-quiz-result-hero">
-            <span class="result-celebration">🎉 CHÚC MỪNG BẠN!</span>
+            <span class="result-celebration">@include('partials.icon', ['name' => 'party', 'size' => '1em']) CHÚC MỪNG BẠN!</span>
             <h2>Soopi Đã Tìm Thấy Mùi Hương Hoàn Hảo Cho Bạn</h2>
             <p class="result-analysis">
                 Dựa trên lựa chọn của bạn: phong cách <strong>{{ match($personality) { 'charming' => 'Quyến rũ bí ẩn', 'elegant' => 'Tinh tế thanh lịch', 'fresh' => 'Tươi vui năng động', default => 'Trầm ấm uy quyền' } }}</strong>, 
@@ -234,7 +234,7 @@
             </p>
             <div class="result-actions-top">
                 <a href="{{ route('store.quiz') }}" class="ht-button ht-button-outline">↺ Làm lại trắc nghiệm</a>
-                <a href="{{ route('store.discovery-box') }}" class="ht-button ht-button-secondary">📦 Tạo Hộp Thử Mùi cho các mùi này</a>
+                <a href="{{ route('store.discovery-box') }}" class="ht-button ht-button-secondary">@include('partials.icon', ['name' => 'box', 'size' => '1em']) Tạo Hộp Thử Mùi cho các mùi này</a>
             </div>
         </div>
 
@@ -242,7 +242,7 @@
             @foreach($recommendations as $index => $perfume)
             <article class="ht-quiz-item-card {{ $index === 0 ? 'top-match' : '' }}">
                 @if($index === 0)
-                <div class="top-match-badge">🏆 TƯƠNG THÍCH NHẤT DÀNH CHO BẠN</div>
+                <div class="top-match-badge">@include('partials.icon', ['name' => 'trophy', 'size' => '1em']) TƯƠNG THÍCH NHẤT DÀNH CHO BẠN</div>
                 @endif
                 <div class="item-card-inner">
                     <div class="item-card-img">
@@ -257,7 +257,7 @@
                         
                         <div class="item-notes-preview">
                             <span class="note-pill">Hương đầu: {{ Str::limit($perfume->scent_profile['top']['notes'] ?? 'Tươi mát', 35) }}</span>
-                            <span class="note-pill">🌿 Độ lưu: {{ $perfume->scent_profile['longevity']['text'] ?? '8h' }}</span>
+                            <span class="note-pill">@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Độ lưu: {{ $perfume->scent_profile['longevity']['text'] ?? '8h' }}</span>
                         </div>
 
                         <div class="item-card-bottom">

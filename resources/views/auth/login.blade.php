@@ -15,21 +15,21 @@
 
         @if (session('success'))
             <div class="luxury-auth-alert alert-success" role="alert">
-                <span>✓</span>
+                <span>@include('partials.icon', ['name' => 'check', 'size' => '1em'])</span>
                 <div>{{ session('success') }}</div>
             </div>
         @endif
 
         @if (session('error'))
             <div class="luxury-auth-alert alert-danger" role="alert">
-                <span>✕</span>
+                <span>@include('partials.icon', ['name' => 'close', 'size' => '1em'])</span>
                 <div>{{ session('error') }}</div>
             </div>
         @endif
 
         @if ($errors->any())
             <div class="luxury-auth-alert alert-danger" role="alert">
-                <span>⚠️</span>
+                <span>@include('partials.icon', ['name' => 'warning', 'size' => '1em'])</span>
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>

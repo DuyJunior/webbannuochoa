@@ -534,7 +534,7 @@
                     <i class="fa-regular fa-calendar"></i>
                     {{ date('d/m/Y') }}
                 </div>
-                <span class="topbar-badge">🌸 Online</span>
+                <span class="topbar-badge">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) Online</span>
             </div>
         </header>
 
@@ -560,7 +560,7 @@
     @if(Auth::user()->role === 'admin')
     {{-- LAB 7: ADMIN LIVECHAT POPUP (PDF Trang 13 - 14 + Chủ động nhắn tin) --}}
     <div id="admin-chat-box">
-        <button id="chat-toggle" class="btn btn-dark shadow">💬 Chat Khách hàng</button>
+        <button id="chat-toggle" class="btn btn-dark shadow">@include('partials.icon', ['name' => 'chat', 'size' => '1em']) Chat Khách hàng</button>
         <div id="chat-popup" class="card shadow-lg" style="display:none;">
             <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-2 px-3">
                 <div class="d-flex align-items-center gap-2">
@@ -573,7 +573,7 @@
             {{-- Thanh tìm kiếm & chuyển chế độ --}}
             <div class="p-2 bg-light border-bottom">
                 <div class="input-group input-group-sm mb-1">
-                    <input type="text" id="chat-search-input" class="form-control form-control-sm" placeholder="🔍 Tìm khách hàng (tên, email)...">
+                    <input type="text" id="chat-search-input" class="form-control form-control-sm" placeholder=" Tìm khách hàng (tên, email)...">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" type="button" id="btn-clear-search" style="display:none;">&times;</button>
                     </div>
@@ -588,7 +588,7 @@
 
             {{-- Header user đang chọn --}}
             <div id="chat-active-header" class="px-3 py-1 bg-white border-bottom text-truncate small" style="display:none; color:#db2777; font-weight:600;">
-                💬 Đang trò chuyện với: <span id="active-user-name" class="text-dark"></span>
+                @include('partials.icon', ['name' => 'chat', 'size' => '1em']) Đang trò chuyện với: <span id="active-user-name" class="text-dark"></span>
             </div>
 
             {{-- Danh sách User --}}

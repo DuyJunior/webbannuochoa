@@ -19,13 +19,13 @@
                         <strong>Chào, {{ Auth::user()->name }}</strong>
                         <a href="{{ route('account.edit') }}">Thông tin & đổi mật khẩu</a>
                         <a href="{{ route('orders.index') }}">Đơn mua của tôi</a>
-                        <a href="{{ route('store.wardrobe') }}">💎 Tủ nước hoa của tôi</a>
+                        <a href="{{ route('store.wardrobe') }}">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) Tủ nước hoa của tôi</a>
                         <a href="{{ route('store.wishlist') }}">Mùi hương yêu thích</a>
-                        <a href="{{ route('store.member') }}">👑 Thẻ thành viên VIP</a>
+                        <a href="{{ route('store.member') }}">@include('partials.icon', ['name' => 'crown', 'size' => '1em']) Thẻ thành viên VIP</a>
                         @if(Auth::user()->role === 'admin')<a href="{{ route('admin.coupons.index') }}">Mã ưu đãi</a>@endif
                         <a href="{{ route('orders.tracking') }}">Tra cứu đơn hàng</a>
                         @if(Auth::user()->role === 'admin')<a href="{{ route('admin.dashboard') }}">Quản trị cửa hàng</a>@endif
-                        @if(Auth::user()->canManageLivestreams())<a href="{{ route('admin.livestreams.index') }}">🔴 Quản lý livestream</a>@endif
+                        @if(Auth::user()->canManageLivestreams())<a href="{{ route('admin.livestreams.index') }}">@include('partials.icon', ['name' => 'broadcast', 'size' => '1em']) Quản lý livestream</a>@endif
                         <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit">Đăng xuất</button></form>
                     </div>
                 </details>
@@ -44,8 +44,8 @@
                 <a href="{{ route('home') }}" @class(['active' => request()->routeIs('home', 'welcome') && !request()->hasAny(['gender', 'category', 'search', 'sort'])])>Khám phá</a>
                 <a href="{{ route('livestream.show') }}" @class(['active' => request()->routeIs('livestream.show')])>Livestream</a>
                 <a href="{{ route('store.quiz') }}" @class(['active' => request()->routeIs('store.quiz*')])>Trắc nghiệm hương</a>
-                <a href="{{ route('store.discovery-box') }}" @class(['active' => request()->routeIs('store.discovery-box')])>🎁 Hộp thử mùi</a>
-                <a href="{{ route('store.scent-of-the-day') }}" @class(['active' => request()->routeIs('store.scent-of-the-day')])>⭐ Mùi hôm nay</a>
+                <a href="{{ route('store.discovery-box') }}" @class(['active' => request()->routeIs('store.discovery-box')])>@include('partials.icon', ['name' => 'gift', 'size' => '1em']) Hộp thử mùi</a>
+                <a href="{{ route('store.scent-of-the-day') }}" @class(['active' => request()->routeIs('store.scent-of-the-day')])>@include('partials.icon', ['name' => 'star', 'size' => '1em']) Mùi hôm nay</a>
                 <a href="{{ route('home', ['gender' => 'nu']) }}#san-pham" @class(['active' => request()->routeIs('home', 'welcome') && request('gender') === 'nu'])>Nước hoa nữ</a>
                 <a href="{{ route('home', ['gender' => 'nam']) }}#san-pham" @class(['active' => request()->routeIs('home', 'welcome') && request('gender') === 'nam'])>Nước hoa nam</a>
                 <a href="{{ route('home', ['gender' => 'unisex']) }}#san-pham" @class(['active' => request()->routeIs('home', 'welcome') && request('gender') === 'unisex'])>Unisex</a>

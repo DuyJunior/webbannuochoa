@@ -11,7 +11,7 @@
                     ← Quay lại cửa hàng
                 </a>
                 <span class="section-kicker" style="display: block; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--pink-main, #e8728a); margin-bottom: 4px;">
-                    🌸 Tuyển tập nhóm hương đặc sắc
+                    @include('partials.icon', ['name' => 'flower', 'size' => '1em']) Tuyển tập nhóm hương đặc sắc
                 </span>
                 <h1 style="font-size: 1.85rem; font-weight: 700; color: #2d1a22; margin: 0 0 6px;">Quản lý danh mục</h1>
                 <p style="color: #7a4b5a; font-size: 0.92rem; margin: 0;">Khám phá và quản lý các nhóm hương thơm độc đáo tại Soopi.</p>
@@ -30,14 +30,14 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; margin-bottom: 36px;">
             @php
                 $catVisuals = [
-                    ['icon' => '🌸', 'bg' => '#fff0f3', 'accent' => '#e8728a', 'tag' => 'Hương Hoa Cỏ', 'desc' => 'Dịu dàng, nữ tính & quyến rũ'],
-                    ['icon' => '🌿', 'bg' => '#f0fdf4', 'accent' => '#059669', 'tag' => 'Thảo Mộc & Xanh', 'desc' => 'Tươi mát, thuần khiết & tự nhiên'],
-                    ['icon' => '🪵', 'bg' => '#fdf4ea', 'accent' => '#b45309', 'tag' => 'Hương Gỗ Quý', 'desc' => 'Trầm ấm, chững chạc & cuốn hút'],
-                    ['icon' => '🌊', 'bg' => '#eff6ff', 'accent' => '#2563eb', 'tag' => 'Hương Biển Sảng Khoái', 'desc' => 'Phóng khoáng, tự do & tươi mới'],
-                    ['icon' => '💎', 'bg' => '#fdf2f8', 'accent' => '#db2777', 'tag' => 'Nước Hoa Niche', 'desc' => 'Độc bản, sang trọng & tinh hoa'],
-                    ['icon' => '🌙', 'bg' => '#f5f3ff', 'accent' => '#7c3aed', 'tag' => 'Dạ Tiệc & Huyền Bí', 'desc' => 'Say đắm, nồng nàn & bí ẩn'],
-                    ['icon' => '🍊', 'bg' => '#fff7ed', 'accent' => '#ea580c', 'tag' => 'Cam Chanh Tươi Mới', 'desc' => 'Năng động, căng tràn sức sống'],
-                    ['icon' => '🔥', 'bg' => '#fff1f2', 'accent' => '#e11d48', 'tag' => 'Gia Vị Phương Đông', 'desc' => 'Ấm nồng, đam mê & cá tính'],
+                    ['icon' => 'flower', 'bg' => '#fff0f3', 'accent' => '#e8728a', 'tag' => 'Hương Hoa Cỏ', 'desc' => 'Dịu dàng, nữ tính & quyến rũ'],
+                    ['icon' => 'leaf', 'bg' => '#f0fdf4', 'accent' => '#059669', 'tag' => 'Thảo Mộc & Xanh', 'desc' => 'Tươi mát, thuần khiết & tự nhiên'],
+                    ['icon' => 'tree', 'bg' => '#fdf4ea', 'accent' => '#b45309', 'tag' => 'Hương Gỗ Quý', 'desc' => 'Trầm ấm, chững chạc & cuốn hút'],
+                    ['icon' => 'waves', 'bg' => '#eff6ff', 'accent' => '#2563eb', 'tag' => 'Hương Biển Sảng Khoái', 'desc' => 'Phóng khoáng, tự do & tươi mới'],
+                    ['icon' => 'gem', 'bg' => '#fdf2f8', 'accent' => '#db2777', 'tag' => 'Nước Hoa Niche', 'desc' => 'Độc bản, sang trọng & tinh hoa'],
+                    ['icon' => 'moon', 'bg' => '#f5f3ff', 'accent' => '#7c3aed', 'tag' => 'Dạ Tiệc & Huyền Bí', 'desc' => 'Say đắm, nồng nàn & bí ẩn'],
+                    ['icon' => 'citrus', 'bg' => '#fff7ed', 'accent' => '#ea580c', 'tag' => 'Cam Chanh Tươi Mới', 'desc' => 'Năng động, căng tràn sức sống'],
+                    ['icon' => 'flame', 'bg' => '#fff1f2', 'accent' => '#e11d48', 'tag' => 'Gia Vị Phương Đông', 'desc' => 'Ấm nồng, đam mê & cá tính'],
                 ];
             @endphp
 
@@ -52,7 +52,7 @@
                     <div>
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
                             <div style="width: 46px; height: 46px; border-radius: 12px; background: {{ $visual['bg'] }}; display: flex; align-items: center; justify-content: center; font-size: 22px; border: 1px solid rgba(0,0,0,0.04);">
-                                {{ $visual['icon'] }}
+                                @include('partials.icon', ['name' => $visual['icon'], 'size' => '1em'])
                             </div>
                             <span style="font-size: 11px; font-weight: 700; color: #c94d68; background: #fce8ed; padding: 3px 10px; border-radius: 999px;">
                                 {{ $category->perfumes_count ?? $category->perfumes()->count() }} sản phẩm
@@ -76,13 +76,13 @@
 
                         <div style="display: flex; gap: 6px;">
                             <a href="{{ route('categories.edit', $category) }}" title="Sửa danh mục" style="width: 28px; height: 28px; border-radius: 8px; background: #fce8ed; color: #c94d68; display: flex; align-items: center; justify-content: center; font-size: 12px; text-decoration: none;">
-                                ✎
+                                @include('partials.icon', ['name' => 'pen', 'size' => '1em'])
                             </a>
                             <form method="POST" action="{{ route('categories.destroy', $category) }}" onsubmit="return confirm('Bạn chắc chắn muốn xóa danh mục này? Sản phẩm sẽ chuyển về chưa phân loại.')" style="margin:0;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" title="Xóa danh mục" style="width: 28px; height: 28px; border-radius: 8px; background: #fff1f2; color: #e11d48; border: none; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer;">
-                                    ✕
+                                    @include('partials.icon', ['name' => 'close', 'size' => '1em'])
                                 </button>
                             </form>
                         </div>
@@ -90,7 +90,7 @@
                 </div>
             @empty
                 <div style="grid-column: 1 / -1; background: #fff; border-radius: 16px; border: 2px dashed rgba(232,114,138,.3); padding: 48px 20px; text-align: center;">
-                    <div style="font-size: 42px; margin-bottom: 12px;">🌸</div>
+                    <div style="font-size: 42px; margin-bottom: 12px;">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</div>
                     <h3 style="color: #2d1a22; font-weight: 700; margin-bottom: 6px;">Chưa có danh mục nào</h3>
                     <p style="color: #7a4b5a; font-size: 0.9rem; margin-bottom: 20px;">Hãy tạo danh mục đầu tiên để phân loại các mùi hương tuyệt mỹ.</p>
                     <a href="{{ route('categories.create') }}" style="background: linear-gradient(135deg, #c94d68, #e8728a); color: #fff; padding: 11px 24px; border-radius: 999px; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-block;">

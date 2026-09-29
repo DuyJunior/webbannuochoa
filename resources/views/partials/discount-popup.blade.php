@@ -3,7 +3,7 @@
     <div class="ht-popup-card">
         <button class="ht-popup-close" id="ht-popup-close" aria-label="Đóng">&times;</button>
         <div class="ht-popup-visual">
-            <span class="ht-popup-icon">🌸</span>
+            <span class="ht-popup-icon">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
             <div class="ht-popup-petals" aria-hidden="true">
                 <span></span><span></span><span></span><span></span><span></span>
             </div>

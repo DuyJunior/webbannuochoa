@@ -52,9 +52,7 @@
                     <select name="payment_status" class="form-control form-select">
                         <option value="">-- Tất cả thanh toán --</option>
                         @foreach($paymentLabels as $pKey => $pLabel)
-                            <option value="{{ $pKey }}" {{ request('payment_status') === $pKey ? 'selected' : '' }}>
-                                {{ $pLabel }}
-                            </option>
+                            <option value="{{ $pKey }}" {{ request('payment_status') === $pKey ? 'selected' : '' }}>{{ $pLabel }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -245,7 +243,7 @@
                                         <span class="font-weight-bold text-dark" style="font-size: 0.88rem;">{{ $order->name ?? $order->customer_name }}</span>
                                         @if($order->user_id)
                                             <button type="button" class="btn btn-sm btn-outline-success py-0 px-1 ml-1" style="font-size: 0.72rem; border-radius: 4px;" onclick="openChatWithUser({{ $order->user_id }}, '{{ addslashes($order->name ?? $order->customer_name) }}')" title="Nhắn tin cho khách hàng này">
-                                                💬 Chat
+                                                @include('partials.icon', ['name' => 'chat', 'size' => '1em']) Chat
                                             </button>
                                         @endif
                                     </div>

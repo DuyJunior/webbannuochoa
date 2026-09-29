@@ -55,12 +55,12 @@
                                                     <div class="mt-1 d-flex flex-wrap gap-1" style="font-size: 0.82rem;">
                                                         @if($item->addon_gift)
                                                             <span class="badge badge-warning text-dark mr-1">
-                                                                🎁 Gói quà Luxury & Thiệp (+50k)
+                                                                @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Gói quà Luxury & Thiệp (+50k)
                                                             </span>
                                                         @endif
                                                         @if($item->engrave_text)
                                                             <span class="badge badge-info mr-1">
-                                                                ✒️ Khắc Laser: "<strong>{{ $item->engrave_text }}</strong>"
+                                                                @include('partials.icon', ['name' => 'pen', 'size' => '1em']) Khắc Laser: "<strong>{{ $item->engrave_text }}</strong>"
                                                             </span>
                                                         @endif
                                                     </div>
@@ -156,7 +156,7 @@
                 @if($order->gift_delivery_date)
                 <div class="col-12 mb-2">
                     <span class="text-muted">Ngày giao mong muốn:</span>
-                    <strong class="text-danger ml-1">📅 {{ \Carbon\Carbon::parse($order->gift_delivery_date)->format('d/m/Y') }}</strong>
+                    <strong class="text-danger ml-1">@include('partials.icon', ['name' => 'calendar', 'size' => '1em']) {{ \Carbon\Carbon::parse($order->gift_delivery_date)->format('d/m/Y') }}</strong>
                 </div>
                 @endif
                 @if($order->gift_message)

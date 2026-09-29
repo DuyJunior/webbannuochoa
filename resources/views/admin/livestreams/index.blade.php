@@ -16,7 +16,7 @@
         </div>
         <div class="live-admin-actions">
             <a class="live-admin-btn" href="{{ route('livestream.show') }}" target="_blank" rel="noopener noreferrer">Trang khách xem ↗</a>
-            <a class="live-admin-btn live-admin-btn--primary" href="{{ route('admin.livestreams.create', ['mode' => 'now']) }}">🔴 Livestream ngay</a>
+            <a class="live-admin-btn live-admin-btn--primary" href="{{ route('admin.livestreams.create', ['mode' => 'now']) }}">@include('partials.icon', ['name' => 'broadcast', 'size' => '1em']) Livestream ngay</a>
             <a class="live-admin-btn" href="{{ route('admin.livestreams.create', ['mode' => 'schedule']) }}">◷ Đặt lịch phát</a>
         </div>
     </header>

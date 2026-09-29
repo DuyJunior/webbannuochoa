@@ -6,7 +6,7 @@
 @section('content')
 <div class="store-container ht-member-page">
     <header class="ht-member-header">
-        <span class="ht-badge-pill">💎 CHƯƠNG TRÌNH KHÁCH HÀNG THÂN THIẾT</span>
+        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) CHƯƠNG TRÌNH KHÁCH HÀNG THÂN THIẾT</span>
         <h1 class="ht-member-title">Đặc Quyền Thành Viên <em>Soopi Club</em></h1>
         <p class="ht-member-subtitle">100.000đ chi tiêu hợp lệ tích 1 điểm; 1 điểm giảm 1.000đ, tối đa 20% tiền hàng sau mã giảm giá. Chỉ tính đơn hoàn tất và đã thanh toán; đơn cũ nhập vào không có giao dịch được tính khi đã hoàn tất. Đơn hủy hoặc hoàn trả không tích điểm. Điểm demo và điểm thật được tách riêng.</p>
     </header>
@@ -19,7 +19,7 @@
                 <span class="card-logo">SOOPI PERFUME</span>
             </div>
             <div class="card-middle-row">
-                <span class="card-tier-badge">{{ $tier['badge'] }} {{ $tier['name'] }}</span>
+                <span class="card-tier-badge">@include('partials.icon', ['name' => $tier['badge'], 'size' => '1em']) {{ $tier['name'] }}</span>
                 <span class="card-discount-tag">{{ $tier['point_rate'] }}</span>
             </div>
             <div class="card-bottom-row">
@@ -52,7 +52,7 @@
                     @if($tier['next_tier'])
                     <span>Cần thêm <strong>{{ number_format($tier['needed_amount'], 0, ',', '.') }}₫</strong> lên {{ $tier['next_tier'] }}</span>
                     @else
-                    <span style="color: #d4af37; font-weight: 700;">★ Bạn đã đạt hạng VIP cao nhất!</span>
+                    <span style="color: #d4af37; font-weight: 700;">@include('partials.icon', ['name' => 'star', 'size' => '1em']) Bạn đã đạt hạng VIP cao nhất!</span>
                     @endif
                 </div>
                 <div class="progress-track">
@@ -82,12 +82,12 @@
             <div class="tier-perk-card {{ $tier['code'] === 'silver' ? 'current-tier' : '' }}">
                 @if($tier['code'] === 'silver')<span class="current-tag">HẠNG HIỆN TẠI</span>@endif
                 <div class="card-head silver">
-                    <span class="badge">🥈</span>
+                    <span class="badge">@include('partials.icon', ['name' => 'ribbon', 'size' => '1em'])</span>
                     <h3>Hạng Bạc (Silver)</h3>
                     <span class="cond">Chi tiêu dưới 1.500.000₫</span>
                 </div>
                 <ul class="perks-list">
-                    @foreach($tier['perks'] as $perk)<li>✓ {{ $perk }}</li>@endforeach
+                    @foreach($tier['perks'] as $perk)<li>@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ $perk }}</li>@endforeach
                 </ul>
             </div>
 
@@ -95,12 +95,12 @@
             <div class="tier-perk-card {{ $tier['code'] === 'rose' ? 'current-tier' : '' }}">
                 @if($tier['code'] === 'rose')<span class="current-tag">HẠNG HIỆN TẠI</span>@endif
                 <div class="card-head rose">
-                    <span class="badge">🌹</span>
+                    <span class="badge">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
                     <h3>Hạng Hoa Hồng (Rose)</h3>
                     <span class="cond">Chi tiêu từ 1.500.000₫ đến 5.000.000₫</span>
                 </div>
                 <ul class="perks-list">
-                    @foreach($tier['perks'] as $perk)<li>✓ {{ $perk }}</li>@endforeach
+                    @foreach($tier['perks'] as $perk)<li>@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ $perk }}</li>@endforeach
                 </ul>
             </div>
 
@@ -108,12 +108,12 @@
             <div class="tier-perk-card premium {{ $tier['code'] === 'premium' ? 'current-tier' : '' }}">
                 @if($tier['code'] === 'premium')<span class="current-tag">HẠNG HIỆN TẠI</span>@endif
                 <div class="card-head royal">
-                    <span class="badge">👑</span>
+                    <span class="badge">@include('partials.icon', ['name' => 'crown', 'size' => '1em'])</span>
                     <h3>Hoàng Gia (Premium VIP)</h3>
                     <span class="cond">Chi tiêu tích lũy trên 5.000.000₫</span>
                 </div>
                 <ul class="perks-list">
-                    @foreach($tier['perks'] as $perk)<li>✓ {{ $perk }}</li>@endforeach
+                    @foreach($tier['perks'] as $perk)<li>@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ $perk }}</li>@endforeach
                 </ul>
             </div>
         </div>

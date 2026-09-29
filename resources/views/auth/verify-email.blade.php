@@ -17,14 +17,14 @@
 
         @if (session('message'))
             <div class="luxury-auth-alert alert-success" role="alert" style="text-align: left;">
-                <span>✓</span>
+                <span>@include('partials.icon', ['name' => 'check', 'size' => '1em'])</span>
                 <div>{{ session('message') }}</div>
             </div>
         @endif
 
         @if (session('success'))
             <div class="luxury-auth-alert alert-success" role="alert" style="text-align: left;">
-                <span>✓</span>
+                <span>@include('partials.icon', ['name' => 'check', 'size' => '1em'])</span>
                 <div>{{ session('success') }}</div>
             </div>
         @endif
@@ -41,14 +41,14 @@
                 @csrf
                 <button type="submit" class="luxury-auth-btn">
                     <span>Gửi lại email xác thực</span>
-                    <span>✉️</span>
+                    <span>@include('partials.icon', ['name' => 'mail', 'size' => '1em'])</span>
                 </button>
             </form>
 
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="luxury-auth-secondary-btn">
-                    <span>🚪 Đăng xuất</span>
+                    <span>@include('partials.icon', ['name' => 'logout', 'size' => '1em']) Đăng xuất</span>
                 </button>
             </form>
         </div>

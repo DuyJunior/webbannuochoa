@@ -121,7 +121,7 @@
                                         {{ $video->duration ?: '0:45' }}
                                     </span>
                                     <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 16px; opacity: 0.9;">
-                                        ▶
+                                        @include('partials.icon', ['name' => 'play', 'size' => '1em'])
                                     </span>
                                 </div>
                             </td>
@@ -146,15 +146,15 @@
                             </td>
                             <td>
                                 @if($video->placement === 'home')
-                                    <span class="badge badge-info" style="font-size: 11px; padding: 4px 8px;">🏠 Trang chủ</span>
+                                    <span class="badge badge-info" style="font-size: 11px; padding: 4px 8px;">@include('partials.icon', ['name' => 'home', 'size' => '1em']) Trang chủ</span>
                                 @elseif($video->placement === 'product')
-                                    <span class="badge badge-warning text-dark" style="font-size: 11px; padding: 4px 8px;">🧴 Trang SP</span>
+                                    <span class="badge badge-warning text-dark" style="font-size: 11px; padding: 4px 8px;">@include('partials.icon', ['name' => 'bottle', 'size' => '1em']) Trang SP</span>
                                 @else
-                                    <span class="badge badge-primary" style="font-size: 11px; padding: 4px 8px; background: #8b5cf6;">🌐 Toàn sàn</span>
+                                    <span class="badge badge-primary" style="font-size: 11px; padding: 4px 8px; background: #8b5cf6;">@include('partials.icon', ['name' => 'globe', 'size' => '1em']) Toàn sàn</span>
                                 @endif
                             </td>
                             <td class="text-center font-weight-bold" style="color: #334155; font-size: 0.9rem;">
-                                🔥 {{ $video->formatted_views }}
+                                @include('partials.icon', ['name' => 'flame', 'size' => '1em']) {{ $video->formatted_views }}
                             </td>
                             <td class="text-center">
                                 <form method="POST" action="{{ route('admin.videos.toggle', $video) }}" class="d-inline">

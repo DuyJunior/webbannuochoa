@@ -69,7 +69,7 @@
                             <span class="momo-info-label">Số điện thoại MoMo</span>
                             <div class="momo-info-val-wrap">
                                 <span id="momo-phone" class="momo-info-value"><strong>0387350999</strong></span>
-                                <button class="momo-copy-btn" onclick="copyMomoText('momo-phone', this)">📋</button>
+                                <button type="button" class="momo-copy-btn" aria-label="Sao chép số điện thoại" onclick="copyMomoText('momo-phone', this)">@include('partials.copy-icon')</button>
                             </div>
                         </div>
                         <div class="momo-info-row">
@@ -82,14 +82,14 @@
                             <span class="momo-info-label">Số tiền</span>
                             <div class="momo-info-val-wrap">
                                 <span class="momo-info-value momo-amount">{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</span>
-                                <button class="momo-copy-btn" onclick="copyMomoAmount({{ (int)$order->total_price }}, this)">📋</button>
+                                <button type="button" class="momo-copy-btn" aria-label="Sao chép số tiền" onclick="copyMomoAmount({{ (int)$order->total_price }}, this)">@include('partials.copy-icon')</button>
                             </div>
                         </div>
                         <div class="momo-info-row highlight">
                             <span class="momo-info-label">Nội dung</span>
                             <div class="momo-info-val-wrap">
                                 <span id="momo-note" class="momo-info-value momo-note-val"><strong>HATHU{{ $order->id }}</strong></span>
-                                <button class="momo-copy-btn" onclick="copyMomoText('momo-note', this)">📋</button>
+                                <button type="button" class="momo-copy-btn" aria-label="Sao chép nội dung chuyển khoản" onclick="copyMomoText('momo-note', this)">@include('partials.copy-icon')</button>
                             </div>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
                     @endif
 
                     <div class="momo-notice-box">
-                        ℹ️ <strong>Lưu ý:</strong> Vui lòng ghi đúng nội dung <strong>HATHU{{ $order->id }}</strong> để hệ thống tự xác nhận. Đơn hàng sẽ được xử lý trong vòng 5–10 phút sau khi thanh toán thành công.
+                        @include('partials.icon', ['name' => 'info', 'size' => '1em']) <strong>Lưu ý:</strong> Vui lòng ghi đúng nội dung <strong>HATHU{{ $order->id }}</strong> để hệ thống tự xác nhận. Đơn hàng sẽ được xử lý trong vòng 5–10 phút sau khi thanh toán thành công.
                     </div>
 
                     {{-- Nút xác nhận đã thanh toán --}}
@@ -114,7 +114,7 @@
                         @csrf
                         <input type="hidden" name="gateway" value="momo">
                         <button type="submit" style="width:100%; padding:14px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; border-radius:12px; font-weight:700; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(16,185,129,0.3); transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-                            <span>✅</span>
+                            <span>@include('partials.icon', ['name' => 'check', 'size' => '1em'])</span>
                             <span>Tôi Đã Chuyển Tiền Thành Công</span>
                         </button>
                     </form>
@@ -124,7 +124,7 @@
             {{-- Cột phải: Tóm tắt đơn hàng --}}
             <div class="momo-side-col">
                 <div class="momo-summary-box">
-                    <h3 class="momo-summary-title">📦 Đơn hàng #{{ $order->id }}</h3>
+                    <h3 class="momo-summary-title">@include('partials.icon', ['name' => 'box', 'size' => '1em']) Đơn hàng #{{ $order->id }}</h3>
 
                     <div class="momo-sum-items">
                         @foreach($order->items as $item)
@@ -134,7 +134,7 @@
                                     @if($prod && $prod->image_src)
                                         <img src="{{ $prod->image_src }}" alt="{{ $prod->name }}">
                                     @else
-                                        <span>🌸</span>
+                                        <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
                                     @endif
                                     <span class="momo-qty-badge">{{ $item->quantity }}</span>
                                 </div>
@@ -164,10 +164,10 @@
                     </div>
 
                     <div class="momo-receiver">
-                        <h4>📬 Giao đến</h4>
+                        <h4>@include('partials.icon', ['name' => 'mail', 'size' => '1em']) Giao đến</h4>
                         <p><strong>{{ $order->name }}</strong></p>
-                        <p>📞 {{ $order->phone }}</p>
-                        <p>📍 {{ $order->address }}</p>
+                        <p>@include('partials.icon', ['name' => 'phone', 'size' => '1em']) {{ $order->phone }}</p>
+                        <p>@include('partials.icon', ['name' => 'pin', 'size' => '1em']) {{ $order->address }}</p>
                     </div>
 
                     <div class="momo-timer-box">
@@ -219,6 +219,8 @@
 .momo-copy-btn { background: none; border: 1px solid #fce7f3; border-radius: 6px; padding: 2px 7px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
 .momo-copy-btn:hover { background: #fdf2f8; }
 .momo-copy-btn.copied { background: #d1fae5; border-color: #6ee7b7; color: #065f46; }
+.momo-copy-btn .copy-done, .momo-copy-btn.copied .copy-idle { display: none; }
+.momo-copy-btn.copied .copy-done { display: inline; }
 .momo-redirect-section { padding: 16px 24px; border-top: 1px solid #fdf2f8; text-align: center; }
 .btn-open-momo { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #a50064 0%, #d82d8b 100%); color: #fff; font-weight: 700; font-size: 0.95rem; padding: 13px 24px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 16px rgba(165,0,100,0.3); transition: all 0.25s; }
 .btn-open-momo:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(165,0,100,0.4); }
@@ -263,16 +265,14 @@ function copyMomoText(id, btn) {
     const el = document.getElementById(id);
     const text = el.innerText.trim();
     navigator.clipboard.writeText(text).then(() => {
-        btn.textContent = '✓';
         btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('copied'); }, 2000);
+        setTimeout(() => { btn.classList.remove('copied'); }, 2000);
     });
 }
 function copyMomoAmount(amount, btn) {
     navigator.clipboard.writeText(String(amount)).then(() => {
-        btn.textContent = '✓';
         btn.classList.add('copied');
-        setTimeout(() => { btn.textContent = '📋'; btn.classList.remove('copied'); }, 2000);
+        setTimeout(() => { btn.classList.remove('copied'); }, 2000);
     });
 }
 // Countdown 15 phút

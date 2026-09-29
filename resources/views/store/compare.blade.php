@@ -6,16 +6,16 @@
 @section('content')
 <div class="store-container ht-compare-page">
     <header class="ht-compare-header">
-        <span class="ht-badge-pill">⚖️ BẢNG ĐỐI CHIẾU MÙI HƯƠNG</span>
+        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'scale', 'size' => '1em']) BẢNG ĐỐI CHIẾU MÙI HƯƠNG</span>
         <h1 class="ht-compare-title">So Sánh <em>Nước Hoa</em> Toàn Diện</h1>
         <p class="ht-compare-subtitle">Đối chiếu trực quan về độ ngọt, độ tươi mát, độ bền mùi và giá trị trên mỗi ml để tìm ra chai nước hoa chân ái nhất của bạn.</p>
     </header>
 
     @if($perfumes->isEmpty())
     <div class="ht-compare-empty">
-        <div class="empty-icon">⚖️</div>
+        <div class="empty-icon">@include('partials.icon', ['name' => 'scale', 'size' => '1em'])</div>
         <h3>Bạn chưa chọn sản phẩm nào để so sánh</h3>
-        <p>Bấm nút <strong>"⚖ So sánh"</strong> trên các chai nước hoa ở trang chủ, hoặc bấm vào các bộ so sánh kinh điển bên dưới để khám phá ngay:</p>
+        <p>Bấm nút <strong>"@include('partials.icon', ['name' => 'scale', 'size' => '1em']) So sánh"</strong> trên các chai nước hoa ở trang chủ, hoặc bấm vào các bộ so sánh kinh điển bên dưới để khám phá ngay:</p>
         
         <div class="preset-compares">
             @php
@@ -74,7 +74,7 @@
                     {{-- 1. Độ ngọt --}}
                     <div class="metric-item">
                         <div class="metric-title-row">
-                            <span class="m-label">🍯 Độ Ngọt (Sweetness)</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'candy', 'size' => '1em']) Độ Ngọt (Sweetness)</span>
                             <span class="m-val">{{ $perfume->metric_sweetness }}/10</span>
                         </div>
                         <div class="m-bar-track">
@@ -85,7 +85,7 @@
                     {{-- 2. Độ tươi mát --}}
                     <div class="metric-item">
                         <div class="metric-title-row">
-                            <span class="m-label">🌿 Độ Tươi Mát (Freshness)</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Độ Tươi Mát (Freshness)</span>
                             <span class="m-val">{{ $perfume->metric_freshness }}/10</span>
                         </div>
                         <div class="m-bar-track">
@@ -107,7 +107,7 @@
                     {{-- 4. Độ tỏa hương --}}
                     <div class="metric-item">
                         <div class="metric-title-row">
-                            <span class="m-label">💫 Độ Tỏa Hương</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'sparkles', 'size' => '1em']) Độ Tỏa Hương</span>
                             <span class="m-val">{{ $perfume->metric_sillage }}</span>
                         </div>
                     </div>
@@ -115,7 +115,7 @@
                     {{-- 5. Giá trị trên mỗi ml --}}
                     <div class="metric-item highlight-box">
                         <div class="metric-title-row">
-                            <span class="m-label">💰 Giá / 1ml</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'cash', 'size' => '1em']) Giá / 1ml</span>
                             <span class="m-val" style="color: #c2476a; font-weight: 700;">{{ number_format($perfume->metric_price_per_ml, 0, ',', '.') }}₫/ml</span>
                         </div>
                         <span class="m-sub">Quy đổi từ chai fullsize {{ $perfume->volume_ml }}ml</span>

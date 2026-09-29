@@ -76,7 +76,7 @@
 
                     <div class="ghn-partner-banner">
                         <div class="ghn-badge-logo">
-                            <span class="truck-icon">🚚</span>
+                            <span class="truck-icon">@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
                             <strong>Giao Hàng Nhanh (GHN Express)</strong>
                         </div>
                         <span class="ghn-status-live">● Kết nối API trực tiếp</span>
@@ -119,7 +119,7 @@
                 {{-- Dịch Vụ Gói Quà Cao Cấp & Thiệp Chúc Mừng --}}
                 <div class="checkout-card" id="giftServiceCard">
                     <div class="card-section-header">
-                        <div class="icon-circle">🎁</div>
+                        <div class="icon-circle">@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</div>
                         <div>
                             <h2>Dịch Vụ Gói Quà Cao Cấp & Thiệp Chúc Mừng</h2>
                             <small>Món quà hoàn hảo trao tận tay người thương</small>
@@ -148,10 +148,10 @@
                             <div class="form-group-item">
                                 <label for="gift_card">Mẫu thiệp chúc mừng:</label>
                                 <select id="gift_card" name="gift_card" class="form-select">
-                                    <option value="Sinh nhật (Happy Birthday)">🎂 Sinh nhật (Happy Birthday)</option>
-                                    <option value="Kỷ niệm (Happy Anniversary)">🌹 Kỷ niệm (Happy Anniversary)</option>
-                                    <option value="Tình yêu (With Love)">💌 Tình yêu ngọt ngào (With Love)</option>
-                                    <option value="Tri ân & Cảm ơn (Thank You)">🙏 Tri ân & Cảm ơn (Thank You)</option>
+                                    <option value="Sinh nhật (Happy Birthday)">Sinh nhật (Happy Birthday)</option>
+                                    <option value="Kỷ niệm (Happy Anniversary)">Kỷ niệm (Happy Anniversary)</option>
+                                    <option value="Tình yêu (With Love)">Tình yêu ngọt ngào (With Love)</option>
+                                    <option value="Tri ân & Cảm ơn (Thank You)">Tri ân & Cảm ơn (Thank You)</option>
                                 </select>
                             </div>
                         </div>
@@ -184,7 +184,7 @@
                             <div class="payment-option-body">
                                 <div class="opt-title">
                                     <div style="display: flex; align-items: center; gap: 8px;">
-                                        <span style="font-size: 1.25rem;">💵</span>
+                                        <span style="font-size: 1.25rem;">@include('partials.icon', ['name' => 'cash', 'size' => '1em'])</span>
                                         <strong>Thanh toán khi nhận hàng (COD)</strong>
                                     </div>
                                     <span class="badge-popular">Phổ biến</span>
@@ -207,9 +207,9 @@
                                 <p>Chuyển hướng đến cổng thanh toán MoMo: Hỗ trợ quét mã QR MoMo, Thẻ ATM Nội Địa (Napas) & Thẻ Quốc Tế.</p>
 
                                 <div class="momo-feature-tags" style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
-                                    <span style="font-size: 0.76rem; background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; padding: 4px 10px; border-radius: 6px; font-weight: 600;">📱 Ví MoMo QR</span>
-                                    <span style="font-size: 0.76rem; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-weight: 600;">🏧 Thẻ ATM Nội Địa (Napas)</span>
-                                    <span style="font-size: 0.76rem; background: #fefce8; color: #854d0e; border: 1px solid #fef08a; padding: 4px 10px; border-radius: 6px; font-weight: 600;">💳 Thẻ Quốc Tế (Visa/Master)</span>
+                                    <span style="font-size: 0.76rem; background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'phone', 'size' => '1em']) Ví MoMo QR</span>
+                                    <span style="font-size: 0.76rem; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'bank', 'size' => '1em']) Thẻ ATM Nội Địa (Napas)</span>
+                                    <span style="font-size: 0.76rem; background: #fefce8; color: #854d0e; border: 1px solid #fef08a; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'card', 'size' => '1em']) Thẻ Quốc Tế (Visa/Master)</span>
                                 </div>
                             </div>
                         </div>
@@ -235,7 +235,7 @@
                                         @if($item['product']?->image_src)
                                             <img src="{{ $item['product']->image_src }}" alt="{{ $item['product']->name }}">
                                         @else
-                                            <div class="thumb-placeholder">🌸</div>
+                                            <div class="thumb-placeholder">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</div>
                                         @endif
                                         <span class="item-qty-badge">{{ $item['quantity'] }}</span>
                                     </div>
@@ -286,7 +286,7 @@
                     </button>
 
                     <div class="safe-checkout-badge">
-                        <span>🔒 Bảo mật thông tin đặt hàng · Cam kết chính hãng 100%</span>
+                        <span>@include('partials.icon', ['name' => 'lock', 'size' => '1em']) Bảo mật thông tin đặt hàng · Cam kết chính hãng 100%</span>
                     </div>
                 </div>
             </div>

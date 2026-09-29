@@ -15,7 +15,7 @@
 
         @if ($errors->any())
             <div class="luxury-auth-alert alert-danger" role="alert">
-                <span>⚠️</span>
+                <span>@include('partials.icon', ['name' => 'warning', 'size' => '1em'])</span>
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>

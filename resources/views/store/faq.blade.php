@@ -193,7 +193,7 @@
 
     {{-- NHÓM 1: Chính hãng --}}
     <div class="ht-faq-group" id="chinh-hang">
-        <div class="ht-faq-group-title">🛡️ Chính hãng &amp; nguồn gốc</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'shield', 'size' => '1em']) Chính hãng &amp; nguồn gốc</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
@@ -235,7 +235,7 @@
 
     {{-- NHÓM 2: Giao hàng --}}
     <div class="ht-faq-group" id="giao-hang">
-        <div class="ht-faq-group-title">🚚 Giao hàng &amp; vận chuyển</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'truck', 'size' => '1em']) Giao hàng &amp; vận chuyển</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
@@ -285,7 +285,7 @@
 
     {{-- NHÓM 3: Thanh toán --}}
     <div class="ht-faq-group" id="thanh-toan">
-        <div class="ht-faq-group-title">💳 Thanh toán</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'card', 'size' => '1em']) Thanh toán</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
@@ -295,9 +295,9 @@
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
                 Chúng tôi hỗ trợ đầy đủ các hình thức:
                 <ul>
-                    <li>💜 <strong>MoMo</strong> – thanh toán QR nhanh chóng</li>
-                    <li>🏦 <strong>Chuyển khoản ATM / Internet Banking</strong></li>
-                    <li>💵 <strong>COD</strong> – thanh toán khi nhận hàng</li>
+                    <li>@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <strong>MoMo</strong> – thanh toán QR nhanh chóng</li>
+                    <li>@include('partials.icon', ['name' => 'bank', 'size' => '1em']) <strong>Chuyển khoản ATM / Internet Banking</strong></li>
+                    <li>@include('partials.icon', ['name' => 'cash', 'size' => '1em']) <strong>COD</strong> – thanh toán khi nhận hàng</li>
                 </ul>
             </div></div>
         </div>
@@ -325,7 +325,7 @@
 
     {{-- NHÓM 4: Đổi & Trả --}}
     <div class="ht-faq-group" id="doi-tra">
-        <div class="ht-faq-group-title">🔄 Đổi &amp; trả hàng</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'refresh', 'size' => '1em']) Đổi &amp; trả hàng</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
@@ -359,7 +359,7 @@
 
     {{-- NHÓM 5: Bảo quản --}}
     <div class="ht-faq-group" id="bao-quan">
-        <div class="ht-faq-group-title">🌸 Bảo quản &amp; sử dụng</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) Bảo quản &amp; sử dụng</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
@@ -397,7 +397,7 @@
 
     {{-- CTA liên hệ --}}
     <div class="ht-faq-cta">
-        <span style="font-size:32px;">💬</span>
+        <span style="font-size:32px;">@include('partials.icon', ['name' => 'chat', 'size' => '1em'])</span>
         <h2>Vẫn còn thắc mắc?</h2>
         <p>Đội ngũ Soopi luôn sẵn sàng hỗ trợ bạn — nhanh chóng, tận tâm.</p>
         <div class="ht-faq-social-links">

@@ -17,7 +17,7 @@
 
     @if (isset($errors) && $errors->any())
         <div class="cart-alert-error" role="alert">
-            <span class="alert-icon">⚠️</span>
+            <span class="alert-icon">@include('partials.icon', ['name' => 'warning', 'size' => '1em'])</span>
             <div>
                 @foreach ($errors->all() as $error)
                     <div>{{ $error }}</div>
@@ -37,7 +37,7 @@
     @endforeach
     @if ($items->isEmpty())
         <div class="cart-empty-box">
-            <div class="empty-icon">🛍️</div>
+            <div class="empty-icon">@include('partials.icon', ['name' => 'bag', 'size' => '1em'])</div>
             <h2>Giỏ hàng của bạn đang trống</h2>
             <p>Hãy khám phá những tuyệt tác mùi hương chính hãng tại Soopi.</p>
             <a class="btn-empty-shop" href="{{ route('home') }}#san-pham">Khám phá sản phẩm ngay</a>
@@ -46,7 +46,7 @@
         {{-- Free Shipping Banner --}}
         <div class="cart-freeship-banner">
             <div class="freeship-content">
-                <span class="freeship-icon">🚚</span>
+                <span class="freeship-icon">@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
                 <span>Phí vận chuyển được tính theo địa chỉ nhận hàng ở bước thanh toán.</span>
             </div>
             <span class="freeship-tag">Phí được báo trước khi đặt</span>
@@ -106,7 +106,7 @@
                             
                             {{-- Dung tích --}}
                             <div class="item-option-badge volume-badge">
-                                <span>💧 Dung tích: <strong>{{ $item['volume_label'] ?? ($item['volume_ml'].'ml') }}</strong></span>
+                                <span>@include('partials.icon', ['name' => 'drop', 'size' => '1em']) Dung tích: <strong>{{ $item['volume_label'] ?? ($item['volume_ml'].'ml') }}</strong></span>
                             </div>
 
                             {{-- Dịch vụ quà tặng & khắc tên --}}
@@ -114,12 +114,12 @@
                                 <div class="item-addons-group">
                                     @if(!empty($item['has_gift']))
                                         <span class="addon-badge gift-badge">
-                                            🎁 Gói quà Luxury & Thiệp (+50.000₫)
+                                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Gói quà Luxury & Thiệp (+50.000₫)
                                         </span>
                                     @endif
                                     @if(!empty($item['has_engrave']) && !empty($item['engrave_text']))
                                         <span class="addon-badge engrave-badge">
-                                            ✒️ Khắc Laser: "<strong>{{ $item['engrave_text'] }}</strong>"
+                                            @include('partials.icon', ['name' => 'pen', 'size' => '1em']) Khắc Laser: "<strong>{{ $item['engrave_text'] }}</strong>"
                                         </span>
                                     @endif
                                 </div>
@@ -152,7 +152,7 @@
                             <form method="POST" action="{{ route('cart.remove', $itemKey) }}">
                                 @csrf @method('DELETE')
                                 <button class="btn-item-remove" type="submit" title="Xóa khỏi giỏ hàng" onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
-                                    ✕ Xóa
+                                    @include('partials.icon', ['name' => 'close', 'size' => '1em']) Xóa
                                 </button>
                             </form>
                         </div>
@@ -161,15 +161,15 @@
 
                 <div class="cart-guarantee-box">
                     <div class="guarantee-item">
-                        <span>🛡️</span>
+                        <span>@include('partials.icon', ['name' => 'shield', 'size' => '1em'])</span>
                         <div><strong>100% Chính hãng</strong><small>Cam kết nguồn gốc rõ ràng</small></div>
                     </div>
                     <div class="guarantee-item">
-                        <span>🔄</span>
+                        <span>@include('partials.icon', ['name' => 'refresh', 'size' => '1em'])</span>
                         <div><strong>Đổi trả 14 ngày</strong><small>Hỗ trợ đổi mùi linh hoạt</small></div>
                     </div>
                     <div class="guarantee-item">
-                        <span>📦</span>
+                        <span>@include('partials.icon', ['name' => 'box', 'size' => '1em'])</span>
                         <div><strong>Đóng gói an toàn</strong><small>3 lớp chống sốc chuyên dụng</small></div>
                     </div>
                 </div>
@@ -180,7 +180,7 @@
                 <div class="checkout-card-box">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
                         <h2 class="checkout-box-title" style="margin: 0; padding: 0; border: none; font-size: 18px;">Tóm tắt đơn hàng</h2>
-                        <span style="font-size: 11px; background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">🛍️ Giỏ hàng</span>
+                        <span style="font-size: 11px; background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">@include('partials.icon', ['name' => 'bag', 'size' => '1em']) Giỏ hàng</span>
                     </div>
 
                     <div class="checkout-summary-lines">
@@ -204,7 +204,7 @@
 
                     {{-- Warning message when no items checked --}}
                     <div id="noSelectionAlert" class="cart-no-selection-alert" style="display: none; margin: 14px 0;">
-                        <span>⚠️ Vui lòng tick chọn ít nhất 1 sản phẩm để thanh toán.</span>
+                        <span>@include('partials.icon', ['name' => 'warning', 'size' => '1em']) Vui lòng tick chọn ít nhất 1 sản phẩm để thanh toán.</span>
                     </div>
 
                     <div style="margin-top: 22px;">
@@ -222,11 +222,11 @@
 
                     <div class="checkout-security-note" style="margin-top: 22px; border-top: 1px solid #f1f5f9; padding-top: 14px;">
                         <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px; font-size: 12px; color: #64748b;">
-                            <span>🚚</span>
+                            <span>@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
                             <span>Giao hàng tận nơi toàn quốc qua <strong>Giao Hàng Nhanh (GHN)</strong></span>
                         </div>
                         <div style="display: flex; gap: 10px; align-items: center; font-size: 12px; color: #64748b;">
-                            <span>💳</span>
+                            <span>@include('partials.icon', ['name' => 'card', 'size' => '1em'])</span>
                             <span>Hỗ trợ thanh toán khi nhận hàng (COD) linh hoạt</span>
                         </div>
                     </div>

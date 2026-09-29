@@ -31,7 +31,7 @@
         if (!messages.length) {
             const empty = document.createElement('p');
             empty.className = 'live-chat-empty';
-            empty.textContent = 'Hãy gửi lời chào hoặc hỏi về mùi hương bạn thích ✿';
+            empty.textContent = 'Hãy gửi lời chào hoặc hỏi về mùi hương bạn thích';
             list.append(empty);
             return;
         }

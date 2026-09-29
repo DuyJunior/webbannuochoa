@@ -7,13 +7,13 @@
 <div class="store-container ht-wardrobe-page">
     <header class="ht-wardrobe-header">
         <div class="header-left">
-            <span class="ht-badge-pill">💎 BỘ SƯU TẬP CÁ NHÂN</span>
+            <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) BỘ SƯU TẬP CÁ NHÂN</span>
             <h1 class="ht-wardrobe-title">Tủ Nước Hoa Của <em>{{ Auth::user()->name }}</em></h1>
             <p class="ht-wardrobe-subtitle">Phân loại và lưu giữ những nốt hương đặc trưng theo từng khoảnh khắc cuộc sống: từ thanh lịch chốn công sở đến nồng nàn những đêm hẹn hò.</p>
         </div>
         <div class="header-actions">
             <button type="button" class="ht-button ht-button-outline" id="shareWardrobeBtn">
-                🔗 Chia Sẻ Tủ Nước Hoa
+                @include('partials.icon', ['name' => 'link', 'size' => '1em']) Chia Sẻ Tủ Nước Hoa
             </button>
             <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary">
                 + Thêm Mùi Hương Mới
@@ -24,15 +24,15 @@
     {{-- Tabs by Occasion --}}
     <div class="ht-wardrobe-tabs">
         <button class="w-tab active" data-target="all">Tất Cả ({{ $wardrobeItems->count() }})</button>
-        <button class="w-tab" data-target="work">💼 Đi Làm & Công Sở ({{ $byOccasion['work']->count() }})</button>
-        <button class="w-tab" data-target="date">🥂 Hẹn Hò & Lãng Mạn ({{ $byOccasion['date']->count() }})</button>
-        <button class="w-tab" data-target="party">👑 Đi Tiệc & Dạ Hội ({{ $byOccasion['party']->count() }})</button>
-        <button class="w-tab" data-target="casual">🌿 Thường Ngày & Dạo Phố ({{ $byOccasion['casual']->count() }})</button>
+        <button class="w-tab" data-target="work">@include('partials.icon', ['name' => 'briefcase', 'size' => '1em']) Đi Làm & Công Sở ({{ $byOccasion['work']->count() }})</button>
+        <button class="w-tab" data-target="date">@include('partials.icon', ['name' => 'glass', 'size' => '1em']) Hẹn Hò & Lãng Mạn ({{ $byOccasion['date']->count() }})</button>
+        <button class="w-tab" data-target="party">@include('partials.icon', ['name' => 'crown', 'size' => '1em']) Đi Tiệc & Dạ Hội ({{ $byOccasion['party']->count() }})</button>
+        <button class="w-tab" data-target="casual">@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Thường Ngày & Dạo Phố ({{ $byOccasion['casual']->count() }})</button>
     </div>
 
     @if($wardrobeItems->isEmpty())
     <div class="ht-wardrobe-empty">
-        <div class="empty-icon">🪞</div>
+        <div class="empty-icon">@include('partials.icon', ['name' => 'mirror', 'size' => '1em'])</div>
         <h3>Tủ nước hoa của bạn hiện chưa có chai nào</h3>
         <p>Hãy khám phá cửa hàng hoặc làm bài trắc nghiệm để chọn và lưu những mùi hương ưng ý nhất vào từng dịp nhé!</p>
         <div class="empty-actions">
@@ -45,7 +45,7 @@
         @foreach($wardrobeItems as $item)
         <article class="ht-wardrobe-card" data-occasion="{{ $item->occasion }}">
             <div class="card-occasion-tag">
-                {{ $item->occasion_label }}
+                @include('partials.icon', ['name' => $item->occasion_icon, 'size' => '1em']) {{ $item->occasion_label }}
             </div>
             <div class="card-img-wrap">
                 <img src="{{ $item->perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $item->perfume->name }}" loading="lazy">
@@ -65,7 +65,7 @@
 
                 <div class="card-scent-notes">
                     <span>Hương đầu: {{ Str::limit($item->perfume->scent_profile['top']['notes'] ?? 'Tươi mát', 35) }}</span>
-                    <span>🌿 Độ lưu: {{ $item->perfume->scent_profile['longevity']['text'] ?? '8h' }}</span>
+                    <span>@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Độ lưu: {{ $item->perfume->scent_profile['longevity']['text'] ?? '8h' }}</span>
                 </div>
 
                 <div class="card-footer">
@@ -81,7 +81,7 @@
                         <form action="{{ route('store.wardrobe.remove', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn bỏ chai này khỏi tủ cá nhân?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="ht-button ht-button-outline btn-sm delete-btn" title="Xóa khỏi tủ">✕</button>
+                            <button type="submit" class="ht-button ht-button-outline btn-sm delete-btn" title="Xóa khỏi tủ">@include('partials.icon', ['name' => 'close', 'size' => '1em'])</button>
                         </form>
                     </div>
                 </div>
@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const shareUrl = "{{ route('store.wardrobe.share', Auth::user()) }}";
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(shareUrl);
-                alert('✓ Đã sao chép link Tủ nước hoa của bạn!\n' + shareUrl + '\nBạn có thể gửi link này cho bạn bè.');
+                alert(' Đã sao chép link Tủ nước hoa của bạn!\n' + shareUrl + '\nBạn có thể gửi link này cho bạn bè.');
             } else {
                 prompt('Copy link Tủ nước hoa của bạn để gửi cho bạn bè:', shareUrl);
             }

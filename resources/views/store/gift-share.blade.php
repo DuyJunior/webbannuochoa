@@ -7,7 +7,7 @@
 <div class="store-container ht-gift-page">
     <div class="ht-gift-envelope-card">
         <div class="envelope-top-bar">
-            <span>💌 BẠN VỪA NHẬN ĐƯỢC MỘT MÓN QUÀ MÙI HƯƠNG</span>
+            <span>@include('partials.icon', ['name' => 'mail', 'size' => '1em']) BẠN VỪA NHẬN ĐƯỢC MỘT MÓN QUÀ MÙI HƯƠNG</span>
         </div>
 
         <div class="ht-gift-letter">
@@ -44,7 +44,7 @@
                         <input type="hidden" name="quantity" value="1">
                         <input type="hidden" name="addon_gift" value="1">
                         <button type="submit" class="ht-button ht-button-primary ht-button-lg">
-                            🎁 Nhận Món Quà & Đặt Giao Về Địa Chỉ Của Bạn
+                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Nhận Món Quà & Đặt Giao Về Địa Chỉ Của Bạn
                         </button>
                     </form>
                     <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light">

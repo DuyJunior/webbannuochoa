@@ -554,7 +554,10 @@ details[open] .cat-caret { transform: rotate(180deg); }
     pointer-events: none;
 }
 .gifting-banner::after {
-    content: '❋';
+    content: '';
+    width: 110px; height: 110px;
+    background: currentColor;
+    mask: url('/images/icons/flower.svg') center / contain no-repeat;
     position: absolute;
     right: 36px; bottom: -10px;
     font-size: 110px;
