@@ -1,0 +1,48 @@
+/* The responsive photo remains the fallback. WebGL bends individual petals;
+   the glass and its bow stay still, including when motion is unavailable. */
+.soopi-homepage .bloom-hero.petal-hero.cinema-hero{background:#efe0dc;border-color:#d9c1c6}
+.soopi-homepage .petal-hero.cinema-hero .bloom-layout{display:block;position:relative;width:100%;max-width:none;min-height:690px;height:clamp(690px,52vw,900px);padding:0}
+.soopi-homepage .petal-hero.cinema-hero .bloom-art{position:absolute;inset:0;width:100%;height:100%;max-width:none;aspect-ratio:auto;z-index:0;overflow:clip}
+.soopi-homepage .petal-hero.cinema-hero .bloom-sculpture{inset:0;filter:none;transform:none;will-change:auto}
+.soopi-homepage .petal-hero.cinema-hero .bloom-open{width:100%;height:100%;object-fit:cover;object-position:58% 50%;transform:none;animation:none}
+.soopi-homepage .petal-hero.cinema-hero .bloom-palette-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:58% 50%;pointer-events:none;opacity:0;transition:opacity .65s ease}
+.soopi-homepage .petal-hero.cinema-hero .bloom-palette-photo.is-selected{opacity:1}
+.bloom-motion-off .bloom-palette-photo{transition:none!important}
+.soopi-homepage .petal-hero.cinema-hero .bloom-halo,.soopi-homepage .petal-hero.cinema-hero .bloom-shadow,.soopi-homepage .petal-hero.cinema-hero .bloom-ambient{display:none}
+.soopi-homepage .petal-hero.cinema-hero .bloom-art:after{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(90deg,#fcf7f1f2 0%,#fbf3ecdf 19%,#fbf3ec70 34%,transparent 49%),linear-gradient(0deg,#3c202b52,transparent 18%)}
+.soopi-homepage .petal-hero.cinema-hero .bloom-copy{position:absolute;left:4.5%;top:50%;transform:translateY(-50%);width:32%;max-width:500px;padding:0;z-index:4}
+.soopi-homepage .petal-hero.cinema-hero .bloom-kicker{font-size:10px;letter-spacing:.23em;color:#805365}
+.soopi-homepage .petal-hero.cinema-hero .bloom-copy h1{font-size:clamp(42px,4.2vw,74px);line-height:1.12;letter-spacing:-.055em;margin:26px 0}
+.soopi-homepage .petal-hero.cinema-hero .bloom-copy h1 em{color:#8d5069}
+.soopi-homepage .petal-hero.cinema-hero .bloom-copy p{font-size:clamp(12px,1vw,15px);color:#715362;line-height:1.9}
+.soopi-homepage .petal-hero.cinema-hero .bloom-actions{margin-top:30px}
+.soopi-homepage .petal-hero.cinema-hero .bloom-button{background:#3b1e30;box-shadow:0 8px 30px #3b1e3020}
+.soopi-homepage .petal-hero.cinema-hero .bloom-tools{right:4%;bottom:22px;color:#fff8f2;z-index:5;padding:5px 14px;background:#fff8f1e8;border:1px solid #fff9f399;border-radius:30px;backdrop-filter:blur(14px)}
+.soopi-homepage .petal-hero.cinema-hero .bloom-tools button{color:#5a3648;min-height:34px}
+.cinema-atmosphere{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.cinema-atmosphere span{position:absolute;inset:0;background:radial-gradient(ellipse at 82% 17%,#fff3d64a,transparent 44%),radial-gradient(ellipse at 53% 79%,#ffead325,transparent 42%);animation:cinema-light 17s ease-in-out infinite alternate;animation-play-state:paused;mix-blend-mode:screen}
+.cinema-atmosphere i{position:absolute;width:120%;height:48%;bottom:-14%;left:-10%;background:radial-gradient(ellipse at center,#fff5e641,transparent 65%);filter:blur(24px);animation:cinema-mist 23s ease-in-out infinite alternate;animation-play-state:paused}
+.cinema-hero.cinema-playing .cinema-atmosphere span,.cinema-hero.cinema-playing .cinema-atmosphere i{animation-play-state:running!important}
+.cinema-hero.cinema-replay .cinema-atmosphere{animation:cinema-reveal 2.4s ease-out both}
+.cinema-hero .soopi-petal-stage{opacity:1;z-index:2}
+@keyframes cinema-light{from{opacity:.4;transform:translateX(-2%)}to{opacity:.9;transform:translateX(2%)}}
+@keyframes cinema-mist{from{transform:translate3d(-3%,0,0);opacity:.3}to{transform:translate3d(4%,-6%,0);opacity:.8}}
+@keyframes cinema-reveal{0%{background:#fff2dc80;opacity:0}25%{opacity:1}100%{background:#fff2dc00;opacity:1}}
+.bloom-motion-off .cinema-hero .bloom-open,.bloom-motion-off .cinema-atmosphere,.bloom-motion-off .cinema-atmosphere *{animation:none!important;transform:none!important}
+@media(max-width:1100px) and (min-width:761px){.soopi-homepage .petal-hero.cinema-hero .bloom-copy{width:33%;left:4%}.soopi-homepage .petal-hero.cinema-hero .bloom-copy h1{font-size:clamp(34px,4.2vw,46px)}.soopi-homepage .petal-hero.cinema-hero .bloom-layout{height:640px;min-height:640px}.soopi-homepage .petal-hero.cinema-hero .bloom-kicker{font-size:8px}}
+@media(max-width:760px){
+ .soopi-homepage .petal-hero.cinema-hero .bloom-layout{display:flex;flex-direction:column;height:auto;min-height:0;padding:0;gap:0;background:#faf3ed}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-copy{position:relative;inset:auto;transform:none;width:100%;max-width:none;padding:36px 25px 26px;order:0}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-copy h1{font-size:clamp(35px,8vw,52px);margin:18px 0}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-copy h1 em br{display:none}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-copy p{font-size:12px}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-actions{margin-top:22px}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-art{position:relative;inset:auto;order:1;width:100%;height:clamp(360px,105vw,550px);max-width:none;flex:none}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-open{object-position:50% 50%}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-palette-photo{object-position:50% 50%}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-art:after{background:linear-gradient(180deg,#faf3ed 0%,#faf3ed00 16%),linear-gradient(0deg,#3c202b40,transparent 20%)}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-tools{right:16px;bottom:15px;padding:4px 10px;gap:12px;max-width:calc(100% - 32px)}
+ .soopi-homepage .petal-hero.cinema-hero .bloom-tools button{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.cinema-hero .bloom-open,.cinema-atmosphere,.cinema-atmosphere *{animation:none!important;transform:none!important}}
+@media(prefers-reduced-motion:reduce){.cinema-hero .bloom-palette-photo{transition:none!important}}

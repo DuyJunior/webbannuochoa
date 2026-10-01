@@ -4,7 +4,6 @@
         ['key'=>'date', 'time'=>'17:30', 'label'=>'Một cuộc hẹn', 'title'=>'Có những lần gặp,\nmuốn nhớ thật lâu.', 'copy'=>'Ánh chiều mềm lại. Để hương thơm kể tiếp câu chuyện của bạn.', 'slug'=>'miss-dior-blooming-bouquet', 'image'=>'images/gallery/miss-dior.webp', 'occasion'=>'hen-ho', 'style'=>'hoa'],
         ['key'=>'evening', 'time'=>'21:00', 'label'=>'Một tối đáng nhớ', 'title'=>'Khi đêm xuống,\ncá tính lên tiếng.', 'copy'=>'Một sắc hương trầm ấm. Một sự hiện diện rất riêng.', 'slug'=>'tom-ford-rose-prick-edp', 'image'=>'images/products/tom-ford-rose-prick.jpg', 'occasion'=>'tiec', 'style'=>'am'],
     ];
-    $sampleSelection = $perfumes->where('stock', '>', 0)->take(8);
 @endphp
 <section class="store-container soopi-moments" id="bo-suu-tap" aria-labelledby="moments-title">
     <header class="moments-heading"><span class="atelier-kicker">SOOPI / THE MOMENTS COLLECTION</span><h2 id="moments-title">Bạn muốn được nhớ đến,<br><em>trong khoảnh khắc nào?</em></h2><p>Một ngày. Nhiều phiên bản của bạn.</p></header>
@@ -40,12 +39,4 @@
     </div>
 </section>
 
-<section class="store-container soopi-sampling" id="khoang-thu-huong" aria-labelledby="sampling-title">
-    <header><div><span class="atelier-kicker">SOOPI / YOUR SCENT WARDROBE</span><h2 id="sampling-title">Thử một chút.<br><em>Yêu thật lâu.</em></h2></div><p>Chọn những mùi hương bạn tò mò.<br>Đặt vào khay, rồi cảm nhận trên làn da.</p></header>
-    <form action="{{ route('store.discovery-box') }}" method="GET" data-sample-form>
-        <div class="sample-workbench"><div class="sample-package"><label for="atelier-box-size">Hộp thử của bạn</label><select name="size" id="atelier-box-size"><option value="3">3 mẫu · 199.000₫</option><option value="5">5 mẫu · 299.000₫</option></select><p>Mỗi lựa chọn là một khởi đầu.</p><a class="atelier-link" href="{{ route('store.quiz') }}">Chưa biết chọn? Tìm gu hương ↗</a></div><div class="sample-tray" data-sample-tray aria-label="Các mẫu đã chọn"></div><div class="sample-checkout"><strong data-sample-price>199.000₫</strong><span data-sample-status role="status">Chọn mẫu bên dưới</span><button class="atelier-button" type="submit">Hoàn thiện hộp thử ↗</button></div></div>
-        <div class="sample-picks">@forelse($sampleSelection as $sample)<label class="sample-pick"><input type="checkbox" name="samples[]" value="{{ $sample->id }}" data-sample-name="{{ $sample->name }}" data-sample-img="{{ $sample->image_src }}"><img src="{{ $sample->image_src }}" alt="" width="160" height="160" loading="lazy"><span>{{ $sample->brand }}</span><strong>{{ $sample->name }}</strong><small>Chọn mẫu <span aria-hidden="true">+</span></small></label>@empty<p>Khám phá các mẫu tại trang hộp thử.</p>@endforelse</div>
-        <noscript><p>Các mẫu đã tích sẽ được chuyển sang trang hoàn thiện hộp thử.</p></noscript>
-    </form>
-    <a class="atelier-link sampling-all" href="{{ route('store.discovery-box') }}">Xem toàn bộ mẫu hương ↗</a>
-</section>
+@include('partials.home-sampling')

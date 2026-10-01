@@ -3,20 +3,16 @@
 @section('page_title', 'Tổng quan cửa hàng')
 @section('content')
 <div class="studio-dashboard">
-    <section class="studio-welcome">
-        <div class="studio-welcome-copy">
-            <span class="studio-eyebrow">SOOPI · KHÔNG GIAN QUẢN TRỊ</span>
-            <h2>Chăm chút từng chi tiết.<br><em>Lan tỏa từng hương thơm.</em></h2>
-            <p>Chào {{ Auth::user()->name }}. Cùng bắt đầu với những điều quan trọng của cửa hàng hôm nay.</p>
-            <div class="studio-welcome-actions">
-                <a href="{{ route('admin.orders.index', ['tab' => 'pending']) }}" class="btn btn-primary">Xử lý đơn hàng <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-                <a href="{{ route('admin.products.create') }}" class="studio-text-link"><i class="fa-solid fa-plus" aria-hidden="true"></i> Thêm sản phẩm</a>
-            </div>
+    <section class="studio-overview-heading">
+        <div>
+            <span class="studio-eyebrow">TỔNG QUAN VẬN HÀNH · {{ now()->timezone('Asia/Ho_Chi_Minh')->format('d.m.Y') }}</span>
+            <h2>Cửa hàng trong tầm tay.</h2>
+            <p>Chào {{ Auth::user()->name }}. Đây là những gì đang diễn ra tại Soopi.</p>
         </div>
-        <figure class="studio-welcome-photo">
-            <img src="{{ asset('images/admin/unsplash-perfume.jpg') }}" alt="Chai nước hoa Prada Candy màu hồng bên hoa giấy trắng" width="1000" height="1500" fetchpriority="high">
-            <figcaption><span>THE ART OF FRAGRANCE</span><a href="https://unsplash.com/photos/MoPGCgHPS6I" target="_blank" rel="noopener noreferrer">Dário Gomes / Unsplash</a></figcaption>
-        </figure>
+        <div class="studio-overview-actions">
+            <a href="{{ route('admin.reports.index') }}" class="btn btn-light"><i class="fa-solid fa-chart-line mr-2" aria-hidden="true"></i>Xem báo cáo</a>
+            <a href="{{ route('admin.products.create') }}" class="btn btn-primary"><i class="fa-solid fa-plus mr-2" aria-hidden="true"></i>Thêm sản phẩm</a>
+        </div>
     </section>
     <section class="studio-metrics" aria-label="Số liệu tổng quan toàn thời gian">
         @foreach([
@@ -25,7 +21,7 @@
             ['label' => 'Cần xử lý', 'value' => number_format($stats['pending']), 'unit' => '', 'note' => 'Chờ xử lý hoặc tạo vận đơn', 'icon' => 'clock', 'url' => route('admin.orders.index', ['tab' => 'pending'])],
             ['label' => 'Bộ sưu tập', 'value' => number_format($stats['products']), 'unit' => '', 'note' => $stats['activeProducts'].' sản phẩm đang được mở bán', 'icon' => 'spray-can-sparkles', 'url' => route('admin.products.index')],
         ] as $metric)
-            <a class="studio-metric" href="{{ $metric['url'] }}">
+            <a class="studio-metric {{ $metric['icon'] === 'clock' && $stats['pending'] > 0 ? 'studio-metric--attention' : '' }}" href="{{ $metric['url'] }}">
                 <div class="studio-metric-top"><span>{{ $metric['label'] }}</span><i class="fa-solid fa-{{ $metric['icon'] }}" aria-hidden="true"></i></div>
                 <strong>{{ $metric['value'] }} <small>{{ $metric['unit'] }}</small></strong>
                 <span class="studio-metric-note">{{ $metric['note'] }}</span>
@@ -43,10 +39,11 @@
             </div>
             <div class="studio-chart-total">{{ number_format($chart->sum('amount'), 0, ',', '.') }} <span>₫</span></div>
             <p class="studio-muted">{{ $chart->sum('count') }} đơn · {{ $chart->first()['date'] }} – {{ $chart->last()['date'] }} · Không gồm đơn hủy</p>
-            <div class="studio-bar-chart" role="img" aria-label="Biểu đồ giá trị đơn hàng trong {{ $days }} ngày; chi tiết số liệu ở bảng bên dưới">
+            <div class="studio-bar-chart" role="group" aria-label="Biểu đồ giá trị đơn hàng trong {{ $days }} ngày; chi tiết số liệu ở bảng bên dưới">
                 @php($chartMax = max(1, $chart->max('amount')))
                 @foreach($chart as $point)
-                    <div class="studio-chart-column" title="{{ $point['date'] }}: {{ number_format($point['amount'], 0, ',', '.') }} đ · {{ $point['count'] }} đơn">
+                    <div class="studio-chart-column" tabindex="0" aria-label="{{ $point['date'] }}: {{ number_format($point['amount'], 0, ',', '.') }} đồng, {{ $point['count'] }} đơn">
+                        <span class="studio-chart-tooltip" aria-hidden="true">{{ $point['date'] }} · {{ $point['count'] }} đơn<strong>{{ number_format($point['amount'], 0, ',', '.') }} ₫</strong></span>
                         <div class="studio-chart-track"><span style="height:{{ $point['amount'] > 0 ? max(2, round($point['amount'] / $chartMax * 100)) : 0 }}%"></span></div>
                         <span class="studio-chart-label">{{ $days === 7 || $loop->first || $loop->last || $loop->iteration % 5 === 0 ? $point['date'] : '' }}</span>
                     </div>
@@ -60,7 +57,7 @@
             <a class="studio-task" href="{{ route('admin.orders.index', ['tab' => 'pending']) }}"><span class="studio-task-icon"><i class="fa-solid fa-box" aria-hidden="true"></i></span><span><strong>Đơn hàng cần xử lý</strong><small>{{ $stats['pending'] }} đơn đang chờ bạn</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             <a class="studio-task" href="{{ route('admin.livestreams.index') }}"><span class="studio-task-icon"><i class="fa-solid fa-video" aria-hidden="true"></i></span><span><strong>Không gian livestream</strong><small>Lên lịch, phát sóng và tư vấn</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
             <a class="studio-task" href="{{ route('admin.coupons.index') }}"><span class="studio-task-icon"><i class="fa-solid fa-ticket" aria-hidden="true"></i></span><span><strong>Ưu đãi cho khách hàng</strong><small>Quản lý các mã khuyến mãi</small></span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-            <div class="studio-note"><i class="fa-regular fa-heart" aria-hidden="true"></i><p>Một trải nghiệm tốt bắt đầu từ những điều nhỏ nhất.</p><span>THE SOOPI WAY</span></div>
+            <p class="studio-ops-note">Số liệu tổng quan được tính trên toàn bộ dữ liệu cửa hàng. Mở Báo cáo để lọc thời gian hoặc tách đơn mô phỏng và đơn thực tế.</p>
         </section>
         <section class="studio-panel studio-recent">
             <div class="studio-panel-heading"><div><span class="studio-eyebrow">CẬP NHẬT MỚI</span><h3>Đơn hàng gần đây</h3></div><a class="studio-text-link" href="{{ route('admin.orders.index') }}">Tất cả <span aria-hidden="true">↗</span></a></div>

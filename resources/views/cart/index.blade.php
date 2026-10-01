@@ -78,6 +78,7 @@
                             <label class="custom-cart-checkbox-label" for="check_{{ md5($itemKey) }}" title="Chọn sản phẩm này để thanh toán">
                                 <input type="checkbox"
                                        name="selected_items[]"
+                                       form="checkoutSelectionForm"
                                        value="{{ $itemKey }}"
                                        id="check_{{ md5($itemKey) }}"
                                        class="custom-cart-checkbox-input cart-item-checkbox"
@@ -101,7 +102,7 @@
                         <div class="item-details">
                             <span class="item-brand">{{ $product->brand }}</span>
                             <h2 class="item-title">
-                                <a href="{{ route('perfumes.show', $product) }}">{{ $product->name }}</a>
+                                <a href="{{ route('perfumes.show', $product) }}">{{ $item['is_discovery_box'] ? $item['custom_title'] : $product->name }}</a>
                             </h2>
                             
                             {{-- Dung tích --}}
@@ -109,12 +110,16 @@
                                 <span>@include('partials.icon', ['name' => 'drop', 'size' => '1em']) Dung tích: <strong>{{ $item['volume_label'] ?? ($item['volume_ml'].'ml') }}</strong></span>
                             </div>
 
+                            @if($item['is_discovery_box'])
+                                <p class="item-sample-summary">{{ $item['engrave_text'] }}</p>
+                            @endif
+
                             {{-- Dịch vụ quà tặng & khắc tên --}}
                             @if(!empty($item['has_gift']) || !empty($item['has_engrave']))
                                 <div class="item-addons-group">
                                     @if(!empty($item['has_gift']))
                                         <span class="addon-badge gift-badge">
-                                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Gói quà Luxury & Thiệp (+50.000₫)
+                                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ $item['is_discovery_box'] ? 'Giá trọn hộp mẫu thử' : 'Gói quà Luxury & Thiệp (+50.000₫)' }}
                                         </span>
                                     @endif
                                     @if(!empty($item['has_engrave']) && !empty($item['engrave_text']))
@@ -135,9 +140,9 @@
                             <form method="POST" action="{{ route('cart.update', $itemKey) }}" class="item-qty-form">
                                 @csrf @method('PATCH')
                                 <div class="custom-qty-picker" data-quantity-picker>
-                                    <button type="button" data-quantity-minus class="qty-btn minus">−</button>
-                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ max(1, $product->getStockForVolume($item['volume_ml'] ?? 100)) }}" class="qty-input">
-                                    <button type="button" data-quantity-plus class="qty-btn plus">+</button>
+                                    <button type="button" data-quantity-minus class="qty-btn minus" aria-label="Giảm số lượng">−</button>
+                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ max(1, $item['max_quantity']) }}" class="qty-input" aria-label="Số lượng {{ $item['is_discovery_box'] ? $item['custom_title'] : $product->name }}">
+                                    <button type="button" data-quantity-plus class="qty-btn plus" aria-label="Tăng số lượng">+</button>
                                 </div>
                                 <button class="btn-qty-update" type="submit" title="Cập nhật số lượng">Cập nhật</button>
                             </form>
@@ -166,7 +171,7 @@
                     </div>
                     <div class="guarantee-item">
                         <span>@include('partials.icon', ['name' => 'refresh', 'size' => '1em'])</span>
-                        <div><strong>Đổi trả 14 ngày</strong><small>Hỗ trợ đổi mùi linh hoạt</small></div>
+                        <div><strong>Đổi trả {{ config('storefront.return_days') }} ngày</strong><small><a href="{{ route('store.faq') }}#doi-tra">Xem điều kiện đổi trả</a></small></div>
                     </div>
                     <div class="guarantee-item">
                         <span>@include('partials.icon', ['name' => 'box', 'size' => '1em'])</span>
@@ -178,9 +183,9 @@
             {{-- Right: Order Summary (Tách riêng khỏi Thanh toán) --}}
             <aside class="cart-checkout-sidebar">
                 <div class="checkout-card-box">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;">
-                        <h2 class="checkout-box-title" style="margin: 0; padding: 0; border: none; font-size: 18px;">Tóm tắt đơn hàng</h2>
-                        <span style="font-size: 11px; background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; padding: 3px 8px; border-radius: 9999px; font-weight: 700;">@include('partials.icon', ['name' => 'bag', 'size' => '1em']) Giỏ hàng</span>
+                    <div class="purchase-summary-heading">
+                        <h2 class="checkout-box-title">Tóm tắt đơn hàng</h2>
+                        <span class="purchase-summary-badge">@include('partials.icon', ['name' => 'bag', 'size' => '1em'])</span>
                     </div>
 
                     <div class="checkout-summary-lines">
@@ -194,11 +199,11 @@
                         </div>
                         <div class="summary-line">
                             <span>Phí vận chuyển (GHN)</span>
-                            <span style="font-size: 13px; color: #059669; font-weight: 600;">Tính ở bước thanh toán</span>
+                            <span class="purchase-shipping-note">Tính ở bước thanh toán</span>
                         </div>
-                        <div class="summary-line total-line" style="margin-top: 14px; padding-top: 14px; border-top: 1px dashed #e2e8f0;">
+                        <div class="summary-line total-line">
                             <span>Ước tính tổng tiền</span>
-                            <strong class="grand-total-amount" id="final_total_text" style="color: #db2777; font-size: 24px;">{{ number_format($subtotal, 0, ',', '.') }}₫</strong>
+                            <strong class="grand-total-amount" id="final_total_text">{{ number_format($subtotal, 0, ',', '.') }}₫</strong>
                         </div>
                     </div>
 
@@ -207,25 +212,26 @@
                         <span>@include('partials.icon', ['name' => 'warning', 'size' => '1em']) Vui lòng tick chọn ít nhất 1 sản phẩm để thanh toán.</span>
                     </div>
 
-                    <div style="margin-top: 22px;">
-                        <a href="{{ route('payment.index') }}" class="btn-submit-order" id="btnProceedToCheckout" style="display: flex; justify-content: center; align-items: center; gap: 8px; text-decoration: none; background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); box-shadow: 0 4px 16px rgba(219,39,119,0.3); border-radius: 10px; padding: 14px 20px; font-weight: 700; color: #fff; font-size: 14px;">
-                            <span>TIẾN HÀNH ĐẶT HÀNG & THANH TOÁN</span>
+                    <form method="GET" action="{{ route('payment.index') }}" id="checkoutSelectionForm" class="purchase-checkout-action">
+                        <input type="hidden" name="selection" value="1">
+                        <button type="submit" class="btn-submit-order" id="btnProceedToCheckout">
+                            <span>Tiếp tục thanh toán</span>
                             <span class="btn-arrow">→</span>
-                        </a>
-                    </div>
+                        </button>
+                    </form>
 
-                    <div style="margin-top: 14px; text-align: center;">
-                        <a href="{{ route('home') }}#san-pham" style="font-size: 13px; color: #64748b; text-decoration: none; font-weight: 500;">
+                    <div class="purchase-continue">
+                        <a href="{{ route('home') }}#san-pham">
                             ← Chọn thêm nước hoa khác
                         </a>
                     </div>
 
-                    <div class="checkout-security-note" style="margin-top: 22px; border-top: 1px solid #f1f5f9; padding-top: 14px;">
-                        <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 8px; font-size: 12px; color: #64748b;">
+                    <div class="checkout-security-note">
+                        <div class="purchase-security-line">
                             <span>@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
                             <span>Giao hàng tận nơi toàn quốc qua <strong>Giao Hàng Nhanh (GHN)</strong></span>
                         </div>
-                        <div style="display: flex; gap: 10px; align-items: center; font-size: 12px; color: #64748b;">
+                        <div class="purchase-security-line">
                             <span>@include('partials.icon', ['name' => 'card', 'size' => '1em'])</span>
                             <span>Hỗ trợ thanh toán khi nhận hàng (COD) linh hoạt</span>
                         </div>
@@ -242,6 +248,8 @@
     padding: 24px 0 60px;
     font-family: inherit;
 }
+.item-sample-summary { font-size: 12px; line-height: 1.6; color: #6d5b64; margin: 8px 0; }
+.custom-cart-checkbox-input:focus-visible + .custom-cart-checkbox-box { outline: 2px solid #753d59; outline-offset: 3px; }
 .cart-top-bar {
     display: flex;
     justify-content: space-between;
@@ -919,12 +927,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Checkout Button & Alert
         if (selectedCount === 0) {
             if (btnProceedToCheckout) {
+                btnProceedToCheckout.disabled = true;
                 btnProceedToCheckout.style.pointerEvents = 'none';
                 btnProceedToCheckout.style.opacity = '0.5';
             }
             if (noSelectionAlert) noSelectionAlert.style.display = 'block';
         } else {
             if (btnProceedToCheckout) {
+                btnProceedToCheckout.disabled = false;
                 btnProceedToCheckout.style.pointerEvents = 'auto';
                 btnProceedToCheckout.style.opacity = '1';
             }

@@ -17,8 +17,25 @@ use Illuminate\View\View;
 
 class PerfumeController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|RedirectResponse
     {
+        if ($request->user()?->role !== 'admin') {
+            $filters = $request->validate([
+                'search' => ['nullable', 'string', 'max:100'],
+                'gender' => ['nullable', 'in:nam,nu,unisex'],
+                'category' => ['nullable', 'integer', 'min:1'],
+                'sort' => ['nullable', 'in:sale,price_asc,price_desc'],
+                'min_price' => ['nullable', 'integer', 'min:0'],
+                'max_price' => ['nullable', 'integer', 'min:0', ...($request->filled('min_price') ? ['gte:min_price'] : [])],
+                'concentration' => ['nullable', 'string', 'max:50'],
+                'note' => ['nullable', 'string', 'max:100'],
+                'style' => ['nullable', 'string', 'max:100'],
+                'longevity' => ['nullable', 'in:light,medium,strong'],
+            ]);
+
+            return redirect()->to(route('home', $filters).'#san-pham');
+        }
+
         $perfumes = Perfume::query()
             ->with('category')
             ->when($request->filled('search'), function ($query) use ($request) {

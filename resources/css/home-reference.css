@@ -1,4 +1,5 @@
-/* Approved flower composition; the original shared storefront header is retained. */
+@import './home-cinema.css';
+/* Flower composition and collection story sections. */
 .soopi-homepage .bloom-hero{background:#f9f5f1 url('/images/bloom/ivory-silk.webp') center/cover;border-color:#cab5be;scroll-margin-top:124px}
 .soopi-homepage .bloom-ambient{background:linear-gradient(90deg,#fffaf733,transparent 65%);opacity:.55}
 .soopi-homepage .bloom-layout{display:block;position:relative;width:100%;max-width:1920px;height:clamp(620px,58vw,870px);min-height:0}
@@ -76,3 +77,39 @@
 }
 @media(max-width:360px){.soopi-homepage .bloom-layout{height:645px}.soopi-homepage .bloom-art{height:395px;top:220px}.soopi-homepage .bloom-copy h1{font-size:38px}.soopi-homepage .bloom-copy p{font-size:17px}}
 @media(prefers-reduced-motion:reduce){.bloom-scene-image img{transition:none}.soopi-homepage .bloom-swatch{transition:none}}
+
+/* Édition Pétale: the approved airy, fully visible flower composition. */
+@font-face{font-family:SoopiPetale;src:url('/fonts/lora-regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:SoopiPetale;src:url('/fonts/lora-italic.ttf') format('truetype');font-weight:400;font-style:italic;font-display:swap}
+.soopi-homepage .bloom-hero.petal-hero{background:#fbf8f5;scroll-margin-top:96px;border-bottom:1px solid #eadfe2}
+.soopi-homepage .petal-hero .bloom-ambient{background:radial-gradient(ellipse at 72% 50%,#f0e1e8,transparent 60%);opacity:.65}
+.soopi-homepage .petal-hero .bloom-layout{display:grid;grid-template-columns:48% 52%;align-items:center;width:100%;max-width:1680px;min-height:650px;height:auto;padding:40px 6% 72px;margin-inline:auto}
+.soopi-homepage .petal-hero .bloom-copy{position:relative;left:auto;top:auto;width:auto;max-width:none;padding:0;z-index:3}
+.soopi-homepage .petal-hero .bloom-kicker{font:400 12px/1.8 var(--ht-sans);letter-spacing:.2em;color:#95657c}
+.soopi-homepage .petal-hero .bloom-copy h1{font:400 clamp(44px,4.8vw,78px)/1.13 SoopiPetale,serif;letter-spacing:-.05em;color:#351525;margin:26px 0 30px}
+.soopi-homepage .petal-hero .bloom-copy h1 em{font:italic 400 1em/1.13 SoopiPetale,serif;letter-spacing:-.05em;white-space:normal;color:#955d79}
+.soopi-homepage .petal-hero .bloom-copy p{font:400 clamp(13px,1.3vw,16px)/1.95 var(--ht-sans);color:#8c6e7d;margin:0}
+.soopi-homepage .petal-hero .bloom-actions{margin-top:40px}
+.soopi-homepage .petal-hero .bloom-button{font:500 13px/1.5 var(--ht-sans);min-height:56px;padding:17px 28px;gap:30px;background:#3b1e30;border-color:#3b1e30;border-radius:2px}
+.soopi-homepage .petal-hero .bloom-art{position:relative;left:auto;top:auto;width:100%;height:auto;aspect-ratio:1;margin:0;outline-offset:3px}
+.soopi-homepage .petal-hero .bloom-sculpture{inset:-6%;filter:drop-shadow(0 25px 26px #8b60791c)}
+.soopi-homepage .petal-hero .bloom-halo{opacity:.15}
+.soopi-homepage .petal-hero .bloom-shadow{bottom:2%;left:20%;right:20%;height:20px;opacity:.5;filter:blur(12px)}
+.soopi-homepage .petal-hero .bloom-art-hint,.soopi-homepage .petal-hero .bloom-art-caption,.soopi-homepage .petal-hero .bloom-edition{display:none}
+.soopi-homepage .petal-hero .bloom-tools{bottom:16px;right:6%;left:auto;gap:18px}
+.soopi-homepage .petal-hero .bloom-tools button{font-size:10px;min-height:32px}
+@media(max-width:1000px) and (min-width:761px){.soopi-homepage .petal-hero .bloom-layout{min-height:590px;padding-inline:5%}.soopi-homepage .petal-hero .bloom-copy h1{font-size:clamp(36px,4.8vw,48px)}.soopi-homepage .petal-hero .bloom-copy p{font-size:12px}.soopi-homepage .petal-hero .bloom-kicker{font-size:10px}}
+@media(max-width:760px){
+ .soopi-homepage .bloom-hero.petal-hero{scroll-margin-top:76px}
+ .soopi-homepage .petal-hero .bloom-layout{grid-template-columns:1fr;min-height:0;height:auto;padding:38px 25px 62px;gap:22px}
+ .soopi-homepage .petal-hero .bloom-copy{position:relative;left:auto;top:auto;width:100%}
+ .soopi-homepage .petal-hero .bloom-kicker{font-size:9px}
+ .soopi-homepage .petal-hero .bloom-copy h1{font-size:clamp(35px,8.7vw,56px);margin:20px 0 22px;line-height:1.13}
+ .soopi-homepage .petal-hero .bloom-copy h1 em{font-size:1em;line-height:1.13;letter-spacing:-.05em;white-space:normal}
+ .soopi-homepage .petal-hero .bloom-copy p{font-size:12px;line-height:1.9}
+ .soopi-homepage .petal-hero .bloom-actions{margin-top:24px}
+ .soopi-homepage .petal-hero .bloom-button{font-size:12px;padding:14px 22px;min-height:48px}
+ .soopi-homepage .petal-hero .bloom-art{position:relative;left:auto;top:auto;width:100%;max-width:460px;height:auto;aspect-ratio:1;justify-self:center;margin:0}
+ .soopi-homepage .petal-hero .bloom-tools{bottom:14px;right:25px;gap:14px}
+ .soopi-homepage .petal-hero .bloom-tools button{font-size:9px;min-height:30px}
+}

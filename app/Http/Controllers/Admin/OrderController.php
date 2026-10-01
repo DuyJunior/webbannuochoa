@@ -84,7 +84,7 @@ class OrderController extends Controller
             $join->on('payment.order_id', '=', 'orders.id')->where('payment.id', '=', $paymentId);
         })->select('orders.*')
             ->selectRaw("COALESCE(payment.gateway, CASE WHEN orders.status IN ('cod_ordered', 'cod_paid') THEN 'cod' WHEN orders.status IN ('paid', 'paid_momo') THEN 'momo' ELSE 'unknown' END) as gateway")
-            ->selectRaw("COALESCE(payment.status, CASE WHEN orders.status = 'cod_ordered' THEN 'pending' WHEN orders.status IN ('cod_paid', 'paid_momo') THEN 'paid' ELSE orders.status END) as payment_status");
+            ->selectRaw("COALESCE(payment.status, CASE WHEN orders.status IN ('paid', 'cod_paid', 'paid_momo', 'completed') THEN 'paid' WHEN orders.status = 'cancelled' THEN 'cancelled' ELSE 'pending' END) as payment_status");
 
         $query = Order::query()->fromSub($source, 'orders');
 
@@ -103,7 +103,7 @@ class OrderController extends Controller
                     ->orWhere('ghn_order_code', 'like', '%'.$search.'%')
                     ->orWhereHas('items.perfume', fn ($perfumes) => $perfumes->where('name', 'like', '%'.$search.'%'));
 
-                if (preg_match('/^(?:#|DH)?0*(\d+)$/i', $search, $matches)) {
+                if (preg_match('/^#?(?:DH)?0*(\d+)$/i', $search, $matches)) {
                     $q->orWhere('orders.id', $matches[1]);
                 }
             });

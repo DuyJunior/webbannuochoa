@@ -1,67 +1,20 @@
 @extends('layouts.admin')
-
 @section('title', 'Quản lý danh mục')
-@section('page_title', 'Danh sách danh mục sản phẩm')
-
+@section('page_title', 'Danh mục sản phẩm')
 @section('content')
-<div class="admin-card">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h5 class="font-weight-bold mb-1" style="color: #0f172a;">Tất cả danh mục</h5>
-            <p class="text-muted mb-0" style="font-size:0.88rem;">Quản lý và phân loại các dòng nước hoa trong hệ thống</p>
-        </div>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-hover table-admin">
-            <thead>
-                <tr>
-                    <th width="80">ID</th>
-                    <th>Tên danh mục</th>
-                    <th>Số sản phẩm</th>
-                    <th>Ngày tạo</th>
-                    <th width="220" class="text-center">Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($categories as $category)
-                    <tr>
-                        <td class="font-weight-bold text-muted">#{{ $category->id }}</td>
-                        <td>
-                            <strong style="color: #0f172a; font-size:0.95rem;">{{ $category->name }}</strong>
-                        </td>
-                        <td>
-                            <span class="badge badge-light px-2 py-1 font-weight-bold border">
-                                {{ $category->perfumes_count ?? $category->perfumes()->count() }} sản phẩm
-                            </span>
-                        </td>
-                        <td class="text-muted">{{ $category->created_at?->format('d/m/Y H:i') ?? 'N/A' }}</td>
-                        <td class="text-center">
-                            <a href="{{ route('admin.categories.show', $category->id) }}" class="btn btn-outline-info btn-sm mr-1" title="Chi tiết">
-                                <i class="fa-regular fa-eye"></i> Xem
-                            </a>
-                            <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn btn-outline-warning btn-sm mr-1" title="Chỉnh sửa">
-                                <i class="fa-regular fa-pen-to-square"></i> Sửa
-                            </a>
-                            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa danh mục này?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Xóa">
-                                    <i class="fa-regular fa-trash-can"></i> Xóa
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">
-                            <i class="fa-regular fa-folder-open mb-2" style="font-size:2rem; color:#cbd5e1; display:block;"></i>
-                            Chưa có danh mục nào trong hệ thống.
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+<div class="studio-function-metrics">
+    @foreach([['Tổng danh mục', $stats['total'], 'layer-group', 'Các nhóm sản phẩm trong cửa hàng'], ['Có sản phẩm', $stats['populated'], 'spray-can-sparkles', 'Đã phân loại ít nhất một sản phẩm'], ['Chưa có sản phẩm', $stats['empty'], 'folder-open', 'Có thể bổ sung sản phẩm hoặc sắp xếp lại']] as [$label, $value, $icon, $note])
+    <div class="studio-function-metric"><div><span>{{ $label }}</span><strong>{{ number_format($value) }}</strong><small>{{ $note }}</small></div><i class="fa-solid fa-{{ $icon }}" aria-hidden="true"></i></div>
+    @endforeach
 </div>
+<section class="admin-card studio-directory">
+    <form method="GET" action="{{ route('admin.categories.index') }}" class="studio-directory-filters"><div class="studio-search-field"><label for="category-search">Tìm danh mục</label><input id="category-search" name="search" type="search" class="form-control" value="{{ request('search') }}" maxlength="100" placeholder="Nhập tên danh mục…"></div><button type="submit" class="btn btn-primary"><i class="fa-solid fa-magnifying-glass mr-1" aria-hidden="true"></i> Tìm kiếm</button>@if(request()->filled('search'))<a href="{{ route('admin.categories.index') }}" class="btn btn-outline-secondary">Xóa bộ lọc</a>@endif</form>
+    <div class="studio-list-heading"><h3>Danh mục <span>{{ number_format($categories->total()) }}</span></h3><small>Phân loại & số lượng sản phẩm</small></div>
+    <div class="table-responsive"><table class="table table-hover table-admin mb-0"><thead><tr><th>Danh mục</th><th>Sản phẩm</th><th>Ngày tạo</th><th class="text-right">Thao tác</th></tr></thead><tbody>
+        @forelse($categories as $category)
+        <tr><td><a class="font-weight-bold" href="{{ route('admin.categories.show', $category) }}">{{ $category->name }}</a><small class="d-block text-muted mt-1">#{{ $category->id }}</small></td><td><span class="{{ $category->perfumes_count ? 'badge-active' : 'badge-inactive' }}">{{ number_format($category->perfumes_count) }} sản phẩm</span></td><td class="text-muted">{{ $category->created_at?->format('d/m/Y') ?? '—' }}</td><td><div class="studio-row-actions"><a href="{{ route('admin.categories.show', $category) }}" class="studio-icon-action" title="Xem danh mục" aria-label="Xem {{ $category->name }}"><i class="fa-regular fa-eye" aria-hidden="true"></i></a><a href="{{ route('admin.categories.edit', $category) }}" class="studio-icon-action" title="Chỉnh sửa danh mục" aria-label="Chỉnh sửa {{ $category->name }}"><i class="fa-regular fa-pen-to-square" aria-hidden="true"></i></a><form method="POST" action="{{ route('admin.categories.destroy', $category) }}" data-confirm="Xóa danh mục {{ $category->name }}? Các sản phẩm trong danh mục sẽ chuyển về trạng thái chưa phân loại.">@csrf @method('DELETE')<button type="submit" class="studio-icon-action studio-icon-action--danger" title="Xóa danh mục" aria-label="Xóa {{ $category->name }}"><i class="fa-regular fa-trash-can" aria-hidden="true"></i></button></form></div></td></tr>
+        @empty<tr><td colspan="4"><div class="studio-directory-empty"><i class="fa-solid fa-layer-group" aria-hidden="true"></i><strong>{{ request()->filled('search') ? 'Không tìm thấy danh mục phù hợp' : 'Chưa có danh mục' }}</strong><p>{{ request()->filled('search') ? 'Thử một tên khác hoặc xóa bộ lọc.' : 'Tạo danh mục để sắp xếp bộ sưu tập và giúp khách hàng tìm sản phẩm.' }}</p><a class="btn btn-outline-secondary" href="{{ request()->filled('search') ? route('admin.categories.index') : route('admin.categories.create') }}">{{ request()->filled('search') ? 'Xóa bộ lọc' : 'Thêm danh mục đầu tiên' }}</a></div></td></tr>@endforelse
+    </tbody></table></div>
+    <div class="studio-list-footer"><span>Hiển thị {{ $categories->firstItem() ?? 0 }}–{{ $categories->lastItem() ?? 0 }} / {{ number_format($categories->total()) }} danh mục</span>{{ $categories->links() }}</div>
+</section>
 @endsection

@@ -33,6 +33,10 @@
 
         <form method="POST" action="{{ route('payment.process') }}" id="checkoutPaymentForm" class="checkout-grid-container">
             @csrf
+            <input type="hidden" name="selection" value="1">
+            @foreach($selectedKeys as $selectedKey)
+                <input type="hidden" name="selected_items[]" value="{{ $selectedKey }}">
+            @endforeach
             <input type="hidden" name="checkout_key" value="{{ old('checkout_key', (string) \Illuminate\Support\Str::uuid()) }}">
             <input type="hidden" id="total_price_input" value="{{ $totalPrice }}">
 
@@ -240,8 +244,8 @@
                                         <span class="item-qty-badge">{{ $item['quantity'] }}</span>
                                     </div>
                                     <div class="item-details">
-                                        <h4 class="item-title">{{ $item['product']?->name }}</h4>
-                                        <span class="item-meta">{{ $item['volume_ml'] }}ml · {{ $item['weight'] ?? 200 }}g</span>
+                                        <h4 class="item-title">{{ $item['title'] }}</h4>
+                                        <span class="item-meta">{{ $item['volume_label'] }} · {{ $item['weight'] ?? 200 }}g</span>
                                         <div class="item-price">{{ number_format($item['price'], 0, ',', '.') }}₫</div>
                                     </div>
                                     <div class="item-subtotal">
@@ -948,7 +952,9 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify({
                 to_district_id: parseInt(districtSelect.value),
-                to_ward_code: String(this.value)
+                to_ward_code: String(this.value),
+                selection: 1,
+                selected_items: {{ Illuminate\Support\Js::from($selectedKeys) }}
             })
         })
         .then(res => res.json())

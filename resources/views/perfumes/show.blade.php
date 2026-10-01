@@ -1,8 +1,12 @@
-@php use Illuminate\Support\Str; @endphp
+@php
+    use Illuminate\Support\Str;
+    $fragranceEditorial = \App\Services\FragranceEditorialService::forPerfume($perfume);
+    $productStory = $fragranceEditorial['verified'] ? $fragranceEditorial['story'] : 'Khám phá '.$perfume->name.' của '.$perfume->brand.' cùng Soopi. Liên hệ để được tư vấn chi tiết về mùi hương.';
+@endphp
 @extends('layouts.store')
 
 @section('title', $perfume->name.' · '.$perfume->brand.' · Soopi')
-@section('meta_description', Str::limit(strip_tags($perfume->description ?: 'Mua '.$perfume->name.' của '.$perfume->brand.' chính hãng tại Soopi. Giao hàng toàn quốc, đổi trả 7 ngày.'), 155))
+@section('meta_description', Str::limit($productStory, 155))
 @section('meta_keywords', $perfume->name.', '.$perfume->brand.', nước hoa chính hãng, '.$perfume->concentration.', Soopi')
 @if($perfume->image_src)
     @section('og_image', $perfume->image_src)
@@ -14,7 +18,7 @@
         '@context' => 'https://schema.org',
         '@type' => 'Product',
         'name' => $perfume->name,
-        'description' => Str::limit(strip_tags($perfume->description ?? ''), 300),
+        'description' => Str::limit($productStory, 300),
         'brand' => [
             '@type' => 'Brand',
             'name' => $perfume->brand,
@@ -45,6 +49,9 @@
 @endpush
 
 @section('content')
+    @php
+        $editorialImage = config('scent-gallery.artwork.'.$perfume->slug);
+    @endphp
     <section class="store-container luxury-product-page">
         {{-- Breadcrumb --}}
         <nav class="luxury-breadcrumb" aria-label="Breadcrumb">
@@ -65,8 +72,8 @@
             {{-- Visual Gallery --}}
             <div class="luxury-gallery-column">
                 <div class="luxury-main-visual">
-                    @if ($perfume->image_src)
-                        <img id="mainProductImage" src="{{ $perfume->image_src }}" alt="{{ $perfume->name }}">
+                    @if ($editorialImage || $perfume->image_src)
+                        <img id="mainProductImage" src="{{ $editorialImage ? asset($editorialImage) : $perfume->image_src }}" alt="{{ $perfume->name }}" fetchpriority="high">
                     @else
                         <div class="luxury-bottle-placeholder">
                             <span>{{ mb_substr($perfume->brand, 0, 1) }}</span>
@@ -74,7 +81,7 @@
                         </div>
                     @endif
 
-                    @if ($perfume->sale_price !== null)
+                    @if ($perfume->price > 0 && $perfume->sale_price !== null && $perfume->sale_price < $perfume->price)
                         <span class="luxury-badge-sale">ƯU ĐÃI -{{ round((($perfume->price - $perfume->sale_price) / $perfume->price) * 100) }}%</span>
                     @endif
 
@@ -84,6 +91,13 @@
                     </div>
                 </div>
 
+                @if($editorialImage && $perfume->image_src)
+                <div class="interior-product-views" role="group" aria-label="Chọn hình sản phẩm">
+                    <button type="button" data-product-image="{{ asset($editorialImage) }}" aria-pressed="true"><img src="{{ asset($editorialImage) }}" alt="" width="48" height="48">Góc nghệ thuật</button>
+                    <button type="button" data-product-image="{{ $perfume->image_src }}" aria-pressed="false"><img src="{{ $perfume->image_src }}" alt="" width="48" height="48">Ảnh sản phẩm</button>
+                </div>
+                @endif
+                <nav class="interior-product-chapters" aria-label="Khám phá sản phẩm"><a href="#scent-story-title">01 / Câu chuyện</a><a href="#danh-gia">02 / Cảm nhận</a><a href="{{ route('store.finder') }}">03 / Chọn hương ↗</a></nav>
                 {{-- Live Viewers & Social Proof --}}
                 <p class="ht-product-advice">Một mùi hương riêng, một dấu ấn khó quên.</p>
 
@@ -128,7 +142,7 @@
                 <div class="luxury-category-tags">
                     <span class="tag-pill">{{ $perfume->category?->name ?? 'Nước hoa' }}</span>
                     <span class="tag-pill">{{ ['nam' => 'Dành cho Nam', 'nu' => 'Dành cho Nữ', 'unisex' => 'Unisex - Mọi giới tính'][$perfume->gender] }}</span>
-                    <span class="tag-pill">{{ $perfume->concentration ?: 'Eau de Parfum (EDP)' }}</span>
+                    @if($perfume->concentration)<span class="tag-pill">{{ $perfume->concentration }}</span>@endif
                     @php
                         $directVid = $perfume->videos()->where('is_active', true)->first();
                         $showVidUrl = $directVid ? $directVid->embed_url : $perfume->embed_video_url;
@@ -137,14 +151,14 @@
                     <button type="button" class="tag-pill tag-pill-video js-open-video"
                         data-title="{{ $directVid ? $directVid->title : 'Review & Cận Cảnh ' . $perfume->name }}"
                         data-embed="{{ $showVidUrl }}"
-                        data-desc="{{ $directVid ? $directVid->description : 'Cảm nhận nốt hương & độ tỏa hương thực tế trên da sau 4 giờ.' }}"
-                        data-views="{{ $directVid ? $directVid->formatted_views : '12.4K' }}"
+                        data-desc="{{ $directVid ? $directVid->description : 'Khám phá sản phẩm cùng Soopi.' }}"
+                        data-views="{{ $directVid ? $directVid->formatted_views : '' }}"
                         data-perfume-name="{{ $perfume->name }}"
                         data-perfume-brand="{{ $perfume->brand }}"
                         data-perfume-price="{{ number_format($perfume->price) }}đ"
                         data-perfume-url="{{ route('perfumes.show', $perfume) }}"
                         data-perfume-img="{{ $perfume->image_src }}">
-                        @include('partials.icon', ['name' => 'video', 'size' => '1em']) Xem Video Review (30s)
+                        @include('partials.icon', ['name' => 'video', 'size' => '1em']) Xem video sản phẩm
                     </button>
                     @endif
                 </div>
@@ -168,7 +182,7 @@
 
                 <div class="luxury-price-box">
                     <div class="current-price" id="displayPrice">{{ number_format($priceFull, 0, ',', '.') }}₫</div>
-                    @if ($perfume->sale_price !== null)
+                    @if ($perfume->sale_price !== null && $perfume->sale_price < $perfume->price)
                         <del class="old-price" id="displayOldPrice">{{ number_format($originalFullPrice, 0, ',', '.') }}₫</del>
                         <span class="save-tag" id="displaySaveTag">Tiết kiệm {{ number_format($originalFullPrice - $priceFull, 0, ',', '.') }}₫</span>
                     @endif
@@ -191,7 +205,7 @@
                         <div class="volume-options-grid">
                             @if($volume100 !== 10)
                             {{-- Option 10ml Chiết --}}
-                            <label class="volume-card-option" data-volume="10" data-stock="{{ $stock10ml }}" data-desc="Chiết Travel Spray" data-price="{{ $price10ml }}" data-oldprice="{{ round($price10ml * 1.25 / 10000) * 10000 }}">
+                            <label class="volume-card-option" data-volume="10" data-stock="{{ $stock10ml }}" data-desc="Chiết Travel Spray" data-price="{{ $price10ml }}" data-oldprice="{{ $price10ml }}">
                                 <input type="radio" name="volume_ml" value="10">
                                 <div class="volume-card-badge">Dùng thử</div>
                                 <div class="volume-card-size">10ml</div>
@@ -209,7 +223,7 @@
                             @endif
                             @if($volume100 !== 50)
                             {{-- Option 50ml --}}
-                            <label class="volume-card-option" data-volume="50" data-stock="{{ $stock50ml }}" data-desc="Chai Vừa Phải" data-price="{{ $price50ml }}" data-oldprice="{{ round($price50ml * 1.2 / 10000) * 10000 }}">
+                            <label class="volume-card-option" data-volume="50" data-stock="{{ $stock50ml }}" data-desc="Chai Vừa Phải" data-price="{{ $price50ml }}" data-oldprice="{{ $price50ml }}">
                                 <input type="radio" name="volume_ml" value="50">
                                 <div class="volume-card-badge">Phổ biến</div>
                                 <div class="volume-card-size">50ml</div>
@@ -228,7 +242,7 @@
                             @endif
                             <label class="volume-card-option active" data-volume="{{ $volume100 }}" data-stock="{{ $stockFull }}" data-desc="Fullbox Nguyên Seal" data-price="{{ $priceFull }}" data-oldprice="{{ $originalFullPrice }}">
                                 <input type="radio" name="volume_ml" value="{{ $volume100 }}" checked>
-                                <div class="volume-card-badge best-seller">Bán chạy nhất @include('partials.icon', ['name' => 'star', 'size' => '1em'])</div>
+                                <div class="volume-card-badge best-seller">Nguyên hộp</div>
                                 <div class="volume-card-size">{{ $volume100 }}ml</div>
                                 <div class="volume-card-desc">Fullbox Nguyên Seal</div>
                                 <div class="volume-card-price">{{ number_format($priceFull, 0, ',', '.') }}₫</div>
@@ -300,6 +314,11 @@
                     </div>
                 </form>
 
+                <div class="purchase-assurance" aria-label="Giao hàng và hỗ trợ mua hàng">
+                    <div>@include('partials.icon', ['name'=>'truck','size'=>19])<span><strong>Giao hàng toàn quốc</strong><small>Phí vận chuyển được tính khi thanh toán.</small></span></div>
+                    <a href="{{ route('store.faq') }}#doi-tra">@include('partials.icon', ['name'=>'shield','size'=>19])<span><strong>Đổi trả {{ config('storefront.return_days') }} ngày</strong><small>Theo điều kiện đổi trả · Xem chính sách ↗</small></span></a>
+                    <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener">@include('partials.icon', ['name'=>'chat','size'=>19])<span><strong>Hỏi Soopi trước khi chọn</strong><small>Zalo {{ config('storefront.zalo_phone') }} ↗</small></span></a>
+                </div>
                 <div class="ht-product-utilities">
                     @auth
                     <form method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}">@csrf<button type="submit" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) {{ $isFavorite ? 'Đã yêu thích' : 'Lưu yêu thích' }}</button></form>
@@ -325,7 +344,7 @@
                         </div>
                         <div class="spec-row">
                             <span class="spec-label">Nồng độ</span>
-                            <span class="spec-value">{{ $perfume->concentration ?: 'Eau de Parfum (EDP)' }}</span>
+                            <span class="spec-value">{{ $perfume->concentration ?: 'Đang cập nhật' }}</span>
                         </div>
                         <div class="spec-row">
                             <span class="spec-label">Dung tích chọn</span>
@@ -335,28 +354,12 @@
                             <span class="spec-label">Giới tính</span>
                             <span class="spec-value">{{ ['nam' => 'Nam giới', 'nu' => 'Nữ giới', 'unisex' => 'Unisex'][$perfume->gender] }}</span>
                         </div>
-                        <div class="spec-row">
-                            <span class="spec-label">Xuất xứ</span>
-                            <span class="spec-value">Pháp / Ý (Chính hãng)</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <section class="ht-scent-story" aria-labelledby="scent-story-title">
-            <div>
-                <span class="ht-eyebrow">CÂU CHUYỆN MÙI HƯƠNG</span>
-                <h2 id="scent-story-title">Một dấu ấn <em>rất riêng.</em></h2>
-                <p>{{ $perfume->description ?: 'Khám phá mùi hương này cùng Soopi. Nếu bạn cần thêm thông tin về các nốt hương, hãy nhắn cho cửa hàng để được tư vấn.' }}</p>
-            </div>
-            <dl>
-                <div><dt>Thương hiệu</dt><dd>{{ $perfume->brand }}</dd></div>
-                <div><dt>Dòng hương</dt><dd>{{ $perfume->concentration ?: 'Chưa cập nhật' }}</dd></div>
-                <div><dt>Dung tích chai</dt><dd>{{ $perfume->volume_ml }} ml</dd></div>
-                <div><dt>Gợi ý cho</dt><dd>{{ ['nam' => 'Nam', 'nu' => 'Nữ', 'unisex' => 'Mọi giới tính'][$perfume->gender] ?? 'Mọi giới tính' }}</dd></div>
-            </dl>
-        </section>
+        @include('partials.fragrance-notes')
 
         {{-- ── NỔI BẬT: SHORTS & VIDEO REVIEW CẬN CẢNH MÙI HƯƠNG ── --}}
         @php
@@ -634,9 +637,11 @@
                 displayPrice.textContent = formatCurrency(unitPriceWithAddon);
                 if (displayOldPrice) {
                     displayOldPrice.textContent = formatCurrency(currentOldPrice + giftPrice);
+                    displayOldPrice.style.display = currentOldPrice > currentBasePrice ? '' : 'none';
                 }
-                if (displaySaveTag && currentOldPrice > currentBasePrice) {
-                    displaySaveTag.textContent = 'Tiết kiệm ' + formatCurrency(currentOldPrice - currentBasePrice);
+                if (displaySaveTag) {
+                    displaySaveTag.style.display = currentOldPrice > currentBasePrice ? '' : 'none';
+                    if (currentOldPrice > currentBasePrice) displaySaveTag.textContent = 'Tiết kiệm ' + formatCurrency(currentOldPrice - currentBasePrice);
                 }
 
                 if (dynamicSubtotal) {
@@ -661,7 +666,7 @@
             const btnBuyNow = document.querySelector('.luxury-buy-now-btn');
 
             volumeCards.forEach(card => {
-                card.addEventListener('click', function () {
+                const updateVolume = function () {
                     volumeCards.forEach(c => c.classList.remove('active'));
                     this.classList.add('active');
 
@@ -716,7 +721,9 @@
                     }
 
                     calculateTotalPrice();
-                });
+                };
+                card.addEventListener('click', updateVolume);
+                card.querySelector('input[type="radio"]')?.addEventListener('change', () => updateVolume.call(card));
             });
 
             // Lắng nghe khi bấm tăng giảm số lượng

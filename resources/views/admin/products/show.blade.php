@@ -1,107 +1,27 @@
 @extends('layouts.admin')
-
 @section('title', 'Chi tiết sản phẩm')
-@section('page_title', 'Chi tiết sản phẩm: ' . $product->name)
-
+@section('page_title', 'Chi tiết sản phẩm')
 @section('content')
-<div class="admin-card">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h5 class="font-weight-bold mb-1" style="color: #0f172a;">Thông tin chi tiết</h5>
-            <span class="text-muted">Mã sản phẩm: #{{ $product->id }}</span>
-        </div>
-        <div>
-            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-warning btn-sm mr-2 font-weight-bold">
-                <i class="fa-regular fa-pen-to-square mr-1"></i> Chỉnh sửa
-            </a>
-            <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary btn-sm">
-                <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại danh sách
-            </a>
-        </div>
+<div class="studio-list-heading mb-4"><div><span class="studio-form-kicker">SẢN PHẨM #{{ $product->id }}</span><h2>{{ $product->name }}</h2><p class="text-muted mb-0">{{ $product->brand }} · {{ optional($product->category)->name ?? 'Chưa phân loại' }}</p></div><div><a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary mr-2">Danh sách</a><a href="{{ route('admin.products.edit', $product) }}" class="btn btn-primary"><i class="fa-regular fa-pen-to-square mr-1" aria-hidden="true"></i> Chỉnh sửa</a></div></div>
+<div class="studio-form-layout">
+    <div>
+        <section class="admin-card studio-form-section"><span class="studio-form-kicker">THÔNG TIN SẢN PHẨM</span><h3>Thông số & giá bán</h3>
+            <dl class="studio-detail-grid">
+                <div><dt>Giá bán hiện tại</dt><dd><strong class="h4 text-primary">{{ number_format($product->sale_price ?? $product->price, 0, ',', '.') }}₫</strong>@if($product->sale_price !== null && $product->sale_price < $product->price)<div class="text-muted small mt-1">Niêm yết <del>{{ number_format($product->price, 0, ',', '.') }}₫</del></div>@endif</dd></div>
+                <div><dt>Trạng thái</dt><dd><span class="{{ $product->is_active ? 'badge-active' : 'badge-inactive' }}">{{ $product->is_active ? 'Đang mở bán' : 'Tạm ẩn' }}</span></dd></div>
+                <div><dt>Dành cho</dt><dd>{{ ['nam' => 'Nam', 'nu' => 'Nữ', 'unisex' => 'Unisex'][$product->gender] ?? $product->gender }}</dd></div>
+                <div><dt>Nồng độ</dt><dd>{{ $product->concentration ?: 'Chưa cập nhật' }}</dd></div>
+                <div><dt>Dung tích chai gốc</dt><dd>{{ $product->volume_ml }}ml</dd></div>
+                <div><dt>Khối lượng tính phí</dt><dd>{{ $product->weight }}g</dd></div>
+            </dl>
+        </section>
+        <section class="admin-card studio-form-section"><span class="studio-form-kicker">TỒN KHO THỰC TẾ</span><h3>Số lượng theo dung tích</h3><div class="row">
+            @foreach([['Chai gốc '.$product->volume_ml.'ml', $product->stock], ['Mẫu thử 5ml', $product->stock_5ml], ['Chiết 10ml', $product->stock_10ml], ['Chai 50ml', $product->stock_50ml]] as [$label, $stock])
+            <div class="col-6 col-lg-3 mb-3"><div class="border rounded p-3"><span class="text-muted small d-block mb-2">{{ $label }}</span><strong class="h3 {{ $stock > 5 ? 'text-success' : 'text-danger' }}">{{ number_format($stock) }}</strong><small class="text-muted"> chai</small><div class="small mt-2">{{ $stock === 0 ? 'Hết hàng' : ($stock <= 5 ? 'Sắp hết hàng' : 'Còn hàng') }}</div></div></div>
+            @endforeach
+        </div><p class="studio-field-help mb-0">Từng dung tích có số lượng riêng, không quy đổi tự động từ chai gốc.</p></section>
+        <section class="admin-card studio-form-section"><h3>Mô tả sản phẩm</h3><p class="mb-0 text-muted" style="white-space:pre-line">{{ $product->description ?: 'Chưa có mô tả cho sản phẩm này.' }}</p></section>
     </div>
-
-    <div class="row">
-        <div class="col-md-4 text-center mb-4">
-            @if($product->image_url)
-                <img src="{{ asset($product->image_url) }}" alt="{{ $product->name }}" class="img-fluid rounded border shadow-sm" style="max-height: 320px; object-fit: contain; width: 100%;">
-            @else
-                <div class="border rounded bg-light d-flex align-items-center justify-content-center text-muted" style="height: 250px;">
-                    <i class="fa-solid fa-image" style="font-size:3rem;"></i>
-                </div>
-            @endif
-        </div>
-
-        <div class="col-md-8">
-            <h3 class="font-weight-bold text-primary mb-2">{{ $product->name }}</h3>
-            <p class="text-muted mb-3" style="font-size:1.05rem;">Thương hiệu: <strong>{{ $product->brand }}</strong></p>
-
-            <div class="row mb-3">
-                <div class="col-6 mb-2">
-                    <div class="text-muted small text-uppercase">Danh mục</div>
-                    <strong>{{ optional($product->category)->name ?? 'Chưa phân loại' }}</strong>
-                </div>
-                <div class="col-6 mb-2">
-                    <div class="text-muted small text-uppercase">Giới tính</div>
-                    <span class="badge badge-info">{{ ucfirst($product->gender) }}</span>
-                </div>
-                <div class="col-6 mb-2">
-                    <div class="text-muted small text-uppercase">Giá bán</div>
-                    <span class="text-primary font-weight-bold" style="font-size: 1.2rem;">
-                        {{ number_format($product->price, 0, ',', '.') }}₫
-                    </span>
-                    @if($product->sale_price)
-                        <small class="text-muted text-decoration-line-through ml-2">{{ number_format($product->sale_price, 0, ',', '.') }}₫</small>
-                    @endif
-                </div>
-                <div class="col-12 my-3">
-                    <div class="text-muted small text-uppercase font-weight-bold mb-2">Tồn kho theo từng dung tích:</div>
-                    <div class="row">
-                        <div class="col-4">
-                            <div class="p-2 border rounded text-center bg-light">
-                                <span class="text-muted d-block small"><i class="fa-solid fa-vial mr-1 text-info"></i>Chiết 10ml</span>
-                                <strong class="h5 {{ $product->stock_10ml > 5 ? 'text-success' : 'text-danger' }}">{{ $product->stock_10ml }}</strong>
-                                <small class="text-muted">chai</small>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="p-2 border rounded text-center bg-light">
-                                <span class="text-muted d-block small"><i class="fa-solid fa-wine-bottle mr-1 text-primary"></i>Vừa 50ml</span>
-                                <strong class="h5 {{ $product->stock_50ml > 5 ? 'text-success' : 'text-danger' }}">{{ $product->stock_50ml }}</strong>
-                                <small class="text-muted">chai</small>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="p-2 border rounded text-center bg-light">
-                                <span class="text-muted d-block small"><i class="fa-solid fa-box mr-1 text-success"></i>Full 100ml</span>
-                                <strong class="h5 {{ $product->stock > 5 ? 'text-success' : 'text-danger' }}">{{ $product->stock }}</strong>
-                                <small class="text-muted">chai</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-4 mb-2">
-                    <div class="text-muted small text-uppercase">Dung tích / Nồng độ</div>
-                    <strong>{{ $product->volume_ml }}ml · {{ $product->concentration ?? 'EDP' }}</strong>
-                </div>
-                <div class="col-4 mb-2">
-                    <div class="text-muted small text-uppercase">KL tính phí GHN</div>
-                    <strong class="text-primary"><i class="fa-solid fa-weight-hanging mr-1"></i>{{ $product->weight ?? 200 }}g</strong>
-                </div>
-                <div class="col-4 mb-2">
-                    <div class="text-muted small text-uppercase">Trạng thái</div>
-                    @if($product->is_active)
-                        <span class="badge badge-success">Đang bán</span>
-                    @else
-                        <span class="badge badge-secondary">Đã ẩn</span>
-                    @endif
-                </div>
-            </div>
-
-            <hr>
-
-            <h6 class="font-weight-bold text-dark">Mô tả sản phẩm:</h6>
-            <p class="text-muted" style="line-height: 1.6;">{{ $product->description ?: 'Chưa có mô tả cho sản phẩm này.' }}</p>
-        </div>
-    </div>
+    <aside class="studio-form-aside"><section class="admin-card studio-form-section"><h3>Hình ảnh sản phẩm</h3><div class="studio-product-preview">@if($product->image_src)<img src="{{ $product->image_src }}" alt="{{ $product->name }}">@else<span><i class="fa-regular fa-image" aria-hidden="true"></i> Chưa có hình ảnh</span>@endif</div>@if($product->is_active)<a href="{{ route('perfumes.show', $product->id) }}" class="btn btn-outline-secondary btn-block mt-3" target="_blank" rel="noopener">Xem trên cửa hàng <i class="fa-solid fa-arrow-up-right-from-square ml-1" aria-hidden="true"></i></a>@endif</section></aside>
 </div>
 @endsection

@@ -10,109 +10,16 @@
 </style>
 
 <div class="container-fluid p-0">
-
-    {{-- Tabs chuyển đổi: Bảng số liệu / Biểu đồ --}}
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 my-3">
-        <nav class="nav nav-pills" aria-label="Báo cáo">
-            <a class="nav-link font-weight-bold text-dark" href="{{ route('admin.reports.index', request()->query()) }}" style="border-radius: 20px; padding: 8px 20px; background:#fff; border:1px solid #e2e8f0;">
-                <i class="fa-solid fa-table mr-1"></i> Bảng số liệu
-            </a>
-            <a class="nav-link active font-weight-bold ml-2" aria-current="page" href="{{ route('admin.reports.charts', request()->query()) }}" style="background:#db2777; border-radius: 20px; padding: 8px 20px;">
-                <i class="fa-solid fa-chart-pie mr-1"></i> Biểu đồ trực quan
-            </a>
-        </nav>
-        <div>
-            <button type="button" class="btn btn-outline-secondary btn-sm font-weight-bold" onclick="window.print()">
-                <i class="fa-solid fa-print mr-1"></i> In / Xuất biểu đồ
-            </button>
-        </div>
-    </div>
-
-    {{-- BỘ LỌC BÁO CÁO BIỂU ĐỒ (THEO YÊU CẦU NGƯỜI DÙNG) --}}
-    <div class="admin-card mb-4 filter-box shadow-sm">
-        <form method="GET" action="{{ route('admin.reports.charts') }}" id="reportChartFilterForm">
-            {{-- Hàng 1: Các nút mốc thời gian nhanh (Presets) --}}
-            <div class="mb-3 d-flex align-items-center flex-wrap gap-2">
-                <span class="small font-weight-bold text-muted mr-1"><i class="fa-regular fa-clock mr-1"></i> Mốc nhanh:</span>
-                @php
-                    $curPreset = $filters['preset'] ?? '';
-                @endphp
-                <button type="button" class="btn btn-sm {{ empty($curPreset) && empty($filters['date_from']) ? 'btn-dark font-weight-bold' : 'btn-light border' }}" onclick="applyChartPreset('')" style="border-radius: 16px;">Tất cả</button>
-                <button type="button" class="btn btn-sm {{ $curPreset === 'today' ? 'btn-dark font-weight-bold' : 'btn-light border' }}" onclick="applyChartPreset('today')" style="border-radius: 16px;">Hôm nay</button>
-                <button type="button" class="btn btn-sm {{ $curPreset === 'yesterday' ? 'btn-dark font-weight-bold' : 'btn-light border' }}" onclick="applyChartPreset('yesterday')" style="border-radius: 16px;">Hôm qua</button>
-                <button type="button" class="btn btn-sm {{ $curPreset === '7days' ? 'btn-dark font-weight-bold' : 'btn-light border' }}" onclick="applyChartPreset('7days')" style="border-radius: 16px;">7 ngày qua</button>
-                <button type="button" class="btn btn-sm {{ $curPreset === '30days' ? 'btn-dark font-weight-bold' : 'btn-light border' }}" onclick="applyChartPreset('30days')" style="border-radius: 16px;">30 ngày qua</button>
-                <button type="button" class="btn btn-sm {{ $curPreset === 'this_month' ? 'btn-dark font-weight-bold' : 'btn-light border' }}" onclick="applyChartPreset('this_month')" style="border-radius: 16px;">Tháng này</button>
-                <button type="button" class="btn btn-sm {{ $curPreset === 'last_month' ? 'btn-dark font-weight-bold' : 'btn-light border' }}" onclick="applyChartPreset('last_month')" style="border-radius: 16px;">Tháng trước</button>
-                <button type="button" class="btn btn-sm {{ $curPreset === 'this_year' ? 'btn-dark font-weight-bold' : 'btn-light border' }}" onclick="applyChartPreset('this_year')" style="border-radius: 16px;">Năm nay</button>
-                <input type="hidden" name="preset" id="reportChartPresetInput" value="{{ $curPreset }}">
-            </div>
-
-            {{-- Hàng 2: Bộ lọc chi tiết --}}
-            <div class="row g-2 align-items-end">
-                <div class="col-lg-3 col-md-6 mb-2">
-                    <label class="small font-weight-bold text-muted mb-1"><i class="fa-regular fa-calendar mr-1"></i> Từ ngày</label>
-                    <input type="date" name="date_from" id="chartDateFromInput" class="form-control form-control-sm" value="{{ $filters['date_from'] ?? '' }}">
-                </div>
-
-                <div class="col-lg-3 col-md-6 mb-2">
-                    <label class="small font-weight-bold text-muted mb-1"><i class="fa-regular fa-calendar-check mr-1"></i> Đến ngày</label>
-                    <input type="date" name="date_to" id="chartDateToInput" class="form-control form-control-sm" value="{{ $filters['date_to'] ?? '' }}">
-                </div>
-
-                <div class="col-lg-3 col-md-6 mb-2">
-                    <label class="small font-weight-bold text-muted mb-1"><i class="fa-solid fa-layer-group mr-1"></i> Danh mục sản phẩm</label>
-                    <select name="category_id" class="form-control form-control-sm">
-                        <option value="">-- Tất cả danh mục --</option>
-                        @foreach($categoriesList as $cat)
-                            <option value="{{ $cat->id }}" {{ ($filters['category_id'] ?? '') == $cat->id ? 'selected' : '' }}>
-                                {{ $cat->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-lg-3 col-md-6 mb-2">
-                    <label class="small font-weight-bold text-muted mb-1"><i class="fa-solid fa-wallet mr-1"></i> Phương thức thanh toán</label>
-                    <select name="gateway" class="form-control form-control-sm">
-                        <option value="">-- Tất cả phương thức --</option>
-                        <option value="cod" {{ ($filters['gateway'] ?? '') === 'cod' ? 'selected' : '' }}>Tiền mặt (COD)</option>
-                        <option value="momo" {{ ($filters['gateway'] ?? '') === 'momo' ? 'selected' : '' }}>Ví MoMo</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top flex-wrap gap-2">
-                <div class="small text-muted">
-                    @if(!empty($filters['date_from']) || !empty($filters['date_to']) || !empty($filters['category_id']) || !empty($filters['gateway']) || !empty($filters['preset']))
-                        <span class="badge badge-warning text-dark px-2 py-1"><i class="fa-solid fa-filter mr-1"></i> Biểu đồ đang theo bộ lọc tùy chỉnh</span>
-                    @else
-                        <span>Biểu đồ số liệu toàn thời gian</span>
-                    @endif
-                </div>
-                <div class="d-flex gap-2">
-                    @if(!empty($filters['date_from']) || !empty($filters['date_to']) || !empty($filters['category_id']) || !empty($filters['gateway']) || !empty($filters['preset']))
-                        <a href="{{ route('admin.reports.charts') }}" class="btn btn-light btn-sm text-danger mr-1">
-                            <i class="fa-solid fa-xmark mr-1"></i> Xóa lọc
-                        </a>
-                    @endif
-                    <button type="submit" class="btn btn-primary btn-sm px-4" style="background:#db2777; border-color:#db2777;">
-                        <i class="fa-solid fa-filter mr-1"></i> Cập nhật biểu đồ
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <p class="text-muted small">
-        <i class="fa-solid fa-circle-info mr-1"></i> Chỉ gồm đơn đã thanh toán, chưa hoàn tiền và không bị hủy hoặc hoàn hàng. Doanh thu tính theo ngày tạo đơn; số liệu theo danh mục không gồm phí vận chuyển.
-    </p>
-
+    @include('admin.reports._filters', ['filterRoute' => 'admin.reports.charts', 'filterCategories' => $categoriesList])
     <div id="report-chart-error" class="alert alert-warning d-none" role="alert">
-        Không tải được thư viện biểu đồ. Bạn có thể xem số liệu tại trang <a href="{{ route('admin.reports.index') }}">Bảng số liệu</a>.
+        Không tải được thư viện biểu đồ. Bạn có thể xem số liệu tại trang <a href="{{ route('admin.reports.index', $filters) }}">Bảng số liệu</a>.
     </div>
 
-    <div class="row">
+    @if(!$hasRevenue)
+        <div class="admin-card report-empty"><i class="fa-solid fa-chart-simple mb-3" aria-hidden="true"></i><h3 class="h6">Chưa có doanh thu phù hợp</h3><p class="mb-3">Không có đơn đã thanh toán đủ điều kiện trong bộ lọc này.</p><a href="{{ route('admin.reports.charts', ['mode' => $filters['mode']]) }}" class="btn btn-outline-secondary btn-sm">Xóa bộ lọc</a></div>
+    @endif
+
+    <div class="row" @if(!$hasRevenue) hidden @endif>
         {{-- Biểu đồ danh mục --}}
         <div class="col-lg-6 mb-4">
             <div class="admin-card shadow-sm h-100 p-0 overflow-hidden">
@@ -120,7 +27,7 @@
                     <i class="fa-solid fa-chart-simple text-primary mr-1"></i> Doanh thu theo danh mục
                 </div>
                 <div class="card-body chart-wrap p-3">
-                    <canvas id="categoryRevenueChart"></canvas>
+                    <canvas id="categoryRevenueChart" role="img" aria-label="Biểu đồ doanh thu theo danh mục. Số liệu chi tiết có trong chế độ Bảng số liệu."></canvas>
                 </div>
             </div>
         </div>
@@ -129,10 +36,11 @@
         <div class="col-lg-6 mb-4">
             <div class="admin-card shadow-sm h-100 p-0 overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom font-weight-bold text-dark">
-                    <i class="fa-solid fa-chart-line text-success mr-1"></i> Doanh thu theo ngày (30 ngày gần nhất)
+                    <i class="fa-solid fa-chart-line text-success mr-1"></i> Doanh thu theo ngày
+                    <span class="report-card-note">{{ $chartDateRange }} · tối đa 90 ngày cuối kỳ đã chọn</span>
                 </div>
                 <div class="card-body chart-wrap p-3">
-                    <canvas id="revenueByDateChart"></canvas>
+                    <canvas id="revenueByDateChart" role="img" aria-label="Biểu đồ doanh thu theo ngày, {{ $chartDateRange }}."></canvas>
                 </div>
             </div>
         </div>
@@ -141,10 +49,11 @@
         <div class="col-lg-6 mb-4">
             <div class="admin-card shadow-sm h-100 p-0 overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom font-weight-bold text-dark">
-                    <i class="fa-solid fa-chart-column text-warning mr-1"></i> Doanh thu theo tháng (12 tháng gần nhất)
+                    <i class="fa-solid fa-chart-column text-warning mr-1"></i> Doanh thu theo tháng
+                    <span class="report-card-note">{{ $chartMonthRange }} · tối đa 12 tháng cuối kỳ đã chọn</span>
                 </div>
                 <div class="card-body chart-wrap p-3">
-                    <canvas id="revenueByMonthChart"></canvas>
+                    <canvas id="revenueByMonthChart" role="img" aria-label="Biểu đồ doanh thu theo tháng, {{ $chartMonthRange }}."></canvas>
                 </div>
             </div>
         </div>
@@ -156,7 +65,7 @@
                     <i class="fa-solid fa-calendar-check text-info mr-1"></i> Doanh thu theo năm
                 </div>
                 <div class="card-body chart-wrap p-3">
-                    <canvas id="revenueByYearChart"></canvas>
+                    <canvas id="revenueByYearChart" role="img" aria-label="Biểu đồ doanh thu theo năm."></canvas>
                 </div>
             </div>
         </div>
@@ -165,11 +74,11 @@
         <div class="col-lg-12 mb-4">
             <div class="admin-card shadow-sm p-0 overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom font-weight-bold text-dark">
-                    <i class="fa-solid fa-chart-pie text-pink mr-1"></i> Doanh thu theo phương thức thanh toán (MoMo vs COD)
+                    <i class="fa-solid fa-chart-pie text-pink mr-1"></i> Doanh thu theo phương thức thanh toán
                 </div>
                 <div class="card-body chart-wrap p-3 d-flex justify-content-center">
                     <div style="width: 100%; max-width: 480px;">
-                        <canvas id="revenueByPaymentMethodChart"></canvas>
+                        <canvas id="revenueByPaymentMethodChart" role="img" aria-label="Tỷ trọng doanh thu theo phương thức thanh toán."></canvas>
                     </div>
                 </div>
             </div>
@@ -302,11 +211,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function applyChartPreset(preset) {
-    document.getElementById('reportChartPresetInput').value = preset;
-    document.getElementById('chartDateFromInput').value = '';
-    document.getElementById('chartDateToInput').value = '';
-    document.getElementById('reportChartFilterForm').submit();
-}
+
 </script>
 @endsection

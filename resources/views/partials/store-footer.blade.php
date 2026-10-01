@@ -1,4 +1,5 @@
-<footer class="ht-footer">
+<footer class="ht-footer atelier-footer">
+    @if(request()->routeIs('home'))
     <div class="atelier-footer-invitation">
         <div class="store-container">
             <span class="ht-eyebrow">SOOPI / L'ART DU PARFUM</span>
@@ -6,6 +7,7 @@
             <a class="ht-text-link" href="{{ route('store.finder') }}">Tìm dấu hương của riêng bạn @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a>
         </div>
     </div>
+    @endif
     <div class="store-container ht-footer-grid">
         <div class="ht-footer-about">
             <a class="ht-brand" href="{{ route('home') }}"><span class="ht-brand-name">Soopi<span>PERFUME STUDIO</span></span></a>
@@ -13,7 +15,7 @@
             <span class="ht-footer-signature">Chọn hương. Chọn chính mình.</span>
             {{-- Social links --}}
             <div class="ht-footer-social">
-                <a href="https://zalo.me/0123456789" target="_blank" rel="noopener" aria-label="Zalo Soopi" class="ht-footer-social-btn ht-social-zalo">
+                <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener" aria-label="Zalo Soopi {{ config('storefront.zalo_phone') }}" class="ht-footer-social-btn ht-social-zalo">
                     <svg width="16" height="16" viewBox="0 0 40 40" fill="none"><text x="4" y="28" font-size="22" font-family="Arial" font-weight="bold" fill="currentColor">Z</text></svg>
                     Zalo
                 </a>
@@ -29,32 +31,7 @@
         </div>
         <div><h2>Khám phá</h2><a href="{{ route('home', ['gender' => 'nu']) }}#san-pham">Nước hoa nữ</a><a href="{{ route('home', ['gender' => 'nam']) }}#san-pham">Nước hoa nam</a><a href="{{ route('home', ['gender' => 'unisex']) }}#san-pham">Nước hoa unisex</a><a href="{{ route('home', ['sort' => 'sale']) }}#san-pham">Ưu đãi hiện có</a><a href="{{ route('store.faq') }}">Câu hỏi thường gặp</a></div>
         <div><h2>Dành cho bạn</h2><a href="{{ route('orders.tracking') }}">Theo dõi đơn hàng</a><a href="{{ route('orders.index') }}">Lịch sử mua hàng</a><a href="{{ route('cart.index') }}">Giỏ hàng của bạn</a><a href="{{ route('register') }}">Trở thành thành viên</a><a href="{{ route('store.wishlist') }}">Yêu thích</a><a href="{{ route('store.member') }}">Điểm thành viên</a><a href="{{ route('store.journal') }}">Cẩm nang mùi hương</a></div>
-        <div class="ht-footer-help"><span class="ht-eyebrow">MỘT CHÚT THẤU HIỂU</span><h2>Tìm hương thơm<br>hợp với bạn.</h2><p>Bắt đầu từ thương hiệu bạn yêu, hay một mùi hương bạn muốn khám phá.</p><a class="ht-text-link" href="{{ route('store.finder') }}">Tìm hương phù hợp @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a></div>
+        <div class="ht-footer-help"><span class="ht-eyebrow">MỘT CHÚT THẤU HIỂU</span><h2>Tìm hương thơm <br>hợp với bạn.</h2><p>Bắt đầu từ thương hiệu bạn yêu, hay một mùi hương bạn muốn khám phá.</p><a class="ht-text-link" href="{{ route('store.finder') }}">Tìm hương phù hợp @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a></div>
     </div>
     <div class="store-container ht-footer-bottom"><span>© {{ date('Y') }} Soopi.</span><span>Được chăm chút, từ hương thơm đến trải nghiệm.</span><a href="#main-content">Về đầu trang ↑</a></div>
 </footer>
-
-<style>
-.ht-footer-social {
-    display: flex;
-    gap: 8px;
-    margin-top: 18px;
-    flex-wrap: wrap;
-}
-.ht-footer-social-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    border-radius: 999px;
-    font-size: 12.5px;
-    font-weight: 700;
-    text-decoration: none;
-    transition: transform .18s, opacity .18s;
-    border: 1.5px solid transparent;
-}
-.ht-footer-social-btn:hover { transform: translateY(-2px); opacity: .88; }
-.ht-social-zalo  { background: #0068FF; color: #fff; }
-.ht-social-fb    { background: #1877F2; color: #fff; }
-.ht-social-ig    { background: linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); color: #fff; }
-</style>

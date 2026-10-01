@@ -14,6 +14,11 @@ class VideoController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'placement' => ['nullable', 'in:all_filter,home,product,all'],
+            'status' => ['nullable', 'in:active,inactive'],
+        ]);
         $videos = Video::query()
             ->with('perfume')
             ->when($request->filled('search'), function ($query) use ($request) {
@@ -118,7 +123,14 @@ class VideoController extends Controller
     {
         return $request->validate([
             'title'          => ['required', 'string', 'max:255'],
-            'video_url'      => ['required', 'string', 'max:2048'],
+            'video_url'      => ['bail', 'required', 'string', 'max:2048', function ($attribute, $value, $fail) {
+                // Keep existing local video paths while rejecting executable URL schemes.
+                $remote = filter_var($value, FILTER_VALIDATE_URL) && in_array(strtolower((string) parse_url($value, PHP_URL_SCHEME)), ['http', 'https'], true);
+                $local = preg_match('~^/?(?:videos|storage|images)/[a-zA-Z0-9/._-]+\.(?:mp4|webm|ogg)$~i', $value) && !str_contains($value, '..');
+                if (!$remote && !$local) {
+                    $fail('Nhập liên kết HTTP/HTTPS hợp lệ hoặc đường dẫn video trong thư mục videos, storage, images.');
+                }
+            }],
             'perfume_id'     => ['nullable', 'exists:perfumes,id'],
             'thumbnail_url'  => ['nullable', 'string', 'max:2048'],
             'thumbnail_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],

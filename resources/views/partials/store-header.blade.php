@@ -1,16 +1,18 @@
 <a class="ht-skip-link" href="#main-content">Đến nội dung chính</a>
-<header class="ht-header">
-    <div class="store-container ht-header-main">
-        <a class="ht-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ">
-            <span class="ht-brand-mark">@include('partials.icon', ['name' => 'flower', 'size' => 30])</span>
-            <span class="ht-brand-name">Soopi<span>PERFUME STUDIO</span></span>
+<header class="ht-header soopi-header">
+    <div class="sn-bar">
+        <a class="sn-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ">
+            @include('partials.icon', ['name' => 'flower', 'size' => 34])
+            <span class="sn-wordmark"><strong>Soopi</strong><small>PERFUME STUDIO</small></span>
         </a>
-        <form class="ht-search" method="GET" action="{{ route('home') }}#san-pham" role="search">
-            @include('partials.icon', ['name' => 'search'])
-            <input type="search" name="search" value="{{ request('search') }}" placeholder="Tìm mùi hương dành riêng cho bạn..." aria-label="Tìm nước hoa hoặc thương hiệu">
-            <button type="submit" aria-label="Tìm kiếm nước hoa">@include('partials.icon', ['name' => 'arrow', 'size' => 18])</button>
-        </form>
-        <div class="ht-header-actions">
+        <nav class="sn-nav" aria-label="Điều hướng chính">
+            <button type="button" data-nav-panel="sn-collection" aria-controls="sn-collection" aria-expanded="false">Bộ sưu tập @include('partials.icon', ['name' => 'chevron', 'size' => 13])</button>
+            <a href="{{ route('store.finder') }}" @if(request()->routeIs('store.finder')) aria-current="page" @endif>Chọn hương</a>
+            <a href="{{ route('store.journal') }}" @if(request()->routeIs('store.journal')) aria-current="page" @endif>Câu chuyện</a>
+            <a href="{{ route('livestream.show') }}" @if(request()->routeIs('livestream.show')) aria-current="page" @endif>Live</a>
+        </nav>
+        <div class="sn-tools">
+            <button class="sn-search-toggle" type="button" data-nav-panel="sn-search" aria-controls="sn-search" aria-expanded="false" aria-label="Tìm mùi hương">@include('partials.icon', ['name' => 'search', 'size' => 18])<span>Tìm một mùi hương</span></button>
             @auth
                 <details class="ht-account">
                     <summary class="ht-header-action" aria-label="Mở menu tài khoản">@include('partials.icon', ['name' => 'user']) <span>Tài khoản</span></summary>
@@ -46,41 +48,35 @@
                 @include('partials.icon', ['name' => 'bag'])<span>Giỏ hàng</span>
                 <span class="ht-cart-count">{{ collect(session('cart', []))->sum(fn($item) => is_array($item) ? ($item['quantity'] ?? 0) : (int)$item) }}</span>
             </a>
+            <button class="sn-mobile-toggle" type="button" data-nav-panel="sn-collection" aria-controls="sn-collection" aria-expanded="false" aria-label="Mở menu">@include('partials.icon', ['name' => 'menu'])</button>
         </div>
     </div>
-    <div class="ht-nav-border">
-        <nav class="store-container ht-nav" aria-label="Danh mục nước hoa">
-            <div class="ht-nav-links">
-                <a href="{{ route('home') }}" @class(['active' => request()->routeIs('home', 'welcome') && !request()->hasAny(['gender', 'category', 'search', 'sort'])])>Khám phá</a>
-                <details class="ht-category-menu ht-nav-products">
-                    <summary @class(['active' => request()->routeIs('home', 'welcome') && request()->hasAny(['gender', 'category'])])>Nước hoa @include('partials.icon', ['name' => 'chevron', 'size' => 14])</summary>
-                    <div class="ht-category-dropdown">
-                        <a href="{{ route('home') }}#san-pham">Tất cả nước hoa <span>{{ $totalPerfumes ?? 0 }}</span></a>
-                        <a href="{{ route('home', ['gender' => 'nu']) }}#san-pham">Nước hoa nữ</a>
-                        <a href="{{ route('home', ['gender' => 'nam']) }}#san-pham">Nước hoa nam</a>
-                        <a href="{{ route('home', ['gender' => 'unisex']) }}#san-pham">Unisex</a>
-                        @if(($categories ?? collect())->isNotEmpty())<span class="ht-nav-dropdown-label">Danh mục hương</span>@endif
-                        @foreach(($categories ?? []) as $category)
-                            <a href="{{ route('home', ['category' => $category->id]) }}#san-pham">{{ $category->name }} <span>{{ $category->perfumes_count ?? 0 }}</span></a>
-                        @endforeach
-                    </div>
-                </details>
-                <a href="{{ route('livestream.show') }}" @class(['active' => request()->routeIs('livestream.show')])>Livestream</a>
-                <a href="{{ route('store.quiz') }}" @class(['ht-nav-quiz', 'active' => request()->routeIs('store.quiz*')])>Chọn hương</a>
-                <a href="{{ route('home', ['sort' => 'sale']) }}#san-pham" @class(['ht-nav-sale', 'active' => request('sort') === 'sale'])>Ưu đãi</a>
-                <details class="ht-category-menu ht-nav-more">
-                    <summary @class(['active' => request()->routeIs('store.discovery-box', 'store.scent-of-the-day', 'store.compare', 'store.journal', 'store.article', 'store.faq')])><span class="ht-nav-more-desktop">Khám phá thêm</span><span class="ht-nav-more-mobile">Thêm</span> @include('partials.icon', ['name' => 'chevron', 'size' => 14])</summary>
-                    <div class="ht-category-dropdown">
-                        <a class="ht-nav-mobile-only" href="{{ route('store.quiz') }}">Chọn hương</a>
-                        <a class="ht-nav-mobile-only" href="{{ route('home', ['sort' => 'sale']) }}#san-pham">Ưu đãi</a>
-                        <a href="{{ route('store.discovery-box') }}">Hộp thử mùi</a>
-                        <a href="{{ route('store.scent-of-the-day') }}">Mùi hôm nay</a>
-                        <a href="{{ route('store.compare') }}">So sánh nước hoa</a>
-                        <a href="{{ route('store.journal') }}">Cẩm nang</a>
-                        <a href="{{ route('store.faq') }}">Hỏi đáp</a>
-                    </div>
-                </details>
-            </div>
+    <section class="sn-panel" id="sn-collection" inert aria-label="Bộ sưu tập nước hoa">
+        <button class="sn-close" type="button" data-nav-close aria-label="Đóng menu">×</button>
+        <nav class="sn-secondary sn-mobile-links" aria-label="Điều hướng chính trên điện thoại">
+            <a href="{{ route('store.finder') }}" @if(request()->routeIs('store.finder')) aria-current="page" @endif>Chọn hương</a>
+            <a href="{{ route('store.journal') }}" @if(request()->routeIs('store.journal')) aria-current="page" @endif>Câu chuyện</a>
+            <a href="{{ route('livestream.show') }}" @if(request()->routeIs('livestream.show')) aria-current="page" @endif>Live</a>
         </nav>
-    </div>
+        <div class="sn-menu-layout">
+            <div class="sn-intro"><span class="sn-kicker">KHÁM PHÁ SOOPI</span><h2>Chọn hương.<br>Chọn chính mình.</h2><a class="sn-line-link" href="{{ route('home') }}#san-pham">Toàn bộ bộ sưu tập ↗</a></div>
+            <nav class="sn-links" aria-label="Danh mục nước hoa">
+                <a href="{{ route('home', ['gender' => 'nu']) }}#san-pham" style="--i:1"><small>01</small>Dành cho nàng<span>→</span></a>
+                <a href="{{ route('home', ['gender' => 'nam']) }}#san-pham" style="--i:2"><small>02</small>Dành cho chàng<span>→</span></a>
+                <a href="{{ route('home', ['gender' => 'unisex']) }}#san-pham" style="--i:3"><small>03</small>Unisex<span>→</span></a>
+                <a href="{{ route('home', ['sort' => 'sale']) }}#san-pham" style="--i:4"><small>04</small>Ưu đãi<span>↗</span></a>
+            </nav>
+            <a class="sn-art" href="{{ route('home') }}#san-pham"><img src="{{ asset('images/bloom/collection-reveal.webp') }}" alt="Bộ sưu tập nước hoa giữa những cánh lụa hồng" width="1254" height="1254" loading="lazy"><span>L’ART DU PARFUM ↗</span></a>
+        </div>
+        <div class="sn-foot"><span>MỘT DẤU HƯƠNG. MỘT THẾ GIỚI RIÊNG.</span><button type="button" data-site-motion aria-pressed="true">Hiệu ứng: bật</button></div>
+    </section>
+    <section class="sn-panel sn-search-panel" id="sn-search" inert aria-label="Tìm kiếm nước hoa">
+        <button class="sn-close" type="button" data-nav-close aria-label="Đóng tìm kiếm">×</button>
+        <div class="sn-search-layout"><div><span class="sn-kicker">ĐỂ CẢM XÚC DẪN LỐI</span><h2>Bạn đang tìm dấu hương nào?</h2>
+            <form class="ht-search sn-search-field" method="GET" action="{{ route('home') }}#san-pham" role="search"><input type="search" name="search" value="{{ request('search') }}" placeholder="Tên nước hoa, thương hiệu…" aria-label="Tìm nước hoa hoặc thương hiệu" maxlength="100"><button type="submit" aria-label="Tìm kiếm nước hoa">@include('partials.icon', ['name' => 'search'])</button></form>
+            <div class="sn-hints"><span>Thử một gợi ý</span><button type="button" data-search-query="Dior">Dior</button><button type="button" data-search-query="Chanel">Chanel</button></div>
+        </div><div class="sn-suggestions"><a href="{{ route('home', ['search' => 'Dior']) }}#san-pham"><img src="{{ asset('images/gallery/miss-dior.webp') }}" alt="Miss Dior" width="95" height="120" loading="lazy"><span><strong>Dior</strong><small>Khám phá thương hiệu ↗</small></span></a><a href="{{ route('home', ['search' => 'Chanel']) }}#san-pham"><img src="{{ asset('images/gallery/chanel.webp') }}" alt="Chanel Chance" width="95" height="120" loading="lazy"><span><strong>Chanel</strong><small>Khám phá thương hiệu ↗</small></span></a></div></div>
+    </section>
+    <noscript><nav class="sn-noscript"><a href="{{ route('home') }}#san-pham">Tất cả nước hoa</a><a href="{{ route('store.finder') }}">Chọn hương</a><a href="{{ route('store.journal') }}">Câu chuyện</a><a href="{{ route('livestream.show') }}">Live</a><form method="GET" action="{{ route('home') }}#san-pham"><input name="search" aria-label="Tìm nước hoa"><button>Tìm kiếm</button></form></nav></noscript>
 </header>
+<button class="sn-backdrop" type="button" data-nav-close aria-label="Đóng bảng điều hướng" tabindex="-1" hidden></button>

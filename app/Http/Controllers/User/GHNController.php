@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Services\CartQuoteService;
+use App\Services\CheckoutSelectionService;
 use App\Services\GHNService;
 use Illuminate\Http\Request;
 
@@ -30,33 +32,8 @@ class GHNController extends Controller
             'to_ward_code' => 'required|string',
         ]);
 
-        $cart = session('cart', []);
-        
-        $perfumeIds = collect($cart)->map(function ($item, $key) {
-            return is_array($item) ? ($item['perfume_id'] ?? $item['id'] ?? null) : (int) $key;
-        })->filter()->unique()->values();
-
-        $products = \App\Models\Perfume::whereIn('id', $perfumeIds)->get()->keyBy('id');
-
-        $weight = 0;
-        foreach ($cart as $key => $item) {
-            if (is_array($item)) {
-                $perfumeId = (int) ($item['perfume_id'] ?? $item['id'] ?? 0);
-                $quantity = (int) ($item['quantity'] ?? 1);
-                $volumeMl = isset($item['volume_ml']) ? (int) $item['volume_ml'] : null;
-            } else {
-                $perfumeId = (int) $key;
-                $quantity = (int) $item;
-                $volumeMl = null;
-            }
-
-            $product = $products->get($perfumeId);
-            if ($product) {
-                $weight += $product->getWeightForVolume($volumeMl) * $quantity;
-            } else {
-                $weight += (int) config('services.ghn.default_weight', 200) * $quantity;
-            }
-        }
+        $cart = CheckoutSelectionService::forRequest($request, session('cart', []));
+        $weight = $cart ? app(CartQuoteService::class)->quote($cart)['weight'] : 0;
 
         if ($weight <= 0) {
             $weight = (int) config('services.ghn.default_weight', 200);

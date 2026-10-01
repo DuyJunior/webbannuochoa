@@ -7,7 +7,7 @@
 <div class="store-container ht-compare-page">
     <header class="ht-compare-header">
         <span class="ht-badge-pill">@include('partials.icon', ['name' => 'scale', 'size' => '1em']) BẢNG ĐỐI CHIẾU MÙI HƯƠNG</span>
-        <h1 class="ht-compare-title">So Sánh <em>Nước Hoa</em> Toàn Diện</h1>
+        <h1 class="ht-compare-title">Đặt cạnh nhau.<br><em>Tìm điều khác biệt.</em></h1>
         <p class="ht-compare-subtitle">Đối chiếu trực quan về độ ngọt, độ tươi mát, độ bền mùi và giá trị trên mỗi ml để tìm ra chai nước hoa chân ái nhất của bạn.</p>
     </header>
 
@@ -28,7 +28,7 @@
                 </a>
                 @if($samplePairs->count() >= 3)
                 <a href="{{ route('store.compare', ['ids' => $samplePairs->take(3)->pluck('id')->join(',')]) }}" class="ht-button ht-button-outline">
-                    So sánh Top 3 chai được yêu thích nhất
+                    So sánh bộ ba gợi ý
                 </a>
                 @endif
             </div>
@@ -39,7 +39,7 @@
         </div>
     </div>
     @else
-    <div class="ht-compare-table-wrap">
+    <div class="ht-compare-table-wrap" tabindex="0" role="region" aria-label="Bảng so sánh nước hoa. Cuộn ngang để xem các sản phẩm.">
         <div class="ht-compare-columns" style="--col-count: {{ $perfumes->count() }}">
             {{-- Header info card for each perfume --}}
             @foreach($perfumes as $perfume)
@@ -50,7 +50,7 @@
                     </div>
                     <span class="col-brand">{{ $perfume->brand }}</span>
                     <h2 class="col-name"><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->name }}</a></h2>
-                    <p class="col-meta">{{ $perfume->category->name ?? 'Nước hoa' }} · {{ ucfirst($perfume->gender) }} · {{ $perfume->volume_ml }}ml</p>
+                    <p class="col-meta">{{ $perfume->category->name ?? 'Nước hoa' }} · {{ match($perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }} · {{ $perfume->volume_ml }}ml</p>
                     
                     <div class="col-price-box">
                         <span class="price-val">{{ number_format($perfume->sale_price ?? $perfume->price, 0, ',', '.') }}₫</span>

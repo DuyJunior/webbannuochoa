@@ -7,14 +7,17 @@
 <div class="store-container ht-quiz-page">
     <header class="ht-quiz-hero">
         <span class="ht-badge-pill">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) TRẮC NGHIỆM CHỌN HƯƠNG</span>
-        <h1 class="ht-quiz-title">Tìm <em>Dấu Ấn Mùi Hương</em> Thuộc Về Riêng Bạn</h1>
-        <p class="ht-quiz-subtitle">Chỉ 4 câu hỏi trực giác trong 60 giây, thuật toán mùi hương của Soopi sẽ tìm ra những chai nước hoa hòa hợp nhất với thần thái và tâm hồn bạn.</p>
+        <h1 class="ht-quiz-title">Lắng nghe bạn.<br><em>Chọn một dấu hương.</em></h1>
+        <p class="ht-quiz-subtitle">Bốn câu hỏi về phong cách, thời tiết, dịp dùng và nốt hương bạn yêu thích. Cùng Soopi tìm những lựa chọn để bạn khám phá.</p>
     </header>
 
+    @if($errors->any())
+        <div class="public-flash alert-danger" role="alert">Lựa chọn chưa hợp lệ. Bạn hãy chọn lại các câu trả lời bên dưới.</div>
+    @endif
     @if(!$hasResult)
     {{-- Form Quiz Step-by-Step --}}
     <div class="ht-quiz-card">
-        <div class="ht-quiz-progress-bar">
+        <div class="ht-quiz-progress-bar" role="progressbar" aria-label="Tiến độ trắc nghiệm" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1">
             <div class="ht-quiz-progress-fill" id="quizProgress" style="width: 25%"></div>
         </div>
         <div class="ht-quiz-steps-indicator">
@@ -25,6 +28,7 @@
         </div>
 
         <form action="{{ route('store.quiz') }}" method="GET" id="quizForm">
+            <p class="interior-quiz-error" id="quizError" role="alert" hidden></p>
             {{-- Bước 1: Tính cách & Thần thái --}}
             <div class="ht-quiz-step-pane active" id="paneStep1">
                 <div class="ht-quiz-step-header">
@@ -226,7 +230,7 @@
     <div class="ht-quiz-results-wrap">
         <div class="ht-quiz-result-hero">
             <span class="result-celebration">@include('partials.icon', ['name' => 'party', 'size' => '1em']) CHÚC MỪNG BẠN!</span>
-            <h2>Soopi Đã Tìm Thấy Mùi Hương Hoàn Hảo Cho Bạn</h2>
+            <h2>Những dấu hương dành để bạn khám phá</h2>
             <p class="result-analysis">
                 Dựa trên lựa chọn của bạn: phong cách <strong>{{ match($personality) { 'charming' => 'Quyến rũ bí ẩn', 'elegant' => 'Tinh tế thanh lịch', 'fresh' => 'Tươi vui năng động', default => 'Trầm ấm uy quyền' } }}</strong>, 
                 thích hợp trong tiết trời <strong>{{ match($weather) { 'cool' => 'mát mẻ se lạnh', 'hot' => 'nắng ấm', 'ac' => 'phòng điều hòa', default => 'buổi tối thoáng đãng' } }}</strong> 
@@ -234,30 +238,30 @@
             </p>
             <div class="result-actions-top">
                 <a href="{{ route('store.quiz') }}" class="ht-button ht-button-outline">↺ Làm lại trắc nghiệm</a>
-                <a href="{{ route('store.discovery-box') }}" class="ht-button ht-button-secondary">@include('partials.icon', ['name' => 'box', 'size' => '1em']) Tạo Hộp Thử Mùi cho các mùi này</a>
+                <a href="{{ route('store.discovery-box') }}" class="ht-button ht-button-secondary">@include('partials.icon', ['name' => 'box', 'size' => '1em']) Khám phá các mẫu thử</a>
             </div>
         </div>
 
         <div class="ht-quiz-results-grid">
-            @foreach($recommendations as $index => $perfume)
+            @forelse($recommendations as $index => $perfume)
+            @php($quizNotes = \App\Services\FragranceEditorialService::forPerfume($perfume))
             <article class="ht-quiz-item-card {{ $index === 0 ? 'top-match' : '' }}">
                 @if($index === 0)
-                <div class="top-match-badge">@include('partials.icon', ['name' => 'trophy', 'size' => '1em']) TƯƠNG THÍCH NHẤT DÀNH CHO BẠN</div>
+                <div class="top-match-badge">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) GỢI Ý ĐỂ BẠN THỬ ĐẦU TIÊN</div>
                 @endif
                 <div class="item-card-inner">
                     <div class="item-card-img">
                         <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" loading="lazy">
-                        <span class="match-score-badge">{{ $perfume->match_score }}% Hòa Hợp</span>
+                        <span class="match-score-badge">Gợi ý {{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
                     </div>
                     <div class="item-card-content">
                         <span class="item-brand">{{ $perfume->brand }}</span>
                         <h3 class="item-title"><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->name }}</a></h3>
-                        <p class="item-category">{{ $perfume->category->name ?? 'Nước hoa cao cấp' }} · {{ ucfirst($perfume->gender) }}</p>
+                        <p class="item-category">{{ $perfume->category->name ?? 'Nước hoa cao cấp' }} · {{ match($perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
                         <p class="item-desc">{{ Str::limit(strip_tags($perfume->description), 110) }}</p>
                         
                         <div class="item-notes-preview">
-                            <span class="note-pill">Hương đầu: {{ Str::limit($perfume->scent_profile['top']['notes'] ?? 'Tươi mát', 35) }}</span>
-                            <span class="note-pill">@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Độ lưu: {{ $perfume->scent_profile['longevity']['text'] ?? '8h' }}</span>
+                            <span class="note-pill">{{ $quizNotes['verified'] ? Str::limit(implode(' · ', $quizNotes['key_notes']), 100) : 'Cùng Soopi tìm hiểu thêm về nốt hương' }}</span>
                         </div>
 
                         <div class="item-card-bottom">
@@ -269,17 +273,15 @@
                             </div>
                             <div class="item-buttons">
                                 <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light">Chi Tiết</a>
-                                <form action="{{ route('cart.add', $perfume) }}" method="POST" style="display: inline;">
-                                    @csrf
-                                    <input type="hidden" name="quantity" value="1">
-                                    <button type="submit" class="ht-button ht-button-primary">Chọn Mua</button>
-                                </form>
+                                <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-primary" data-quick-view="{{ route('perfumes.quick-view', $perfume) }}" data-product-name="{{ $perfume->name }}" aria-haspopup="dialog" aria-controls="product-quick-view">Chọn dung tích</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </article>
-            @endforeach
+            @empty
+                <p class="interior-quiz-empty">Soopi đang bổ sung mùi hương cho lựa chọn này. <a href="{{ route('store.quiz') }}">Thử lựa chọn khác ↗</a></p>
+            @endforelse
         </div>
     </div>
     @endif
@@ -618,6 +620,8 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('quizForm');
+    if (!form) return;
     const panes = {
         1: document.getElementById('paneStep1'),
         2: document.getElementById('paneStep2'),
@@ -625,21 +629,44 @@ document.addEventListener('DOMContentLoaded', function () {
         4: document.getElementById('paneStep4'),
     };
     const progress = document.getElementById('quizProgress');
+    const progressBar = document.querySelector('.ht-quiz-progress-bar');
+    const error = document.getElementById('quizError');
     const stepDots = document.querySelectorAll('.ht-quiz-steps-indicator .step-dot');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    Object.entries(panes).forEach(([step, pane]) => {
+        const heading = pane.querySelector('h2');
+        heading.id = 'quizQuestion' + step;
+        heading.tabIndex = -1;
+        const options = pane.querySelector('.ht-quiz-grid');
+        options.setAttribute('role', 'radiogroup');
+        options.setAttribute('aria-labelledby', heading.id);
+        options.setAttribute('aria-describedby', 'quizError');
+    });
+    stepDots[0]?.setAttribute('aria-current', 'step');
+
+    function clearError() {
+        error.hidden = true;
+        error.textContent = '';
+    }
 
     function goToStep(step) {
+        clearError();
         Object.keys(panes).forEach(k => {
             if (panes[k]) panes[k].classList.remove('active');
         });
         if (panes[step]) panes[step].classList.add('active');
 
         if (progress) progress.style.width = (step * 25) + '%';
+        progressBar.setAttribute('aria-valuenow', String(step));
         stepDots.forEach(dot => {
             const dStep = parseInt(dot.dataset.step);
             dot.classList.toggle('active', dStep <= step);
+            if (dStep === step) dot.setAttribute('aria-current', 'step');
+            else dot.removeAttribute('aria-current');
         });
-
-        window.scrollTo({ top: document.querySelector('.ht-quiz-card').offsetTop - 60, behavior: 'smooth' });
+        panes[step].querySelector('h2').focus({ preventScroll: true });
+        document.querySelector('.ht-quiz-card').scrollIntoView({ block: 'start', behavior: reducedMotion.matches ? 'instant' : 'smooth' });
     }
 
     document.querySelectorAll('.next-step-btn').forEach(btn => {
@@ -647,7 +674,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const currentPane = this.closest('.ht-quiz-step-pane');
             const selected = currentPane.querySelector('input[type="radio"]:checked');
             if (!selected) {
-                alert('Vui lòng chọn 1 câu trả lời trước khi tiếp tục.');
+                error.textContent = 'Bạn hãy chọn một câu trả lời để tiếp tục nhé.';
+                error.hidden = false;
+                currentPane.querySelector('input[type="radio"]').focus();
                 return;
             }
             goToStep(parseInt(this.dataset.next));
@@ -659,6 +688,7 @@ document.addEventListener('DOMContentLoaded', function () {
             goToStep(parseInt(this.dataset.prev));
         });
     });
+    form.addEventListener('change', clearError);
 });
 </script>
 @endpush

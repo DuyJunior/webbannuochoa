@@ -17,6 +17,10 @@ class ChatController extends Controller
      */
     public function getUsers(Request $request)
     {
+        $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'mode' => ['nullable', 'string', 'in:recent,all'],
+        ]);
         $adminId = Auth::id();
 
         // 1. Tìm kiếm chủ động theo từ khóa (tên, email, sđt)
@@ -66,6 +70,7 @@ class ChatController extends Controller
      */
     public function searchCustomers(Request $request)
     {
+        $request->validate(['q' => ['nullable', 'string', 'max:100']]);
         $adminId = Auth::id();
         $query = trim($request->get('q', ''));
 

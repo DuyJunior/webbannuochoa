@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
 @section('title', 'Mùi Hương Hôm Nay (Scent of the Day) · ' . $perfume->name . ' | Soopi')
-@section('meta_description', 'Khám phá nốt hương được Soopi tuyển chọn cho ngày hôm nay: ' . $perfume->name . ' kèm ưu đãi độc quyền giảm 10% với mã ' . $todayCode)
+@section('meta_description', 'Khám phá mùi hương được Soopi tuyển chọn cho ngày hôm nay: ' . $perfume->name)
 
 @section('content')
 <div class="store-container ht-sotd-page">
@@ -15,14 +15,16 @@
                 <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" class="sotd-main-img">
                 <span class="sotd-daily-ribbon">@include('partials.icon', ['name' => 'star', 'size' => '1em']) MÙI HƯƠNG HÔM NAY</span>
             </div>
+            @if($todayCode)
             <div class="sotd-coupon-box">
-                <span class="coupon-label">ĐẶC QUYỀN TRONG NGÀY HÔM NAY:</span>
+                <span class="coupon-label">ƯU ĐÃI ĐANG ÁP DỤNG:</span>
                 <div class="coupon-code-pill">
                     <span class="code" id="sotdCoupon">{{ $todayCode }}</span>
                     <button type="button" class="copy-btn" id="copySotdBtn">Sao chép</button>
                 </div>
-                <p class="coupon-hint">Giảm thêm 10% trực tiếp khi nhập mã này tại bước thanh toán.</p>
+                <p class="coupon-hint">Giảm {{ number_format($regularPrice - $dealPrice, 0, ',', '.') }}₫ cho chai này khi nhập mã tại bước thanh toán. Ưu đãi tùy điều kiện và lượt sử dụng còn lại.</p>
             </div>
+            @endif
         </div>
 
         <div class="sotd-content-col">
@@ -38,38 +40,27 @@
 
             <div class="sotd-story">
                 <h3>Vì sao đây là mùi hương lý tưởng cho hôm nay?</h3>
-                <p>{{ $perfume->description ?: 'Một sự pha trộn tinh tế giữa các nốt hương đầu tươi mát và tầng hương cuối ấm áp, lưu giữ cảm xúc trọn vẹn suốt ngày dài.' }}</p>
+                <p>{{ $dailyEditorial['verified'] ? $dailyEditorial['story'] : ($perfume->description ?: $dailyEditorial['story']) }}</p>
             </div>
 
-            {{-- 3 Pyramid Notes --}}
+            @if($dailyEditorial['verified'])
             <div class="sotd-pyramid-grid">
-                <div class="pyramid-item">
-                    <span class="pyramid-icon">@include('partials.icon', ['name' => 'citrus', 'size' => '1em'])</span>
-                    <strong>Hương Đầu</strong>
-                    <p>{{ Str::limit($perfume->scent_profile['top']['notes'] ?? 'Tươi mát, thanh khiết', 45) }}</p>
-                </div>
-                <div class="pyramid-item">
-                    <span class="pyramid-icon">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
-                    <strong>Hương Giữa</strong>
-                    <p>{{ Str::limit($perfume->scent_profile['heart']['notes'] ?? 'Hoa cỏ kiều diễm', 45) }}</p>
-                </div>
-                <div class="pyramid-item">
-                    <span class="pyramid-icon">@include('partials.icon', ['name' => 'tree', 'size' => '1em'])</span>
-                    <strong>Hương Cuối</strong>
-                    <p>{{ Str::limit($perfume->scent_profile['base']['notes'] ?? 'Gỗ trầm sâu lắng', 45) }}</p>
-                </div>
+                @if($dailyEditorial['mode'] === 'pyramid')
+                    @foreach($dailyEditorial['layers'] as $layer)
+                        <div class="pyramid-item"><strong>{{ $layer['label'] }}</strong><p>{{ implode(' · ', $layer['notes']) }}</p></div>
+                    @endforeach
+                @else
+                    <div class="pyramid-item" style="grid-column:1/-1"><strong>Nốt hương nổi bật</strong><p>{{ implode(' · ', $dailyEditorial['key_notes']) }}</p></div>
+                @endif
             </div>
+            @endif
 
             <div class="sotd-pricing-action">
                 <div class="sotd-price-wrap">
-                    @php
-                        $regularPrice = $perfume->sale_price ?? $perfume->price;
-                        $dealPrice = round($regularPrice * 0.9 / 1000) * 1000;
-                    @endphp
-                    <span class="deal-label">Giá độc quyền hôm nay (với mã {{ $todayCode }}):</span>
+                    <span class="deal-label">{{ $todayCode ? 'Giá khi áp dụng mã '.$todayCode : 'Giá sản phẩm' }}</span>
                     <div class="price-numbers">
                         <span class="deal-price">{{ number_format($dealPrice, 0, ',', '.') }}₫</span>
-                        <del class="original-price">{{ number_format($regularPrice, 0, ',', '.') }}₫</del>
+                        @if($todayCode)<del class="original-price">{{ number_format($regularPrice, 0, ',', '.') }}₫</del>@endif
                     </div>
                 </div>
 
@@ -281,12 +272,12 @@
 
 @push('scripts')
 <script>
-document.getElementById('copySotdBtn').addEventListener('click', function () {
+document.getElementById('copySotdBtn')?.addEventListener('click', async function () {
     const code = document.getElementById('sotdCoupon').textContent.trim();
-    if (navigator.clipboard) {
-        navigator.clipboard.writeText(code);
-    }
-    this.textContent = 'Đã chép!';
+    try {
+        await navigator.clipboard.writeText(code);
+        this.textContent = 'Đã chép!';
+    } catch { this.textContent = 'Hãy chọn mã để sao chép'; }
     setTimeout(() => { this.textContent = 'Sao chép'; }, 2000);
 });
 </script>

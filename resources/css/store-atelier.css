@@ -2,6 +2,11 @@
 .soopi-store{--ht-white:#fffcfa;--ht-card:#fffdfb;--ht-blush-pale:#faf1f3;--ht-blush-soft:#f2e3e8;--ht-blush:#dec5ce;--ht-rose:#82516a;--ht-rose-dark:#472836;--ht-rose-light:#b58197;--ht-rose-faint:#faf3f5;--ht-ink:#35232d;--ht-ink-mid:#684e5c;--ht-ink-soft:#806e77;--ht-line:#e7d8de;--ht-line-light:#efe5e9;--ht-shadow-xs:0 3px 18px #4d293105;--ht-shadow-md:0 12px 32px #4d293110;--pink-main:#a57389;--pink-dark:#75465d;--pink-primary:#75465d;--pink-light:#f5e7ec;--bloom-paper:#fffcfa;--bloom-ink:#35232d;--bloom-muted:#806e77;--bloom-line:#e7d8de;--bloom-accent:#82516a;background:var(--bloom-paper);color:var(--bloom-ink)}
 .soopi-store .public-main{background:var(--bloom-paper)}
 .soopi-store .public-main :is(h1,h2,h3){font-family:var(--ht-serif);font-weight:400;letter-spacing:-.035em}
+/* Transform the sticky header without changing document height or scroll position. */
+.soopi-store>.ht-header{transition:transform .24s cubic-bezier(.2,.65,.3,1)}
+.soopi-store>.ht-header.ht-header-away{transform:translateY(calc(-100% - 2px));pointer-events:none}
+.soopi-store>.ht-header:focus-within{pointer-events:auto}
+@media(prefers-reduced-motion:reduce){.soopi-store>.ht-header{transition:none}}
 .soopi-store :is(a,button,input,select,textarea):focus-visible{outline:2px solid #946780;outline-offset:4px}
 .soopi-store :is(input[type=checkbox],input[type=radio]){accent-color:#82516a}
 .soopi-store :is(.ht-button,.public-primary-button,.btn-shop-now,.btn-empty-shop,.btn-submit-order,.btn-confirm-checkout,.btn-tracking-search,.cart-empty-btn,.luxury-auth-btn,.ht-live-button){border-radius:2px!important;background:#402631!important;border-color:#402631!important;box-shadow:none!important;color:#fff9fc!important;font-size:12px;font-weight:500;letter-spacing:.02em;min-height:46px;transition:background .2s,transform .2s}
@@ -19,7 +24,7 @@
 .soopi-store .ht-feature-page>h1{margin:17px 0;max-width:900px}
 .soopi-store :is(.ht-badge-pill,.ht-live-eyebrow,.badge-tag,.section-kicker){background:transparent!important;border:0;color:#95697d!important;font-size:9px;font-weight:500;letter-spacing:1.7px;padding:0;box-shadow:none}
 .soopi-store .ht-eyebrow{font-size:9px;letter-spacing:1.8px;color:#95697d}
-.soopi-store :is(.ht-feature-panel,.ht-feature-product,.ht-compare-card,.ht-quiz-card,.picker-card,.ht-wardrobe-card,.ht-member-card,.ht-faq-item,.ht-live-card,.ht-live-empty,.ht-live-chat,.account-grid form,.cart-item-card,.cart-select-all-card,.cart-order-summary,.order-summary-box,.checkout-card,.tracking-search-card,.tracking-result-card,.order-card-box,.empty-orders-card,.cart-empty-state){border-radius:3px!important;border:1px solid var(--bloom-line);box-shadow:none!important}
+.soopi-store :is(.ht-feature-panel,.ht-feature-product,.ht-compare-card,.ht-quiz-card,.picker-card,.ht-wardrobe-card,.ht-member-card,.ht-faq-item,.ht-live-card,.ht-live-empty,.ht-live-chat,.account-grid form,.cart-item-card,.cart-select-all-card,.cart-order-summary,.order-summary-box,.checkout-card,.tracking-search-card,.tracking-result-card,.order-card-box,.empty-orders-card,.cart-empty-state){border-radius:var(--soopi-panel-radius,3px)!important;border:1px solid var(--bloom-line);box-shadow:var(--soopi-panel-shadow,none)!important}
 .soopi-store :is(.ht-feature-panel,.ht-feature-product,.ht-compare-card,.ht-quiz-card,.picker-card,.ht-wardrobe-card,.ht-faq-item,.account-grid form,.cart-item-card,.cart-select-all-card,.cart-order-summary,.order-summary-box,.checkout-card,.tracking-search-card,.tracking-result-card,.order-card-box,.empty-orders-card,.cart-empty-state){background:#fffdfc}
 .soopi-store .ht-feature-panel{padding:28px}
 .soopi-store :is(.ht-finder-form,.ht-filter-form){background:#faf4f5;border:1px solid var(--bloom-line);border-radius:3px;padding:24px;box-shadow:none;gap:18px}

@@ -15,6 +15,22 @@ class StorefrontThemeTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_mobile_menu_preserves_the_main_navigation_destinations(): void
+    {
+        $this->withoutVite();
+        $response = $this->get(route('store.finder'))->assertOk();
+        $document = new \DOMDocument();
+        @$document->loadHTML($response->getContent());
+        $xpath = new \DOMXPath($document);
+        $links = $xpath->query('//section[@id="sn-collection"]//nav[contains(@class, "sn-mobile-links")]/a');
+
+        $this->assertCount(3, $links);
+        foreach (['store.finder', 'store.journal', 'livestream.show'] as $index => $route) {
+            $this->assertSame(route($route), $links->item($index)->getAttribute('href'));
+        }
+        $this->assertSame('page', $links->item(0)->getAttribute('aria-current'));
+    }
+
     public function test_storefront_pages_share_the_theme_without_losing_purchase_forms(): void
     {
         $export = getenv('SOOPI_EXPORT_REVIEW') === '1';
@@ -52,7 +68,7 @@ class StorefrontThemeTest extends TestCase
         if ($export) File::ensureDirectoryExists($directory);
         $save = function ($name, $url) use ($export, $directory) {
             $response = $this->get($url)->assertOk()->assertSee('soopi-store', false)
-                ->assertSee('atelier-footer-invitation', false);
+                ->assertSee('ht-footer atelier-footer', false);
             if ($export) File::put($directory.'/'.$name.'.html', $response->getContent());
             return $response;
         };

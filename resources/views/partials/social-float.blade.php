@@ -2,7 +2,7 @@
 <details class="bloom-contact-menu"><summary aria-label="Mở các kênh liên hệ" title="Liên hệ Soopi">@include('partials.icon', ['name' => 'phone', 'size' => 20])</summary>
 <div class="ht-social-float" aria-label="Liên hệ nhanh">
     <div class="ht-social-float-inner">
-        <a href="https://zalo.me/0123456789" target="_blank" rel="noopener"
+        <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener"
            class="ht-float-btn ht-float-zalo"
            aria-label="Chat Zalo với Soopi">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">

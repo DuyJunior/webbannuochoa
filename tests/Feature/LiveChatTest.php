@@ -113,6 +113,19 @@ class LiveChatTest extends TestCase
             ->assertJsonFragment(['name' => 'Khách Hàng A', 'id' => $this->user->id]);
     }
 
+    public function test_admin_customer_search_rejects_non_string_and_excessive_filters(): void
+    {
+        $this->actingAs($this->admin);
+        $this->getJson(route('admin.chat.users', ['search' => ['invalid']]))
+            ->assertUnprocessable()->assertJsonValidationErrors('search');
+        $this->getJson(route('admin.chat.users', ['mode' => ['invalid']]))
+            ->assertUnprocessable()->assertJsonValidationErrors('mode');
+        $this->getJson(route('admin.chat.users', ['search' => str_repeat('a', 101)]))
+            ->assertUnprocessable()->assertJsonValidationErrors('search');
+        $this->getJson(route('admin.chat.search_customers', ['q' => ['invalid']]))
+            ->assertUnprocessable()->assertJsonValidationErrors('q');
+    }
+
     public function test_admin_can_get_messages_of_specific_user()
     {
         Message::create([

@@ -76,7 +76,7 @@ class FinanceController extends Controller
             $query->where(function (Builder $query) use ($search) {
                 $query->where('name', 'like', '%'.$search.'%')->orWhere('customer_name', 'like', '%'.$search.'%')
                     ->orWhere('phone', 'like', '%'.$search.'%');
-                if (preg_match('/^(?:#|DH)?0*(\d+)$/i', $search, $matches)) {
+                if (preg_match('/^#?(?:DH)?0*(\d+)$/i', $search, $matches)) {
                     $query->orWhere('orders.id', $matches[1]);
                 }
             });

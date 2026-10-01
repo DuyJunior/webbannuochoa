@@ -4,14 +4,27 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CouponController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.coupons.index', ['coupons' => Coupon::latest()->paginate(20)]);
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:30'],
+            'status' => ['nullable', 'in:active,inactive'],
+        ]);
+        $search = trim($filters['search'] ?? '');
+        $coupons = Coupon::query()
+            ->addSelect(['used_count' => Order::selectRaw('count(*)')
+                ->whereColumn('coupon_code', 'coupons.code')->where('status', '!=', 'cancelled')])
+            ->when($search !== '', fn ($query) => $query->where('code', 'like', '%'.Str::upper($search).'%'))
+            ->when(!empty($filters['status']), fn ($query) => $query->where('is_active', $filters['status'] === 'active'))
+            ->latest()->paginate(20)->withQueryString();
+
+        return view('admin.coupons.index', compact('coupons'));
     }
 
     public function store(Request $request)
@@ -24,7 +37,7 @@ class CouponController extends Controller
             'minimum_order' => 'required|integer|min:0',
             'usage_limit' => 'nullable|integer|min:1',
             'starts_at' => 'nullable|date',
-            'expires_at' => 'nullable|date|after:starts_at',
+            'expires_at' => ['nullable', 'date', ...($request->filled('starts_at') ? ['after:starts_at'] : [])],
         ]);
         $data['code'] = Str::upper($data['code']);
         if ($data['type'] === 'percent' && $data['value'] > 100) {

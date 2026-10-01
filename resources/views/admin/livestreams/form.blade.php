@@ -17,12 +17,7 @@
         <div class="live-admin-actions"><a class="live-admin-btn" href="{{ route('admin.livestreams.index') }}">← Danh sách livestream</a></div>
     </header>
 
-    @if($errors->any())
-        <div class="alert alert-danger" role="alert">
-            <strong>Vui lòng kiểm tra lại thông tin:</strong>
-            <ul class="mb-0 mt-2">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
-        </div>
-    @endif
+
 
     <div class="live-admin-form-grid">
         <div class="live-admin-form-card">
@@ -86,16 +81,20 @@
                 <div class="live-admin-field">
                     <label for="live-product-search">Sản phẩm trong buổi live</label>
                     <input id="live-product-search" type="search" placeholder="Tìm tên hoặc thương hiệu nước hoa..." autocomplete="off">
-                    @php($selectedProducts = array_map('strval', old('perfume_ids', $livestream->products->pluck('id')->all())))
+                    @php($selectedProducts = array_map('strval', (array) (session()->hasOldInput() ? old('perfume_ids', []) : $livestream->products->pluck('id')->all())))
                     <div id="live-product-options" class="live-product-options">
-                        @foreach($perfumes as $perfume)
+                        @forelse($perfumes as $perfume)
                             <label class="live-product-choice" data-search="{{ mb_strtolower($perfume->name.' '.$perfume->brand) }}">
                                 <input type="checkbox" name="perfume_ids[]" value="{{ $perfume->id }}" @checked(in_array((string) $perfume->id, $selectedProducts, true))>
                                 @if($perfume->image_src)<img src="{{ $perfume->image_src }}" alt="" loading="lazy">@endif
                                 <span><strong>{{ $perfume->name }}</strong><small>{{ $perfume->brand }} · {{ number_format((float) ($perfume->sale_price ?? $perfume->price), 0, ',', '.') }}đ</small></span>
                             </label>
-                        @endforeach
+                        @empty
+                            <p class="text-muted small p-3 mb-0">Chưa có sản phẩm đang bán để gắn vào buổi phát.</p>
+                        @endforelse
                     </div>
+                    <p id="live-product-empty" class="text-muted small mt-2" hidden>Không tìm thấy sản phẩm phù hợp. Thử tên hoặc thương hiệu khác.</p>
+                    <small id="live-product-count" class="d-block mt-2" role="status">Đã chọn {{ count($selectedProducts) }} / 50 sản phẩm</small>
                     <small>Chọn tối đa 50 sản phẩm. Khi đang phát, bạn vẫn có thể thêm hoặc gỡ sản phẩm ngay trong Studio.</small>
                 </div>
                 <button id="live-submit" type="submit" class="live-admin-btn live-admin-btn--primary">{{ $livestream->exists ? 'Lưu thay đổi' : 'Tiếp tục' }}</button>
@@ -127,6 +126,8 @@
     const modes = [...document.querySelectorAll('input[name="launch_mode"]')];
     const productSearch = document.getElementById('live-product-search');
     const productOptions = [...document.querySelectorAll('#live-product-options .live-product-choice')];
+    const productEmpty = document.getElementById('live-product-empty');
+    const productCount = document.getElementById('live-product-count');
     const editing = {{ $livestream->exists ? 'true' : 'false' }};
     const sync = () => {
         const youtube = source.value === 'youtube';
@@ -146,7 +147,11 @@
     productSearch.addEventListener('input', () => {
         const query = productSearch.value.trim().toLocaleLowerCase('vi');
         productOptions.forEach(option => { option.hidden = !option.dataset.search.includes(query); });
+        productEmpty.hidden = !productOptions.length || productOptions.some(option => !option.hidden);
     });
+    productOptions.forEach(option => option.querySelector('input').addEventListener('change', () => {
+        productCount.textContent = `Đã chọn ${productOptions.filter(option => option.querySelector('input').checked).length} / 50 sản phẩm`;
+    }));
     sync();
 })();
 </script>

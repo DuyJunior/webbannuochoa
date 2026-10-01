@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\PaymentTransaction;
 use App\Models\Perfume;
 use App\Services\CartQuoteService;
+use App\Services\CheckoutSelectionService;
 use App\Services\GHNOrderService;
 use App\Services\GHNService;
 use App\Services\LoyaltyService;
@@ -26,7 +27,7 @@ class OrderController extends Controller
     // ==========================================
     // 1. CÁC VIEW HIỂN THỊ ĐƠN HÀNG & THANH TOÁN
     // ==========================================
-    public function index()
+    public function index(Request $request)
     {
         $cart = session('cart', []);
         if (empty($cart)) {
@@ -34,6 +35,7 @@ class OrderController extends Controller
         }
 
         try {
+            $cart = CheckoutSelectionService::forRequest($request, $cart, true);
             $quote = app(CartQuoteService::class)->quote($cart);
         } catch (ValidationException $exception) {
             return redirect()->route('cart.index')->withErrors($exception->errors());
@@ -48,16 +50,19 @@ class OrderController extends Controller
                 'price' => $item['price'], 'total' => $item['price'] * $item['quantity'],
                 'volume_ml' => $item['volume_ml'], 'weight' => $weight,
                 'total_weight' => $weight * $item['quantity'],
+                'title' => $item['stock_components'] ? 'Hộp thử mùi · '.count($item['stock_components']).' mẫu' : $product->name,
+                'volume_label' => $item['stock_components'] ? count($item['stock_components']).' × 5ml' : $item['volume_ml'].'ml',
             ];
         });
         $totalPrice = $quote['total'];
         $totalWeight = $quote['weight'];
+        $selectedKeys = array_map('strval', array_keys($cart));
 
         $loyaltyBalance = LoyaltyService::balance(Auth::id());
         $availableCoupons = Coupon::where('is_active', true)->orderBy('minimum_order')->get()
             ->filter(fn (Coupon $coupon) => $coupon->isAvailableFor((int) $totalPrice));
 
-        return view('user.payment.index', compact('cart', 'cartItems', 'totalPrice', 'totalWeight', 'loyaltyBalance', 'availableCoupons'));
+        return view('user.payment.index', compact('cart', 'cartItems', 'totalPrice', 'totalWeight', 'loyaltyBalance', 'availableCoupons', 'selectedKeys'));
     }
 
     public function processPayment(Request $request, GHNService $ghn, GHNOrderService $ghnOrderService)
@@ -108,7 +113,8 @@ class OrderController extends Controller
             return redirect()->route('user.cart.index')->with('error', 'Không thể thanh toán vì giỏ hàng trống.');
         }
 
-        $quote = app(CartQuoteService::class)->quote($cart);
+        $selectedCart = CheckoutSelectionService::forRequest($request, $cart);
+        $quote = app(CartQuoteService::class)->quote($selectedCart);
         $orderItemsData = $quote['items'];
         $subtotal = $quote['total'];
         $totalWeight = $quote['weight'];
@@ -203,8 +209,13 @@ class OrderController extends Controller
             return redirect()->route('orders.show', $order);
         }
 
-        // Xóa session giỏ hàng
-        session()->forget('cart');
+        // Preserve every line the customer did not select for this order.
+        $remainingCart = array_diff_key(session('cart', []), $selectedCart);
+        if ($remainingCart === []) {
+            session()->forget('cart');
+        } else {
+            session()->put('cart', $remainingCart);
+        }
 
         // 4. Phân luồng thanh toán theo đúng tài liệu Lab 06
         if (in_array($request->payment_method, ['momo', 'atm_domestic', 'atm_international'], true)) {

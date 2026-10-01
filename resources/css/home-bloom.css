@@ -9,7 +9,7 @@
 .soopi-store .ht-nav,.soopi-store .ht-nav-links>a,.soopi-store .ht-category-menu summary{min-height:43px}
 .soopi-store .ht-nav-links{gap:clamp(24px,4vw,60px)}
 .soopi-store .ht-nav-links>a,.soopi-store .ht-category-menu summary{font-size:11px}
-.soopi-store .bloom-hero{position:relative;isolation:isolate;overflow:hidden;background:var(--bloom-paper);border-bottom:1px solid var(--bloom-line);color:var(--bloom-ink)}
+.soopi-store .bloom-hero{position:relative;isolation:isolate;overflow:clip;background:var(--bloom-paper);border-bottom:1px solid var(--bloom-line);color:var(--bloom-ink)}
 .bloom-hero .bloom-ambient{position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 76% 52%,#f5dfe4aa,transparent 58%);transition:background 1s}
 .bloom-layout{position:relative;display:grid;grid-template-columns:46% 54%;align-items:center;min-height:670px}
 .bloom-copy{position:relative;z-index:3;padding:58px 0 64px;pointer-events:none}

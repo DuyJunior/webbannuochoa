@@ -25,7 +25,7 @@
             <thead>
                 <tr>
                     <th class="studio-product-column">Sản phẩm</th>
-                    <th>Giá niêm yết</th>
+                    <th>Giá bán</th>
                     <th>Tồn kho</th>
                     <th>Trạng thái</th>
                     <th class="text-center studio-product-actions">Thao tác</th>
@@ -37,36 +37,41 @@
                         <td>
                             <div class="d-flex align-items-center">
                                 @if($product->image_url)
-                                    <img src="{{ asset($product->image_url) }}" alt="{{ $product->name }}" style="width: 48px; height: 60px; object-fit: contain; border-radius: 8px; flex-shrink:0;" loading="lazy" class="mr-3 border">
+                                    <img src="{{ $product->image_src }}" alt="{{ $product->name }}" style="width: 48px; height: 60px; object-fit: contain; border-radius: 8px; flex-shrink:0;" loading="lazy" class="mr-3 border">
                                 @else
                                     <div class="mr-3 border rounded bg-light d-flex align-items-center justify-content-center text-muted" style="width: 42px; height: 42px;">
                                         <i class="fa-solid fa-image"></i>
                                     </div>
                                 @endif
                                 <div>
-                                    <strong style="color:#0f172a;">{{ $product->name }}</strong>
+                                    <a class="font-weight-bold" href="{{ route('admin.products.show', $product) }}">{{ $product->name }}</a>
                                     <div class="studio-product-meta">#{{ $product->id }} · {{ $product->brand }} · {{ optional($product->category)->name ?? 'Chưa phân loại' }}</div>
                                     <div class="text-muted" style="font-size:0.8rem;">
-                                        {{ $product->volume_ml }}ml · {{ $product->weight ? $product->weight . 'g · ' : '' }}{{ ucfirst($product->gender) }}
+                                        {{ $product->volume_ml }}ml · {{ $product->weight ? $product->weight . 'g · ' : '' }}{{ ['nam' => 'Nam', 'nu' => 'Nữ', 'unisex' => 'Unisex'][$product->gender] ?? $product->gender }}
                                     </div>
                                 </div>
                             </div>
                         </td>
                         <td class="font-weight-bold text-primary">
-                            {{ number_format($product->price, 0, ',', '.') }}₫
+                            {{ number_format($product->sale_price ?? $product->price, 0, ',', '.') }}₫
+                            @if($product->sale_price !== null && $product->sale_price < $product->price)<del class="d-block small text-muted">{{ number_format($product->price, 0, ',', '.') }}₫</del>@endif
                         </td>
                         <td>
                             <div class="d-flex flex-column" style="gap: 3px; font-size: 0.8rem; min-width: 0;">
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span class="text-muted"><i class="fa-solid fa-vial mr-1 text-info"></i>10ml:</span>
+                                    <span class="text-muted">5ml:</span>
+                                    <span class="badge {{ $product->stock_5ml > 5 ? 'badge-light border' : 'badge-warning' }} ml-1">{{ $product->stock_5ml }} chai</span>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span class="text-muted">10ml:</span>
                                     <span class="badge {{ $product->stock_10ml > 5 ? 'badge-light border' : 'badge-danger' }} font-weight-bold ml-1">{{ $product->stock_10ml }} chai</span>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span class="text-muted"><i class="fa-solid fa-wine-bottle mr-1 text-primary"></i>50ml:</span>
+                                    <span class="text-muted">50ml:</span>
                                     <span class="badge {{ $product->stock_50ml > 5 ? 'badge-light border' : 'badge-danger' }} font-weight-bold ml-1">{{ $product->stock_50ml }} chai</span>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span class="text-muted"><i class="fa-solid fa-box mr-1 text-success"></i>100ml:</span>
+                                    <span class="text-muted">{{ $product->volume_ml }}ml:</span>
                                     <span class="badge {{ $product->stock > 5 ? 'badge-success' : 'badge-danger' }} ml-1">{{ $product->stock }} chai</span>
                                 </div>
                             </div>
@@ -79,16 +84,16 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('admin.products.show', $product->id) }}" class="btn btn-outline-info btn-sm mr-1" title="Chi tiết">
+                            <a href="{{ route('admin.products.show', $product->id) }}" class="btn btn-outline-info btn-sm mr-1" title="Chi tiết" aria-label="Xem {{ $product->name }}">
                                 <i class="fa-regular fa-eye"></i>
                             </a>
-                            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-outline-warning btn-sm mr-1" title="Sửa">
+                            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-outline-warning btn-sm mr-1" title="Sửa" aria-label="Chỉnh sửa {{ $product->name }}">
                                 <i class="fa-regular fa-pen-to-square"></i>
                             </a>
-                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="d-inline" data-confirm="Xóa {{ $product->name }} khỏi bộ sưu tập? Sản phẩm sẽ ngừng hiển thị và không thể mua mới. Lịch sử đơn hàng được giữ lại.">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Xóa">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Xóa" aria-label="Xóa {{ $product->name }}">
                                     <i class="fa-regular fa-trash-can"></i>
                                 </button>
                             </form>
@@ -99,6 +104,7 @@
                         <td colspan="5" class="text-center py-5 text-muted">
                             <i class="fa-regular fa-folder-open mb-2" style="font-size:2rem; color:#cbd5e1; display:block;"></i>
                             Không tìm thấy sản phẩm nào.
+                            <div class="mt-3">@if(request()->anyFilled(['search', 'gender', 'status']))<a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary">Xóa bộ lọc</a>@else<a href="{{ route('admin.products.create') }}" class="btn btn-primary">Thêm sản phẩm đầu tiên</a>@endif</div>
                         </td>
                     </tr>
                 @endforelse

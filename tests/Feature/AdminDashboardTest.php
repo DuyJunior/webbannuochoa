@@ -22,7 +22,7 @@ class AdminDashboardTest extends TestCase
             $order->saveQuietly();
         }
         $response = $this->actingAs($admin)->get(route('admin.dashboard'));
-        $response->assertOk()->assertSee('unsplash-perfume.jpg')->assertSee('Dário Gomes / Unsplash');
+        $response->assertOk()->assertSee('Cửa hàng trong tầm tay.')->assertSee('Xem báo cáo');
         $response->assertViewHas('stats', fn ($stats) => $stats['orders'] === 3 && $stats['value'] === 170000.0 && $stats['pending'] === 2);
         $response->assertViewHas('chart', fn ($chart) => $chart->count() === 7 && $chart->sum('amount') === 120000.0 && $chart->sum('count') === 1);
         $this->get(route('admin.dashboard', ['days' => 30]))->assertOk()

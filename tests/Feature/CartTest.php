@@ -146,7 +146,34 @@ class CartTest extends TestCase
                 'address' => '123 Nguyễn Trãi, Hà Nội',
                 'selected_items' => [],
             ])
-            ->assertSessionHasErrors('cart');
+            ->assertSessionHasErrors('selected_items');
+    }
+
+    public function test_legacy_checkout_rejects_missing_stale_and_malformed_explicit_selections_without_ordering(): void
+    {
+        $user = User::factory()->create();
+        $perfume = Perfume::create($this->perfumeData(['stock' => 5]));
+        $cart = [$perfume->id => 2];
+        $address = ['customer_name' => 'Nguyễn Văn A', 'phone' => '0901234567', 'address' => '123 Nguyễn Trãi, Hà Nội'];
+
+        foreach ([
+            ['selection' => 1],
+            ['selection' => 1, 'selected_items' => []],
+            ['selected_items' => ['removed-item']],
+            ['selected_items' => [(string) $perfume->id, 'removed-item']],
+            ['selected_items' => [(string) $perfume->id, (string) $perfume->id]],
+            ['selected_items' => [['nested-item']]],
+            ['selected_items' => (string) $perfume->id],
+        ] as $selection) {
+            $this->actingAs($user)->withSession(['cart' => $cart])
+                ->postJson(route('cart.checkout'), array_merge($address, $selection))
+                ->assertUnprocessable()->assertSessionHas('cart', $cart);
+
+            $this->assertDatabaseCount('orders', 0);
+            $this->assertDatabaseCount('order_items', 0);
+            $this->assertDatabaseCount('inventory_movements', 0);
+            $this->assertSame(5, $perfume->fresh()->stock);
+        }
     }
 
     public function test_checkout_rejects_phone_number_not_strictly_10_digits(): void

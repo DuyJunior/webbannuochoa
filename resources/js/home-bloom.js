@@ -1,5 +1,8 @@
 import './home-gallery.js';
+import './gallery-filter.js';
 import './home-moments.js';
+import './home-cinema.js';
+import './home-palette.js';
 
 const hero = document.querySelector('[data-bloom]');
 
@@ -12,10 +15,10 @@ if (hero) {
     const hint = hero.querySelector('[data-bloom-hint]');
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const fine = matchMedia('(hover: hover) and (pointer: fine)');
-    const saveData = navigator.connection?.saveData === true;
+    const saveData = () => navigator.connection?.saveData === true;
     let preference = null;
     try { preference = localStorage.getItem('soopi.bloom.motion'); } catch { /* Storage may be unavailable. */ }
-    let enabled = !reduced.matches && !saveData && preference !== 'off';
+    let enabled = !reduced.matches && !saveData() && preference !== 'off';
     let visible = true;
     let frame = 0;
     let openingTimer = 0;
@@ -45,12 +48,13 @@ if (hero) {
         hero.classList.remove('is-bud', 'is-opening');
     };
     const syncMotion = () => {
+        window.dispatchEvent(new CustomEvent('soopi:motion', { detail: { enabled } }));
         document.body.classList.toggle('bloom-motion-on', enabled);
         document.body.classList.toggle('bloom-motion-off', !enabled);
         motionButton.setAttribute('aria-pressed', String(enabled));
         motionButton.querySelector('[data-motion-label]').textContent = `Hiệu ứng: ${enabled ? 'bật' : 'tắt'}`;
-        motionButton.disabled = reduced.matches;
-        motionButton.title = reduced.matches ? 'Đang theo cài đặt giảm chuyển động của thiết bị' : 'Bật hoặc tắt chuyển động trang chủ';
+        motionButton.disabled = reduced.matches || saveData();
+        motionButton.title = motionButton.disabled ? 'Theo cài đặt giảm chuyển động hoặc tiết kiệm dữ liệu của thiết bị' : 'Bật hoặc tắt chuyển động trang chủ';
         replayButton.disabled = !enabled;
         hint.hidden = !enabled || !fine.matches;
         if (!enabled) { stopOpening(); reset(); }
@@ -98,6 +102,10 @@ if (hero) {
     // The opening dissolves between them; pointer movement uses CSS perspective, not a 360° model.
     const bloom = async () => {
         if (!enabled || !visible || document.hidden) return;
+        if (hero.classList.contains('cinema-hero')) {
+            hero.dispatchEvent(new Event('cinema:replay'));
+            return;
+        }
         stopOpening();
         const run = playback;
         if (!closed.getAttribute('src')) closed.src = closed.dataset.src;
@@ -110,23 +118,16 @@ if (hero) {
             finishTimer = setTimeout(() => hero.classList.remove('is-opening'), 1900);
         }, 900);
     };
+    window.addEventListener('soopi:motion-request', event => {
+        enabled = event.detail.enabled && !reduced.matches && !saveData();
+        syncMotion();
+    });
     motionButton.addEventListener('click', () => {
-        enabled = !enabled && !reduced.matches;
+        enabled = !enabled && !reduced.matches && !saveData();
         try { localStorage.setItem('soopi.bloom.motion', enabled ? 'on' : 'off'); } catch { /* Optional preference. */ }
         syncMotion();
     });
     replayButton.addEventListener('click', bloom);
-    document.querySelectorAll('[data-bloom-scene]').forEach(link => {
-        link.addEventListener('click', event => {
-            event.preventDefault();
-            hero.scrollIntoView({ behavior: 'instant', block: 'start' });
-            stage.focus({ preventScroll: true });
-            visible = true;
-            if (!enabled) return;
-            if (link.dataset.bloomScene === 'open') bloom();
-            else { stopOpening(); pointerX = 8; pointerY = -2; schedule(); }
-        });
-    });
     stage.addEventListener('keydown', event => {
         if (event.target !== stage || !enabled) return;
         if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Escape'].includes(event.key)) return;
@@ -142,7 +143,7 @@ if (hero) {
     reduced.addEventListener('change', () => {
         let saved = null;
         try { saved = localStorage.getItem('soopi.bloom.motion'); } catch { /* Optional preference. */ }
-        enabled = !reduced.matches && !saveData && saved !== 'off';
+        enabled = !reduced.matches && !saveData() && saved !== 'off';
         syncMotion();
     });
     fine.addEventListener('change', () => { reset(); syncMotion(); });
@@ -155,23 +156,6 @@ if (hero) {
         });
         heroObserver.observe(hero);
     }
-
-    const descriptions = {
-        rose: 'Một khoảng trời mềm mại, dành cho những điều dịu dàng.',
-        velvet: 'Một chút sâu lắng, một chút bí ẩn. Để dấu hương ở lại.',
-        sage: 'Nhẹ tênh và phóng khoáng. Tự do theo cách của bạn.',
-    };
-    document.querySelectorAll('[data-bloom-mood]').forEach(button => {
-        button.addEventListener('click', () => {
-            hero.dataset.mood = button.dataset.bloomMood;
-            document.querySelectorAll('[data-bloom-mood]').forEach(item => {
-                const selected = item === button;
-                item.classList.toggle('is-selected', selected);
-                item.setAttribute('aria-pressed', String(selected));
-            });
-            document.querySelector('[data-bloom-mood-note]').textContent = descriptions[button.dataset.bloomMood];
-        });
-    });
 
     // One short scroll update; no scroll hijacking or perpetual animation loop.
     let scrollFrame = 0;
@@ -186,7 +170,7 @@ if (hero) {
     hero.querySelector('[data-bloom-tools]').hidden = false;
     syncMotion();
     // Don't delay the first meaningful paint for the decorative closed state.
-    if (enabled) {
+    if (enabled && hero.dataset.bloomIntro !== 'still') {
         const start = () => { if (enabled) bloom(); };
         if (document.readyState === 'complete') start();
         else window.addEventListener('load', start, { once: true });

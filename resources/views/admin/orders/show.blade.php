@@ -1,16 +1,21 @@
 @extends('layouts.admin')
 
 @section('title', 'Chi tiết đơn hàng #' . $order->id)
-@section('page_title')
-    <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary btn-sm mr-3" style="border-radius: 6px;">
-        <i class="fa-solid fa-arrow-left"></i> Quay lại
-    </a>
-    Chi tiết đơn hàng #{{ $order->id }}
-@endsection
+@section('page_title', 'Chi tiết đơn hàng #' . $order->id)
 
 @section('content')
-@include('partials.order-timeline')
-@include('partials.inventory-movements')
+@php
+    $orderLabels = ['pending' => 'Chờ xử lý', 'confirmed' => 'Đã xác nhận', 'paid' => 'Đã thanh toán', 'paid_momo' => 'Đã thanh toán MoMo', 'cod_ordered' => 'Chờ thu COD', 'cod_paid' => 'Đã thu COD', 'completed' => 'Đã hoàn thành', 'cancelled' => 'Đã hủy'];
+    $shippingLabels = ['pending' => 'Chờ tạo vận đơn', 'not_shipped' => 'Chưa giao hàng', 'processing' => 'Đang tạo vận đơn', 'ready_to_pick' => 'Chờ lấy hàng', 'picking' => 'Đang lấy hàng', 'picked' => 'Đã lấy hàng', 'storing' => 'Đang lưu kho', 'transporting' => 'Đang trung chuyển', 'sorting' => 'Đang phân loại', 'delivering' => 'Đang giao hàng', 'delivered' => 'Giao thành công', 'return' => 'Chờ hoàn hàng', 'returning' => 'Đang hoàn hàng', 'return_transporting' => 'Đang chuyển hoàn', 'return_sorting' => 'Đang phân loại hoàn', 'returned' => 'Đã hoàn hàng', 'cancelled' => 'Đã hủy giao hàng'];
+    $shippingRanks = ['pending' => 0, 'not_shipped' => 0, 'processing' => 1, 'ready_to_pick' => 2, 'picking' => 3, 'picked' => 4, 'storing' => 5, 'transporting' => 5, 'sorting' => 5, 'delivering' => 6, 'delivered' => 7, 'return' => 8, 'returning' => 8, 'return_transporting' => 8, 'return_sorting' => 8, 'returned' => 9];
+    $isTerminal = in_array($order->status, ['cancelled', 'completed'], true) || in_array($order->shipping_status, ['delivered', 'returned', 'cancelled'], true);
+    $canCancel = !$isTerminal && (!$order->ghn_order_code || $order->is_demo) && in_array($order->shipping_status, [null, 'pending', 'not_shipped', 'ready_to_pick'], true);
+@endphp
+<a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary btn-sm mb-3"><i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i> Danh sách đơn hàng</a>
+<div class="admin-card d-flex justify-content-between align-items-center flex-wrap mb-4" style="gap:16px">
+    <div><strong>#DH{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</strong><div class="text-muted small mt-1">Đặt lúc {{ $order->created_at->format('H:i · d/m/Y') }} · {{ $order->items->sum('quantity') }} sản phẩm @if($order->is_demo) · <span class="badge badge-warning">DỮ LIỆU DEMO</span>@endif</div></div>
+    <a href="{{ route('admin.finance.transactions', ['search' => '#'.$order->id, 'mode' => $order->is_demo ? 'demo' : 'real']) }}" class="btn btn-outline-secondary btn-sm">Xem thanh toán & đối soát</a>
+</div>
 <div class="row">
     <!-- Left Column: Items and Customer Info -->
     <div class="col-lg-8 mb-4">
@@ -30,7 +35,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($order->items as $item)
+                        @forelse ($order->items as $item)
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
@@ -66,7 +71,8 @@
                                                     </div>
                                                 @endif
                                             @else
-                                                <span class="text-muted font-italic">Sản phẩm đã bị xóa khỏi hệ thống (#{{ $item->perfume_id }})</span>
+                                                <strong>{{ $item->product_name ?: 'Sản phẩm #'.$item->perfume_id }}</strong>
+                                                <div class="text-muted small">Sản phẩm không còn trong danh mục @if($item->volume_ml) · {{ $item->volume_ml }} ml @endif</div>
                                             @endif
                                         </div>
                                     </div>
@@ -81,9 +87,19 @@
                                     {{ number_format($item->price * $item->quantity, 0, ',', '.') }} đ
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr><td colspan="4" class="text-center text-muted py-4">Đơn hàng chưa có dòng sản phẩm.</td></tr>
+                        @endforelse
                     </tbody>
                     <tfoot>
+                        <tr><td colspan="3" class="text-right text-muted">Tiền sản phẩm</td><td class="text-right">{{ number_format($order->items->sum(fn ($item) => $item->price * $item->quantity), 0, ',', '.') }} đ</td></tr>
+                        <tr><td colspan="3" class="text-right text-muted">Phí giao hàng</td><td class="text-right">{{ number_format($order->ghn_total_fee ?? 0, 0, ',', '.') }} đ</td></tr>
+                        @if($order->discount_amount)
+                            <tr><td colspan="3" class="text-right text-muted">Ưu đãi @if($order->coupon_code)({{ $order->coupon_code }})@endif</td><td class="text-right text-success">−{{ number_format($order->discount_amount, 0, ',', '.') }} đ</td></tr>
+                        @endif
+                        @if($order->points_used)
+                            <tr><td colspan="3" class="text-right text-muted">Điểm đã dùng ({{ number_format($order->points_used) }})</td><td class="text-right text-success">−{{ number_format($order->points_used * 1000, 0, ',', '.') }} đ</td></tr>
+                        @endif
                         <tr class="border-top">
                             <td colspan="3" class="text-right font-weight-bold text-muted py-3">Tổng cộng:</td>
                             <td class="text-right font-weight-bold text-primary py-3" style="font-size: 1.15rem;">
@@ -105,7 +121,7 @@
                     <table class="table table-borderless" style="font-size: 0.92rem; line-height: 1.8;">
                         <tr>
                             <td class="text-muted p-0" width="130">Họ và tên khách:</td>
-                            <td class="font-weight-bold text-dark p-0">{{ $order->customer_name }}</td>
+                            <td class="font-weight-bold text-dark p-0">{{ $order->name ?: 'Chưa có thông tin' }}</td>
                         </tr>
                         <tr>
                             <td class="text-muted p-0">Số điện thoại:</td>
@@ -118,7 +134,7 @@
                                     <span class="badge badge-light border text-muted">
                                         <i class="fa-solid fa-user mr-1"></i> {{ $order->user->name }} ({{ $order->user->email }})
                                     </span>
-                                    <button type="button" class="btn btn-sm btn-outline-success ml-2 py-0 px-2" style="font-size: 0.78rem;" onclick="openChatWithUser({{ $order->user->id }}, '{{ addslashes($order->user->name) }}')" title="Nhắn tin cho khách hàng này">
+                                    <button type="button" class="btn btn-sm btn-outline-success ml-2 py-0 px-2" style="font-size: 0.78rem;" data-user-id="{{ $order->user->id }}" data-customer-name="{{ $order->user->name }}" onclick="openChatWithUser(Number(this.dataset.userId), this.dataset.customerName)" title="Nhắn tin cho khách hàng này">
                                         <i class="fa-solid fa-comment-dots mr-1"></i> Nhắn tin
                                     </button>
                                 @else
@@ -179,7 +195,7 @@
             <h5 class="font-weight-bold mb-3" style="color: #0f172a;">
                 <i class="fa-solid fa-sliders text-primary mr-2"></i> Trạng thái đơn hàng & Giao hàng
             </h5>
-            
+
             <div class="py-3 px-3 my-3 bg-light rounded border">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="small text-muted font-weight-bold">Trạng thái đơn:</span>
@@ -200,7 +216,7 @@
                             <i class="fa-solid fa-ban mr-1"></i> Đã hủy đơn
                         </span>
                     @else
-                        <span class="badge badge-secondary px-3 py-1 font-weight-bold" style="border-radius: 14px; font-size: 0.8rem;">{{ strtoupper($order->status) }}</span>
+                        <span class="badge badge-secondary px-3 py-1 font-weight-bold" style="border-radius: 14px; font-size: 0.8rem;">{{ $orderLabels[$order->status] ?? $order->status }}</span>
                     @endif
                 </div>
 
@@ -209,57 +225,42 @@
                     @php
                         $shStatus = $order->shipping_status ?? 'pending';
                         $shColor = match($shStatus) {
-                            'delivered' => '#16a34a',
-                            'delivering', 'transporting', 'sorting', 'picked' => '#f59e0b',
-                            'ready_to_pick', 'picking' => '#06b6d4',
-                            'return', 'returning', 'returned' => '#ea580c',
-                            'cancelled' => '#dc2626',
+                            'delivered' => '#15803d',
+                            'delivering', 'transporting', 'sorting', 'picked' => '#a16207',
+                            'ready_to_pick', 'picking' => '#0e7490',
+                            'return', 'returning', 'returned', 'return_transporting', 'return_sorting' => '#c2410c',
+                            'cancelled' => '#b91c1c',
                             default => '#64748b'
                         };
-                        $shLabels = [
-                            'pending' => 'Chờ tạo vận đơn',
-                            'ready_to_pick' => 'Chờ lấy hàng',
-                            'picking' => 'Đang lấy hàng',
-                            'delivering' => 'Đang giao hàng',
-                            'delivered' => 'Giao hàng thành công',
-                            'return' => 'Chờ hoàn hàng',
-                            'returned' => 'Đã hoàn hàng',
-                            'cancelled' => 'Hủy giao hàng',
-                        ];
                     @endphp
                     <span class="font-weight-bold small" style="color: {{ $shColor }};">
                         <span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:{{ $shColor }}; margin-right:3px;"></span>
-                        {{ $shLabels[$shStatus] ?? $shStatus }}
+                        {{ $shippingLabels[$shStatus] ?? $shStatus }}
                     </span>
                 </div>
             </div>
 
             <!-- Error message if validation or exception fails -->
-            @if (isset($errors) && $errors->any())
-                <div class="alert alert-danger p-2" role="alert" style="font-size: 0.85rem; border-radius: 8px;">
-                    <i class="fa-solid fa-triangle-exclamation mr-1"></i> {{ $errors->first() }}
-                </div>
-            @endif
+
 
             <!-- Update Status Form -->
-            <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="mt-3">
+            <form method="POST" action="{{ route('admin.orders.update', $order) }}" class="mt-3" data-confirm="Xác nhận cập nhật đơn #{{ $order->id }}? Hủy đơn hợp lệ sẽ hoàn kho đã giữ. Giao thành công sẽ ghi nhận thanh toán COD đang chờ.">
                 @csrf
                 @method('PATCH')
-                
+                <fieldset @disabled($isTerminal)>
+
                 {{-- 1. Trạng thái giao hàng GHN --}}
                 <div class="form-group mb-3">
                     <label for="shippingStatusSelect" class="font-weight-bold text-muted small" style="text-transform: uppercase;">
                         <i class="fa-solid fa-truck text-primary mr-1"></i> Trạng thái giao hàng (GHN)
                     </label>
                     <select name="shipping_status" id="shippingStatusSelect" class="form-control">
-                        <option value="pending" {{ $order->shipping_status === 'pending' ? 'selected' : '' }}>Chờ tạo vận đơn (Pending)</option>
-                        <option value="ready_to_pick" {{ $order->shipping_status === 'ready_to_pick' ? 'selected' : '' }}>Chờ lấy hàng (Ready to pick)</option>
-                        <option value="picking" {{ $order->shipping_status === 'picking' ? 'selected' : '' }}>Đang lấy hàng (Picking)</option>
-                        <option value="delivering" {{ $order->shipping_status === 'delivering' ? 'selected' : '' }}>Đang giao hàng (Delivering)</option>
-                        <option value="delivered" {{ $order->shipping_status === 'delivered' ? 'selected' : '' }}>Giao hàng thành công (Delivered)</option>
-                        <option value="return" {{ $order->shipping_status === 'return' ? 'selected' : '' }}>Chờ hoàn hàng (Return)</option>
-                        <option value="returned" {{ $order->shipping_status === 'returned' ? 'selected' : '' }}>Đã hoàn hàng (Returned)</option>
-                        <option value="cancelled" {{ $order->shipping_status === 'cancelled' ? 'selected' : '' }}>Hủy giao hàng (Cancelled)</option>
+                        <option value="">Giữ nguyên — {{ $shippingLabels[$shStatus] ?? $shStatus }}</option>
+                        @foreach($shippingLabels as $value => $label)
+                            @if($value !== $shStatus && ($value !== 'cancelled' || $canCancel) && (!isset($shippingRanks[$value], $shippingRanks[$shStatus]) || $shippingRanks[$value] >= $shippingRanks[$shStatus]))
+                                <option value="{{ $value }}" @selected(old('shipping_status') === $value)>{{ $label }}</option>
+                            @endif
+                        @endforeach
                     </select>
                 </div>
 
@@ -269,28 +270,31 @@
                         <i class="fa-solid fa-receipt text-primary mr-1"></i> Trạng thái đơn hàng
                     </label>
                     <select name="status" id="statusSelect" class="form-control">
-                        <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Chờ xử lý (Pending)</option>
-                        <option value="confirmed" {{ $order->status === 'confirmed' ? 'selected' : '' }}>Đã xác nhận (Confirmed)</option>
-                        <option value="completed" {{ $order->status === 'completed' ? 'selected' : '' }}>Đã hoàn thành (Completed)</option>
-                        <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Hủy đơn hàng (Cancelled)</option>
+                        <option value="">Giữ nguyên — {{ $orderLabels[$order->status] ?? $order->status }}</option>
+                        @foreach(['pending', 'confirmed', 'completed', 'cancelled'] as $value)
+                            @if($value !== $order->status && ($value !== 'cancelled' || $canCancel))
+                                <option value="{{ $value }}" @selected(old('status') === $value)>{{ $orderLabels[$value] }}</option>
+                            @endif
+                        @endforeach
                     </select>
                 </div>
 
-                @if($order->status !== 'cancelled' && $order->shipping_status !== 'cancelled')
+                @if(!$isTerminal)
                     <div class="alert alert-warning py-2 px-3 small my-3" style="border-radius: 8px; border-left: 3px solid #d97706;">
-                        <i class="fa-solid fa-circle-info mr-1 text-warning"></i> 
-                        <strong>Lưu ý:</strong> Khi chọn <strong>Hủy đơn</strong>, số lượng sản phẩm sẽ tự động cộng hoàn lại tồn kho. Khi chọn <strong>Giao hàng thành công</strong>, đơn hàng sẽ tự động chuyển sang Đã hoàn thành.
+                        <i class="fa-solid fa-circle-info mr-1 text-warning"></i>
+                        Chỉ chọn trạng thái cần thay đổi. Hủy đơn hợp lệ sẽ hoàn lượng hàng đã giữ; giao thành công ghi nhận thanh toán COD đang chờ. @if(!$canCancel)Đơn này không thể hủy tại đây.@endif
                     </div>
                 @else
                     <div class="alert alert-info py-2 px-3 small my-3" style="border-radius: 8px; border-left: 3px solid #2563eb;">
-                        <i class="fa-solid fa-circle-info mr-1 text-primary"></i> 
-                        <strong>Lưu ý:</strong> Khôi phục đơn hàng đã hủy sẽ trừ lại tồn kho của các sản phẩm tương ứng.
+                        <i class="fa-solid fa-circle-info mr-1 text-primary"></i>
+                        Đơn đã kết thúc và không thể mở lại. Bạn vẫn có thể xem thanh toán, đối soát và lịch sử bên dưới.
                     </div>
                 @endif
 
                 <button type="submit" class="btn btn-primary btn-block py-2 font-weight-bold" style="border-radius: 8px;">
                     <i class="fa-solid fa-save mr-1"></i> Cập nhật trạng thái
                 </button>
+                </fieldset>
             </form>
         </div>
 
@@ -304,4 +308,9 @@
         </div>
     </div>
 </div>
+<details class="admin-card mb-4">
+    <summary class="font-weight-bold">Lịch sử xử lý & chứng từ kho</summary>
+    @include('partials.order-timeline')
+    @include('partials.inventory-movements')
+</details>
 @endsection

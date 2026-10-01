@@ -38,6 +38,8 @@ use Illuminate\Support\Facades\URL;
 // TRANG CHỦ & CỬA HÀNG - Giữ nguyên từ Lab 01 & 02
 // ============================================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/perfumes/{perfume}/quick-view', [\App\Http\Controllers\ProductQuickViewController::class, 'show'])->name('perfumes.quick-view');
+Route::get('/perfumes/{perfume}/quick-view/login', [\App\Http\Controllers\ProductQuickViewController::class, 'login'])->name('perfumes.quick-view.login');
 Route::get('/livestream', [LivestreamController::class, 'show'])->name('livestream.show');
 Route::get('/livestream/state', [LivestreamController::class, 'state'])->name('livestream.state');
 Route::get('/livestream/{livestream}/products', [LivestreamProductController::class, 'index'])->name('livestream.products');

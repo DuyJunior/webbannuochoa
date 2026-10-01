@@ -7,6 +7,7 @@ use App\Models\Perfume;
 use App\Models\PerfumeReview;
 use App\Models\ScentWardrobe;
 use App\Models\User;
+use App\Services\DiscoveryBoxService;
 use App\Services\LoyaltyService;
 use App\Services\ScentFinder;
 use Illuminate\Http\RedirectResponse;
@@ -40,21 +41,31 @@ class StoreExperienceController extends Controller
      */
     public function quiz(Request $request): View
     {
-        $step = (int) $request->query('step', 1);
-        $personality = $request->query('personality');
-        $weather = $request->query('weather');
-        $occasion = $request->query('occasion');
-        $note = $request->query('note');
-        $gender = $request->query('gender');
+        $data = $request->validate([
+            'step' => 'nullable|integer|between:1,4',
+            'personality' => 'nullable|string|in:charming,elegant,fresh,warm',
+            'weather' => 'nullable|string|in:cool,hot,ac,night',
+            'occasion' => 'nullable|string|in:work,date,party,casual',
+            'note' => 'nullable|string|in:floral,woody,citrus,sweet',
+            'gender' => 'nullable|string|in:nam,nu,unisex',
+        ]);
+        $step = (int) ($data['step'] ?? 1);
+        $personality = $data['personality'] ?? null;
+        $weather = $data['weather'] ?? null;
+        $occasion = $data['occasion'] ?? null;
+        $note = $data['note'] ?? null;
+        $gender = $data['gender'] ?? null;
 
-        $hasResult = $personality || $weather || $occasion || $note || $gender;
+        $hasResult = collect([$personality, $weather, $occasion, $note])->every(fn ($answer) => filled($answer));
         $recommendations = collect();
 
         if ($hasResult) {
-            $perfumes = Perfume::where('is_active', true)->with('category')->get();
+            $perfumes = Perfume::where('is_active', true)->with('category')
+                ->when($gender, fn ($query) => $query->whereIn('gender', array_unique([$gender, 'unisex'])))
+                ->get();
             $recommendations = $perfumes->map(function (Perfume $p) use ($personality, $weather, $occasion, $note, $gender) {
                 $text = mb_strtolower($p->name.' '.$p->brand.' '.$p->description.' '.($p->category->name ?? ''));
-                $score = 60; // base score
+                $score = 0; // Ranking only, not a probability of compatibility.
 
                 // Gender match
                 if ($gender && ($p->gender === $gender || $p->gender === 'unisex')) {
@@ -101,7 +112,7 @@ class StoreExperienceController extends Controller
                     $score += 10;
                 }
 
-                $p->match_score = min(99, $score + ($p->id % 5));
+                $p->match_score = $score;
 
                 return $p;
             })->sortByDesc('match_score')->take(4)->values();
@@ -117,11 +128,20 @@ class StoreExperienceController extends Controller
     {
         $data = $request->validate(['samples' => 'nullable|array|max:5', 'samples.*' => 'integer|distinct', 'size' => 'nullable|in:3,5']);
         $perfumes = Perfume::where('is_active', true)->with('category')->orderBy('brand')->get();
-        $initialSize = (int) ($data['size'] ?? 3);
-        $initialSamples = $perfumes->whereIn('id', $data['samples'] ?? [])->take($initialSize)->map(fn ($p) => [
-            'id' => $p->id, 'name' => $p->name, 'brand' => $p->brand, 'img' => $p->image_src,
-        ])->values();
-        return view('store.discovery-box', compact('perfumes', 'initialSize', 'initialSamples'));
+        $cart = $request->session()->get('cart', []);
+        $sampleAvailability = $perfumes->mapWithKeys(fn ($perfume) => [$perfume->id => DiscoveryBoxService::remaining($perfume, $cart)]);
+        $initialSize = (int) $request->old('size', $data['size'] ?? 3);
+        $initialSize = in_array($initialSize, [3, 5], true) ? $initialSize : 3;
+        $requestedIds = collect($request->old('perfume_ids', $data['samples'] ?? []))
+            ->map(fn ($id) => (int) $id)->unique()->take($initialSize);
+        $catalog = $perfumes->keyBy('id');
+        $initialSamples = $requestedIds->map(fn ($id) => $catalog->get($id))
+            ->filter(fn ($perfume) => $perfume && $sampleAvailability[$perfume->id] > 0)->map(fn ($p) => [
+                'id' => $p->id, 'name' => $p->name, 'brand' => $p->brand, 'img' => $p->image_src,
+            ])->values();
+        $unavailableSelectionCount = $requestedIds->count() - $initialSamples->count();
+
+        return view('store.discovery-box', compact('perfumes', 'initialSize', 'initialSamples', 'sampleAvailability', 'unavailableSelectionCount'));
     }
 
     /**
@@ -280,9 +300,14 @@ class StoreExperienceController extends Controller
         ];
         $quote = $quotes[$dayIndex % count($quotes)];
 
-        $todayCode = 'TODAY10'; // Giảm 10% trong ngày
+        $regularPrice = (int) ($perfume->sale_price ?? $perfume->price);
+        $coupon = \App\Models\Coupon::where('code', 'TODAY10')->first();
+        $coupon = $coupon?->isAvailableFor($regularPrice) ? $coupon : null;
+        $todayCode = $coupon?->code;
+        $dealPrice = $regularPrice - ($coupon?->discountFor($regularPrice) ?? 0);
+        $dailyEditorial = \App\Services\FragranceEditorialService::forPerfume($perfume);
 
-        return view('store.scent-of-the-day', compact('perfume', 'quote', 'todayCode'));
+        return view('store.scent-of-the-day', compact('perfume', 'quote', 'todayCode', 'regularPrice', 'dealPrice', 'dailyEditorial'));
     }
 
     /**
@@ -290,14 +315,21 @@ class StoreExperienceController extends Controller
      */
     public function giftShare(Request $request): View
     {
-        $perfumeId = (int) $request->query('id', 0);
+        $data = $request->validate([
+            'id' => 'nullable|integer|min:1',
+            'from' => 'nullable|string|max:100',
+            'to' => 'nullable|string|max:100',
+            'card' => 'nullable|string|max:40',
+            'msg' => 'nullable|string|max:1500',
+        ]);
+        $perfumeId = (int) ($data['id'] ?? 0);
         $perfume = Perfume::where('is_active', true)->find($perfumeId) ?: Perfume::where('is_active', true)->first();
         abort_unless($perfume, 404);
 
-        $senderName = $request->query('from', 'Người bạn giấu tên');
-        $recipientName = $request->query('to', 'Bạn thân mến');
-        $cardType = $request->query('card', 'birthday');
-        $message = $request->query('msg', 'Mong rằng món quà mùi hương ngọt ngào này sẽ mang lại cho bạn thật nhiều niềm vui và nụ cười rạng rỡ!');
+        $senderName = $data['from'] ?? 'Người bạn giấu tên';
+        $recipientName = $data['to'] ?? 'Bạn thân mến';
+        $cardType = $data['card'] ?? 'birthday';
+        $message = $data['msg'] ?? 'Mong rằng món quà mùi hương ngọt ngào này sẽ mang lại cho bạn thật nhiều niềm vui và nụ cười rạng rỡ!';
 
         return view('store.gift-share', compact('perfume', 'senderName', 'recipientName', 'cardType', 'message'));
     }

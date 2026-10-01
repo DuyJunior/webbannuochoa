@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Perfume;
 use App\Services\CartQuoteService;
+use App\Services\CartStockService;
+use App\Services\CheckoutSelectionService;
+use App\Services\DiscoveryBoxService;
 use App\Services\OrderInventoryService;
 use App\Support\DemoMode;
 use Illuminate\Http\RedirectResponse;
@@ -27,7 +30,7 @@ class CartController extends Controller
         $products = Perfume::query()->whereKey($perfumeIds)->get()->keyBy('id');
 
         $unavailableItems = [];
-        $items = collect($cart)->map(function ($itemData, $itemKey) use ($products, &$unavailableItems) {
+        $items = collect($cart)->map(function ($itemData, $itemKey) use ($products, $cart, &$unavailableItems) {
             if (is_array($itemData)) {
                 $perfumeId = (int) ($itemData['perfume_id'] ?? 0);
                 $quantity = (int) ($itemData['quantity'] ?? 1);
@@ -94,6 +97,7 @@ class CartController extends Controller
                 'engrave_text' => $engraveText,
                 'unit_price' => $unitPrice,
                 'line_total' => $unitPrice * $quantity,
+                'max_quantity' => CartStockService::limitFor($quoted, array_diff_key($cart, [$itemKey => true])),
             ];
         })->filter()->values();
 
@@ -105,7 +109,7 @@ class CartController extends Controller
     public function add(Request $request, Perfume $perfume): RedirectResponse
     {
         $validated = $request->validate([
-            'quantity' => ['required', 'integer', 'min:1'],
+            'quantity' => ['required', 'integer', 'min:1', 'max:999'],
             'volume_ml' => ['nullable', 'integer'],
             'addon_gift' => ['nullable'],
             'addon_engrave' => ['nullable'],
@@ -143,6 +147,14 @@ class CartController extends Controller
         }
 
         $cart = $request->session()->get('cart', []);
+
+        $availableStock = CartStockService::remaining($perfume, $volumeMl, array_diff_key($cart, [$itemKey => true]));
+        $existing = $cart[$itemKey] ?? 0;
+        $existingQuantity = (int) (is_array($existing) ? ($existing['quantity'] ?? 0) : $existing);
+        $desiredQuantity = (int) $validated['quantity'] + ($request->boolean('buy_now') ? 0 : $existingQuantity);
+        if ($desiredQuantity > min(999, $availableStock)) {
+            return back()->withErrors(['quantity' => "Dung tích {$volumeMl}ml chỉ có thể chọn tối đa {$availableStock} ở dòng này, sau khi tính các món khác trong giỏ."]);
+        }
 
         if ($request->boolean('buy_now')) {
             if ($isStandardDefault) {
@@ -200,7 +212,7 @@ class CartController extends Controller
     public function update(Request $request, string $itemKey): RedirectResponse
     {
         $validated = $request->validate([
-            'quantity' => ['required', 'integer', 'min:1'],
+            'quantity' => ['required', 'integer', 'min:1', 'max:999'],
         ]);
 
         $cart = $request->session()->get('cart', []);
@@ -209,20 +221,15 @@ class CartController extends Controller
             return back()->withErrors(['quantity' => 'Sản phẩm không tồn tại trong giỏ.']);
         }
 
+        $candidate = is_array($cart[$itemKey]) ? array_replace($cart[$itemKey], ['quantity' => 1]) : 1;
+        $quoted = app(CartQuoteService::class)->quote([$itemKey => $candidate])['items'][0];
+        $availableStock = CartStockService::limitFor($quoted, array_diff_key($cart, [$itemKey => true]));
+        if ((int) $validated['quantity'] > $availableStock) {
+            return back()->withErrors(['quantity' => "Sản phẩm hoặc hộp thử này chỉ có thể chọn tối đa {$availableStock}, sau khi tính các món khác trong giỏ."]);
+        }
         if (is_array($cart[$itemKey])) {
-            $perfume = Perfume::find($cart[$itemKey]['perfume_id']);
-            $vol = (int) ($cart[$itemKey]['volume_ml'] ?? 100);
-            $availableStock = $perfume ? $perfume->getStockForVolume($vol) : 0;
-            if (! $perfume || ! $perfume->is_active || $validated['quantity'] > $availableStock) {
-                return back()->withErrors(['quantity' => "Số lượng chọn vượt quá tồn kho hiện có của dung tích {$vol}ml (còn {$availableStock} chai)."]);
-            }
             $cart[$itemKey]['quantity'] = $validated['quantity'];
         } else {
-            $perfume = Perfume::find((int) $itemKey);
-            $availableStock = $perfume ? $perfume->getStockForVolume() : 0;
-            if ($perfume && $validated['quantity'] > $availableStock) {
-                return back()->withErrors(['quantity' => 'Số lượng chọn vượt quá tồn kho hiện có.']);
-            }
             $cart[$itemKey] = $validated['quantity'];
         }
 
@@ -271,19 +278,8 @@ class CartController extends Controller
             return back()->withErrors(['cart' => 'Giỏ hàng đang trống.']);
         }
 
-        $selectedKeys = $request->input('selected_items');
-        if ($selectedKeys !== null) {
-            if (! is_array($selectedKeys) || count($selectedKeys) === 0) {
-                return back()->withErrors(['cart' => 'Vui lòng chọn ít nhất một sản phẩm để thanh toán.']);
-            }
-            $selectedCart = array_intersect_key($cart, array_flip($selectedKeys));
-            if (empty($selectedCart)) {
-                return back()->withErrors(['cart' => 'Vui lòng chọn ít nhất một sản phẩm hợp lệ để thanh toán.']);
-            }
-        } else {
-            $selectedCart = $cart;
-            $selectedKeys = array_keys($cart);
-        }
+        $selectedCart = CheckoutSelectionService::forRequest($request, $cart);
+        $selectedKeys = array_keys($selectedCart);
 
         $quote = app(CartQuoteService::class)->quote($selectedCart);
         $totalPrice = $quote['total'];
@@ -334,26 +330,28 @@ class CartController extends Controller
     {
         $validated = $request->validate([
             'size' => ['required', 'in:3,5'],
-            'perfume_ids' => ['required', 'array'],
-            'perfume_ids.*' => ['required', 'distinct', 'exists:perfumes,id'],
+            'perfume_ids' => ['required', 'array', 'min:3', 'max:5'],
+            'perfume_ids.*' => ['required', 'integer', 'distinct', 'exists:perfumes,id'],
         ]);
 
         $size = (int) $validated['size'];
-        $selectedIds = array_slice($validated['perfume_ids'], 0, $size);
+        $selectedIds = array_map('intval', $validated['perfume_ids']);
         if (count($selectedIds) !== $size) {
-            return back()->withErrors(['discovery' => 'Vui lòng chọn đủ số mẫu chiết cho Hộp thử mùi.']);
+            return back()->withInput()->withErrors(['discovery' => 'Vui lòng chọn đúng số mẫu chiết cho Hộp thử mùi.']);
         }
 
         $perfumes = Perfume::whereIn('id', $selectedIds)->where('is_active', true)->get();
         if ($perfumes->count() !== $size) {
-            return back()->withErrors(['discovery' => 'Có mẫu thử đã ngừng bán. Vui lòng chọn lại.']);
+            return back()->withInput()->withErrors(['discovery' => 'Có mẫu thử đã ngừng bán. Vui lòng chọn lại.']);
         }
+        $cart = $request->session()->get('cart', []);
+        DiscoveryBoxService::assertAvailable($perfumes, $cart);
+        $byId = $perfumes->keyBy('id');
+        $perfumes = collect($selectedIds)->map(fn ($id) => $byId->get($id));
         $price = $size === 5 ? 299000 : 199000;
         $names = $perfumes->pluck('name')->join(', ');
 
         $itemKey = 'discovery_box_'.Str::random(8);
-        $cart = $request->session()->get('cart', []);
-
         $cart[$itemKey] = [
             'item_key' => $itemKey,
             'is_discovery_box' => true,

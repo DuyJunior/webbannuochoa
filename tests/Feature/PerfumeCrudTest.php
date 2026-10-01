@@ -113,11 +113,11 @@ class PerfumeCrudTest extends TestCase
         $homeResponse = $this->get(route('home'));
         $homeResponse
             ->assertOk()
-            ->assertSee('Tìm hương của bạn')
-            ->assertSee('ht-search', false)
+            ->assertSee('aria-label="Điều hướng chính"', false)
+            ->assertSee('id="sn-search"', false)
             ->assertDontSee('store-product-actions', false)
             ->assertDontSee('Quản lý sản phẩm');
-        $this->assertSame(1, substr_count($homeResponse->getContent(), 'Tìm hương của bạn'));
+        $this->assertSame(1, substr_count($homeResponse->getContent(), 'class="ht-header soopi-header"'));
 
         $this->get(route('perfumes.index'))
             ->assertOk()

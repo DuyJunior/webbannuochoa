@@ -9,9 +9,21 @@ use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('admin.articles.index', ['articles' => Article::latest()->paginate(20)]);
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:200'],
+            'status' => ['nullable', 'in:published,draft'],
+        ]);
+        $search = trim($filters['search'] ?? '');
+        $articles = Article::query()
+            ->when($search !== '', fn ($query) => $query->where(fn ($query) => $query
+                ->where('title', 'like', "%{$search}%")
+                ->orWhere('excerpt', 'like', "%{$search}%")))
+            ->when(!empty($filters['status']), fn ($query) => $query->where('is_published', $filters['status'] === 'published'))
+            ->latest()->paginate(20)->withQueryString();
+
+        return view('admin.articles.index', compact('articles'));
     }
 
     public function create()

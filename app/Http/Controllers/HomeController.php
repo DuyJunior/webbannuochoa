@@ -68,6 +68,12 @@ class HomeController extends Controller
             });
         }
         $hasFilters = $request->anyFilled(['search', 'gender', 'category', 'sort', 'min_price', 'max_price', 'concentration', 'note', 'style', 'longevity']);
+        $moodCollections = $hasFilters ? [] : \App\Services\MoodCollectionService::from($perfumes);
+        $homeSampleAvailability = $hasFilters ? collect() : $perfumes->mapWithKeys(fn (Perfume $item) => [
+            $item->id => \App\Services\DiscoveryBoxService::remaining($item, $request->session()->get('cart', [])),
+        ]);
+        $sampleCandidates = $hasFilters ? collect() : $perfumes
+            ->sortByDesc(fn (Perfume $item) => $homeSampleAvailability[$item->id] > 0)->take(8)->values();
         $perfumes = $hasFilters ? $perfumes->values() : $perfumes->take(12);
         $featuredOffer = $hasFilters ? null : Perfume::where('is_active', true)->whereNotNull('sale_price')
             ->where('price', '>', 0)->whereColumn('sale_price', '<', 'price')->latest()->first();
@@ -111,6 +117,6 @@ class HomeController extends Controller
             ->orderBy('sort_order')->orderBy('id')->take(4)->get();
 
         return view('home', compact('perfumes', 'categories', 'genderCounts', 'totalPerfumes', 'livestream', 'onAir', 'featuredOffer',
-            'galleryFeatured', 'gallerySelection', 'galleryRemaining', 'wishlistIds', 'journalArticles', 'homeVideos'));
+            'galleryFeatured', 'gallerySelection', 'galleryRemaining', 'wishlistIds', 'journalArticles', 'homeVideos', 'moodCollections', 'sampleCandidates', 'homeSampleAvailability'));
     }
 }

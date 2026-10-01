@@ -17,6 +17,15 @@
             </a>
         </div>
 
+        <form method="GET" action="{{ route('admin.articles.index') }}" class="studio-filter-bar mb-4">
+            <div class="form-row align-items-end">
+                <div class="col-md-6 mb-2"><label for="article-search" class="small font-weight-bold">Tìm bài viết</label><input id="article-search" class="form-control" type="search" name="search" maxlength="200" value="{{ request('search') }}" placeholder="Tiêu đề hoặc tóm tắt…"></div>
+                <div class="col-md-3 mb-2"><label for="article-status" class="small font-weight-bold">Trạng thái</label><select id="article-status" class="form-control" name="status"><option value="">Tất cả trạng thái</option><option value="published" @selected(request('status') === 'published')>Đã xuất bản</option><option value="draft" @selected(request('status') === 'draft')>Bản nháp</option></select></div>
+                <div class="col-md-3 mb-2 d-flex gap-2"><button class="btn btn-primary" type="submit">Lọc bài viết</button>@if(request()->filled('search') || request()->filled('status'))<a class="btn btn-outline-secondary" href="{{ route('admin.articles.index') }}">Xóa lọc</a>@endif</div>
+            </div>
+        </form>
+        <p class="studio-result-count text-muted small">{{ number_format($articles->total()) }} bài viết{{ request()->filled('search') || request()->filled('status') ? ' phù hợp' : '' }}</p>
+
         <div class="table-responsive">
             <table class="table table-hover table-admin align-middle mb-0">
                 <thead>
@@ -51,10 +60,10 @@
                                 <a href="{{ route('admin.articles.edit', $article) }}" class="btn btn-outline-warning btn-sm mr-1" title="Chỉnh sửa">
                                     <i class="fa-solid fa-pen-to-square"></i> Sửa
                                 </a>
-                                <form class="d-inline" method="POST" action="{{ route('admin.articles.destroy', $article) }}" onsubmit="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
+                                <form class="d-inline" method="POST" action="{{ route('admin.articles.destroy', $article) }}" data-confirm="Xóa bài viết {{ $article->title }}? Nội dung đã xóa sẽ không thể khôi phục.">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-outline-danger btn-sm" type="submit" title="Xóa">
+                                    <button class="btn btn-outline-danger btn-sm" type="submit" title="Xóa" aria-label="Xóa bài viết {{ $article->title }}">
                                         <i class="fa-solid fa-trash-can"></i> Xóa
                                     </button>
                                 </form>
@@ -64,7 +73,8 @@
                         <tr>
                             <td colspan="5" class="text-center py-5 text-muted">
                                 <i class="fa-solid fa-book-open mb-2" style="font-size: 2rem; color: #cbd5e1; display: block;"></i>
-                                Chưa có bài viết cẩm nang nào.
+                                <strong class="d-block">{{ request()->filled('search') || request()->filled('status') ? 'Không tìm thấy bài viết phù hợp' : 'Chưa có bài viết cẩm nang nào' }}</strong>
+                                <span class="d-block small mt-2">{{ request()->filled('search') || request()->filled('status') ? 'Thử từ khóa khác hoặc xóa bộ lọc để xem tất cả bài viết.' : 'Viết bài đầu tiên để chia sẻ kiến thức về nước hoa với khách hàng.' }}</span>
                             </td>
                         </tr>
                     @endforelse
@@ -72,7 +82,7 @@
             </table>
         </div>
 
-        @if($articles->hasPages())
+        @if($articles->total())
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4 pt-3 border-top">
                 <div class="text-muted small">
                     Hiển thị <strong>{{ $articles->firstItem() }}</strong> - <strong>{{ $articles->lastItem() }}</strong> trong tổng số <strong>{{ $articles->total() }}</strong> bài viết

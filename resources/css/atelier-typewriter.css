@@ -1,0 +1,49 @@
+/* The actual painted glyphs reserve their space, even before they are revealed. */
+[data-typewriter] {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: baseline;
+}
+.atelier-typewriter-ready .atelier-typewriter-measure {
+    /* Read once in full; a separate text node must not determine the visual line breaks. */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+.atelier-typewriter-ready .atelier-typewriter-visual {
+    position: relative;
+    display: block;
+    width: auto;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
+    text-align: inherit;
+    pointer-events: none;
+    user-select: none;
+}
+.atelier-typewriter-ready .atelier-typewriter-character { opacity: 0; }
+.atelier-typewriter-ready .atelier-typewriter-character.is-visible { opacity: 1; }
+.atelier-typewriter-ready .atelier-typewriter-cursor {
+    position: absolute;
+    display: none;
+    width: 1px;
+    background: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity .18s ease;
+}
+.atelier-typewriter-ready[data-typewriter-state="running"] .atelier-typewriter-cursor { display: block; opacity: .5; }
+.bloom-motion-off .atelier-typewriter-ready .atelier-typewriter-character { opacity: 1; }
+.bloom-motion-off .atelier-typewriter-ready .atelier-typewriter-cursor { display: none; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+    .atelier-typewriter-ready .atelier-typewriter-character { opacity: 1; }
+    .atelier-typewriter-ready .atelier-typewriter-cursor { display: none; transition: none; }
+}

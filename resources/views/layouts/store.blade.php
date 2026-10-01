@@ -8,7 +8,7 @@
 
     {{-- SEO: Title & Description --}}
     <title>@yield('title', 'Soopi · Hương thơm của riêng bạn')</title>
-    <meta name="description" content="@yield('meta_description', 'Soopi — Khám phá nước hoa chính hãng 100%. Giao hàng toàn quốc, đóng gói 3 lớp, hỗ trợ đổi trả trong 7 ngày.')">
+    <meta name="description" content="@yield('meta_description', 'Soopi — Khám phá nước hoa chính hãng. Giao hàng toàn quốc, hỗ trợ đổi trả trong '.config('storefront.return_days').' ngày theo chính sách.')">
     <meta name="keywords" content="@yield('meta_keywords', 'nước hoa chính hãng, nước hoa nữ, nước hoa nam, Dior, Chanel, YSL, nước hoa Soopi')">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url()->current() }}">
@@ -60,9 +60,14 @@
     <link rel="stylesheet" href="{{ asset('css/store-experience.css') }}">
     @vite(['resources/css/home-bloom.css', 'resources/css/store-atelier.css'])
     @stack('page-styles')
+    @unless(request()->routeIs('home', 'welcome'))
+        @vite('resources/css/store-interiors.css')
+    @endunless
+    @vite('resources/css/store-navigation.css')
+    @vite('resources/css/store-refinements.css')
 </head>
 
-<body class="store-page boutique-store soopi-store @yield('body_class')" style="--ht-auth-image:url('{{ asset('images/bloom/silk-atelier.webp') }}')">
+<body class="store-page boutique-store soopi-store {{ request()->routeIs('home', 'welcome') ? '' : 'soopi-interior' }} @yield('body_class')" style="--ht-auth-image:url('{{ asset('images/bloom/silk-atelier.webp') }}')">
     @include('partials.store-header')
     <main class="public-main" id="main-content" tabindex="-1">
         @if(session('success') && !request()->routeIs('login'))<div class="store-container public-flash" role="status">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ session('success') }}</div>@endif
@@ -105,6 +110,7 @@
         @include('partials.chat_popup')
         @include('partials.video_modal')
     @endunless
+    @include('partials.product-quick-view')
     @stack('scripts')
 </body>
 </html>

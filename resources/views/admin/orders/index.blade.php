@@ -35,7 +35,7 @@
             <div class="order-filter-grid">
                 <div class="order-filter-field order-filter-search">
                     <label for="order-search">Tìm đơn hàng</label>
-                    <input id="order-search" type="search" name="search" class="form-control" placeholder="Mã đơn, khách hàng, số điện thoại…" value="{{ request('search') }}">
+                    <input id="order-search" type="search" name="search" class="form-control" maxlength="100" placeholder="Mã đơn, khách hàng, số điện thoại…" value="{{ request('search') }}">
                 </div>
                 <div class="order-filter-field">
                     <label for="order-payment">Thanh toán</label>
@@ -52,6 +52,7 @@
                         <option value="">Tất cả phương thức</option>
                         <option value="cod" @selected(request('gateway') === 'cod')>Tiền mặt (COD)</option>
                         <option value="momo" @selected(request('gateway') === 'momo')>Ví MoMo</option>
+                        <option value="unknown" @selected(request('gateway') === 'unknown')>Chưa xác định</option>
                     </select>
                 </div>
                 <div class="order-filter-field">
@@ -60,13 +61,31 @@
                 </div>
                 <div class="order-filter-field">
                     <label for="order-date-to">Đến ngày</label>
-                    <input id="order-date-to" type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
+                    <input id="order-date-to" type="date" name="date_to" class="form-control" min="{{ request('date_from') }}" value="{{ request('date_to') }}">
                 </div>
                 <div class="order-filter-field order-filter-limit">
                     <label for="order-per-page">Số đơn / trang</label>
                     <select id="order-per-page" name="per_page" class="form-control">
                         @foreach([25, 50, 100] as $limit)
                             <option value="{{ $limit }}" @selected(request('per_page', 25) == $limit)>{{ $limit }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="order-filter-field">
+                    <label for="order-status">Trạng thái đơn</label>
+                    <select id="order-status" name="status" class="form-control">
+                        <option value="">Tất cả trạng thái đơn</option>
+                        @foreach(['pending' => 'Chờ xử lý', 'confirmed' => 'Đã xác nhận', 'paid' => 'Đã thanh toán', 'paid_momo' => 'Đã thanh toán MoMo', 'cod_ordered' => 'Chờ thu COD', 'cod_paid' => 'Đã thu COD', 'completed' => 'Đã hoàn thành', 'cancelled' => 'Đã hủy'] as $value => $label)
+                            <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="order-filter-field">
+                    <label for="order-shipping">Trạng thái vận chuyển</label>
+                    <select id="order-shipping" name="shipping_status" class="form-control">
+                        <option value="">Tất cả trạng thái giao hàng</option>
+                        @foreach($shippingLabels as $value => $label)
+                            <option value="{{ $value }}" @selected(request('shipping_status') === $value)>{{ $label }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -83,7 +102,7 @@
             <div class="order-filter-footer">
                 <span class="order-result-count"><strong>{{ number_format($orders->total()) }}</strong> đơn hàng phù hợp</span>
                 <div class="order-filter-actions">
-                    @if(request()->anyFilled(['search', 'payment_status', 'gateway', 'date_from', 'date_to', 'shipping_status']))
+                    @if(request()->anyFilled(['search', 'status', 'payment_status', 'gateway', 'date_from', 'date_to', 'shipping_status']))
                         <a href="{{ route('admin.orders.index', request('tab') ? ['tab' => request('tab')] : []) }}" class="btn btn-light">Xóa bộ lọc</a>
                     @endif
                     <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="fa-solid fa-print" aria-hidden="true"></i> In danh sách</button>
@@ -100,13 +119,13 @@
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge badge-dark px-3 py-2" style="font-size: 0.9rem; border-radius: 20px;">
-                        Đã chọn <strong id="selectedCountNumber">0</strong> đơn hàng
+                        Đã chọn <strong id="selectedCountNumber" aria-live="polite">0</strong> đơn hàng trên trang
                     </span>
                     <button type="button" class="btn btn-link btn-sm text-secondary" id="btnDeselectAll">Bỏ chọn tất cả</button>
                 </div>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <label class="mb-0 small font-weight-bold text-dark">Chuyển trạng thái:</label>
+                    <label class="mb-0 small font-weight-bold text-dark" for="bulkShippingStatus">Vận chuyển:</label>
                     <select name="bulk_shipping_status" id="bulkShippingStatus" class="form-control form-control-sm" style="width: 170px;">
                         <option value="">-- Trạng thái giao --</option>
                         <option value="pending">Chờ tạo vận đơn</option>
@@ -117,11 +136,11 @@
                         <option value="cancelled">Hủy đơn (Không giao)</option>
                     </select>
 
+                    <label class="sr-only" for="bulkOrderStatus">Trạng thái đơn hàng</label>
                     <select name="bulk_status" id="bulkOrderStatus" class="form-control form-control-sm" style="width: 170px;">
                         <option value="">-- Trạng thái đơn --</option>
                         <option value="pending">Chờ xử lý</option>
                         <option value="confirmed">Đã xác nhận</option>
-                        <option value="paid">Đã thanh toán</option>
                         <option value="completed">Đã hoàn thành</option>
                         <option value="cancelled">Đã hủy đơn</option>
                     </select>
@@ -165,7 +184,7 @@
                                     'delivered' => '#15803d',
                                     'delivering', 'transporting', 'sorting', 'picked' => '#a16207',
                                     'ready_to_pick', 'picking' => '#0e7490',
-                                    'return', 'returning', 'returned' => '#c2410c',
+                                    'return', 'returning', 'returned', 'return_transporting', 'return_sorting' => '#c2410c',
                                     'cancelled' => '#b91c1c',
                                     default => '#64748b'
                                 };
@@ -176,6 +195,7 @@
                                 </td>
                                 <td class="order-meta-cell">
                                     <a href="{{ route('admin.orders.show', $order->id) }}" class="order-code">#DH{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</a>
+                                    @if($order->is_demo)<span class="badge badge-warning mt-1">DEMO</span>@endif
                                     <time class="order-secondary" datetime="{{ $order->created_at->toIso8601String() }}">{{ $order->created_at->format('d/m/Y') }}<br> {{ $order->created_at->format('H:i') }}</time>
                                 </td>
                                 <td class="order-customer-cell" data-label="Khách hàng">
@@ -201,7 +221,10 @@
                                 <td class="order-payment-cell" data-label="Thanh toán">
                                     <strong class="order-amount">{{ number_format($order->total_price, 0, ',', '.') }} đ</strong>
                                     <span class="badge {{ $paymentBadgeClass }} order-payment-badge">{{ $paymentLabels[$order->payment_status] ?? strtoupper($order->status) }}</span>
-                                    <span class="order-secondary">COD cần thu: <span class="order-cod">{{ number_format(in_array($order->payment_status, ['paid', 'paid_momo']) ? 0 : $order->total_price, 0, ',', '.') }} đ</span></span>
+                                    <span class="order-secondary">{{ ['cod' => 'Tiền mặt (COD)', 'momo' => 'Ví MoMo', 'demo' => 'Thanh toán mô phỏng'][$order->gateway] ?? 'Chưa xác định phương thức' }}</span>
+                                    @if($order->gateway === 'cod' && in_array($order->payment_status, ['pending', 'failed']) && $order->status !== 'cancelled' && !in_array($order->shipping_status, ['cancelled', 'return', 'returning', 'returned', 'return_transporting', 'return_sorting']))
+                                        <span class="order-secondary">COD cần thu: <span class="order-cod">{{ number_format($order->total_price, 0, ',', '.') }} đ</span></span>
+                                    @endif
                                 </td>
                                 <td class="order-shipping-cell" data-label="Vận chuyển">
                                     <span class="order-shipping-status" style="color: {{ $dotColor }}"><span class="order-status-dot" aria-hidden="true"></span>{{ $shippingLabels[$shStatus] ?? $shStatus }}</span>
@@ -221,6 +244,9 @@
                                 <td colspan="7" class="text-center text-muted order-empty-state">
                                     <i class="fa-solid fa-box-open mb-2" style="font-size: 2.2rem; opacity: 0.3;"></i>
                                     <div>Không tìm thấy đơn hàng nào phù hợp với bộ lọc hiện tại.</div>
+                                    @if(request()->anyFilled(['search', 'status', 'payment_status', 'gateway', 'date_from', 'date_to', 'shipping_status', 'tab']))
+                                        <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary btn-sm mt-3">Xem tất cả đơn hàng</a>
+                                    @endif
                                 </td>
                             </tr>
                         @endforelse
@@ -308,6 +334,7 @@
 }
 @media(max-width:420px){.order-table-populated .order-row-item{gap:14px}.order-detail-link{width:100%}}
 .admin-orders-container .order-row-item:hover{background:#fff8fa}
+.admin-orders-container .order-row-item.is-selected{background:#f7f1f6}
 .boutique-admin .admin-orders-container .table-admin td.order-empty-state{padding:54px 20px;line-height:1.8;border-top:0;background:#fff}
 .admin-orders-container .order-empty-state i{display:block;margin:0 auto 14px!important;color:#c492a5;opacity:1!important}
 .admin-orders-container .bulk-action-bar{background:#fff1f5;border:1px solid #edccd8;border-radius:12px;padding:16px;margin-bottom:18px}
@@ -316,6 +343,7 @@
 @media(max-width:1150px){.order-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.order-filter-field{grid-column:span 1}.order-filter-search{grid-column:1/-1}}
 @media(max-width:600px){.admin-orders-container .nav-tabs-scroll{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-orders-container .filter-box{padding:16px}.order-filter-grid{gap:14px 10px}.order-filter-footer{align-items:stretch;flex-direction:column}.order-filter-actions .btn{flex:1}.boutique-admin .admin-orders-container .form-control{font-size:14px}}
 @media(max-width:380px){.order-filter-field{grid-column:1/-1}}
+@media print{.order-tabs-wrapper,.filter-box,.bulk-action-bar,.order-select-cell,.order-actions-cell,.order-chat-link{display:none!important}.admin-orders-container .table-responsive{overflow:visible}.order-row-item{break-inside:avoid}}
 </style>
 
 <script>
@@ -341,7 +369,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (selectAll && checkboxes.length > 0) {
             selectAll.checked = (count === checkboxes.length);
+            selectAll.indeterminate = count > 0 && count < checkboxes.length;
         }
+        checkboxes.forEach(cb => cb.closest('tr').classList.toggle('is-selected', cb.checked));
     }
 
     if (selectAll) {
@@ -364,6 +394,11 @@ document.addEventListener("DOMContentLoaded", function () {
             updateBulkState();
         });
     }
+
+    updateBulkState();
+    document.getElementById('order-date-from').addEventListener('change', function () {
+        document.getElementById('order-date-to').min = this.value;
+    });
 
     window.confirmBulkAction = function () {
         const checkedBoxes = document.querySelectorAll(".order-checkbox:checked");

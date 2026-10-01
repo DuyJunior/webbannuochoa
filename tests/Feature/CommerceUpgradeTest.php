@@ -56,7 +56,7 @@ class CommerceUpgradeTest extends TestCase
     public function test_guest_and_customer_cannot_write_catalog(): void
     {
         $product = $this->product();
-        $this->get(route('perfumes.index'))->assertOk();
+        $this->get(route('perfumes.index'))->assertRedirect(route('home').'#san-pham');
         $this->delete(route('perfumes.destroy', $product))->assertRedirect(route('login'));
         $this->customer();
         $this->delete(route('perfumes.destroy', $product))->assertRedirect(route('home'));

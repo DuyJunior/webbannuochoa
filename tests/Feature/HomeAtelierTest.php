@@ -23,7 +23,7 @@ class HomeAtelierTest extends TestCase
     public function test_sample_selection_reaches_builder_and_ignores_inactive_or_unknown_ids(): void
     {
         $this->withoutVite();
-        $active = Perfume::create(['name'=>'Sample', 'slug'=>'sample', 'brand'=>'Soopi', 'gender'=>'nu', 'volume_ml'=>100, 'price'=>1500000, 'stock'=>5, 'is_active'=>true]);
+        $active = Perfume::create(['name'=>'Sample', 'slug'=>'sample', 'brand'=>'Soopi', 'gender'=>'nu', 'volume_ml'=>100, 'price'=>1500000, 'stock'=>5, 'stock_5ml'=>5, 'is_active'=>true]);
         $hidden = Perfume::create(['name'=>'Hidden', 'slug'=>'hidden', 'brand'=>'Soopi', 'gender'=>'nu', 'volume_ml'=>100, 'price'=>1500000, 'stock'=>5, 'is_active'=>false]);
         $this->get('/hop-thu-mui?'.http_build_query(['size'=>5, 'samples'=>[$active->id, $hidden->id, 99999]]))->assertOk()
             ->assertViewHas('initialSize', 5)->assertViewHas('initialSamples', fn ($items) => $items->pluck('id')->all() === [$active->id]);

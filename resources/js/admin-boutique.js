@@ -1,30 +1,76 @@
+import './admin-chat.js';
+
 const toggle = document.querySelector('.ht-admin-toggle');
 const backdrop = document.querySelector('.ht-admin-backdrop');
 const sidebar = document.getElementById('admin-sidebar');
+const menuBreakpoint = window.matchMedia('(max-width: 991px)');
 function setMenu(open) {
+    open = open && menuBreakpoint.matches;
     document.body.classList.toggle('admin-menu-open', open);
     toggle?.setAttribute('aria-expanded', String(open));
     toggle?.setAttribute('aria-label', open ? 'Đóng menu quản trị' : 'Mở menu quản trị');
     if (backdrop) backdrop.hidden = !open;
-    if (sidebar) sidebar.inert = !open && window.innerWidth <= 991;
+    if (sidebar) sidebar.inert = !open && menuBreakpoint.matches;
+    document.querySelector('.admin-main-wrapper')?.toggleAttribute('inert', open);
+    document.getElementById('admin-chat-box')?.toggleAttribute('inert', open);
+    if (open) sidebar?.querySelector('.studio-sidebar-close')?.focus();
 }
 toggle?.addEventListener('click', () => setMenu(!document.body.classList.contains('admin-menu-open')));
 backdrop?.addEventListener('click', () => { setMenu(false); toggle?.focus(); });
+sidebar?.querySelector('.studio-sidebar-close')?.addEventListener('click', () => { setMenu(false); toggle?.focus(); });
+sidebar?.addEventListener('keydown', event => {
+    if (event.key !== 'Tab' || !document.body.classList.contains('admin-menu-open')) return;
+    const items = [...sidebar.querySelectorAll('a[href],button:not(:disabled)')].filter(el => el.getClientRects().length);
+    const first = items[0], last = items.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+    if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+});
 document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && document.body.classList.contains('admin-menu-open')) {
         setMenu(false);
         toggle?.focus();
     }
 });
-window.addEventListener('resize', () => setMenu(false));
+menuBreakpoint.addEventListener('change', () => setMenu(false));
 setMenu(false);
 
 document.querySelectorAll('[data-chat-user]').forEach(button => button.addEventListener('click', () => {
     window.openChatWithUser?.(Number(button.dataset.chatUser), button.dataset.chatName);
 }));
-document.querySelectorAll('.studio-confirm-delete').forEach(form => form.addEventListener('submit', event => {
-    if (!window.confirm(form.dataset.confirmMessage)) event.preventDefault();
-}));
+// Request confirmation before the browser submits; retain the original submitter value.
+const confirmation = document.getElementById('studio-confirm');
+let pendingConfirmation = null;
+const approvedForms = new WeakSet();
+document.addEventListener('submit', event => {
+    const form = event.target;
+    const message = form.dataset.confirm || form.dataset.confirmMessage;
+    if (!message || event.defaultPrevented) return;
+    if (approvedForms.has(form)) { approvedForms.delete(form); return; }
+    if (!confirmation?.showModal) { if (!window.confirm(message)) event.preventDefault(); return; }
+    event.preventDefault();
+    if (confirmation.open) return;
+    pendingConfirmation = { form, submitter: event.submitter, trigger: document.activeElement };
+    confirmation.querySelector('#studio-confirm-message').textContent = message;
+    confirmation.showModal();
+    confirmation.querySelector('[data-confirm-cancel]').focus();
+});
+confirmation?.querySelector('[data-confirm-cancel]')?.addEventListener('click', () => confirmation.close());
+confirmation?.querySelector('[data-confirm-accept]')?.addEventListener('click', () => {
+    const pending = pendingConfirmation;
+    if (!pending) return;
+    confirmation.close();
+    pendingConfirmation = null;
+    approvedForms.add(pending.form);
+    if (pending.submitter?.isConnected && !pending.submitter.disabled) pending.form.requestSubmit(pending.submitter);
+    else pending.form.requestSubmit();
+    approvedForms.delete(pending.form);
+});
+confirmation?.addEventListener('close', () => { pendingConfirmation?.trigger?.focus(); pendingConfirmation = null; });
+confirmation?.addEventListener('click', event => {
+    if (event.target !== confirmation) return;
+    const r = confirmation.getBoundingClientRect();
+    if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) confirmation.close();
+});
 
 // The launcher mirrors authorized sidebar links; it never invents destinations.
 const commandMenu = document.getElementById('studio-command-menu');
@@ -75,7 +121,6 @@ if (commandMenu && commandInput && commandResults && commandOpen) {
 // Respect the system preference and remember the user's own motion setting.
 const motionToggle = document.querySelector('.studio-motion-toggle');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-const precisePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 let motionEnabled = true;
 try { motionEnabled = localStorage.getItem('soopi-admin-motion') !== 'off'; } catch { /* Storage may be restricted. */ }
 function syncMotion() {
@@ -108,30 +153,6 @@ document.querySelectorAll('.admin-content-area img').forEach(img => {
     if (img.complete && !img.naturalWidth && img.getAttribute('src')) showPlaceholder();
 });
 
-// Small tilts only on summary cards. Tables, forms and video controls stay still.
-document.querySelectorAll('.studio-metric, .finance-metric, .live-admin-metric, .studio-function-metric').forEach(card => {
-    let frame = 0;
-    function resetDepth() {
-        cancelAnimationFrame(frame);
-        frame = 0;
-        card.classList.remove('studio-depth-active');
-    }
-    card.addEventListener('pointermove', event => {
-        if (!motionEnabled || reducedMotion.matches || !precisePointer.matches || event.pointerType === 'touch') return;
-        const x = event.clientX, y = event.clientY;
-        cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(() => {
-            const bounds = card.getBoundingClientRect();
-            card.style.setProperty('--tilt-x', `${(0.5 - (y - bounds.top) / bounds.height) * 4}deg`);
-            card.style.setProperty('--tilt-y', `${((x - bounds.left) / bounds.width - 0.5) * 4}deg`);
-            card.classList.add('studio-depth-active');
-        });
-    });
-    card.addEventListener('pointerleave', resetDepth);
-    card.addEventListener('pointercancel', resetDepth);
-    card.addEventListener('blur', resetDepth);
-});
-
 // Give simple management tables a readable, labelled layout on narrow screens.
 document.querySelectorAll('.admin-content-area .table-responsive > table').forEach(table => {
     if (table.classList.contains('order-table-populated') || table.classList.contains('order-table-empty')) return;
@@ -146,4 +167,12 @@ document.querySelectorAll('.admin-content-area .table-responsive > table').forEa
             if (headings[index]) cell.dataset.column = headings[index];
         });
     }));
+});
+
+// Errors stay visible until the operator has corrected the form.
+document.querySelector('[data-validation-summary]')?.focus();
+document.querySelectorAll('.table-responsive').forEach(region => {
+    region.tabIndex = 0;
+    region.setAttribute('role','region');
+    if (!region.hasAttribute('aria-label')) region.setAttribute('aria-label','Bảng dữ liệu — có thể cuộn ngang trên màn hình nhỏ');
 });

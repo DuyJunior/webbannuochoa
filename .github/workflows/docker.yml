@@ -39,7 +39,7 @@ jobs:
       - name: PHP tests in Docker
         run: docker run --rm soopi:test
       - name: JavaScript tests in Docker
-        run: docker run --rm -v "$PWD:/app:ro" -w /app node:22-bookworm-slim node --test tests/Js/livestream-ui.test.cjs
+        run: docker run --rm -v "$PWD:/app:ro" -w /app node:22-bookworm-slim node --test tests/Js/*.test.cjs tests/Js/*.test.mjs
       - name: Check deployment scripts
         run: |
           bash -n docker/deploy.sh docker/setup-proxy.sh

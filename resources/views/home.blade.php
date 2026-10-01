@@ -89,19 +89,21 @@
  const bar = document.getElementById('htCompareBar');
  const count = document.getElementById('htCompareCount');
  const link = document.getElementById('htCompareLink');
- const buttons = document.querySelectorAll('[data-compare-id]');
  function render() {
-   buttons.forEach(button => button.classList.toggle('active', selected.has(button.dataset.compareId)));
+   document.querySelectorAll('[data-compare-id]').forEach(button => button.classList.toggle('active', selected.has(button.dataset.compareId)));
    bar.hidden = selected.size === 0;
    count.textContent = selected.size + '/3 sản phẩm';
    link.href = compareBase + '?ids=' + [...selected].join(',');
  }
- buttons.forEach(button => button.addEventListener('click', () => {
+ document.addEventListener('click', event => {
+   const button = event.target.closest('[data-compare-id]');
+   if (!button) return;
    const id = button.dataset.compareId;
    if (selected.has(id)) { selected.delete(id); }
    else if (selected.size < 3) { selected.add(id); }
    render();
- }));
+ });
+ document.addEventListener('scent-gallery:updated', render);
  document.getElementById('htCompareClear').addEventListener('click', () => { selected.clear(); render(); });
 })();
 

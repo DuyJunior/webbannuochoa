@@ -21,15 +21,17 @@ class GHNOrderService
 
         foreach ($order->items as $item) {
             $product = $item->product ?? $item->perfume;
-            $itemWeight = ($product && method_exists($product, 'getWeightForVolume'))
-                ? $product->getWeightForVolume($item->volume_ml)
-                : (int) ($product?->weight ?? 200);
+            $isDiscovery = count($item->stock_components ?? []) > 1;
+            $itemWeight = $isDiscovery ? 50 * count($item->stock_components)
+                : (($product && method_exists($product, 'getWeightForVolume'))
+                    ? $product->getWeightForVolume($item->volume_ml)
+                    : (int) ($product?->weight ?? 200));
             if ($itemWeight <= 0) {
                 $itemWeight = 200;
             }
             $weight += $itemWeight * (int) $item->quantity;
             $items[] = [
-                'name' => $item->product_name ?? $product->name ?? 'Sản phẩm',
+                'name' => $isDiscovery ? 'Hộp thử mùi · '.count($item->stock_components).' mẫu 5ml' : ($item->product_name ?? $product->name ?? 'Sản phẩm'),
                 'quantity' => (int) $item->quantity,
                 'price' => (int) $item->price,
                 'weight' => $itemWeight,

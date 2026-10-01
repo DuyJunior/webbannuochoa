@@ -213,14 +213,18 @@ class Lab8AdminTest extends TestCase
         ]));
         $response->assertStatus(200);
         $response->assertSee('Báo cáo doanh thu');
-        $response->assertSee('Đang áp dụng bộ lọc tùy chỉnh');
+        $response->assertSee('Xóa bộ lọc');
+        $this->assertSame(now()->toDateString(), $response->viewData('filters')['date_from']);
+        $this->assertSame('cod', $response->viewData('filters')['gateway']);
 
         $chartResponse = $this->actingAs($this->admin)->get(route('admin.reports.charts', [
             'preset' => '7days',
             'gateway' => 'momo',
         ]));
         $chartResponse->assertStatus(200);
-        $chartResponse->assertSee('Biểu đồ đang theo bộ lọc tùy chỉnh');
+        $chartResponse->assertSee('Xóa bộ lọc');
+        $this->assertSame(now()->subDays(6)->toDateString(), $chartResponse->viewData('filters')['date_from']);
+        $this->assertSame('momo', $chartResponse->viewData('filters')['gateway']);
     }
 
     public function test_admin_can_proactively_search_and_message_customer()

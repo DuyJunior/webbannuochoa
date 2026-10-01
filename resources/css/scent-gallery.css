@@ -96,3 +96,5 @@
  .soopi-homepage .ht-compare-bar{bottom:130px;border-radius:12px;max-width:calc(100% - 24px)}
 }
 @media(prefers-reduced-motion:reduce){.scent-gallery *{transition:none!important}.gallery-piece.is-lit .scent-visual img{transform:none}.scent-visual:after{display:none}}
+.scent-filter-status{min-height:20px;margin:0;padding:4px 0;font:400 11px/1.6 var(--ht-sans);color:#80566f}
+.scent-gallery[aria-busy=true] :is(.scent-exhibition,.scent-catalog){opacity:.45;transition:opacity .15s}

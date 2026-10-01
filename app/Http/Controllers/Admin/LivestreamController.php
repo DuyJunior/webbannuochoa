@@ -19,11 +19,19 @@ class LivestreamController extends Controller
 {
     private const SCHEDULE_TIMEZONE = 'Asia/Ho_Chi_Minh';
 
-    public function index(LivekitTokenService $livekit, LivestreamRevenueService $revenue): View
+    public function index(Request $request, LivekitTokenService $livekit, LivestreamRevenueService $revenue): View
     {
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:255'],
+            'status' => ['nullable', 'in:live,scheduled,ended'],
+        ]);
+        $search = trim($filters['search'] ?? '');
         $today = now(self::SCHEDULE_TIMEZONE)->startOfDay();
         return view('admin.livestreams.index', [
-            'livestreams' => Livestream::with(['products', 'creator'])->latest()->paginate(15),
+            'livestreams' => Livestream::with(['products', 'creator'])
+                ->when($search !== '', fn ($query) => $query->where('title', 'like', "%{$search}%"))
+                ->when(!empty($filters['status']), fn ($query) => $query->where('status', $filters['status']))
+                ->latest()->paginate(15)->withQueryString(),
             'onAir' => Livestream::where('status', 'live')->latest()->first(),
             'livekitConfigured' => $livekit->configured(),
             'liveRevenue' => $revenue->summaries(),

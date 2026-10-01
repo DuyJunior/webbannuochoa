@@ -1,5 +1,5 @@
 // Subtle, event-driven depth. Touch devices and reduced-motion users get static cards.
-const cards = [...document.querySelectorAll('.soopi-homepage .gallery-piece, .soopi-homepage .store-product-card, .soopi-homepage .ht-collection-card, .soopi-homepage .exp-banner-card')];
+const boundCards = new WeakSet();
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 const pointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 let frame = 0;
@@ -13,7 +13,10 @@ function reset() {
     for (const key of ['rx', 'ry', 'x', 'y']) active.style.removeProperty(`--pearl-${key}`);
     active = null;
 }
-for (const card of cards) {
+function bindCards() {
+for (const card of document.querySelectorAll('.soopi-homepage .gallery-piece, .soopi-homepage .store-product-card, .soopi-homepage .ht-collection-card, .soopi-homepage .exp-banner-card')) {
+    if (boundCards.has(card)) continue;
+    boundCards.add(card);
     if (!card.classList.contains('gallery-piece')) card.classList.add('pearl-depth');
     card.addEventListener('pointermove', event => {
         if (!enabled() || event.pointerType === 'touch') return;
@@ -34,13 +37,20 @@ for (const card of cards) {
     card.addEventListener('pointerleave', reset);
     card.addEventListener('pointercancel', reset);
 }
+}
+bindCards();
 reduced.addEventListener('change', reset);
 pointer.addEventListener('change', reset);
 window.addEventListener('blur', reset);
 document.addEventListener('visibilitychange', reset);
 document.querySelector('[data-bloom-motion]')?.addEventListener('click', reset);
 
-const sortMenu = document.querySelector('.scent-sort');
+let sortMenu = document.querySelector('.scent-sort');
+document.addEventListener('scent-gallery:updated', () => {
+    reset();
+    bindCards();
+    sortMenu = document.querySelector('.scent-sort');
+});
 document.addEventListener('click', event => {
     if (sortMenu?.open && !sortMenu.contains(event.target)) sortMenu.open = false;
 });

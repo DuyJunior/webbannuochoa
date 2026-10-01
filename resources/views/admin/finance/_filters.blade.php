@@ -1,14 +1,9 @@
-@if($errors->any())
-    <div class="alert alert-danger" role="alert">
-        <strong>Vui lòng kiểm tra lại:</strong>
-        <ul class="mb-0 mt-2 pl-3">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
-    </div>
-@endif
+
 <div class="admin-card">
     <form method="GET" action="{{ route($filterRoute) }}" class="finance-filters">
         <div>
             <label for="finance-search">Mã đơn, khách hàng hoặc điện thoại</label>
-            <input class="form-control" id="finance-search" name="search" value="{{ $filters['search'] ?? '' }}" maxlength="100" placeholder="Ví dụ: #123">
+            <input class="form-control" id="finance-search" type="search" name="search" value="{{ $filters['search'] ?? '' }}" maxlength="100" placeholder="Ví dụ: #DH00123">
         </div>
         <div>
             <label for="finance-date-from">Từ ngày tạo đơn</label>
@@ -16,7 +11,7 @@
         </div>
         <div>
             <label for="finance-date-to">Đến ngày tạo đơn</label>
-            <input class="form-control" id="finance-date-to" type="date" name="date_to" value="{{ $filters['date_to'] ?? '' }}">
+            <input class="form-control" id="finance-date-to" type="date" name="date_to" min="{{ $filters['date_from'] ?? '' }}" value="{{ $filters['date_to'] ?? '' }}">
         </div>
         <div>
             <label for="finance-mode">Nguồn dữ liệu</label>
@@ -68,3 +63,13 @@
         </div>
     </form>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('finance-date-from').addEventListener('change', function () {
+        document.getElementById('finance-date-to').min = this.value;
+    });
+    document.getElementById('finance-min').addEventListener('input', function () {
+        document.getElementById('finance-max').min = this.value || '0';
+    });
+});
+</script>

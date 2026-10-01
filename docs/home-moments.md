@@ -19,6 +19,23 @@ hero, product gallery and visible videos remain intact.
 - Existing local artwork was reused; no new image service/network dependency.
 - Responsive layout and reduced-motion support are scoped to the new sections.
 
+## Sampling atelier update
+
+`partials/home-sampling.blade.php` now pairs a plum sample tray with a responsive
+four/two-column catalog. Native 3/5-size radios and checkboxes remain functional
+without JavaScript; the enhanced tray preserves the order in which samples were
+chosen and passes that order into the builder. Product details use the existing
+quick-view drawer. Sample availability uses `DiscoveryBoxService::remaining`,
+including 5ml inventory and samples already allocated in the customer's cart.
+Unavailable entries remain visible with an explanation; catalog inventory is
+never synthesized. The full builder and cart validate availability again.
+
+`atelier-typewriter.js` enhances the sampling heading once on viewport entry.
+The full phrase is present in the initial HTML and accessible to screen readers;
+Vietnamese grapheme clusters are revealed decoratively without changing the
+heading's dimensions. Reduced motion and the site motion switch show static text.
+`home-sampling.css` controls the tray, selection depth and responsive layout.
+
 Files: `partials/home-moments.blade.php`, `home-moments.css`,
 `home-moments.js`, `StoreExperienceController`, finder and discovery-box views.
 

@@ -1,0 +1,207 @@
+/* Shared finishing layer: calmer section rhythm, legible navigation and one footer. */
+.soopi-store .scent-discovery {
+    border-bottom: 1px solid #e5d9df;
+    background: #fcf9f6;
+}
+.soopi-store .scent-discovery-inner {
+    display: grid;
+    grid-template-columns: .9fr 2.2fr;
+    gap: 40px;
+    align-items: center;
+    padding-block: 30px;
+}
+.scent-discovery-heading .atelier-kicker { color: #826373; font-size: 9px; letter-spacing: 1.8px; }
+.soopi-store .scent-discovery-heading h2 {
+    margin: 12px 0 0;
+    font: 400 clamp(25px, 2.4vw, 34px)/1.2 var(--ht-serif);
+    letter-spacing: -.6px;
+    color: #38232e;
+    text-wrap: balance;
+}
+.scent-discovery-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.scent-discovery-link {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr) 16px;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 0;
+    border-left: 1px solid #e5d9df;
+    border-radius: 0;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    color: #38232e;
+    text-decoration: none;
+}
+.scent-discovery-link[aria-pressed="true"] { box-shadow: inset 0 -2px #8a6277; background: #f4ebef66; }
+.scent-palette-check { color: #8a6277; font: 400 15px/1 var(--ht-sans); opacity: 0; }
+.scent-discovery-link[aria-pressed="true"] .scent-palette-check { opacity: 1; }
+.scent-palette-view { display: inline-block; margin-top: 12px; padding: 6px 0; min-height: 32px; border: 0; border-bottom: 1px solid #c8acbb; border-radius: 0; background: none; color: #78586c; font: 400 11px/1.5 var(--ht-sans); cursor: pointer; }
+.scent-palette-view:focus-visible { outline: 2px solid #97667f; outline-offset: 4px; }
+.scent-palette-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.scent-discovery-link strong { display: block; font: 400 25px/1.25 var(--ht-serif); }
+.scent-discovery-link small { display: block; margin-top: 6px; font: 400 11px/1.6 var(--ht-sans); color: #78636d; }
+.scent-discovery-link > svg { display: block; color: #81566b; transition: transform .3s ease; }
+.scent-discovery-petal {
+    display: block;
+    height: 82px;
+    background: url('/images/bloom/petal-rose.webp') center/contain no-repeat;
+    transform: rotate(-8deg);
+    transition: transform .4s ease;
+}
+.scent-discovery-petal-velvet { filter: brightness(.49) saturate(1.7) hue-rotate(332deg); }
+.scent-discovery-petal-sage { filter: saturate(.22) hue-rotate(80deg); }
+.scent-discovery-link:focus-visible { outline: 2px solid #97667f; outline-offset: -3px; }
+.soopi-homepage .ht-benefits {
+    margin: 0 auto !important;
+    padding: 20px 0;
+    border: 0;
+    border-bottom: 1px solid #e5d9df;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+}
+.soopi-homepage .ht-benefits strong { font-size: 12px; }
+.soopi-homepage .ht-benefits small { font-size: 11px; }
+
+/* The collection remains the visual lead; supporting stories use a quieter scale. */
+.soopi-homepage .soopi-journal { margin-bottom: 56px; }
+.soopi-homepage .soopi-journal .journal-heading h2,
+.soopi-homepage :is(.moments-heading, .gifting-copy, .soopi-sampling) h2 {
+    font-size: clamp(34px, 3.8vw, 54px);
+    letter-spacing: -.035em;
+    line-height: 1.15;
+}
+.soopi-homepage .soopi-journal .journal-story-side h3 { font-size: clamp(23px, 2vw, 29px); letter-spacing: -.025em; }
+.soopi-homepage .soopi-journal .journal-video-heading h2 { font-size: clamp(32px, 3.2vw, 46px); letter-spacing: -.035em; }
+.soopi-homepage :is(.soopi-moments, .soopi-gifting, .soopi-sampling) { margin-block: 56px; }
+.soopi-homepage .sample-pick > span { font-size: 9px; line-height: 1.5; }
+.soopi-homepage .sample-pick strong { font-size: 15px; }
+
+.soopi-store.soopi-interior .ht-journal-page .ht-journal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px 32px;
+}
+.soopi-store.soopi-interior .ht-journal-page .interior-journal-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 0 0 26px;
+    border: 0;
+    border-bottom: 1px solid #ddcbd3;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+}
+.soopi-store.soopi-interior .ht-journal-page .interior-journal-card > a:first-child { display: block; overflow: hidden; }
+.soopi-store.soopi-interior .ht-journal-page .interior-journal-card img { aspect-ratio: 1.65; border-radius: 3px; transition: transform .5s ease; }
+.soopi-store.soopi-interior .ht-journal-page .interior-journal-card h2 { font-size: clamp(25px, 2.3vw, 33px); line-height: 1.25; }
+.soopi-store.soopi-interior .ht-journal-page .interior-journal-card > span { font-size: 10px; margin: 22px 0 12px; color: #806070; }
+.soopi-store.soopi-interior .ht-journal-page .interior-journal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 20px; }
+.soopi-store.soopi-interior .ht-journal-page .interior-journal-card > a:last-child { align-self: start; margin-top: auto; padding-block: 12px; font-size: 13px; }
+
+/* Warm ivory invitation, then a plum colophon shared by all storefront pages. */
+.soopi-store .ht-footer.atelier-footer { padding-top: 0; background: #34232f; border: 0; color: #f7f0ed; }
+.soopi-store .atelier-footer .atelier-footer-invitation {
+    margin: 0;
+    padding-block: 38px;
+    border: 0;
+    background-color: #f7f0eb;
+    background-position: right 55%;
+    color: #513443;
+}
+.soopi-store .atelier-footer .atelier-footer-invitation h2 { font-size: clamp(36px, 3.6vw, 50px); line-height: 1.12; margin: 15px 0 17px; letter-spacing: -.035em; }
+.soopi-store .atelier-footer .atelier-footer-invitation .ht-eyebrow { font-size: 9px; color: #78596b; }
+.soopi-store .atelier-footer .atelier-footer-invitation .ht-text-link { font-size: 12px; min-height: 44px; display: inline-flex; align-items: center; gap: 18px; color: #513443; }
+.soopi-store .atelier-footer .ht-footer-grid {
+    grid-template-columns: 1.25fr .8fr .9fr 1fr;
+    gap: 48px;
+    padding-block: 54px 40px;
+}
+.soopi-store .atelier-footer .ht-footer-grid > div { min-width: 0; }
+.soopi-store .atelier-footer .ht-footer-about .ht-brand-name { font: 400 45px/1 var(--ht-serif); letter-spacing: -2px; color: #fff9f5; }
+.soopi-store .atelier-footer .ht-brand-name > span { margin-top: 10px; font: 400 9px/1.6 var(--ht-sans); letter-spacing: 2.3px; color: #dec5d2; }
+.soopi-store .atelier-footer .ht-footer-grid p { max-width: 270px; margin: 20px 0; color: #d2c1c8; font: 400 13px/1.85 var(--ht-sans); }
+.soopi-store .atelier-footer .ht-footer-signature { font: italic 18px/1.5 var(--ht-serif); color: #dcb7cb; }
+.soopi-store .atelier-footer .ht-footer-grid h2 { margin-bottom: 18px; color: #fff9f5; font: 500 13px/1.5 var(--ht-sans); letter-spacing: .2px; }
+.soopi-store .atelier-footer .ht-footer-grid > div > a:not(.ht-brand):not(.ht-text-link) { font: 400 13px/1.5 var(--ht-sans); color: #d2c1c8; margin: 0; padding-block: 9px; }
+.soopi-store .atelier-footer .ht-footer-grid .ht-footer-help h2 { font: 400 30px/1.2 var(--ht-serif); letter-spacing: -.5px; margin: 16px 0; }
+.soopi-store .atelier-footer .ht-footer-help .ht-eyebrow { font-size: 9px; color: #dcb7cb; letter-spacing: 1.7px; }
+.soopi-store .atelier-footer .ht-footer-help .ht-text-link { display: inline-flex; align-items: center; gap: 15px; min-height: 44px; color: #fff4f8; border-color: #9c788c; font-size: 13px; }
+.soopi-store .atelier-footer .ht-footer-social { display: flex; gap: 7px; margin-top: 22px; flex-wrap: wrap; }
+.soopi-store .atelier-footer .ht-footer-social-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+    padding: 8px 10px;
+    border: 1px solid #755669;
+    border-radius: 3px;
+    background: transparent;
+    box-shadow: none;
+    color: #f7eaf0;
+    font: 400 11px/1.5 var(--ht-sans);
+    text-decoration: none;
+    transition: border-color .2s, background .2s;
+}
+.soopi-store .atelier-footer .ht-footer-bottom { border-color: #604555; padding-block: 22px; padding-right: 64px; color: #cdbbc4; font: 400 11px/1.6 var(--ht-sans); }
+.soopi-store .atelier-footer .ht-footer-bottom a { color: #f7eaf0; display: inline-flex; align-items: center; min-height: 44px; }
+.soopi-store .atelier-footer a:focus-visible { outline: 2px solid #dcb7cb; outline-offset: 4px; }
+.soopi-store .atelier-footer .ht-footer-about { border-color: #604555; }
+@media (hover: hover) and (pointer: fine) {
+    .scent-discovery-link:hover .scent-discovery-petal { transform: rotate(2deg) translateY(-4px); }
+    .scent-discovery-link:hover > svg { transform: translate(2px, -2px); }
+    .soopi-store .atelier-footer .ht-footer-grid a:hover { color: #fff; }
+    .soopi-store .atelier-footer .ht-footer-social-btn:hover { background: #503647; border-color: #c6a2b6; }
+    .soopi-store.soopi-interior .ht-journal-page .interior-journal-card > a:first-child:hover img { transform: scale(1.025); }
+}
+@media (max-width: 1150px) {
+    .soopi-store .scent-discovery-inner { gap: 26px; grid-template-columns: 1fr; padding-block: 27px; }
+    .scent-discovery-heading { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+    .soopi-store .scent-discovery-heading h2 { margin: 0; }
+    .scent-discovery-link:first-child { border: 0; padding-left: 0; }
+    .scent-discovery-link:last-child { padding-right: 0; }
+    .soopi-store .atelier-footer .ht-footer-grid { gap: 30px; }
+}
+@media (max-width: 760px) {
+    .soopi-homepage :is(.soopi-moments, .soopi-gifting, .soopi-sampling) { margin-block: 42px; }
+    .soopi-homepage .soopi-journal { margin-bottom: 42px; }
+    .soopi-homepage .ht-benefits { padding-block: 22px; }
+    .soopi-homepage .ht-benefits strong { font-size: 11px; }
+    .soopi-homepage .ht-benefits small { font-size: 10px; }
+    .scent-discovery-heading { display: block; }
+    .soopi-store .scent-discovery-heading h2 { margin-top: 10px; }
+    .soopi-store .scent-discovery-inner { gap: 18px; padding-block: 25px; }
+    .scent-discovery-link { display: flex; flex-direction: column; align-items: start; gap: 8px; padding: 0 12px; position: relative; }
+    .scent-discovery-petal { width: 60px; height: 57px; }
+    .scent-discovery-link strong { font-size: 22px; }
+    .scent-discovery-link small { font-size: 10px; line-height: 1.65; }
+    .scent-discovery-link > svg { position: absolute; top: 12px; right: 12px; width: 13px; }
+    .scent-palette-check { position: absolute; top: 12px; right: 12px; }
+    .scent-discovery-link { padding-bottom: 12px; }
+    .soopi-homepage .sample-picks { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 10px; }
+    .soopi-homepage .sample-pick { padding: 10px 8px; }
+    .soopi-homepage .sample-pick small { font-size: 11px; }
+    .soopi-store .atelier-footer .ht-footer-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); padding-block: 36px 28px; gap: 28px 20px; }
+    .soopi-store .atelier-footer .ht-footer-about { grid-column: 1 / -1; padding-bottom: 28px; border-bottom: 1px solid #604555; }
+    .soopi-store .atelier-footer .ht-footer-grid p { max-width: 360px; margin-block: 17px; }
+    .soopi-store .atelier-footer .ht-footer-help { grid-column: 1 / -1; border-top: 1px solid #604555; padding-top: 25px; }
+    .soopi-store .atelier-footer .ht-footer-help :is(.ht-eyebrow, p) { display: none; }
+    .soopi-store .atelier-footer .ht-footer-grid .ht-footer-help h2 { font-size: 26px; margin: 0 0 12px; }
+    .soopi-store .atelier-footer .ht-footer-help h2 br { display: none; }
+    .soopi-store .atelier-footer .ht-footer-grid > div > a:not(.ht-brand):not(.ht-text-link) { min-height: 44px; display: flex; align-items: center; font-size: 12px; }
+    .soopi-store .atelier-footer .ht-footer-social-btn { min-height: 44px; padding-inline: 12px; }
+    .soopi-store .atelier-footer .ht-footer-bottom { padding-block: 14px; font-size: 11px; }
+    .soopi-store .atelier-footer .atelier-footer-invitation { padding-block: 30px; background-position: 60% center; }
+}
+@media (max-width: 650px) {
+    .soopi-store.soopi-interior .ht-journal-page .ht-journal-grid { grid-template-columns: 1fr; gap: 30px; }
+    .soopi-store.soopi-interior .ht-journal-page .interior-journal-card h2 { font-size: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .scent-discovery-link > svg, .scent-discovery-petal,
+    .soopi-store.soopi-interior .ht-journal-page .interior-journal-card img { transition: none; transform: none !important; }
+}
+.bloom-motion-off .scent-discovery-petal, .bloom-motion-off .scent-discovery-link > svg { transition: none; transform: none; }

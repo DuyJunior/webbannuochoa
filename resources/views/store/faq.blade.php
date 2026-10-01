@@ -183,13 +183,13 @@
         <p>Giải đáp mọi thắc mắc để bạn an tâm mua hàng tại Soopi.</p>
     </header>
 
-    <div class="ht-faq-tabs" role="tablist">
+    <nav class="ht-faq-tabs" aria-label="Chủ đề câu hỏi">
         <a class="ht-faq-tab active" href="#chinh-hang">Chính hãng</a>
         <a class="ht-faq-tab" href="#giao-hang">Giao hàng</a>
         <a class="ht-faq-tab" href="#thanh-toan">Thanh toán</a>
         <a class="ht-faq-tab" href="#doi-tra">Đổi & trả</a>
         <a class="ht-faq-tab" href="#bao-quan">Bảo quản</a>
-    </div>
+    </nav>
 
     {{-- NHÓM 1: Chính hãng --}}
     <div class="ht-faq-group" id="chinh-hang">
@@ -333,7 +333,7 @@
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Soopi chấp nhận đổi/trả trong vòng <strong>7 ngày</strong> kể từ ngày nhận hàng nếu:
+                Soopi chấp nhận đổi/trả trong vòng <strong>{{ config('storefront.return_days') }} ngày</strong> kể từ ngày nhận hàng nếu:
                 <ul>
                     <li>Sản phẩm bị lỗi do nhà sản xuất (nứt vỡ, rỉ chai, mùi không đúng)</li>
                     <li>Giao nhầm sản phẩm so với đơn đặt hàng</li>
@@ -401,7 +401,7 @@
         <h2>Vẫn còn thắc mắc?</h2>
         <p>Đội ngũ Soopi luôn sẵn sàng hỗ trợ bạn — nhanh chóng, tận tâm.</p>
         <div class="ht-faq-social-links">
-            <a class="ht-faq-social-link zalo" href="https://zalo.me/0123456789" target="_blank" rel="noopener">
+            <a class="ht-faq-social-link zalo" href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener">
                 <svg width="18" height="18" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="white" fill-opacity=".25"/><text x="5" y="28" font-size="22" font-family="Arial" font-weight="bold" fill="white">Z</text></svg>
                 Zalo
             </a>
@@ -420,8 +420,24 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // Accordion logic
-    document.querySelectorAll('.ht-faq-question').forEach(function (btn) {
+    var answerObserver = new ResizeObserver(function (entries) {
+        entries.forEach(function (entry) {
+            var answer = entry.target.closest('.ht-faq-answer');
+            if (answer.closest('.ht-faq-item').classList.contains('open')) {
+                answer.style.maxHeight = entry.target.scrollHeight + 'px';
+            }
+        });
+    });
+    // Keep collapsed answers out of the keyboard order and accessibility tree.
+    document.querySelectorAll('.ht-faq-question').forEach(function (btn, index) {
+        var initialAnswer = btn.closest('.ht-faq-item').querySelector('.ht-faq-answer');
+        btn.id = 'faq-question-' + index;
+        initialAnswer.id = 'faq-answer-' + index;
+        btn.setAttribute('aria-controls', initialAnswer.id);
+        initialAnswer.setAttribute('aria-labelledby', btn.id);
+        initialAnswer.setAttribute('aria-hidden', 'true');
+        initialAnswer.inert = true;
+        answerObserver.observe(initialAnswer.querySelector('.ht-faq-answer-inner'));
         btn.addEventListener('click', function () {
             var item = this.closest('.ht-faq-item');
             var answer = item.querySelector('.ht-faq-answer');
@@ -432,12 +448,16 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.ht-faq-item.open').forEach(function (openItem) {
                 openItem.classList.remove('open');
                 openItem.querySelector('.ht-faq-answer').style.maxHeight = '0';
+                openItem.querySelector('.ht-faq-answer').inert = true;
+                openItem.querySelector('.ht-faq-answer').setAttribute('aria-hidden', 'true');
                 openItem.querySelector('.ht-faq-question').setAttribute('aria-expanded', 'false');
             });
 
             if (!isOpen) {
                 item.classList.add('open');
                 answer.style.maxHeight = inner.scrollHeight + 'px';
+                answer.inert = false;
+                answer.setAttribute('aria-hidden', 'false');
                 btn.setAttribute('aria-expanded', 'true');
             }
         });
@@ -447,8 +467,9 @@ document.addEventListener('DOMContentLoaded', function () {
     var tabs = document.querySelectorAll('.ht-faq-tab');
     tabs.forEach(function (tab) {
         tab.addEventListener('click', function () {
-            tabs.forEach(function (t) { t.classList.remove('active'); });
+            tabs.forEach(function (t) { t.classList.remove('active'); t.removeAttribute('aria-current'); });
             this.classList.add('active');
+            this.setAttribute('aria-current', 'location');
         });
     });
 });

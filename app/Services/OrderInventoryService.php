@@ -40,10 +40,10 @@ class OrderInventoryService
                     }
                     // Store the physical bucket at reservation, never infer it again on release.
                     $column = $release ? ($component['stock_column'] ?? null) : null;
-                    $column ??= $volume === 5 ? 'stock_5ml' : ($volume === (int) ($product->volume_ml ?: 100) ? 'stock' : match ($volume) {
-                        10 => 'stock_10ml', 50 => 'stock_50ml',
+                    $column ??= $volume === (int) ($product->volume_ml ?: 100) ? 'stock' : match ($volume) {
+                        5 => 'stock_5ml', 10 => 'stock_10ml', 50 => 'stock_50ml',
                         default => throw ValidationException::withMessages(['cart' => 'Dung tích không hợp lệ.']),
-                    });
+                    };
                     if (! in_array($column, ['stock', 'stock_5ml', 'stock_10ml', 'stock_50ml'], true)) {
                         throw ValidationException::withMessages(['cart' => 'Thông tin kho của đơn hàng không hợp lệ.']);
                     }

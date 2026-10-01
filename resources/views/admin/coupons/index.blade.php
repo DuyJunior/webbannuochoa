@@ -1,160 +1,89 @@
 @extends('layouts.admin')
 
 @section('title', 'Quản lý mã ưu đãi')
-@section('page_title', 'Quản lý mã ưu đãi & Voucher')
+@section('page_title', 'Mã ưu đãi')
 
 @section('content')
 <div class="admin-coupons-page">
-
-    @if($errors->any())
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-triangle-exclamation mr-2"></i> {{ $errors->first() }}
-            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-        </div>
-    @endif
-
-    {{-- Form tạo mã ưu đãi --}}
-    <div class="admin-card mb-4">
-        <h5 class="font-weight-bold mb-3" style="color: #0f172a;">
-            <i class="fa-solid fa-ticket-simple text-primary mr-2"></i> Tạo mã giảm giá mới
-        </h5>
-        <p class="text-muted small mb-4">Tạo các voucher khuyến mãi tri ân khách hàng khi mua sắm tại boutique</p>
-
-        <form method="POST" action="{{ route('admin.coupons.store') }}">
+    <details class="admin-card" id="coupon-create" @if($errors->any()) open @endif>
+        <summary class="font-weight-bold">Tạo mã ưu đãi mới <span class="text-muted small ml-2">Thiết lập mức giảm và điều kiện sử dụng</span></summary>
+        <form class="mt-4" method="POST" action="{{ route('admin.coupons.store') }}">
             @csrf
-            <div class="row g-3">
-                <div class="col-md-4 col-sm-6 mb-3">
-                    <label class="form-label font-weight-bold small text-muted text-uppercase">Mã voucher <span class="text-danger">*</span></label>
-                    <input class="form-control" name="code" value="{{ old('code') }}" placeholder="VD: SOOPI50K, VALENTINE..." style="text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;" required>
+            <div class="row">
+                <div class="col-md-4 form-group">
+                    <label for="coupon-code" class="font-weight-bold small">Mã ưu đãi <span class="text-danger">*</span></label>
+                    <input id="coupon-code" class="form-control @error('code') is-invalid @enderror" name="code" maxlength="30" pattern="[A-Za-z0-9_-]+" value="{{ old('code') }}" placeholder="VD: SOOPI50K" required autocapitalize="characters" spellcheck="false" @error('code') aria-invalid="true" aria-describedby="coupon-code-error" @enderror>
+                    @error('code')<div id="coupon-code-error" class="invalid-feedback">{{ $message }}</div>@enderror
+                    <small class="form-text text-muted">Chữ, số, dấu gạch ngang hoặc gạch dưới; tối đa 30 ký tự.</small>
                 </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                    <label class="form-label font-weight-bold small text-muted text-uppercase">Loại giảm giá <span class="text-danger">*</span></label>
-                    <select class="form-control custom-select" name="type">
-                        <option value="fixed" {{ old('type') === 'fixed' ? 'selected' : '' }}>Giảm trực tiếp số tiền (VNĐ)</option>
-                        <option value="percent" {{ old('type') === 'percent' ? 'selected' : '' }}>Giảm theo phần trăm (%)</option>
-                    </select>
+                <div class="col-md-4 form-group">
+                    <label for="coupon-type" class="font-weight-bold small">Loại giảm giá <span class="text-danger">*</span></label>
+                    <select id="coupon-type" class="form-control @error('type') is-invalid @enderror" name="type" required><option value="fixed" @selected(old('type', 'fixed') === 'fixed')>Giảm số tiền (₫)</option><option value="percent" @selected(old('type') === 'percent')>Giảm theo phần trăm (%)</option></select>
+                    @error('type')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                    <label class="form-label font-weight-bold small text-muted text-uppercase">Giá trị giảm <span class="text-danger">*</span></label>
-                    <input class="form-control" name="value" type="number" min="1" value="{{ old('value') }}" placeholder="VD: 50000 hoặc 15" required>
+                <div class="col-md-4 form-group">
+                    <label for="coupon-value" class="font-weight-bold small">Giá trị giảm <span class="text-danger">*</span></label>
+                    <input id="coupon-value" class="form-control @error('value') is-invalid @enderror" name="value" type="number" min="1" step="1" value="{{ old('value') }}" placeholder="VD: 50000 hoặc 15" required aria-describedby="coupon-value-hint @error('value') coupon-value-error @enderror" @error('value') aria-invalid="true" @enderror>
+                    @error('value')<div id="coupon-value-error" class="invalid-feedback">{{ $message }}</div>@enderror
+                    <small id="coupon-value-hint" class="form-text text-muted">Mức giảm phần trăm tối đa là 100%.</small>
                 </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                    <label class="form-label font-weight-bold small text-muted text-uppercase">Đơn hàng tối thiểu (₫)</label>
-                    <input class="form-control" name="minimum_order" type="number" min="0" value="{{ old('minimum_order', 0) }}" placeholder="0 nếu không yêu cầu" required>
-                </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                    <label class="form-label font-weight-bold small text-muted text-uppercase">Giới hạn lượt dùng</label>
-                    <input class="form-control" name="usage_limit" type="number" min="1" value="{{ old('usage_limit') }}" placeholder="Để trống nếu không giới hạn">
-                </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                    <label class="form-label font-weight-bold small text-muted text-uppercase">Thời gian hiệu lực</label>
-                    <div class="d-flex gap-2">
-                        <input class="form-control" name="starts_at" type="datetime-local" title="Bắt đầu" value="{{ old('starts_at') }}">
+                @foreach([
+                    ['minimum_order', 'Đơn hàng tối thiểu (₫)', 'number', 0, 'Nhập 0 nếu không yêu cầu giá trị đơn tối thiểu.'],
+                    ['usage_limit', 'Giới hạn lượt dùng', 'number', null, 'Để trống nếu không giới hạn lượt dùng.'],
+                    ['starts_at', 'Bắt đầu áp dụng (UTC)', 'datetime-local', null, 'Giờ Việt Nam bằng UTC + 7 giờ. Để trống để có hiệu lực ngay.'],
+                    ['expires_at', 'Hết hạn vào lúc (UTC)', 'datetime-local', null, 'Giờ Việt Nam bằng UTC + 7 giờ. Để trống nếu không đặt ngày hết hạn.'],
+                ] as [$field, $label, $type, $default, $hint])
+                    <div class="col-md-4 form-group">
+                        <label for="coupon-{{ $field }}" class="font-weight-bold small">{{ $label }} @if($field === 'minimum_order')<span class="text-danger">*</span>@endif</label>
+                        <input id="coupon-{{ $field }}" class="form-control @error($field) is-invalid @enderror" name="{{ $field }}" type="{{ $type }}" value="{{ old($field, $default) }}" @if($type === 'number') min="{{ $field === 'minimum_order' ? 0 : 1 }}" step="1" @endif @required($field === 'minimum_order') aria-describedby="coupon-{{ $field }}-hint @error($field) coupon-{{ $field }}-error @enderror" @error($field) aria-invalid="true" @enderror>
+                        @error($field)<div id="coupon-{{ $field }}-error" class="invalid-feedback">{{ $message }}</div>@enderror
+                        <small id="coupon-{{ $field }}-hint" class="form-text text-muted">{{ $hint }}</small>
                     </div>
-                </div>
-                <div class="col-md-4 col-sm-6 mb-3">
-                    <label class="form-label font-weight-bold small text-muted text-uppercase">Hết hạn vào lúc</label>
-                    <input class="form-control" name="expires_at" type="datetime-local" title="Hết hạn" value="{{ old('expires_at') }}">
-                </div>
+                @endforeach
             </div>
+            <div class="studio-form-actions d-flex justify-content-end pt-3 border-top"><button class="btn btn-primary" type="submit"><i class="fa-solid fa-plus" aria-hidden="true"></i> Tạo mã ưu đãi</button></div>
+        </form>
+    </details>
 
-            <div class="mt-2 text-right">
-                <button class="btn btn-primary px-4 py-2 font-weight-bold" type="submit" style="border-radius: 8px;">
-                    <i class="fa-solid fa-plus mr-1"></i> Tạo mã ưu đãi
-                </button>
+    <div class="admin-card">
+        <h2 class="h5 font-weight-bold mb-4">Danh sách mã ưu đãi</h2>
+        <form class="studio-filter-bar mb-3" method="GET" action="{{ route('admin.coupons.index') }}">
+            <div class="form-row align-items-end">
+                <div class="col-md-6 mb-2"><label for="coupon-search" class="small font-weight-bold">Tìm mã</label><input id="coupon-search" class="form-control" type="search" name="search" maxlength="30" value="{{ request('search') }}" placeholder="Nhập mã ưu đãi…"></div>
+                <div class="col-md-3 mb-2"><label for="coupon-status" class="small font-weight-bold">Trạng thái bật / tắt</label><select id="coupon-status" name="status" class="form-control"><option value="">Tất cả mã</option><option value="active" @selected(request('status') === 'active')>Đang bật</option><option value="inactive" @selected(request('status') === 'inactive')>Đã tắt</option></select></div>
+                <div class="col-md-3 mb-2 d-flex gap-2"><button class="btn btn-primary" type="submit">Lọc mã</button>@if(request()->filled('search') || request()->filled('status'))<a href="{{ route('admin.coupons.index') }}" class="btn btn-outline-secondary">Xóa lọc</a>@endif</div>
             </div>
         </form>
-    </div>
-
-    {{-- Danh sách mã ưu đãi --}}
-    <div class="admin-card">
-        <h5 class="font-weight-bold mb-3" style="color: #0f172a;">
-            <i class="fa-solid fa-list-check text-primary mr-2"></i> Danh sách mã ưu đãi đã phát hành
-        </h5>
-
+        <p class="studio-result-count text-muted small">{{ number_format($coupons->total()) }} mã ưu đãi · Lượt dùng tính theo đơn chưa hủy.</p>
         <div class="table-responsive">
-            <table class="table table-hover table-admin align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th width="140">Mã voucher</th>
-                        <th width="150">Mức giảm</th>
-                        <th>Đơn tối thiểu</th>
-                        <th>Đã dùng / Giới hạn</th>
-                        <th width="130" class="text-center">Trạng thái</th>
-                        <th width="100" class="text-center">Thao tác</th>
-                    </tr>
-                </thead>
+            <table class="table table-hover table-admin mb-0">
+                <thead><tr><th scope="col">Mã ưu đãi</th><th scope="col">Mức giảm</th><th scope="col">Đơn tối thiểu</th><th scope="col">Đã dùng / Giới hạn</th><th scope="col">Thời gian áp dụng (UTC)</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr></thead>
                 <tbody>
-                    @forelse($coupons as $coupon)
-                        <tr>
-                            <td>
-                                <span class="badge badge-light border text-primary font-weight-bold px-3 py-2" style="font-family: monospace; font-size: 0.95rem; letter-spacing: 0.5px;">
-                                    {{ $coupon->code }}
-                                </span>
-                            </td>
-                            <td>
-                                @if($coupon->type === 'percent')
-                                    <span class="badge badge-warning text-dark px-2 py-1 font-weight-bold">
-                                        Giảm {{ $coupon->value }}%
-                                    </span>
-                                @else
-                                    <span class="badge badge-success px-2 py-1 font-weight-bold">
-                                        -{{ number_format($coupon->value, 0, ',', '.') }}₫
-                                    </span>
-                                @endif
-                            </td>
-                            <td>
-                                <span class="text-dark font-weight-500">
-                                    {{ $coupon->minimum_order > 0 ? number_format($coupon->minimum_order, 0, ',', '.') . '₫' : 'Không giới hạn' }}
-                                </span>
-                            </td>
-                            <td class="text-muted small">
-                                <strong>{{ $coupon->used_count ?? 0 }}</strong> / {{ $coupon->usage_limit ? $coupon->usage_limit . ' lượt' : '∞' }}
-                            </td>
-                            <td class="text-center">
-                                @if($coupon->is_active)
-                                    <span class="badge-active"><i class="fa-solid fa-circle mr-1" style="font-size:0.5rem;"></i> Đang bật</span>
-                                @else
-                                    <span class="badge-inactive"><i class="fa-solid fa-circle mr-1" style="font-size:0.5rem;"></i> Đã tắt</span>
-                                @endif
-                            </td>
-                            <td class="text-center">
-                                <form method="POST" action="{{ route('admin.coupons.toggle', $coupon) }}" class="d-inline">
-                                    @csrf
-                                    @if($coupon->is_active)
-                                        <button class="btn btn-outline-secondary btn-sm px-3" type="submit" title="Tắt mã này">
-                                            <i class="fa-solid fa-power-off mr-1"></i> Tắt
-                                        </button>
-                                    @else
-                                        <button class="btn btn-outline-success btn-sm px-3" type="submit" title="Kích hoạt lại">
-                                            <i class="fa-solid fa-play mr-1"></i> Bật
-                                        </button>
-                                    @endif
-                                </form>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
-                                <i class="fa-solid fa-ticket-simple mb-2" style="font-size: 2rem; color: #cbd5e1; display: block;"></i>
-                                Chưa có mã ưu đãi nào được tạo.
-                            </td>
-                        </tr>
-                    @endforelse
+                @forelse($coupons as $coupon)
+                    @php
+                        $statusLabel = 'Có hiệu lực';
+                        $statusClass = 'badge-active';
+                        if (!$coupon->is_active) { $statusLabel = 'Đã tắt'; $statusClass = 'badge-inactive'; }
+                        elseif ($coupon->expires_at && $coupon->expires_at->isPast()) { $statusLabel = 'Đã hết hạn'; $statusClass = 'badge-inactive'; }
+                        elseif ($coupon->starts_at && $coupon->starts_at->isFuture()) { $statusLabel = 'Chưa tới ngày'; $statusClass = 'badge-inactive'; }
+                        elseif ($coupon->usage_limit !== null && $coupon->used_count >= $coupon->usage_limit) { $statusLabel = 'Hết lượt dùng'; $statusClass = 'badge-inactive'; }
+                    @endphp
+                    <tr>
+                        <td><strong>{{ $coupon->code }}</strong></td>
+                        <td class="font-weight-bold">{{ $coupon->type === 'percent' ? $coupon->value.'%' : number_format($coupon->value, 0, ',', '.').'₫' }}</td>
+                        <td>{{ $coupon->minimum_order > 0 ? number_format($coupon->minimum_order, 0, ',', '.').'₫' : 'Không yêu cầu' }}</td>
+                        <td><strong>{{ number_format($coupon->used_count) }}</strong> / {{ $coupon->usage_limit !== null ? number_format($coupon->usage_limit).' lượt' : 'Không giới hạn' }}</td>
+                        <td><small class="d-block">Từ: {{ $coupon->starts_at?->format('H:i d/m/Y') ?? 'Ngay khi tạo' }}</small><small class="d-block text-muted">Đến: {{ $coupon->expires_at?->format('H:i d/m/Y') ?? 'Không hết hạn' }}</small></td>
+                        <td><span class="{{ $statusClass }}">{{ $statusLabel }}</span>@if($coupon->is_active && $statusLabel !== 'Có hiệu lực')<small class="d-block text-muted mt-1">Mã đang bật</small>@endif</td>
+                        <td><form method="POST" action="{{ route('admin.coupons.toggle', $coupon) }}" @if($coupon->is_active) data-confirm="Tắt mã {{ $coupon->code }}? Khách hàng sẽ không thể áp dụng mã này cho đơn mới." @endif>@csrf<button class="btn btn-outline-secondary btn-sm" type="submit" aria-label="{{ $coupon->is_active ? 'Tắt' : 'Bật' }} mã {{ $coupon->code }}">{{ $coupon->is_active ? 'Tắt mã' : 'Bật mã' }}</button></form></td>
+                    </tr>
+                @empty
+                    <tr><td colspan="7" class="studio-empty-state text-center py-5"><i class="fa-solid fa-ticket-simple text-muted mb-3" aria-hidden="true"></i><strong class="d-block">{{ request()->filled('search') || request()->filled('status') ? 'Không tìm thấy mã phù hợp' : 'Chưa có mã ưu đãi' }}</strong><p class="text-muted small mb-0 mt-2">{{ request()->filled('search') || request()->filled('status') ? 'Thử tìm mã khác hoặc xóa bộ lọc.' : 'Mở mục tạo mã ưu đãi ở trên để phát hành ưu đãi đầu tiên.' }}</p></td></tr>
+                @endforelse
                 </tbody>
             </table>
         </div>
-
-        @if($coupons->hasPages())
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4 pt-3 border-top">
-                <div class="text-muted small">
-                    Hiển thị <strong>{{ $coupons->firstItem() }}</strong> - <strong>{{ $coupons->lastItem() }}</strong> trong tổng số <strong>{{ $coupons->total() }}</strong> mã
-                </div>
-                <div>
-                    {{ $coupons->links() }}
-                </div>
-            </div>
-        @endif
+        @if($coupons->total())<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4 pt-3 border-top"><span class="text-muted small">Hiển thị {{ $coupons->firstItem() }}–{{ $coupons->lastItem() }} / {{ $coupons->total() }} mã</span>{{ $coupons->links() }}</div>@endif
     </div>
 </div>
 @endsection

@@ -26,6 +26,9 @@ class ReportController extends Controller
             'gateway' => 'nullable|in:cod,momo,demo',
             'preset' => 'nullable|in:today,yesterday,7days,30days,this_month,last_month,this_year',
             'mode' => 'nullable|in:real,demo',
+        ], [
+            'date_to.after_or_equal' => 'Ngày kết thúc phải từ ngày bắt đầu trở đi.',
+            '*.date_format' => 'Ngày lọc không hợp lệ.',
         ]);
         $preset = $request->get('preset', '');
         $dateFrom = $request->get('date_from');
@@ -54,8 +57,8 @@ class ReportController extends Controller
                     $dateTo = Carbon::today()->toDateString();
                     break;
                 case 'last_month':
-                    $dateFrom = Carbon::today()->subMonth()->startOfMonth()->toDateString();
-                    $dateTo = Carbon::today()->subMonth()->endOfMonth()->toDateString();
+                    $dateFrom = Carbon::today()->startOfMonth()->subMonth()->toDateString();
+                    $dateTo = Carbon::today()->startOfMonth()->subDay()->toDateString();
                     break;
                 case 'this_year':
                     $dateFrom = Carbon::today()->startOfYear()->toDateString();
@@ -84,7 +87,8 @@ class ReportController extends Controller
 
         $query = Order::query()->where('orders.is_demo', ($filters['mode'] ?? 'real') === 'demo')->where('orders.created_at', '<=', now())
             ->where('orders.status', '!=', 'cancelled')
-            ->whereNotIn('orders.shipping_status', ['cancelled', 'return', 'returned'])
+            ->where(fn (Builder $query) => $query->whereNull('orders.shipping_status')
+                ->orWhereNotIn('orders.shipping_status', ['cancelled', 'return', 'returning', 'return_transporting', 'return_sorting', 'returned']))
             ->where(function (Builder $query) use ($paymentStatus) {
                 $query->where($paymentStatus, 'paid')
                     ->orWhere(function (Builder $legacy) {
@@ -115,6 +119,8 @@ class ReportController extends Controller
                             $legacy->where('orders.status', 'cod_paid');
                         } elseif ($g === 'momo') {
                             $legacy->whereIn('orders.status', ['paid', 'paid_momo']);
+                        } else {
+                            $legacy->whereRaw('1 = 0');
                         }
                     });
             });
@@ -126,9 +132,9 @@ class ReportController extends Controller
             $query->whereExists(function ($sub) use ($catId) {
                 $sub->select(DB::raw(1))
                     ->from('order_items')
-                    ->join('products', 'order_items.product_id', '=', 'products.id')
+                    ->join('perfumes', 'order_items.perfume_id', '=', 'perfumes.id')
                     ->whereColumn('order_items.order_id', 'orders.id')
-                    ->where('products.category_id', $catId);
+                    ->where('perfumes.category_id', $catId);
             });
         }
 
@@ -138,18 +144,18 @@ class ReportController extends Controller
     private function categoryRevenue(array $filters = []): Collection
     {
         $query = DB::table('order_items')
-            ->join('products', 'order_items.product_id', '=', 'products.id')
-            ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+            ->join('perfumes', 'order_items.perfume_id', '=', 'perfumes.id')
+            ->leftJoin('categories', 'perfumes.category_id', '=', 'categories.id')
             ->whereIn('order_items.order_id', $this->paidOrders($filters)->select('orders.id'));
 
         if (! empty($filters['category_id'])) {
-            $query->where('products.category_id', $filters['category_id']);
+            $query->where('perfumes.category_id', $filters['category_id']);
         }
 
         return $query
-            ->select('products.category_id', 'categories.name as category_name')
+            ->select('perfumes.category_id', 'categories.name as category_name')
             ->selectRaw('SUM(order_items.price * order_items.quantity) as total_revenue, SUM(order_items.quantity) as total_qty')
-            ->groupBy('products.category_id', 'categories.name')
+            ->groupBy('perfumes.category_id', 'categories.name')
             ->orderByDesc('total_revenue')
             ->get();
     }
@@ -206,7 +212,7 @@ class ReportController extends Controller
         }
         $totalOrders = $totalOrdersQuery->count();
 
-        $totalCustomers = DB::table('users')->where('role', 'user')->count();
+        $totalCustomers = DB::table('users')->whereIn('role', ['user', 'customer'])->count();
         $revenueByDate = $this->dailyRevenue($filters);
         $revenueByMonth = $this->periodRevenue($revenueByDate, 'month');
         $revenueByYear = $this->periodRevenue($revenueByDate, 'year');
@@ -232,17 +238,24 @@ class ReportController extends Controller
         $byMonth = $this->periodRevenue($daily, 'month')->keyBy('month');
         $byYear = $this->periodRevenue($daily, 'year');
 
-        // Dynamic chart range if filtered by date or default to 30 days
-        if (! empty($filters['date_from']) && ! empty($filters['date_to'])) {
-            $startDay = Carbon::parse($filters['date_from'])->startOfDay();
-            $endDay = Carbon::parse($filters['date_to'])->startOfDay();
-            $dayCount = min(90, max(1, $startDay->diffInDays($endDay) + 1));
-        } else {
-            $startDay = Carbon::now()->startOfDay()->subDays(29);
-            $dayCount = 30;
+        // Anchor chart windows to the selected period, including historical and one-sided filters.
+        $endDay = Carbon::parse($filters['date_to'] ?: now()->toDateString())->startOfDay();
+        $startDay = ! empty($filters['date_from'])
+            ? Carbon::parse($filters['date_from'])->startOfDay()
+            : $endDay->copy()->subDays(29);
+        if ($startDay->gt($endDay)) {
+            $endDay = $startDay->copy();
         }
+        $startDay = $startDay->max($endDay->copy()->subDays(89));
+        $dayCount = (int) $startDay->diffInDays($endDay) + 1;
+        $chartDateRange = $startDay->format('d/m/Y').' – '.$endDay->format('d/m/Y');
 
-        $startMonth = Carbon::now()->startOfMonth()->subMonths(11);
+        $endMonth = $endDay->copy()->startOfMonth();
+        $startMonth = ! empty($filters['date_from'])
+            ? Carbon::parse($filters['date_from'])->startOfMonth()->max($endMonth->copy()->subMonths(11))
+            : $endMonth->copy()->subMonths(11);
+        $monthCount = (int) $startMonth->diffInMonths($endMonth) + 1;
+        $chartMonthRange = $startMonth->format('m/Y').' – '.$endMonth->format('m/Y');
 
         $revDateLabels = $revDateData = $revMonthLabels = $revMonthData = [];
 
@@ -252,7 +265,7 @@ class ReportController extends Controller
             $revDateData[] = (float) ($byDate->get($date)?->total_revenue ?? 0);
         }
 
-        for ($i = 0; $i < 12; $i++) {
+        for ($i = 0; $i < $monthCount; $i++) {
             $month = $startMonth->copy()->addMonths($i);
             $revMonthLabels[] = $month->format('m/Y');
             $revMonthData[] = (float) ($byMonth->get($month->format('Y-m'))?->total_revenue ?? 0);
@@ -265,19 +278,22 @@ class ReportController extends Controller
             ->whereColumn('order_id', 'orders.id')->where('status', 'paid')->orderByDesc('id')->limit(1);
 
         $paid = $this->paidOrders($filters)->select('orders.total_price')->selectSub($gateway, 'gateway')
-            ->selectRaw("CASE WHEN orders.status = 'cod_paid' THEN 'cod' ELSE 'momo' END as legacy_gateway");
+            ->selectRaw("CASE WHEN orders.status = 'cod_paid' THEN 'cod' WHEN orders.status IN ('paid', 'paid_momo') THEN 'momo' ELSE 'unknown' END as legacy_gateway");
 
         $methodRevenue = DB::query()->fromSub($paid, 'paid_orders')
             ->selectRaw('COALESCE(gateway, legacy_gateway) as method, SUM(total_price) as revenue')
             ->groupByRaw('COALESCE(gateway, legacy_gateway)')->pluck('revenue', 'method');
 
-        $paymentMethodLabels = ['MoMo', 'COD'];
-        $paymentMethodRevenue = [(float) $methodRevenue->get('momo', 0), (float) $methodRevenue->get('cod', 0)];
+        $gatewayLabels = ['momo' => 'MoMo', 'cod' => 'COD', 'demo' => 'Mô phỏng', 'unknown' => 'Chưa xác định'];
+        $paymentMethodLabels = $methodRevenue->keys()->map(fn ($gateway) => $gatewayLabels[$gateway] ?? 'Khác')->all();
+        $paymentMethodRevenue = $methodRevenue->values()->map(fn ($value) => (float) $value)->all();
+        $hasRevenue = $daily->isNotEmpty();
 
         return view('admin.reports.charts', compact(
             'catLabels', 'catRevenue', 'revDateLabels', 'revDateData',
             'revMonthLabels', 'revMonthData', 'revYearLabels', 'revYearData',
-            'paymentMethodLabels', 'paymentMethodRevenue', 'categoriesList', 'filters'
+            'paymentMethodLabels', 'paymentMethodRevenue', 'categoriesList', 'filters',
+            'chartDateRange', 'chartMonthRange', 'hasRevenue'
         ));
     }
 }

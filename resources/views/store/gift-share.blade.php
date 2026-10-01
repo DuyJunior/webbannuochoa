@@ -33,6 +33,7 @@
                 <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" loading="lazy">
             </div>
             <div class="gift-prod-info">
+                <p class="gift-prod-desc">Đây là thiệp gợi ý mùi hương, chưa phải đơn hàng đã thanh toán.</p>
                 <span class="gift-prod-brand">{{ $perfume->brand }}</span>
                 <h3 class="gift-prod-title">{{ $perfume->name }}</h3>
                 <p class="gift-prod-meta">{{ $perfume->category->name ?? 'Nước hoa' }} · Chai {{ $perfume->volume_ml }}ml · {{ ucfirst($perfume->gender) }}</p>
@@ -44,7 +45,7 @@
                         <input type="hidden" name="quantity" value="1">
                         <input type="hidden" name="addon_gift" value="1">
                         <button type="submit" class="ht-button ht-button-primary ht-button-lg">
-                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Nhận Món Quà & Đặt Giao Về Địa Chỉ Của Bạn
+                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Thêm vào giỏ với gói quà (+50.000₫)
                         </button>
                     </form>
                     <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light">
