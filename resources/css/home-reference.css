@@ -1,0 +1,78 @@
+/* Approved flower composition; the original shared storefront header is retained. */
+.soopi-homepage .bloom-hero{background:#f9f5f1 url('/images/bloom/ivory-silk.webp') center/cover;border-color:#cab5be;scroll-margin-top:124px}
+.soopi-homepage .bloom-ambient{background:linear-gradient(90deg,#fffaf733,transparent 65%);opacity:.55}
+.soopi-homepage .bloom-layout{display:block;position:relative;width:100%;max-width:1920px;height:clamp(620px,58vw,870px);min-height:0}
+.soopi-homepage .bloom-copy{position:absolute;left:3.7%;top:15%;width:55%;max-width:none;padding:0;z-index:3}
+.soopi-homepage .bloom-copy h1{font-size:clamp(65px,6.6vw,116px);line-height:1.04;letter-spacing:-4.5px;color:#23101a;margin:0 0 22px}
+.soopi-homepage .bloom-copy h1 em{font-size:.68em;line-height:1.25;white-space:nowrap;color:#23101a;letter-spacing:-3px}
+.soopi-homepage .bloom-copy p{font:400 clamp(19px,2vw,28px)/1.5 var(--ht-serif);color:#301b26;margin:0}
+.soopi-homepage .bloom-actions{margin-top:26px}
+.soopi-homepage .bloom-button{font:400 19px/1.3 var(--ht-serif);min-height:56px;padding:15px 25px;gap:20px;background:#361c29;border-color:#361c29}
+.soopi-homepage .bloom-art{position:absolute;left:22%;top:-9%;width:87%;height:117%;margin:0;aspect-ratio:auto;outline-offset:-8px}
+.soopi-homepage .bloom-sculpture{inset:0}
+.soopi-homepage .bloom-halo{opacity:.25}
+.soopi-homepage .bloom-shadow{bottom:11%;height:11%;left:24%;right:17%;opacity:.8}
+.soopi-homepage .bloom-art-hint{display:flex;align-items:center;gap:12px;right:12%;top:20%;background:transparent;padding:0;border:0;font:400 13px/1.4 var(--ht-serif);color:#321e29}
+.soopi-homepage .bloom-art-hint[hidden]{display:none}
+.bloom-orbit-icon{font:400 47px/1 Georgia,serif;display:inline-block}
+.soopi-homepage .bloom-art-caption{left:auto;right:11%;bottom:12%;display:block;max-width:180px}
+.soopi-homepage .bloom-art-caption>a{display:block;border:0;border-bottom:1px solid #b8a0ac;background:#fff9f340;padding:0 0 14px;font:400 16px/1.5 var(--ht-serif)}
+.soopi-homepage .bloom-art-caption>a em{display:block;font:400 14px/1.5 var(--ht-serif)}
+.soopi-homepage .bloom-art-caption>a>span{display:none}
+.soopi-homepage .bloom-edition{display:flex;position:absolute;left:4%;bottom:28px;flex-direction:column;align-items:start;gap:13px;margin:0;z-index:4}
+.soopi-homepage .bloom-edition>span:first-child{font:400 13px var(--ht-serif);letter-spacing:.1px;color:#351b29}
+.bloom-edition-line{display:flex;gap:5px}.soopi-homepage .bloom-edition i{width:44px;background:#bba3af}.soopi-homepage .bloom-edition i:first-child{height:2px;background:#432535}
+.soopi-homepage .bloom-tools{bottom:9px;right:3.5%;gap:15px}
+.soopi-homepage .bloom-tools button{font-size:9px;min-height:26px}
+.bloom-scenes{background:#fcf9f6;border-bottom:1px solid #deced6;padding:32px 0 35px}
+.soopi-homepage .bloom-scenes>.store-container{width:calc(100% - 40px);max-width:1720px}
+.bloom-scenes-heading{display:flex;align-items:center;gap:28px;padding:0 25px;margin-bottom:22px}
+.soopi-homepage .bloom-scenes-heading h2{font:400 clamp(30px,3.7vw,57px)/1.2 var(--ht-serif);letter-spacing:-1.9px;color:#2d1723;margin:0}
+.bloom-scenes-heading>span{flex:1;height:1px;background:#a98497;min-width:30px}
+.bloom-scenes-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.bloom-scene{display:block;color:#301b26;min-width:0}
+.bloom-scene-image{overflow:hidden;aspect-ratio:1.16;background:#f6ece8 url('/images/bloom/ivory-silk.webp') center/cover}
+.bloom-scene-image img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.bloom-scene-bud img{object-fit:contain;transform:scale(1.08)}
+.bloom-scene-open img{object-fit:contain;transform:scale(1.18)}
+.bloom-scene:hover .bloom-scene-image img{transform:scale(1.06)}
+.bloom-scene:hover .bloom-scene-bud img{transform:scale(1.13)}
+.bloom-scene:hover .bloom-scene-open img{transform:scale(1.24)}
+.bloom-scene-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 24px 8px}
+.soopi-homepage .bloom-scene-heading h3{font:400 clamp(13px,1.5vw,20px)/1.5 var(--ht-serif);letter-spacing:0;margin:0}
+.bloom-scene-heading>span{display:flex;flex:1;max-width:140px;gap:5px}
+.bloom-scene-heading i{height:1px;background:#b8a0ac;flex:1}
+.bloom-scene-heading i:first-child{height:2px;background:#432535}
+.bloom-scene:nth-child(2) .bloom-scene-heading i:nth-child(2),.bloom-scene:nth-child(3) .bloom-scene-heading i{background:#432535;height:2px}
+.bloom-scene p{font:400 clamp(13px,1.6vw,20px)/1.55 var(--ht-serif);margin:0 24px}
+.soopi-homepage .bloom-moods{background:#fcf9f6 url('/images/bloom/ivory-silk.webp') center/cover}
+.soopi-homepage .bloom-moods-inner{display:grid;grid-template-columns:1fr 2.8fr 1.2fr;gap:30px;padding-block:20px;align-items:center}
+.bloom-material-note{font:400 16px/1.5 var(--ht-serif);margin:0;padding-right:20px;border-right:1px solid #c9b5be;color:#392331}
+.soopi-homepage .bloom-moods-heading{border-left:1px solid #c9b5be;padding-left:28px}
+.soopi-homepage .bloom-moods-heading h2{font:400 clamp(22px,2.3vw,34px)/1.18 var(--ht-serif);letter-spacing:-1.1px;margin:0}
+.soopi-homepage .bloom-mood-options{gap:23px}
+.soopi-homepage .bloom-mood{display:flex;flex-direction:column;align-items:center;gap:0;padding:0 0 8px;text-align:center}
+.soopi-homepage .bloom-mood small,.soopi-homepage .bloom-mood i{display:none}
+.soopi-homepage .bloom-mood strong{font:400 16px/1.4 var(--ht-serif);margin:0}
+.soopi-homepage .bloom-swatch{width:100%;max-width:165px;height:110px;transform:rotate(-6deg);border-radius:0;background:url('/images/bloom/petal-rose.webp') center/contain no-repeat;box-shadow:none}
+.soopi-homepage .bloom-swatch-velvet{filter:brightness(.49) saturate(1.7) hue-rotate(332deg)}
+.soopi-homepage .bloom-swatch-sage{filter:saturate(.22) hue-rotate(80deg)}
+.soopi-homepage .bloom-mood:hover .bloom-swatch,.soopi-homepage .bloom-mood.is-selected .bloom-swatch{transform:rotate(0deg) translateY(-3px)}
+.soopi-homepage .bloom-mood-note{padding-bottom:16px;font-size:10px}
+.soopi-homepage .ht-benefits{border-top:0}
+@media(min-width:1700px){.soopi-homepage .bloom-copy{left:5%;top:18%}.soopi-homepage .bloom-art{left:24%;width:80%;height:128%;top:-16%}}
+@media(max-width:1000px) and (min-width:761px){.soopi-homepage .bloom-copy h1{font-size:66px}.soopi-homepage .bloom-copy h1 em{font-size:.66em}.soopi-homepage .bloom-copy{top:19%;width:60%}.soopi-homepage .bloom-art{left:24%;width:89%}.soopi-homepage .bloom-moods-inner{gap:18px;grid-template-columns:.9fr 2.5fr 1fr}.bloom-material-note{font-size:13px}.soopi-homepage .bloom-moods-heading{padding-left:17px}.bloom-scene-heading{margin-inline:8px}.bloom-scene p{margin-inline:8px}}
+@media(max-width:760px){
+
+
+
+ .soopi-homepage .bloom-hero{scroll-margin-top:168px}.soopi-homepage .bloom-layout{display:block;height:700px;min-height:0;width:100%}
+ .soopi-homepage .bloom-copy{position:absolute;left:5%;top:30px;width:90%;padding:0;max-width:none}.soopi-homepage .bloom-copy h1{font-size:clamp(40px,10.4vw,69px);line-height:1.08;letter-spacing:-2px;margin:0 0 14px}.soopi-homepage .bloom-copy h1 em{font-size:.67em;letter-spacing:-1.5px;line-height:1.4;white-space:nowrap}.soopi-homepage .bloom-copy p{font-size:18px}.soopi-homepage .bloom-actions{margin-top:17px}.soopi-homepage .bloom-button{min-height:44px;font-size:15px;padding:12px 17px;gap:17px}
+ .soopi-homepage .bloom-art{position:absolute;left:-12%;top:220px;width:130%;height:450px;margin:0;aspect-ratio:auto}.soopi-homepage .bloom-sculpture{inset:0}.soopi-homepage .bloom-art-hint{display:none!important}.soopi-homepage .bloom-art-caption{right:14%;bottom:5%;max-width:125px}.soopi-homepage .bloom-art-caption>a{font-size:11px;background:#fffaf799;padding:7px 10px;border-bottom:1px solid #cab3bf}.soopi-homepage .bloom-art-caption>a em{font-size:10px}
+ .soopi-homepage .bloom-edition{display:flex;bottom:30px;left:5%;gap:10px}.soopi-homepage .bloom-edition>span:first-child{font-size:9px}.soopi-homepage .bloom-edition i{width:25px}.soopi-homepage .bloom-tools{left:auto;right:4%;bottom:0;gap:12px}.soopi-homepage .bloom-tools button{font-size:8px;min-height:28px}
+ .bloom-scenes{padding:26px 0}.soopi-homepage .bloom-scenes>.store-container{width:calc(100% - 32px)}.bloom-scenes-heading{padding:0;margin-bottom:20px;gap:15px}.soopi-homepage .bloom-scenes-heading h2{font-size:32px;letter-spacing:-1.3px;max-width:280px}.bloom-scenes-heading>span{min-width:15px}.bloom-scenes-grid{grid-template-columns:1fr;gap:26px}.bloom-scene-image{aspect-ratio:1.25}.bloom-scene-heading{margin:14px 4px 7px}.soopi-homepage .bloom-scene-heading h3{font-size:15px}.bloom-scene-heading>span{max-width:90px}.bloom-scene p{font-size:15px;margin:0 4px}
+ .soopi-homepage .bloom-moods-inner{grid-template-columns:1fr;gap:18px;padding-block:26px 15px}.bloom-material-note{display:none}.soopi-homepage .bloom-moods-heading{grid-row:1;border:0;padding:0}.soopi-homepage .bloom-moods-heading h2{font-size:30px;line-height:1.25}.soopi-homepage .bloom-moods-heading h2 br{display:none}.soopi-homepage .bloom-mood-options{gap:10px;margin-top:0}.soopi-homepage .bloom-mood{gap:0;display:flex}.soopi-homepage .bloom-swatch{height:85px;max-width:120px;margin:0}.soopi-homepage .bloom-mood strong{font-size:14px}.soopi-homepage .bloom-mood-note{gap:8px;font-size:10px}
+ .soopi-homepage .ht-products-section{scroll-margin-top:168px}
+}
+@media(max-width:360px){.soopi-homepage .bloom-layout{height:645px}.soopi-homepage .bloom-art{height:395px;top:220px}.soopi-homepage .bloom-copy h1{font-size:38px}.soopi-homepage .bloom-copy p{font-size:17px}}
+@media(prefers-reduced-motion:reduce){.bloom-scene-image img{transition:none}.soopi-homepage .bloom-swatch{transition:none}}

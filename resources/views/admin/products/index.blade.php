@@ -1,71 +1,25 @@
 @extends('layouts.admin')
-
-@section('title', 'Quản lý sản phẩm')
-@section('page_title', 'Danh sách sản phẩm nước hoa')
-
+@section('title', 'Bộ sưu tập nước hoa')
+@section('page_title', 'Bộ sưu tập nước hoa')
 @section('content')
-{{-- Thống kê nhanh --}}
-<div class="row mb-2">
-    <div class="col-md-4 mb-3">
-        <div class="admin-card py-3 px-4 mb-0" >
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Tổng sản phẩm</div>
-                    <div style="font-size:1.6rem; font-weight:800; color:#0f172a;">{{ $stats['total'] }}</div>
-                </div>
-                <i class="fa-solid fa-boxes-stacked text-primary" style="font-size:1.6rem; opacity:0.8;"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-3">
-        <div class="admin-card py-3 px-4 mb-0" >
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Đang hoạt động</div>
-                    <div style="font-size:1.6rem; font-weight:800; color:#10b981;">{{ $stats['active'] }}</div>
-                </div>
-                <i class="fa-solid fa-circle-check text-success" style="font-size:1.6rem; opacity:0.8;"></i>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4 mb-3">
-        <div class="admin-card py-3 px-4 mb-0" >
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="text-muted" style="font-size:0.8rem; text-transform:uppercase;">Sắp hết hàng (≤5)</div>
-                    <div style="font-size:1.6rem; font-weight:800; color:#ef4444;">{{ $stats['low_stock'] }}</div>
-                </div>
-                <i class="fa-solid fa-triangle-exclamation text-danger" style="font-size:1.6rem; opacity:0.8;"></i>
-            </div>
-        </div>
-    </div>
+<div class="studio-function-metrics">
+    @foreach([
+        ['Tổng sản phẩm', $stats['total'], 'spray-can-sparkles', 'Toàn bộ bộ sưu tập của cửa hàng'],
+        ['Đang mở bán', $stats['active'], 'circle-check', 'Sẵn sàng đón khách trên website'],
+        ['Cần kiểm tra tồn kho', $stats['low_stock'], 'box-open', 'Sản phẩm còn tối đa 5 chai gốc'],
+    ] as [$label, $value, $icon, $note])
+    <div class="studio-function-metric"><div><span>{{ $label }}</span><strong>{{ number_format($value) }}</strong><small>{{ $note }}</small></div><i class="fa-solid fa-{{ $icon }}" aria-hidden="true"></i></div>
+    @endforeach
 </div>
-
-<div class="admin-card">
-    {{-- Header & Search --}}
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4" style="gap: 15px;">
-        <form method="GET" action="{{ route('admin.products.index') }}" class="form-inline flex-grow-1" style="max-width: 450px;">
-            <div class="input-group w-100">
-                <input type="text" name="search" class="form-control" placeholder="Tìm theo tên nước hoa, thương hiệu..." value="{{ request('search') }}">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="fa-solid fa-magnifying-glass"></i> Tìm
-                    </button>
-                    @if(request()->hasAny(['search', 'gender', 'status']))
-                        <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary" title="Đặt lại">
-                            <i class="fa-solid fa-rotate-left"></i>
-                        </a>
-                    @endif
-                </div>
-            </div>
-        </form>
-
-        <a href="{{ route('admin.products.create') }}" class="btn btn-primary px-3 py-2" style="border-radius: 8px;">
-            <i class="fa-solid fa-plus mr-1"></i> Thêm sản phẩm mới
-        </a>
-    </div>
-
-    {{-- Table --}}
+<section class="admin-card studio-directory">
+    <form method="GET" action="{{ route('admin.products.index') }}" class="studio-directory-filters studio-product-filters">
+        <div class="studio-search-field"><label for="product-search">Tìm sản phẩm</label><input id="product-search" class="form-control" type="search" name="search" placeholder="Tên nước hoa, thương hiệu…" value="{{ request('search') }}"></div>
+        <div><label for="product-gender">Dành cho</label><select class="form-control" name="gender" id="product-gender"><option value="">Tất cả</option>@foreach(['nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex'] as $key => $label)<option value="{{ $key }}" @selected(request('gender') === $key)>{{ $label }}</option>@endforeach</select></div>
+        <div><label for="product-status">Trạng thái</label><select class="form-control" name="status" id="product-status"><option value="">Tất cả trạng thái</option><option value="active" @selected(request('status') === 'active')>Đang mở bán</option><option value="inactive" @selected(request('status') === 'inactive')>Tạm ẩn</option></select></div>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter mr-1" aria-hidden="true"></i> Áp dụng</button>
+        @if(request()->anyFilled(['search', 'gender', 'status']))<a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary">Xóa bộ lọc</a>@endif
+    </form>
+    <div class="studio-list-heading"><h3>Bộ sưu tập <span>{{ number_format($products->total()) }}</span></h3><small>Giá bán · Tồn kho · Hiển thị</small></div>
     <div class="table-responsive">
         <table class="table table-hover table-admin studio-product-table">
             <thead>
@@ -163,5 +117,5 @@
             </div>
         </div>
     @endif
-</div>
+</section>
 @endsection

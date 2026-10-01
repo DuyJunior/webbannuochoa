@@ -1,0 +1,67 @@
+/* Journal Olfactif: one editorial surface, with real reading and video links. */
+.soopi-homepage .soopi-journal{--journal-ink:#321b28;--journal-line:#d9c9cf;--journal-muted:#79616c;color:var(--journal-ink);margin:0 auto 72px;padding:28px 0 0;scroll-margin-top:180px}
+.soopi-journal .journal-eyebrow{display:block;font:500 10px/1.7 var(--ht-sans);letter-spacing:2.4px;color:#795269}
+.soopi-journal a{color:inherit;text-decoration:none}
+.soopi-journal a:focus-visible,.soopi-journal summary:focus-visible{outline:2px solid #854d70;outline-offset:6px}
+.journal-heading{display:grid;grid-template-columns:1.55fr 1fr;gap:60px;align-items:end;padding:0 0 32px;border-bottom:1px solid var(--journal-line);margin-bottom:20px}
+.soopi-journal .journal-heading h2{font:400 clamp(42px,5.1vw,79px)/1.07 var(--ht-serif);letter-spacing:-2.5px;margin:18px 0 0;color:var(--journal-ink)}
+.soopi-journal .journal-heading h2 em{font-weight:400}
+.journal-intro{border-left:1px solid var(--journal-line);padding:0 0 0 30px;margin-bottom:6px}
+.journal-intro p{font:400 clamp(18px,1.5vw,23px)/1.5 var(--ht-serif);max-width:380px;margin:0 0 18px}
+.journal-intro a{display:inline-flex;align-items:center;gap:22px;font:400 18px/1.5 var(--ht-serif);padding-bottom:4px;border-bottom:1px solid #9c7b8b}
+.journal-intro a span{transition:transform .25s}.journal-intro a:hover span{transform:translate(3px,-3px)}
+.journal-stories{display:grid;grid-template-columns:1.76fr 1fr;grid-template-rows:1fr 1fr;gap:20px 24px}
+.journal-story{min-width:0;display:grid;position:relative}
+.journal-story-featured{grid-row:1/3;grid-template-rows:1fr auto}
+.journal-photo{position:relative;overflow:hidden;isolation:isolate;width:100%;min-width:0;min-height:0;background:#eee2df}
+.journal-photo:after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,transparent 55%,#26121f2b)}
+.journal-photo img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.65,.3,1);will-change:auto}
+.journal-story-featured .journal-photo{aspect-ratio:1.82}
+.journal-story-featured .journal-photo img{object-position:50% 52%}
+.journal-read{position:absolute;z-index:1;right:20px;bottom:20px;display:flex;gap:15px;align-items:center;color:#fff;font:500 12px/1.5 var(--ht-sans)}
+.journal-read>span:last-child{display:grid;place-items:center;border:1px solid #ffffffb0;width:44px;height:44px;border-radius:50%;background:#ffffff15;backdrop-filter:blur(8px);font-size:23px;transition:background .3s,transform .3s}
+.journal-read>span:first-child{text-shadow:0 1px 8px #321b28b0}
+.journal-story-copy{padding:20px 2px 4px}
+.soopi-journal .journal-story h3{font:400 clamp(25px,2.6vw,39px)/1.2 var(--ht-serif);letter-spacing:-.6px;color:var(--journal-ink);margin:10px 0 7px;overflow-wrap:break-word}
+.journal-story-copy p{font:400 13px/1.7 var(--ht-sans);margin:0;color:var(--journal-muted)}
+.journal-story-side{grid-template-columns:48% 1fr;align-items:stretch;gap:22px;border-bottom:1px solid var(--journal-line);padding-bottom:18px}
+.journal-story-side .journal-photo{min-height:200px}
+.journal-story-side .journal-story-copy{padding:20px 0;align-self:center}
+.soopi-journal .journal-story-side h3{font-size:clamp(25px,2.5vw,37px);line-height:1.2;margin-block:24px 12px}
+.journal-story-side .journal-eyebrow{font-size:9px;letter-spacing:1.8px}
+.journal-story-side .journal-read{left:14px;right:auto;bottom:14px}.journal-story-side .journal-read>span:first-child{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.journal-live{display:grid;grid-template-columns:30% 1fr auto;align-items:center;gap:40px;margin-top:36px;min-height:260px;position:relative;isolation:isolate;background:linear-gradient(110deg,#eedcda,#f8ecec 58%,#f5e5e9);overflow:hidden}
+.journal-live:after{content:'';position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 70% 0,#fff9,transparent 58%);pointer-events:none}
+.journal-live-art{height:100%;min-height:260px;overflow:hidden;position:relative}
+.journal-live-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:45% center}
+.journal-live-copy{padding:32px 0;min-width:0}
+.soopi-journal .journal-live h3{font:400 clamp(28px,3vw,44px)/1.13 var(--ht-serif);letter-spacing:-1px;margin:15px 0;color:var(--journal-ink)}
+.journal-live-copy p{font:400 14px/1.7 var(--ht-sans);color:#745667;max-width:350px;margin:0}
+.journal-live-action{padding-right:36px;min-width:0;text-align:center}
+.journal-live-action a{display:flex;align-items:center;justify-content:center;gap:24px;padding:17px 24px;min-height:54px;background:#361b2b;color:#fff;font:400 19px/1.4 var(--ht-serif);border:1px solid #361b2b;transition:background .25s,box-shadow .25s;white-space:nowrap}
+.journal-live-action a:hover{background:#553045;box-shadow:0 8px 24px #50223625}
+.journal-live-action p{font:400 13px/1.6 var(--ht-serif);color:#745667;margin:13px 0 0}
+.journal-live-status{display:inline-flex;align-items:center;gap:7px;font:500 11px/1.5 var(--ht-sans);color:#923a63;margin-top:14px}.journal-live-status[hidden]{display:none}.journal-live-status i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.journal-video-library{border-block:1px solid var(--journal-line);margin-top:54px;padding:32px 0 0;scroll-margin-top:180px}
+.journal-video-heading{display:flex;justify-content:space-between;align-items:end;gap:32px;margin-bottom:30px}
+.soopi-journal .journal-video-heading h2{font:400 clamp(34px,4vw,58px)/1.12 var(--ht-serif);letter-spacing:-1.5px;margin:14px 0 0;color:var(--journal-ink)}
+.journal-video-heading h2 em{font-weight:400;color:#81556d}.journal-video-intro{border-left:1px solid var(--journal-line);padding-left:28px;margin-bottom:5px;min-width:230px}
+.journal-library-count{display:block;font:500 10px/1.6 var(--ht-sans);letter-spacing:1.5px;color:#795269}.journal-video-intro p{font:400 17px/1.6 var(--ht-serif);margin:10px 0 0;color:var(--journal-muted)}
+.journal-video-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;padding:4px 0 32px}
+.journal-video{min-width:0;display:flex;flex-direction:column;padding-bottom:8px}.journal-video-thumb{position:relative;aspect-ratio:3/4;overflow:hidden;background:#eee4e7;isolation:isolate}
+.journal-video-thumb:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#23142020,transparent 35%,#23142015 60%,#231420ab);pointer-events:none}
+.journal-video-thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.journal-play{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);width:60px;height:60px;display:grid;place-items:center;border:1px solid #ffffffca;background:#ffffff1c;backdrop-filter:blur(8px);border-radius:50%;color:#fff;box-shadow:0 4px 24px #321b281c;transition:background .25s,box-shadow .25s}.journal-play svg{display:block!important}
+.journal-duration{position:absolute;z-index:1;right:15px;top:16px;font:500 11px/1.6 var(--ht-sans);padding:3px 8px;background:#321b286b;color:white}
+.journal-video-number{position:absolute;left:16px;top:15px;z-index:1;font:400 20px/1.4 var(--ht-serif);color:#fff;text-shadow:0 1px 6px #321b28}
+.journal-watch{position:absolute;left:18px;right:18px;bottom:17px;z-index:1;display:flex;align-items:center;justify-content:space-between;color:#fff;font:500 12px/1.5 var(--ht-sans);letter-spacing:.4px}.journal-watch>span{font-size:22px}
+.journal-video:hover .journal-play,.journal-video:focus-visible .journal-play{background:#75495e80;box-shadow:0 0 0 8px #ffffff15}
+.journal-video>.journal-eyebrow{font-size:9px;margin-top:16px;letter-spacing:1.4px}.soopi-journal .journal-video h3{font:400 20px/1.4 var(--ht-serif);margin:6px 0 0;color:var(--journal-ink)}
+.journal-signature{display:flex;align-items:center;gap:22px;color:#80546a;margin:30px 0 0}.journal-signature>span{height:1px;background:var(--journal-line);flex:1}.journal-signature svg{display:block!important;flex:0 0 30px}
+@media(hover:hover) and (pointer:fine){.journal-story:hover .journal-photo img,.journal-story:focus-visible .journal-photo img{transform:scale(1.035)}.journal-story:hover .journal-read>span:last-child{background:#ffffff30;transform:translate(2px,-2px)}.journal-video:hover img{transform:scale(1.025)}}
+@media(min-width:1600px){.journal-live{min-height:295px}.journal-live-art{min-height:295px}}
+@media(max-width:1199px){.journal-heading{gap:35px;grid-template-columns:1.45fr 1fr}.journal-stories{grid-template-columns:1.5fr 1fr;gap:18px}.journal-story-side{gap:14px;grid-template-columns:45% 1fr}.journal-story-side .journal-photo{min-height:185px}.soopi-journal .journal-story-side h3{font-size:27px;margin-block:16px 8px}.journal-story-side .journal-eyebrow{font-size:8px;letter-spacing:1px}.journal-story-side .journal-story-copy p{font-size:12px}.journal-live{gap:26px;grid-template-columns:29% 1fr auto}.journal-live-action{padding-right:25px}.journal-live-action a{font-size:17px;padding:15px 18px;gap:14px}.journal-live-action p{max-width:150px;margin-inline:auto}}
+@media(max-width:950px){.journal-heading{grid-template-columns:1fr;gap:25px}.journal-intro{border:0;padding:0;display:flex;justify-content:space-between;align-items:end;gap:30px}.journal-intro p{font-size:19px;margin:0;max-width:380px}.journal-intro a{flex-shrink:0;font-size:17px}.journal-stories{grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:28px 22px}.journal-story-featured{grid-column:1/-1;grid-row:auto}.journal-story-side{grid-template-columns:1fr;gap:0;padding-bottom:16px}.journal-story-side .journal-photo{aspect-ratio:1.3;min-height:0}.journal-story-side .journal-story-copy{padding:18px 0 0}.soopi-journal .journal-story-side h3{font-size:31px;margin-block:10px 8px}.journal-live{grid-template-columns:34% 1fr;gap:0 30px}.journal-live-art{grid-row:1/3}.journal-live-copy{padding:30px 24px 18px 0}.journal-live-action{justify-self:start;text-align:left;padding:0 24px 28px 0}.journal-live-action p{max-width:none}.journal-live-action a{min-width:200px}.journal-video-grid{gap:16px}.soopi-journal .journal-video h3{font-size:18px}}
+@media(max-width:600px){.soopi-homepage .soopi-journal{padding-top:14px;margin-bottom:42px}.journal-heading{padding-bottom:24px;margin-bottom:16px;gap:21px}.soopi-journal .journal-heading h2{font-size:clamp(34px,8vw,48px);letter-spacing:-1.1px;line-height:1.13;margin-top:12px}.soopi-journal .journal-eyebrow{font-size:9px;letter-spacing:1.6px}.journal-intro{display:block}.journal-intro p{font-size:17px;line-height:1.5;max-width:310px}.journal-intro a{font-size:16px;margin-top:14px;gap:25px}.journal-stories{gap:22px 14px}.journal-story-featured .journal-photo{aspect-ratio:1.25}.journal-story-copy{padding-top:17px}.soopi-journal .journal-story h3{font-size:27px;margin-top:10px;letter-spacing:-.5px}.journal-story-copy p{font-size:12px}.journal-read{right:14px;bottom:14px;font-size:11px;gap:10px}.journal-read>span:last-child{width:38px;height:38px;font-size:21px}.journal-story-side .journal-photo{aspect-ratio:1}.soopi-journal .journal-story-side h3{font-size:24px;line-height:1.22;margin-top:11px}.journal-story-side .journal-eyebrow{font-size:8px;letter-spacing:1px}.journal-story-side .journal-story-copy{padding-top:15px}.journal-story-side .journal-story-copy p{font-size:11px;line-height:1.6}.journal-story-side .journal-read{left:10px;bottom:10px}.journal-live{grid-template-columns:1fr;gap:0;margin-top:25px}.journal-live-art{grid-row:auto;aspect-ratio:1.8;min-height:0;height:auto}.journal-live-art img{object-position:center 55%}.journal-live-copy{padding:25px 24px 20px}.soopi-journal .journal-live h3{font-size:36px;letter-spacing:-1px;margin-block:13px}.journal-live-copy p{font-size:13px}.journal-live-action{padding:0 24px 28px;justify-self:stretch}.journal-live-action a{font-size:19px;justify-content:space-between}.journal-live-action p{text-align:center;font-size:12px;margin-top:12px}.journal-video-library{margin-top:35px;padding-top:26px}.journal-video-heading{display:block;margin-bottom:22px}.soopi-journal .journal-video-heading h2{font-size:36px;letter-spacing:-1px}.journal-video-intro{border:0;padding:0;margin:18px 0 0;min-width:0}.journal-video-intro p{font-size:15px;margin-top:6px}.journal-video-intro p br{display:none}.journal-library-count{font-size:9px;letter-spacing:1.2px}.journal-play{width:44px;height:44px}.journal-watch{left:10px;right:10px;bottom:10px;font-size:10px}.journal-video-number{left:10px;top:10px;font-size:16px}.journal-duration{top:10px;right:10px;font-size:9px;padding:2px 5px}.journal-video-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 14px}.soopi-journal .journal-video h3{font-size:17px}.journal-signature{margin-top:24px;gap:18px}}
+@media(prefers-reduced-motion:reduce){.soopi-journal *{transition:none!important}.journal-photo img,.journal-video-thumb img{transform:none!important}}
+.bloom-motion-off .soopi-journal *{transition:none!important}.bloom-motion-off .journal-photo img,.bloom-motion-off .journal-video-thumb img{transform:none!important}

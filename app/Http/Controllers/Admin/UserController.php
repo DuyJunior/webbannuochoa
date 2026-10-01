@@ -14,10 +14,19 @@ class UserController extends Controller
     /**
      * Hiển thị danh sách người dùng.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::orderByDesc('id')->paginate(15);
-        return view('admin.users.index', compact('users'));
+        $request->validate(['search' => ['nullable', 'string', 'max:100'], 'role' => ['nullable', 'in:admin,customer,livestream_staff']]);
+        $users = User::query()
+            ->when($request->filled('search'), function ($query) use ($request) {
+                $term = trim($request->string('search')->toString());
+                $query->where(fn ($q) => $q->where('name', 'like', "%{$term}%")->orWhere('email', 'like', "%{$term}%"));
+            })
+            ->when($request->filled('role'), fn ($query) => $request->input('role') === 'customer'
+                ? $query->whereIn('role', ['user', 'customer']) : $query->where('role', $request->input('role')))
+            ->orderByDesc('id')->paginate(15)->withQueryString();
+        $roleCounts = User::selectRaw('role, count(*) as total')->groupBy('role')->pluck('total', 'role');
+        return view('admin.users.index', compact('users', 'roleCounts'));
     }
 
     /**

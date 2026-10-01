@@ -6,7 +6,7 @@
         'delivering'=>'Đang giao','delivered'=>'Đã giao','return'=>'Chờ hoàn hàng','returning'=>'Đang hoàn hàng',
         'returned'=>'Đã hoàn hàng','return_transporting'=>'Đang chuyển hoàn','return_sorting'=>'Đang phân loại hoàn'];
 @endphp
-<section style="background:#fff;border:1px solid #e7d8c5;border-radius:16px;padding:24px;margin:20px 0">
+<section class="order-history-panel" style="background:#fff;border:1px solid #e7d8c5;border-radius:16px;padding:24px;margin:20px 0">
     <h2 style="font-size:20px;margin-bottom:12px">Lịch sử xử lý đơn hàng</h2>
     @if($order->status === 'pending' && $order->payment_expires_at)
         <p>Hạn thanh toán: <strong>{{ $order->payment_expires_at->format('d/m/Y H:i') }}</strong>. Đơn online chưa thanh toán sẽ tự hủy và hoàn kho khi hết hạn (cần tiến trình lịch chạy).</p>

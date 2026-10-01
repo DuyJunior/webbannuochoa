@@ -5,12 +5,6 @@
 
 @section('content')
 <div class="admin-articles-page">
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-        </div>
-    @endif
 
     <div class="admin-card">
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
@@ -19,7 +13,7 @@
                 <p class="text-muted mb-0 small">Chia sẻ kiến thức chọn mùi, bảo quản và phong cách sử dụng nước hoa</p>
             </div>
             <a href="{{ route('admin.articles.create') }}" class="btn btn-primary px-3 py-2 font-weight-bold" style="border-radius: 8px;">
-                <i class="fa-solid fa-pen-nib mr-1"></i> + Viết bài mới
+                <i class="fa-solid fa-pen-nib mr-1"></i> Viết bài mới
             </a>
         </div>
 

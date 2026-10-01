@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Thông tin người dùng #' . $user->id . ' · Lab 8')
+@section('title', 'Thông tin người dùng #' . $user->id)
 @section('page_title', 'Thông tin người dùng')
 
 @section('content')

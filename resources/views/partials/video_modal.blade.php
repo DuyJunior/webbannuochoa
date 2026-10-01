@@ -7,7 +7,7 @@
         <div class="ht-video-modal-content">
             {{-- Video Player Box --}}
             <div class="ht-video-player-container">
-                <iframe id="htVideoIframe" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="htVideoIframe" title="Video giới thiệu nước hoa" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 <video id="htVideoHtml5" controls style="display:none; width:100%; height:100%; border-radius:12px; background:#000;"></video>
             </div>
 
@@ -254,26 +254,35 @@ document.addEventListener('DOMContentLoaded', function () {
     const perfumeName = document.getElementById('htVideoPerfumeName');
     const perfumePrice = document.getElementById('htVideoPerfumePrice');
     const perfumeLink = document.getElementById('htVideoPerfumeLink');
+    let returnFocus = null;
+    let closeTimer = null;
+    let previousOverflow = '';
 
     window.openBoutiqueVideoModal = function (data) {
         if (!data) return;
+        clearTimeout(closeTimer);
+        if (!modal.classList.contains('is-active')) {
+            returnFocus = document.activeElement;
+            previousOverflow = document.body.style.overflow;
+        }
 
         titleEl.textContent = data.title || 'Video Trải Nghiệm Nước Hoa';
         descEl.textContent = data.desc || '';
-        viewsEl.textContent = (data.views || '1.2K') + ' lượt xem';
+        viewsEl.textContent = (data.views || '0') + ' lượt xem';
 
         // Xử lý player (YouTube vs Direct Video)
         const embedUrl = data.embed || data.url || '';
-        if (embedUrl.endsWith('.mp4') || embedUrl.endsWith('.webm')) {
+        if (/\.(mp4|webm|ogg)(?:[?#]|$)/i.test(embedUrl)) {
             iframe.style.display = 'none';
-            iframe.src = '';
+            iframe.removeAttribute('src');
             html5Video.style.display = 'block';
             html5Video.src = embedUrl;
-            html5Video.play();
+            html5Video.play().catch(() => { /* Native controls remain available when autoplay is blocked. */ });
         } else {
             html5Video.style.display = 'none';
             html5Video.pause();
-            html5Video.src = '';
+            html5Video.removeAttribute('src');
+            html5Video.load();
             iframe.style.display = 'block';
             // Đảm bảo có autoplay
             let src = embedUrl;
@@ -304,6 +313,7 @@ document.addEventListener('DOMContentLoaded', function () {
         requestAnimationFrame(() => {
             modal.classList.add('is-active');
             modal.setAttribute('aria-hidden', 'false');
+            closeBtn.focus();
         });
         document.body.style.overflow = 'hidden';
     };
@@ -311,12 +321,14 @@ document.addEventListener('DOMContentLoaded', function () {
     window.closeBoutiqueVideoModal = function () {
         modal.classList.remove('is-active');
         modal.setAttribute('aria-hidden', 'true');
-        setTimeout(() => {
+        iframe.removeAttribute('src');
+        html5Video.pause();
+        html5Video.removeAttribute('src');
+        html5Video.load();
+        document.body.style.overflow = previousOverflow;
+        returnFocus?.focus();
+        closeTimer = setTimeout(() => {
             modal.style.display = 'none';
-            iframe.src = '';
-            html5Video.pause();
-            html5Video.src = '';
-            document.body.style.overflow = '';
         }, 260);
     };
 
@@ -324,8 +336,19 @@ document.addEventListener('DOMContentLoaded', function () {
     if (closeBtn) closeBtn.addEventListener('click', window.closeBoutiqueVideoModal);
 
     document.addEventListener('keydown', function (e) {
+        const trigger = e.target.closest('.js-open-video');
+        if (trigger && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            trigger.click();
+        }
         if (e.key === 'Escape' && modal.classList.contains('is-active')) {
             window.closeBoutiqueVideoModal();
+        }
+        if (e.key === 'Tab' && modal.classList.contains('is-active')) {
+            const focusable = [...modal.querySelectorAll('button, a[href], iframe, video[controls]')].filter(el => el.getClientRects().length);
+            const first = focusable[0], last = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
         }
     });
 

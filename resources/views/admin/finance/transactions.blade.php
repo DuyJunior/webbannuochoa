@@ -6,7 +6,7 @@
 @endsection
 @section('content')
 <div class="finance-heading">
-    <div><h2>Quản lý giao dịch</h2><p class="finance-muted mb-2">Tra cứu thanh toán và ghi nhận đối soát COD có lịch sử.</p><span class="finance-mode {{ $filters['mode'] === 'demo' ? 'demo' : '' }}">{{ $filters['mode'] === 'demo' ? 'DỮ LIỆU MÔ PHỎNG · DEMO' : 'GIAO DỊCH THỰC' }}</span></div>
+    <div><span class="finance-mode {{ $filters['mode'] === 'demo' ? 'demo' : '' }}">{{ $filters['mode'] === 'demo' ? 'DỮ LIỆU MÔ PHỎNG · DEMO' : 'GIAO DỊCH THỰC' }}</span></div>
     <div class="finance-actions"><a class="btn btn-outline-pink" href="{{ route('admin.finance.index', array_diff_key($filters, ['page' => true])) }}">Tổng quan</a><a class="btn btn-pink" href="{{ route('admin.finance.export', array_diff_key($filters, ['page' => true])) }}"><i class="fa-solid fa-download" aria-hidden="true"></i> Xuất CSV</a></div>
 </div>
 @include('admin.finance._filters', ['filterRoute' => 'admin.finance.transactions'])

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Biểu đồ báo cáo doanh thu · Lab 8')
+@section('title', 'Biểu đồ báo cáo doanh thu')
 @section('page_title', 'Biểu đồ báo cáo doanh thu')
 
 @section('content')
@@ -10,9 +10,6 @@
 </style>
 
 <div class="container-fluid p-0">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="h4 font-weight-bold text-dark mb-0">Biểu đồ báo cáo doanh thu</h2>
-    </div>
 
     {{-- Tabs chuyển đổi: Bảng số liệu / Biểu đồ --}}
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 my-3">
@@ -219,7 +216,8 @@ window.addEventListener('DOMContentLoaded', () => {
     const payLabels = reportData.paymentMethodLabels;
     const payRevenue = reportData.paymentMethodRevenue.map(Number);
 
-    const mk = (el, type, labels, data, label, bgColor = '#db2777') => new Chart(el, {
+    const chartMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.body.classList.contains('studio-motion-off') ? false : { duration: 350 };
+    const mk = (el, type, labels, data, label, bgColor = '#a56385') => new Chart(el, {
         type,
         data: {
             labels,
@@ -228,13 +226,14 @@ window.addEventListener('DOMContentLoaded', () => {
                 data,
                 fill: type === 'line',
                 tension: 0.3,
-                backgroundColor: type === 'line' ? 'rgba(219, 39, 119, 0.1)' : bgColor,
-                borderColor: '#db2777',
+                backgroundColor: type === 'line' ? 'rgba(153, 70, 101, 0.08)' : bgColor,
+                borderColor: type === 'line' ? '#994665' : bgColor,
                 borderWidth: 2,
                 borderRadius: type === 'bar' ? 6 : 0,
             }]
         },
         options: {
+            animation: chartMotion,
             responsive: true,
             maintainAspectRatio: false,
             scales: {
@@ -260,16 +259,16 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     if (document.getElementById('categoryRevenueChart')) {
-        mk(document.getElementById('categoryRevenueChart'), 'bar', catLabels, catRevenue, 'Doanh thu (VNĐ)', '#f472b6');
+        mk(document.getElementById('categoryRevenueChart'), 'bar', catLabels, catRevenue, 'Doanh thu (VNĐ)', '#bd8da7');
     }
     if (document.getElementById('revenueByDateChart')) {
         mk(document.getElementById('revenueByDateChart'), 'line', revDateLabels, revDateData, 'Doanh thu (VNĐ)');
     }
     if (document.getElementById('revenueByMonthChart')) {
-        mk(document.getElementById('revenueByMonthChart'), 'bar', revMonthLabels, revMonthData, 'Doanh thu (VNĐ)', '#38bdf8');
+        mk(document.getElementById('revenueByMonthChart'), 'bar', revMonthLabels, revMonthData, 'Doanh thu (VNĐ)', '#89738f');
     }
     if (document.getElementById('revenueByYearChart')) {
-        mk(document.getElementById('revenueByYearChart'), 'bar', revYearLabels, revYearData, 'Doanh thu (VNĐ)', '#fbbf24');
+        mk(document.getElementById('revenueByYearChart'), 'bar', revYearLabels, revYearData, 'Doanh thu (VNĐ)', '#bc9c79');
     }
 
     if (document.getElementById('revenueByPaymentMethodChart')) {
@@ -280,12 +279,13 @@ window.addEventListener('DOMContentLoaded', () => {
                 datasets: [{
                     label: 'Doanh thu (VNĐ)',
                     data: payRevenue,
-                    backgroundColor: ['#a21caf', '#10b981'],
+                    backgroundColor: ['#a56385', '#7c9b92', '#8d809f', '#c2a382', '#96a6b8'],
                     borderWidth: 2,
                     borderColor: '#ffffff',
                 }]
             },
             options: {
+                animation: chartMotion,
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {

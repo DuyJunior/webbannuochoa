@@ -5,12 +5,6 @@
 
 @section('content')
 <div class="admin-coupons-page">
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
-            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
-        </div>
-    @endif
 
     @if($errors->any())
         <div class="alert alert-danger alert-dismissible fade show" role="alert">

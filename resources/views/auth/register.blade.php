@@ -4,6 +4,7 @@
 
 @section('content')
 <section class="luxury-auth-section">
+    @include('partials.atelier-auth-art')
     <div class="luxury-auth-card" style="max-width: 500px;">
         <div class="luxury-auth-header">
             <div class="luxury-auth-icon-wrap">

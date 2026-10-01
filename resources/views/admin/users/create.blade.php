@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Thêm người dùng mới · Lab 8')
+@section('title', 'Thêm người dùng mới')
 @section('page_title', 'Thêm người dùng mới')
 
 @section('content')

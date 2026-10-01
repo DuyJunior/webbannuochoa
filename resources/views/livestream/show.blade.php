@@ -81,7 +81,7 @@
                 <span class="ht-live-empty-footnote">✿ Một chút hương, một chút thương.</span>
             </div>
             <div class="ht-live-empty-visual">
-                <img src="{{ asset('images/perfume-hero.jpg') }}" alt="Bộ sưu tập nước hoa và hoa trắng của Soopi" loading="lazy">
+                <img src="{{ asset('images/bloom/flower-open.webp') }}" alt="Chai nước hoa giữa những cánh lụa hồng của Soopi" loading="lazy">
                 <span>THE SOOPI LIVE EDIT</span>
             </div>
         </div>

@@ -1,4 +1,5 @@
 {{-- FLOATING SOCIAL CONTACT BUTTONS --}}
+<details class="bloom-contact-menu"><summary aria-label="Mở các kênh liên hệ" title="Liên hệ Soopi">@include('partials.icon', ['name' => 'phone', 'size' => 20])</summary>
 <div class="ht-social-float" aria-label="Liên hệ nhanh">
     <div class="ht-social-float-inner">
         <a href="https://zalo.me/0123456789" target="_blank" rel="noopener"
@@ -29,6 +30,7 @@
     </div>
 </div>
 
+</details>
 <style>
 /* ── FLOATING SOCIAL BUTTONS ── */
 .ht-social-float {

@@ -385,14 +385,15 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    let currentSize = 3;
-    let selectedSamples = []; // array of objects {id, name, brand, img}
+    let currentSize = {{ $initialSize }};
+    let selectedSamples = {{ Illuminate\Support\Js::from($initialSamples) }};
     const sizeBtns = document.querySelectorAll('.size-btn');
     const boxSlots = document.getElementById('boxSlots');
     const priceDisplay = document.getElementById('boxPriceDisplay');
     const addBoxBtn = document.getElementById('addBoxBtn');
     const inputBoxSize = document.getElementById('inputBoxSize');
     const hiddenInputsWrap = document.getElementById('hiddenInputsWrap');
+    const escapeMarkup = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
 
     function renderBox() {
         boxSlots.innerHTML = '';
@@ -403,9 +404,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (sample) {
                 slot.innerHTML = `
-                    <img src="${sample.img}" alt="${sample.name}" class="slot-filled-img">
-                    <span class="slot-brand">${sample.brand}</span>
-                    <strong class="slot-name">${sample.name}</strong>
+                    <img src="${escapeMarkup(sample.img)}" alt="${escapeMarkup(sample.name)}" class="slot-filled-img">
+                    <span class="slot-brand">${escapeMarkup(sample.brand)}</span>
+                    <strong class="slot-name">${escapeMarkup(sample.name)}</strong>
                     <button type="button" class="remove-sample-btn" data-index="${i}">@include('partials.icon', ['name' => 'close', 'size' => '1em']) Đổi mùi khác</button>
                 `;
             } else {
@@ -509,6 +510,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    sizeBtns.forEach(button => button.classList.toggle('active', Number(button.dataset.size) === currentSize));
+    priceDisplay.textContent = (currentSize === 5 ? 299000 : 199000).toLocaleString('vi-VN') + '₫';
+    inputBoxSize.value = currentSize;
     renderBox();
 });
 </script>

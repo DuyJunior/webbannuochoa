@@ -51,7 +51,7 @@
                 <p class="text-muted mb-0 small">Quản lý các video ngắn shorts trên Trang chủ và video review cận cảnh trên Trang chi tiết sản phẩm</p>
             </div>
             <a href="{{ route('admin.videos.create') }}" class="btn btn-primary px-3 py-2 font-weight-bold" style="border-radius: 8px;">
-                <i class="fa-solid fa-plus mr-1"></i> + Thêm Video Mới
+                <i class="fa-solid fa-plus mr-1"></i> Thêm video mới
             </a>
         </div>
 

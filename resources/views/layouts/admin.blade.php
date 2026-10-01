@@ -409,6 +409,7 @@
     </style>
     @vite(['resources/css/admin-boutique.css', 'resources/js/admin-boutique.js'])
     @yield('styles')
+    @vite('resources/css/admin-polish.css')
 </head>
 <body class="boutique-admin">
     <a class="studio-skip-link" href="#admin-main">Đến nội dung chính</a>
@@ -452,6 +453,10 @@
                 </div>
             </div>
             <div class="topbar-right">
+                <button type="button" class="studio-command-open" aria-label="Tìm chức năng quản trị" aria-haspopup="dialog" aria-controls="studio-command-menu"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Tìm chức năng</span><kbd>Ctrl K</kbd></button>
+                <button type="button" class="studio-motion-toggle" aria-pressed="true" title="Bật hoặc tắt hiệu ứng chuyển động">
+                    <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i><span>Hiệu ứng</span>
+                </button>
                 <div class="topbar-date">
                     <i class="fa-regular fa-calendar"></i>
                     {{ date('d/m/Y') }}
@@ -461,6 +466,7 @@
         </header>
 
         <main class="admin-content-area" id="admin-main" tabindex="-1">
+            @include('partials.admin-workspace-heading')
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
                     <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
@@ -478,6 +484,8 @@
             @yield('content')
         </main>
     </div>
+
+    @include('partials.admin-command-menu')
 
     @if(Auth::user()->role === 'admin')
     {{-- LAB 7: ADMIN LIVECHAT POPUP (PDF Trang 13 - 14 + Chủ động nhắn tin) --}}

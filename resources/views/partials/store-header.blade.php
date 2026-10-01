@@ -66,7 +66,7 @@
                     </div>
                 </details>
                 <a href="{{ route('livestream.show') }}" @class(['active' => request()->routeIs('livestream.show')])>Livestream</a>
-                <a class="ht-nav-quiz" href="{{ route('store.quiz') }}" @class(['active' => request()->routeIs('store.quiz*')])>Chọn hương</a>
+                <a href="{{ route('store.quiz') }}" @class(['ht-nav-quiz', 'active' => request()->routeIs('store.quiz*')])>Chọn hương</a>
                 <a href="{{ route('home', ['sort' => 'sale']) }}#san-pham" @class(['ht-nav-sale', 'active' => request('sort') === 'sale'])>Ưu đãi</a>
                 <details class="ht-category-menu ht-nav-more">
                     <summary @class(['active' => request()->routeIs('store.discovery-box', 'store.scent-of-the-day', 'store.compare', 'store.journal', 'store.article', 'store.faq')])><span class="ht-nav-more-desktop">Khám phá thêm</span><span class="ht-nav-more-mobile">Thêm</span> @include('partials.icon', ['name' => 'chevron', 'size' => 14])</summary>

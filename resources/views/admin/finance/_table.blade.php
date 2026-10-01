@@ -4,7 +4,7 @@
         <span class="finance-muted">{{ $orders->firstItem() ?? 0 }}–{{ $orders->lastItem() ?? 0 }} / {{ number_format($orders->total()) }} đơn</span>
     </div>
     <div class="table-responsive">
-        <table class="table table-admin finance-table mb-0">
+        <table class="table table-admin finance-table mb-0 {{ $canReconcile ? 'finance-reconcile-table' : '' }}">
             <thead><tr><th>Đơn hàng</th><th>Khách hàng</th><th>Giá trị đơn</th><th>Phương thức</th><th>Thanh toán</th><th>Ngày thu tiền</th>@if($canReconcile)<th>Đối soát thủ công</th>@endif</tr></thead>
             <tbody>
                 @forelse($orders as $order)

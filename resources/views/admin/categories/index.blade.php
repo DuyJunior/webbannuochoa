@@ -10,9 +10,6 @@
             <h5 class="font-weight-bold mb-1" style="color: #0f172a;">Tất cả danh mục</h5>
             <p class="text-muted mb-0" style="font-size:0.88rem;">Quản lý và phân loại các dòng nước hoa trong hệ thống</p>
         </div>
-        <a href="{{ route('admin.categories.create') }}" class="btn btn-primary px-3 py-2" style="border-radius: 8px;">
-            <i class="fa-solid fa-plus mr-1"></i> Thêm danh mục mới
-        </a>
     </div>
 
     <div class="table-responsive">

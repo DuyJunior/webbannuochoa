@@ -18,6 +18,7 @@ class ProductController extends Controller
 {
     public function index(Request $request): View
     {
+        $request->validate(['search' => ['nullable', 'string', 'max:100'], 'gender' => ['nullable', 'in:nam,nu,unisex'], 'status' => ['nullable', 'in:active,inactive']]);
         $products = Product::query()
             ->with('category')
             ->when($request->filled('search'), function ($query) use ($request) {

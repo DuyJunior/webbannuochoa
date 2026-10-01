@@ -1,4 +1,9 @@
 {{-- FIRST-VISIT DISCOUNT POPUP (cookie-based, shows once per session) --}}
+@php
+    $welcomeCoupon = \App\Models\Coupon::where('code', 'HATHUFIRST')->first();
+    $showWelcomeCoupon = $welcomeCoupon && $welcomeCoupon->isAvailableFor((int) $welcomeCoupon->minimum_order);
+@endphp
+@if($showWelcomeCoupon)
 <div id="ht-discount-popup" class="ht-popup-overlay" aria-modal="true" role="dialog" aria-labelledby="ht-popup-title" hidden>
     <div class="ht-popup-card">
         <button class="ht-popup-close" id="ht-popup-close" aria-label="Đóng">&times;</button>
@@ -10,15 +15,15 @@
         </div>
         <span class="ht-popup-eyebrow">CHÀO MỪNG BẠN ĐẾN VỚI</span>
         <h2 id="ht-popup-title" class="ht-popup-brand">Soopi<br><em>Perfume Studio</em></h2>
-        <p class="ht-popup-sub">Giảm ngay <strong>10%</strong> đơn hàng đầu tiên của bạn với mã:</p>
+        <p class="ht-popup-sub">Ưu đãi <strong>{{ number_format($welcomeCoupon->value, 0, ',', '.') }}{{ $welcomeCoupon->type === 'percent' ? '%' : '₫' }}</strong> cho đơn hàng đủ điều kiện với mã:</p>
         <div class="ht-popup-code-wrap">
-            <span class="ht-popup-code" id="ht-popup-code">HATHUFIRST</span>
+            <span class="ht-popup-code" id="ht-popup-code">{{ $welcomeCoupon->code }}</span>
             <button class="ht-popup-copy" id="ht-popup-copy" aria-label="Sao chép mã">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
                 <span>Sao chép</span>
             </button>
         </div>
-        <p class="ht-popup-terms">Áp dụng cho đơn từ 300.000₫ · Hết hạn 31/12/{{ date('Y') }}</p>
+        <p class="ht-popup-terms">Áp dụng cho đơn từ {{ number_format($welcomeCoupon->minimum_order, 0, ',', '.') }}₫@if($welcomeCoupon->expires_at) · Hết hạn {{ $welcomeCoupon->expires_at->format('d/m/Y') }} @endif</p>
         <a href="{{ route('home') }}#san-pham" class="ht-popup-cta" id="ht-popup-shop">
             Khám phá ngay →
         </a>
@@ -273,3 +278,4 @@
     });
 })();
 </script>
+@endif

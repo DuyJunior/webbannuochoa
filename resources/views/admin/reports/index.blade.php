@@ -1,13 +1,12 @@
 @extends('layouts.admin')
 
-@section('title', 'Báo cáo doanh thu · Lab 8')
+@section('title', 'Báo cáo doanh thu')
 @section('page_title', 'Báo cáo doanh thu')
 
 @section('content')
 <div class="container-fluid p-0">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <a class="btn btn-outline-secondary" href="{{ route('admin.reports.export', request()->query()) }}">Tải CSV theo bộ lọc</a>
-        <h2 class="h4 font-weight-bold text-dark mb-0">Báo cáo doanh thu</h2>
     </div>
 
     {{-- Tabs chuyển đổi: Bảng số liệu / Biểu đồ --}}

@@ -1,0 +1,98 @@
+/* Approved crystal gallery. All selectors are component-scoped. */
+.soopi-homepage .ht-products-section.scent-gallery{--gallery-ink:#341323;--gallery-muted:#765e6c;--gallery-line:#ded1d8;padding-block:55px 64px;color:var(--gallery-ink);scroll-margin-top:125px}
+.scent-heading{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:40px;align-items:end;padding-bottom:30px}
+.scent-eyebrow{display:block;font:400 11px/1.7 var(--ht-sans);letter-spacing:3px;margin-bottom:24px;color:#674152}
+.soopi-homepage .scent-heading h2{font:400 clamp(48px,5.7vw,87px)/1.05 var(--ht-serif);letter-spacing:-3.7px;margin:0;color:var(--gallery-ink)}
+.scent-heading h2 em{font-weight:400;white-space:nowrap}
+.scent-heading-note{border-bottom:1px solid #9d8490;padding-bottom:20px}
+.scent-heading-note>svg{display:block!important;margin:0 0 27px auto;color:#714d60;stroke-width:1}
+.scent-heading-note p{font:400 18px/1.45 var(--ht-serif);margin:0 0 22px;max-width:310px}
+.scent-heading-note>span{font-size:9px;letter-spacing:2px}
+.scent-result{margin:18px 0 0;font-size:14px;color:var(--gallery-muted)}
+.scent-toolbar{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;border-top:1px solid var(--gallery-line);margin-bottom:0;z-index:4}
+.scent-categories{display:flex;gap:clamp(18px,3vw,52px);align-items:center;min-height:65px}
+.scent-categories>a{font-size:13px;color:#5d3f50;padding:21px 10px 18px;position:relative;white-space:nowrap}
+.scent-categories>a.active:after{content:'';height:1px;position:absolute;bottom:10px;left:0;right:0;background:#482436}
+.scent-categories>a.active{font-weight:600;color:#3e2030}
+.scent-sort{grid-column:2;grid-row:1;position:relative;margin-left:135px;min-width:130px}
+.scent-sort summary,.scent-filters summary{list-style:none;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:12px;min-height:44px;color:#543246}
+.scent-sort summary::-webkit-details-marker,.scent-filters summary::-webkit-details-marker,.scent-more>summary::-webkit-details-marker{display:none}
+.scent-sort summary{justify-content:space-between;padding:8px 9px 8px 23px;border-left:1px solid var(--gallery-line)}
+.scent-sort nav{position:absolute;right:0;top:51px;width:180px;padding:8px;border:1px solid var(--gallery-line);background:#fffcfa;box-shadow:0 10px 30px #41253317;border-radius:9px;z-index:7}
+.scent-sort nav a{display:block;padding:12px;font-size:12px;border-radius:5px}.scent-sort nav a:hover{background:#f6e8ee}
+.scent-filters{grid-column:1/-1;grid-row:2}
+.scent-filters>summary{position:absolute;right:150px;top:11px;padding:8px 15px;min-width:95px}
+.scent-filters[open]>summary{background:#f3e7ed;border-radius:6px}
+.soopi-homepage .scent-filters .ht-filter-form{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:24px;margin-bottom:25px;border-radius:0;border:1px solid var(--gallery-line);background:#fbf5f7}
+.scent-active-filters{display:flex;justify-content:space-between;gap:20px;border-bottom:1px solid var(--gallery-line);padding:0 0 20px;font-size:12px;color:var(--gallery-muted)}
+.scent-active-filters a{text-decoration:underline;text-underline-offset:4px}
+.scent-exhibition{display:grid;grid-template-columns:48% 52%;background:#faf7f5;border-bottom:1px solid var(--gallery-line)}
+.scent-exhibition-solo{grid-template-columns:1fr;max-width:750px;margin-inline:auto}
+.scent-selection{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-content:start;border-left:1px solid var(--gallery-line)}
+.scent-gallery .gallery-piece{position:relative;min-width:0;display:flex;flex-direction:column;background:transparent;overflow:hidden;border:0;border-radius:0;padding:0;box-shadow:none}
+.scent-selection>.gallery-piece:nth-child(odd){border-right:1px solid var(--gallery-line)}
+.scent-selection>.gallery-piece:nth-child(n+3){border-top:1px solid var(--gallery-line)}
+.scent-visual{display:block;position:relative;aspect-ratio:1.13;overflow:hidden;isolation:isolate;background:#faf7f5;perspective:1100px}
+.scent-visual img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 54%;transform:scale(1.025);transition:transform .55s cubic-bezier(.2,.7,.2,1);mask-image:linear-gradient(#000 85%,#0000)}
+.scent-visual:after{content:'';position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at var(--pearl-x,50%) var(--pearl-y,35%),#fff4,transparent 62%);opacity:0;transition:opacity .4s}
+.gallery-piece.is-lit .scent-visual:after{opacity:1}
+.gallery-piece.is-lit .scent-visual img{transform:scale(1.05) rotateX(var(--pearl-rx,0deg)) rotateY(var(--pearl-ry,0deg))}
+.scent-placeholder{display:grid;place-content:center;gap:20px;justify-items:center;height:100%;min-height:200px;background:radial-gradient(ellipse,#f3dfe7,#faf7f5);color:#9c7289;font-size:11px;letter-spacing:2px}
+.scent-heart{position:absolute;right:15px;top:15px;z-index:2;margin:0;border:0;border-radius:50%;background:#fffcfa99;width:42px;height:42px;display:grid;place-items:center;color:#5d384e;backdrop-filter:blur(6px)}
+.scent-heart button{border:0;background:none;color:inherit;padding:0;width:42px;height:42px;display:grid;place-items:center;cursor:pointer;border-radius:50%}
+.scent-heart button[aria-pressed=true] svg{fill:#a36785;stroke:#a36785}
+.scent-heart:hover{background:#f3dfe9}
+.scent-info{position:relative;z-index:1;padding:4px 23px 15px;display:flex;flex-direction:column;flex:1}
+.scent-brand{font:400 10px/1.6 var(--ht-sans);letter-spacing:2px;text-transform:uppercase;color:#5b3549}
+.soopi-homepage .scent-info h3{font:400 clamp(19px,1.7vw,25px)/1.25 var(--ht-serif);letter-spacing:-.5px;margin:7px 0 5px;color:var(--gallery-ink)}
+.scent-info h3 a{color:inherit}.scent-info h3 a:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px}
+.scent-meta{font:400 12px/1.5 var(--ht-sans);color:#765e6c;margin:0 0 13px}.scent-meta>span{padding-inline:3px}
+.scent-purchase{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;min-height:44px}
+.scent-price{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 12px;min-width:0}
+.scent-price strong{font:500 17px/1.5 var(--ht-sans);color:#432236;white-space:nowrap;font-variant-numeric:tabular-nums}
+.scent-price del{font:400 11px/1.5 var(--ht-sans);color:#927989;white-space:nowrap}
+.scent-buy{flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:9px;border:1px solid #9c7c8d;border-radius:50%;height:42px;min-width:42px;padding:0 10px;color:#4d293d;font-size:20px;transition:background .25s,border-radius .25s,color .25s}
+.scent-buy>span:first-child{display:none;font:400 11px/1.4 var(--ht-sans)}
+.scent-buy:hover,.scent-buy:focus-visible{background:#f5dfe9;border-color:#b98aa1;border-radius:24px}
+.scent-buy:hover>span:first-child,.scent-buy:focus-visible>span:first-child{display:inline}
+.scent-gallery .scent-compare{align-self:start;font:400 10px/1.4 var(--ht-sans);min-height:30px;margin:5px 0 0;padding:5px 0;color:#896879;border:0;background:none;cursor:pointer;text-decoration:none}
+.scent-gallery .scent-compare:hover{text-decoration:underline;text-underline-offset:4px}
+.gallery-piece-featured .scent-visual{aspect-ratio:auto;flex:1;min-height:400px}
+.gallery-piece-featured .scent-visual img{position:absolute;inset:0;object-fit:cover;object-position:center 48%;mask-image:linear-gradient(#000 87%,#0000)}
+.gallery-piece-featured .scent-info{flex:0;padding:12px 24px 18px 0}
+.soopi-homepage .gallery-piece-featured h3{font-size:clamp(29px,2.8vw,42px);line-height:1.14;letter-spacing:-1.2px;margin:12px 0}
+.gallery-piece-featured .scent-meta{font-size:14px;margin-bottom:20px}
+.gallery-piece-featured .scent-price strong{font-size:22px}.gallery-piece-featured .scent-price del{font-size:13px}
+.gallery-piece-featured .scent-purchase{gap:18px;flex-wrap:wrap}
+.gallery-piece-featured .scent-buy{border-radius:30px;padding:14px 22px;min-height:49px;height:auto;background:#3d1d30;color:#fff8fb;border-color:#3d1d30;font-size:18px}
+.gallery-piece-featured .scent-buy>span:first-child{display:inline;font-size:12px}
+.gallery-piece-featured .scent-buy:hover{background:#795069}
+.gallery-piece-featured .scent-heart{right:20px;top:20px}
+.scent-concierge{position:relative;display:flex;align-items:center;justify-content:space-between;gap:25px;border-bottom:1px solid var(--gallery-line);padding:25px 0;min-height:116px}
+.scent-concierge>img{width:135px;height:88px;object-fit:contain}
+.scent-concierge>div{flex:1;text-align:center}
+.soopi-homepage .scent-concierge h3{font:400 clamp(23px,2.3vw,33px)/1.25 var(--ht-serif);letter-spacing:-.7px;margin:0 0 8px}
+.scent-concierge p{font-size:12px;color:var(--gallery-muted);margin:0}
+.scent-concierge>a{display:flex;align-items:center;justify-content:center;gap:25px;white-space:nowrap;padding:13px 22px;border:1px solid #9c7c8d;border-radius:28px;font-size:12px}
+.scent-concierge>a:hover{background:#f4e1e9}
+.scent-more>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:22px;cursor:pointer;list-style:none;font-size:12px}
+.scent-more>summary>span:first-child{font-size:9px;letter-spacing:2px;color:#7c5e6d}
+.scent-more-open{display:none}.scent-more[open] .scent-more-open{display:inline}.scent-more[open] .scent-more-closed{display:none}
+.scent-catalog{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--gallery-line);border-bottom:1px solid var(--gallery-line)}
+.scent-catalog>.gallery-piece{background:#faf7f5}.scent-catalog .scent-visual{aspect-ratio:1}
+.scent-empty{grid-column:1/-1;padding:65px 25px;text-align:center;background:#fffcfa}.scent-empty>svg{margin:auto}.scent-empty h3{font-size:28px}.scent-empty p,.scent-empty a{font-size:14px}
+@media(min-width:1200px){.scent-selection>.gallery-piece:nth-child(2) .scent-buy{background:#f5e1e9}}
+@media(max-width:1100px){
+ .scent-heading{grid-template-columns:minmax(0,1fr) 220px;gap:25px}.soopi-homepage .scent-heading h2{font-size:61px;letter-spacing:-2.8px}.scent-heading-note p{font-size:16px}.scent-heading-note>svg{width:45px;height:45px;margin-bottom:18px}
+ .scent-categories{gap:14px}.scent-categories>a{font-size:12px;padding-inline:5px}.scent-exhibition{grid-template-columns:45% 55%}.scent-info{padding-inline:16px}.gallery-piece-featured .scent-info{padding-right:20px}.scent-price strong{font-size:15px}.scent-price del{font-size:10px}.scent-purchase{gap:8px}.scent-buy{width:37px;min-width:37px;height:37px}.scent-buy:hover>span:first-child{display:none}.gallery-piece-featured .scent-buy{width:auto}.gallery-piece-featured .scent-buy>span:first-child{display:inline}.scent-concierge>img{width:90px}.scent-catalog{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:760px){
+ .soopi-homepage .ht-products-section.scent-gallery{padding-block:35px 40px;scroll-margin-top:174px}.scent-heading{display:block;padding-bottom:24px}.scent-eyebrow{font-size:8px;letter-spacing:2px;margin-bottom:18px}.soopi-homepage .scent-heading h2{font-size:clamp(37px,9vw,65px);letter-spacing:-1.8px;line-height:1.12}.scent-heading h2 em{white-space:normal}.scent-heading-note{border:0;padding:0;margin-top:17px;max-width:380px}.scent-heading-note>svg,.scent-heading-note>span{display:none!important}.scent-heading-note p{font:400 12px/1.8 var(--ht-sans);margin:0}.scent-result{font-size:12px}
+ .scent-toolbar{grid-template-columns:1fr 1fr}.scent-categories{grid-column:1/-1;grid-row:1;justify-content:space-between;gap:7px;min-height:53px}.scent-categories>a{font-size:11px;padding:17px 4px}.scent-categories>a.active:after{bottom:5px}.scent-sort{grid-column:2;grid-row:2;margin:0;min-width:0}.scent-sort summary{min-height:47px;padding-left:15px;font-size:12px;border-left:0;justify-content:end;gap:15px}.scent-sort nav{top:45px}
+ .scent-filters{grid-row:3}.scent-filters>summary{left:0;right:auto;top:56px;padding:8px 5px;min-height:40px;font-size:12px}.soopi-homepage .scent-filters .ht-filter-form{grid-template-columns:1fr 1fr;padding:17px;gap:14px}.scent-filters .ht-filter-form button{grid-column:1/-1}.scent-active-filters{padding-block:10px;font-size:11px}
+ .scent-exhibition{grid-template-columns:1fr}.gallery-piece-featured .scent-visual{aspect-ratio:1;min-height:0;flex:auto}.gallery-piece-featured .scent-visual img{object-fit:cover;object-position:center 45%}.gallery-piece-featured .scent-info{padding:8px 4px 20px}.soopi-homepage .gallery-piece-featured h3{font-size:34px;letter-spacing:-1px}.gallery-piece-featured .scent-meta{font-size:12px;margin-bottom:14px}.gallery-piece-featured .scent-price strong{font-size:20px}.gallery-piece-featured .scent-purchase{gap:15px}.gallery-piece-featured .scent-buy{padding:12px 19px;min-height:46px}.gallery-piece-featured .scent-buy>span:first-child{font-size:12px}
+ .scent-selection{border-left:0;border-top:1px solid var(--gallery-line)}.scent-visual{aspect-ratio:1}.scent-info{padding:7px 10px 12px}.scent-brand{font-size:8px;letter-spacing:1.2px}.soopi-homepage .scent-info h3{font-size:19px;min-height:47px;line-height:1.25;letter-spacing:-.4px}.soopi-homepage .gallery-piece-featured h3{font-size:34px;min-height:0}.scent-meta{font-size:10px;margin-bottom:10px}.scent-heart{top:5px;right:5px;width:36px;height:36px}.scent-heart button{width:36px;height:36px}.scent-heart svg{width:18px;height:18px}.scent-purchase{align-items:center;flex-wrap:wrap;gap:8px}.scent-price{gap:1px 7px}.scent-price strong{font-size:14px}.scent-price del{font-size:10px}.scent-buy{width:auto;border-radius:24px;min-height:36px;height:auto;padding:7px 10px;font-size:14px}.scent-buy>span:first-child,.scent-buy:hover>span:first-child{display:inline;font-size:9px}.scent-gallery .scent-compare{font-size:9px;min-height:30px;margin-top:4px}
+ .scent-concierge{padding-block:24px;display:grid;grid-template-columns:65px 1fr;gap:15px}.scent-concierge>img{width:65px;height:75px;grid-row:1/3}.scent-concierge>div{text-align:left}.soopi-homepage .scent-concierge h3{font-size:24px;letter-spacing:-.5px}.scent-concierge p{font-size:11px;line-height:1.7}.scent-concierge>a{grid-column:2;justify-self:start;padding:10px 16px;font-size:11px;gap:18px}.scent-more>summary{padding-block:20px;font-size:11px;justify-content:center}.scent-more>summary>span:first-child{display:none}.scent-catalog{grid-template-columns:repeat(2,minmax(0,1fr))}.scent-empty{padding:40px 15px}
+ .soopi-homepage .ht-compare-bar{bottom:130px;border-radius:12px;max-width:calc(100% - 24px)}
+}
+@media(prefers-reduced-motion:reduce){.scent-gallery *{transition:none!important}.gallery-piece.is-lit .scent-visual img{transform:none}.scent-visual:after{display:none}}

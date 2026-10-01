@@ -24,9 +24,11 @@ class StoreExperienceController extends Controller
             'style' => 'nullable|in:hoa,go,vanilla,tuoi,am',
             'occasion' => 'nullable|in:hang-ngay,hen-ho,tiec',
             'gender' => 'nullable|in:nam,nu,unisex',
+            'max_price' => 'nullable|integer|min:0|max:1000000000',
         ]);
         $recommended = count($data) ? ScentFinder::recommendations(
-            Perfume::where('is_active', true)->get(),
+            Perfume::where('is_active', true)
+                ->when($request->filled('max_price'), fn ($q) => $q->whereRaw('COALESCE(sale_price, price) <= ?', [(int) $data['max_price']]))->get(),
             $data['style'] ?? null, $data['occasion'] ?? null, $data['gender'] ?? null
         ) : collect();
 
@@ -111,11 +113,15 @@ class StoreExperienceController extends Controller
     /**
      * Tính năng 2: Hộp thử mùi (Discovery Box) cho khách tự chọn 3-5 mẫu chiết
      */
-    public function discoveryBox(): View
+    public function discoveryBox(Request $request): View
     {
+        $data = $request->validate(['samples' => 'nullable|array|max:5', 'samples.*' => 'integer|distinct', 'size' => 'nullable|in:3,5']);
         $perfumes = Perfume::where('is_active', true)->with('category')->orderBy('brand')->get();
-
-        return view('store.discovery-box', compact('perfumes'));
+        $initialSize = (int) ($data['size'] ?? 3);
+        $initialSamples = $perfumes->whereIn('id', $data['samples'] ?? [])->take($initialSize)->map(fn ($p) => [
+            'id' => $p->id, 'name' => $p->name, 'brand' => $p->brand, 'img' => $p->image_src,
+        ])->values();
+        return view('store.discovery-box', compact('perfumes', 'initialSize', 'initialSamples'));
     }
 
     /**

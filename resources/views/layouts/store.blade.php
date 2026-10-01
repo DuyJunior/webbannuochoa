@@ -58,9 +58,11 @@
     {{-- Load the shared theme before the browser paints the storefront. --}}
     @vite('resources/css/boutique.css')
     <link rel="stylesheet" href="{{ asset('css/store-experience.css') }}">
+    @vite(['resources/css/home-bloom.css', 'resources/css/store-atelier.css'])
+    @stack('page-styles')
 </head>
 
-<body class="store-page boutique-store" style="--ht-auth-image:url('{{ asset('images/products/narciso-musc-noir-rose.jpg') }}')">
+<body class="store-page boutique-store soopi-store @yield('body_class')" style="--ht-auth-image:url('{{ asset('images/bloom/silk-atelier.webp') }}')">
     @include('partials.store-header')
     <main class="public-main" id="main-content" tabindex="-1">
         @if(session('success') && !request()->routeIs('login'))<div class="store-container public-flash" role="status">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ session('success') }}</div>@endif

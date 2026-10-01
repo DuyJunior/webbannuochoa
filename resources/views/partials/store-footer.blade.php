@@ -1,4 +1,11 @@
 <footer class="ht-footer">
+    <div class="atelier-footer-invitation">
+        <div class="store-container">
+            <span class="ht-eyebrow">SOOPI / L'ART DU PARFUM</span>
+            <h2>Một chút hương.<br><em>Một chút thương.</em></h2>
+            <a class="ht-text-link" href="{{ route('store.finder') }}">Tìm dấu hương của riêng bạn @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a>
+        </div>
+    </div>
     <div class="store-container ht-footer-grid">
         <div class="ht-footer-about">
             <a class="ht-brand" href="{{ route('home') }}"><span class="ht-brand-name">Soopi<span>PERFUME STUDIO</span></span></a>

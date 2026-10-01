@@ -3,7 +3,6 @@
 @section('title', 'Chi tiết đơn hàng #' . $order->id . ' · Soopi')
 
 @section('content')
-@include('partials.order-timeline')
 <div class="order-detail-page">
     <div class="store-container">
         {{-- Breadcrumb --}}
@@ -31,6 +30,8 @@
                 @endif
             </div>
         </div>
+
+        @include('partials.order-timeline')
 
         {{-- Trạng thái vận chuyển GHN Timeline --}}
         @php

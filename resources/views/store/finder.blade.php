@@ -15,9 +15,10 @@
         <label>Gợi ý dành cho
             <select name="gender"><option value="">Mọi người</option><option value="nu" @selected(request('gender') === 'nu')>Nữ</option><option value="nam" @selected(request('gender') === 'nam')>Nam</option><option value="unisex" @selected(request('gender') === 'unisex')>Unisex</option></select>
         </label>
+        <label>Ngân sách tối đa (₫)<input type="number" name="max_price" min="0" max="1000000000" value="{{ request('max_price') }}" placeholder="Không giới hạn"></label>
         <button class="ht-button" type="submit">Xem gợi ý →</button>
     </form>
-    @if(request()->hasAny(['style','occasion','gender']))
+    @if(request()->hasAny(['style','occasion','gender','max_price']))
         <div class="ht-section-heading"><div><span class="ht-eyebrow">DÀNH CHO BẠN</span><h2>Những mùi hương phù hợp</h2></div></div>
         <div class="ht-feature-grid">
             @forelse($recommended as $perfume)
