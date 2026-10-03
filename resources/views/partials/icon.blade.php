@@ -41,6 +41,8 @@
 @case('vial') <path d="M8 2h8m-7 0v12l-5 6a1 1 0 0 0 1 2h14a1 1 0 0 0 1-2l-5-6V2M7 17h10"/> @break
 @case('drop') <path d="M12 2S5 10 5 15a7 7 0 0 0 14 0c0-5-7-13-7-13Z"/> @break
 @case('pen') <path d="m15 3 6 6-11 11-7 1 1-7Zm-9 13 2 2M13 5l6 6"/> @break
+@case('eye') <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/> @break
+@case('trash') <path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/> @break
 @case('scale') <path d="M12 3v18m-5 0h10M3 7h18M6 7l-4 8h8Zm12 0-4 8h8Z"/> @break
 @case('wheel') <circle cx="12" cy="11" r="8"/><circle cx="12" cy="11" r="2"/><path d="M12 3v6m0 4v6M4 11h6m4 0h6M6.3 5.3l4.3 4.3m2.8 2.8 4.3 4.3M6.3 16.7l4.3-4.3m2.8-2.8 4.3-4.3M9 19l-2 3m8-3 2 3"/> @break
 @case('party') <path d="m9 8 7 7-13 6Zm7-12v3m2 2h3M13 7l2-3m4 7 3-1M5 15l4 4"/><circle cx="20" cy="4" r="1"/> @break

@@ -16,7 +16,7 @@
     margin-bottom: 56px;
 }
 .ht-faq-page > header h1 {
-    font: 400 clamp(36px, 5vw, 56px) Georgia, serif;
+    font: 400 clamp(36px, 5vw, 56px) var(--ht-serif);
     color: #3b2c34;
     margin: 14px 0 16px;
 }
@@ -139,7 +139,7 @@
     text-align: center;
 }
 .ht-faq-cta h2 {
-    font: 400 28px Georgia, serif;
+    font: 400 28px var(--ht-serif);
     color: #3d2f37;
     margin: 12px 0 10px;
 }

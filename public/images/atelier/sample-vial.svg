@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="360" viewBox="0 0 140 360" fill="none">
+  <defs>
+    <linearGradient id="glass" x1="33" y1="175" x2="108" y2="177" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ead1ce" stop-opacity=".42"/><stop offset=".07" stop-color="#fffaf2" stop-opacity=".95"/><stop offset=".19" stop-color="#fff7e8" stop-opacity=".3"/><stop offset=".42" stop-color="#fae8d9" stop-opacity=".1"/><stop offset=".73" stop-color="#f5d7c1" stop-opacity=".29"/><stop offset=".89" stop-color="#fffaf4" stop-opacity=".76"/><stop offset="1" stop-color="#bea4a7" stop-opacity=".45"/>
+    </linearGradient>
+    <linearGradient id="liquid" x1="37" y1="243" x2="102" y2="316" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8d6b2" stop-opacity=".68"/><stop offset=".58" stop-color="#d7a174" stop-opacity=".34"/><stop offset="1" stop-color="#fff0d9" stop-opacity=".68"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="34" y1="32" x2="107" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#34212d"/><stop offset=".08" stop-color="#745463"/><stop offset=".2" stop-color="#583c4a"/><stop offset=".52" stop-color="#2a1b25"/><stop offset=".83" stop-color="#3f2935"/><stop offset=".93" stop-color="#906c7b"/><stop offset="1" stop-color="#3c2833"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="34" y1="87" x2="105" y2="87" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#a18476"/><stop offset=".12" stop-color="#f9ead6"/><stop offset=".29" stop-color="#c8ad97"/><stop offset=".5" stop-color="#e9d6bd"/><stop offset=".75" stop-color="#9d8172"/><stop offset=".9" stop-color="#fff5e3"/><stop offset="1" stop-color="#c0a38d"/>
+    </linearGradient>
+    <linearGradient id="base" x1="39" y1="315" x2="99" y2="330" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fffbf4" stop-opacity=".85"/><stop offset=".4" stop-color="#d2b0a9" stop-opacity=".35"/><stop offset=".72" stop-color="#fff6e4" stop-opacity=".78"/><stop offset="1" stop-color="#a48a8d" stop-opacity=".6"/>
+    </linearGradient>
+    <radialGradient id="shadow"><stop stop-color="#09060b" stop-opacity=".65"/><stop offset="1" stop-color="#09060b" stop-opacity="0"/></radialGradient>
+  </defs>
+  <ellipse cx="72" cy="343" rx="60" ry="12" fill="url(#shadow)"/>
+  <path d="M48 85H92V99C92 105 104 109 104 122V315C104 328 95 334 70 334C45 334 36 328 36 315V122C36 109 48 105 48 99V85Z" fill="url(#glass)" stroke="#f5e7dd" stroke-opacity=".62" stroke-width="1.2"/>
+  <path d="M42 244C59 248 81 248 98 244V314C98 323 90 326 70 326C50 326 42 323 42 314V244Z" fill="url(#liquid)"/>
+  <ellipse cx="70" cy="244" rx="28" ry="3.2" fill="#f9d6b4" fill-opacity=".32" stroke="#f8e5cf" stroke-opacity=".3"/>
+  <path d="M72 108L75 318" stroke="#fff7e8" stroke-opacity=".32" stroke-width="2.2"/>
+  <path d="M43 128V309" stroke="#fff9ee" stroke-opacity=".74" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M47 125V292" stroke="#fffef5" stroke-opacity=".16" stroke-width="3" stroke-linecap="round"/>
+  <path d="M99 132V309" stroke="#fff8ed" stroke-opacity=".36" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M39 315C46 324 94 324 101 315V319C97 333 43 333 39 319V315Z" fill="url(#base)"/>
+  <ellipse cx="70" cy="322" rx="26" ry="4" stroke="#fff7eb" stroke-opacity=".38"/>
+  <rect x="34" y="27" width="72" height="65" rx="5" fill="url(#cap)" stroke="#bc97a5" stroke-opacity=".55"/>
+  <ellipse cx="70" cy="29" rx="34" ry="5" fill="#725363" stroke="#b0909d" stroke-opacity=".6"/>
+  <ellipse cx="70" cy="28.5" rx="28" ry="2.3" fill="#4d3442"/>
+  <path d="M39 36V79" stroke="#d9b4c2" stroke-opacity=".33" stroke-linecap="round"/>
+  <path d="M101 35V80" stroke="#1e1420" stroke-opacity=".5"/>
+  <rect x="34" y="85" width="72" height="9" rx="1.5" fill="url(#metal)"/>
+  <path d="M35 86H105M36 93H104" stroke="#fff0d6" stroke-opacity=".5" stroke-width=".7"/>
+  <path d="M45 116C59 112 81 112 95 116" stroke="#fff3e5" stroke-opacity=".46"/>
+  <path d="M40 164C58 167 82 167 100 164V249C82 252 58 252 40 249V164Z" fill="#f6eee2"/>
+  <path d="M40 164C58 167 82 167 100 164V249C82 252 58 252 40 249V164Z" stroke="#ddcdbf" stroke-width=".7"/>
+  <path d="M43 168V246M97 168V246" stroke="#fffaf1" stroke-opacity=".8"/>
+</svg>

@@ -67,7 +67,7 @@
     margin-bottom: 40px;
 }
 .ht-share-title {
-    font: 400 clamp(26px, 4.5vw, 36px) 'Playfair Display', Georgia, serif;
+    font: 400 clamp(26px, 4.5vw, 36px) 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #2b1f26;
     margin: 12px 0 8px;
 }
@@ -136,7 +136,7 @@
     font-weight: 700;
 }
 .name {
-    font: 600 18px Georgia, serif;
+    font: 600 18px var(--ht-serif);
     margin: 4px 0;
 }
 .name a { color: #2b1f26; text-decoration: none; }

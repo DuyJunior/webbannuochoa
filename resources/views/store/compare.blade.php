@@ -155,7 +155,7 @@
     margin-bottom: 36px;
 }
 .ht-compare-title {
-    font: 400 clamp(28px, 5vw, 40px) 'Playfair Display', Georgia, serif;
+    font: 400 clamp(28px, 5vw, 40px) 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #2b1f26;
     margin: 12px 0 10px;
 }
@@ -176,7 +176,7 @@
 }
 .empty-icon { font-size: 48px; margin-bottom: 12px; }
 .ht-compare-empty h3 {
-    font: 600 22px Georgia, serif;
+    font: 600 22px var(--ht-serif);
     color: #3b2832;
     margin: 0 0 8px;
 }
@@ -234,7 +234,7 @@
     font-weight: 700;
 }
 .col-name {
-    font: 600 20px Georgia, serif;
+    font: 600 20px var(--ht-serif);
     margin: 4px 0 6px;
 }
 .col-name a { color: #2b1f26; text-decoration: none; }

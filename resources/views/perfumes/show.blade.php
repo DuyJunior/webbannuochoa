@@ -795,7 +795,7 @@
         .bundle-item span { display: block; font-size: 11px; color: #715865; margin-top: 4px; }
         .bundle-plus { font-size: 20px; font-weight: 700; color: #be185d; }
         .vial-thumb, .box-thumb { font-size: 36px; height: 90px; display: flex; align-items: center; justify-content: center; }
-        .bundle-info h3 { font: 600 20px Georgia, serif; color: #2b1f26; margin: 0 0 6px; }
+        .bundle-info h3 { font: 600 20px var(--ht-serif); color: #2b1f26; margin: 0 0 6px; }
         .bundle-info p { font-size: 13.5px; color: #664d5a; line-height: 1.5; margin: 0 0 16px; }
         .bundle-pricing { display: flex; align-items: baseline; gap: 10px; margin-bottom: 16px; }
         .bundle-price { font-size: 24px; font-weight: 700; color: #be185d; }
@@ -902,7 +902,7 @@
             padding: 3px 8px;
             border-radius: 6px;
         }
-        .ht-video-card h4 { font: 700 15px Georgia, serif; color: #1e293b; margin: 0 0 6px; line-height: 1.4; }
+        .ht-video-card h4 { font: 700 15px var(--ht-serif); color: #1e293b; margin: 0 0 6px; line-height: 1.4; }
         .ht-video-card:hover h4 { color: #db2777; }
         .ht-video-card p { font-size: 12.5px; color: #64748b; margin: 0; line-height: 1.5; }
 
@@ -944,7 +944,7 @@
             color: #be185d;
         }
         .modal-icon { font-size: 36px; margin-bottom: 8px; }
-        .ht-popup-modal h3 { font: 600 20px Georgia, serif; color: #2b1f26; margin: 0 0 6px; }
+        .ht-popup-modal h3 { font: 600 20px var(--ht-serif); color: #2b1f26; margin: 0 0 6px; }
         .ht-popup-modal p { font-size: 13.5px; color: #6d5b64; margin: 0 0 18px; line-height: 1.5; }
         .occasion-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; }
         .occ-radio {

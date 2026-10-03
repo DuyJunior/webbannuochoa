@@ -7,7 +7,7 @@
 .ht-live-follow-stage video,.ht-live-follow-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:contain}
 .ht-live-follow-stage p{color:#fff;font-size:12px;text-align:center;line-height:1.5;padding:18px;margin:0}
 .ht-live-follow-bottom{padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.ht-live-follow-bottom strong{font:400 16px/1.2 Georgia,serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ht-live-follow-bottom strong{font:400 16px/1.2 var(--ht-serif);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .ht-live-follow-bottom div{display:flex;gap:6px;flex:none}
 .ht-live-follow-bottom a,.ht-live-follow-bottom button{border:1px solid #e4bfce;border-radius:99px;padding:6px 10px;background:#fff6f9;color:#9d3c60;text-decoration:none;font-size:10px;font-weight:800;white-space:nowrap;cursor:pointer}
 @media(max-width:640px){.ht-live-follow{right:10px;bottom:10px;width:min(300px,calc(100vw - 20px))}.ht-live-follow-bottom{padding:10px}.ht-live-follow-bottom strong{font-size:14px}}

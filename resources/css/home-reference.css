@@ -15,7 +15,7 @@
 .soopi-homepage .bloom-shadow{bottom:11%;height:11%;left:24%;right:17%;opacity:.8}
 .soopi-homepage .bloom-art-hint{display:flex;align-items:center;gap:12px;right:12%;top:20%;background:transparent;padding:0;border:0;font:400 13px/1.4 var(--ht-serif);color:#321e29}
 .soopi-homepage .bloom-art-hint[hidden]{display:none}
-.bloom-orbit-icon{font:400 47px/1 Georgia,serif;display:inline-block}
+.bloom-orbit-icon{font:400 47px/1 var(--ht-serif);display:inline-block}
 .soopi-homepage .bloom-art-caption{left:auto;right:11%;bottom:12%;display:block;max-width:180px}
 .soopi-homepage .bloom-art-caption>a{display:block;border:0;border-bottom:1px solid #b8a0ac;background:#fff9f340;padding:0 0 14px;font:400 16px/1.5 var(--ht-serif)}
 .soopi-homepage .bloom-art-caption>a em{display:block;font:400 14px/1.5 var(--ht-serif)}

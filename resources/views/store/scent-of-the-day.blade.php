@@ -204,7 +204,7 @@
     position: relative;
 }
 .quote-text {
-    font: italic 15.5px Georgia, serif;
+    font: italic 15.5px var(--ht-serif);
     color: #553e4c;
     margin: 0 0 6px;
     line-height: 1.5;
@@ -222,7 +222,7 @@
     font-weight: 700;
 }
 .sotd-title {
-    font: 600 clamp(24px, 4vw, 36px) 'Playfair Display', Georgia, serif;
+    font: 600 clamp(24px, 4vw, 36px) 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #2b1f26;
     margin: 4px 0 6px;
 }
@@ -232,7 +232,7 @@
     margin-bottom: 18px;
 }
 .sotd-story h3 {
-    font: 600 16px Georgia, serif;
+    font: 600 16px var(--ht-serif);
     color: #3b2832;
     margin: 0 0 6px;
 }

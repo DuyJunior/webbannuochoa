@@ -25,31 +25,6 @@ if (form) {
     const tray = form.querySelector('[data-sample-tray]');
     const status = form.querySelector('[data-sample-status]');
     const available = picks.filter(input => !input.disabled);
-    const workbench = form.querySelector('.sample-workbench');
-    let stickyFrame = 0;
-    let disposed = false;
-    function updateStickyFit() {
-        stickyFrame = 0;
-        if (!workbench || disposed) return;
-        const bounds = workbench.getBoundingClientRect();
-        const scale = workbench.offsetHeight ? bounds.height / workbench.offsetHeight : 1;
-        const top = (parseFloat(getComputedStyle(workbench).top) || 108) * scale;
-        const height = window.visualViewport?.height || window.innerHeight;
-        workbench.dataset.stickyFit = String(window.innerWidth > 900 && bounds.height + top + 24 <= height);
-    }
-    function scheduleStickyFit() {
-        if (!disposed && !stickyFrame) stickyFrame = requestAnimationFrame(updateStickyFit);
-    }
-    const workbenchObserver = workbench && typeof ResizeObserver === 'function' ? new ResizeObserver(scheduleStickyFit) : null;
-    workbenchObserver?.observe(workbench);
-    window.addEventListener('resize', scheduleStickyFit, { passive: true });
-    window.visualViewport?.addEventListener('resize', scheduleStickyFit, { passive: true });
-    document.fonts?.ready.then(scheduleStickyFit);
-    window.addEventListener('pageshow', scheduleStickyFit);
-    window.addEventListener('pagehide', event => {
-        cancelAnimationFrame(stickyFrame); stickyFrame = 0;
-        if (!event.persisted) { disposed = true; workbenchObserver?.disconnect(); }
-    });
     const capacity = () => Number(sizes.find(input => input.checked)?.value || 3);
     let selection = available.filter(input => input.checked).slice(0, capacity());
     let previouslyShown = new Set();
@@ -61,23 +36,27 @@ if (form) {
         for (let i = 0; i < limit; i++) {
             const slot = document.createElement('div'); slot.className = 'sample-slot';
             const sample = samples[i];
+            const vial = document.createElement('span'); vial.className = 'sample-vial'; vial.setAttribute('aria-hidden', 'true');
+            const img = document.createElement('img'); img.alt = ''; img.src = form.dataset.vialSrc; img.width = 140; img.height = 360;
+            const label = document.createElement('span'); label.className = 'sample-vial-label';
+            const brand = document.createElement('b'); brand.textContent = 'SOOPI';
+            const number = document.createElement('small'); number.textContent = String(i + 1).padStart(2, '0');
+            const volume = document.createElement('span'); volume.textContent = '5 ML';
+            label.append(brand, number, volume); vial.append(img, label);
+            const name = document.createElement('span'); name.className = 'sample-slot-name';
+            name.textContent = sample?.dataset.sampleName || 'Mùi hương ' + String(i + 1).padStart(2, '0');
+            name.title = name.textContent;
+            slot.append(vial, name);
             if (sample) {
                 slot.classList.add('is-filled');
                 if (!previouslyShown.has(sample.value)) slot.classList.add('is-arriving');
-                const number = document.createElement('small'); number.className = 'sample-slot-number'; number.textContent = String(i + 1).padStart(2, '0');
-                const img = document.createElement('img'); img.alt = ''; if (sample.dataset.sampleImg) img.src = sample.dataset.sampleImg;
-                else img.hidden = true;
-                const name = document.createElement('span'); name.className = 'sample-slot-name'; name.textContent = sample.dataset.sampleName; name.title = sample.dataset.sampleName;
                 const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = '×'; remove.setAttribute('aria-label', 'Bỏ ' + sample.dataset.sampleName);
                 remove.addEventListener('click', () => {
                     selection = selection.filter(item => item !== sample);
                     render();
                     sample.focus({ preventScroll: true });
                 });
-                slot.append(number, img, name, remove);
-            } else {
-                const vial = document.createElement('i'); vial.setAttribute('aria-hidden', 'true');
-                const text = document.createElement('span'); text.textContent = 'Mẫu ' + String(i + 1).padStart(2, '0'); slot.append(vial, text);
+                slot.append(remove);
             }
             tray.append(slot);
         }
@@ -97,7 +76,7 @@ if (form) {
         form.querySelector('[data-sample-progress]').style.width = `${samples.length / limit * 100}%`;
         status.textContent = message || (available.length ? `${samples.length}/${limit} mẫu đã chọn` : 'Chưa có mẫu để thêm vào hộp');
         form.querySelector('.sample-complete > span').textContent = samples.length === limit ? `Xem lại hộp ${limit} mẫu` : samples.length ? `Tiếp tục với ${samples.length} mẫu đã chọn` : 'Xem toàn bộ mẫu hương';
-        scheduleStickyFit();
+
     }
     picks.forEach(input => input.addEventListener('change', () => {
         if (input.disabled) return;

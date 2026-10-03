@@ -111,16 +111,16 @@
     transform: rotate(6deg);
 }
 .to-label {
-    font: italic 15px Georgia, serif;
+    font: italic 15px var(--ht-serif);
     color: #8b6b7a;
 }
 .recipient-name {
-    font: 600 clamp(24px, 4vw, 34px) 'Playfair Display', Georgia, serif;
+    font: 600 clamp(24px, 4vw, 34px) 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #3b2832;
     margin: 4px 0 16px;
 }
 .letter-message {
-    font: italic 17px Georgia, serif;
+    font: italic 17px var(--ht-serif);
     color: #4a3540;
     line-height: 1.7;
     margin: 0 0 24px;
@@ -133,12 +133,12 @@
     text-align: right;
 }
 .from-label {
-    font: italic 14px Georgia, serif;
+    font: italic 14px var(--ht-serif);
     color: #8b6b7a;
     display: block;
 }
 .sender-name {
-    font: 600 20px 'Playfair Display', Georgia, serif;
+    font: 600 20px 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #c2476a;
     display: block;
 }
@@ -174,7 +174,7 @@
     font-weight: 700;
 }
 .gift-prod-title {
-    font: 600 clamp(22px, 3.5vw, 28px) Georgia, serif;
+    font: 600 clamp(22px, 3.5vw, 28px) var(--ht-serif);
     color: #2b1f26;
     margin: 4px 0 6px;
 }
@@ -201,7 +201,7 @@
     border-top: 1px solid #f8e8ee;
 }
 .ht-gift-create-own h3 {
-    font: 600 18px Georgia, serif;
+    font: 600 18px var(--ht-serif);
     color: #3b2832;
     margin: 0 0 6px;
 }

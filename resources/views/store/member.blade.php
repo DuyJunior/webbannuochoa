@@ -131,7 +131,7 @@
     margin-bottom: 36px;
 }
 .ht-member-title {
-    font: 400 clamp(28px, 5vw, 40px) 'Playfair Display', Georgia, serif;
+    font: 400 clamp(28px, 5vw, 40px) 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #2b1f26;
     margin: 12px 0 10px;
 }
@@ -294,7 +294,7 @@
 }
 .section-title {
     text-align: center;
-    font: 600 24px Georgia, serif;
+    font: 600 24px var(--ht-serif);
     color: #2b1f26;
     margin: 0 0 6px;
 }
@@ -348,7 +348,7 @@
     margin-bottom: 8px;
 }
 .card-head h3 {
-    font: 600 18px Georgia, serif;
+    font: 600 18px var(--ht-serif);
     margin: 0 0 4px;
     color: #2b1f26;
 }

@@ -175,7 +175,7 @@
     transform: rotate(90deg) scale(1.08);
 }
 .spin-card-header h2 {
-    font: 600 clamp(18px, 3.5vw, 22px) 'Playfair Display', Georgia, serif;
+    font: 600 clamp(18px, 3.5vw, 22px) 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #2b1f26;
     margin: 2px 0 3px;
 }
@@ -259,7 +259,7 @@
     margin-bottom: 2px;
 }
 .spin-result-box h3 {
-    font: 600 18px 'Playfair Display', Georgia, serif;
+    font: 600 18px 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #be185d;
     margin: 4px 0 4px;
 }

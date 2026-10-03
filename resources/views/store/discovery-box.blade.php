@@ -109,7 +109,7 @@
     margin-bottom: 30px;
 }
 .ht-discovery-title {
-    font: 400 clamp(28px, 5vw, 42px) 'Playfair Display', Georgia, serif;
+    font: 400 clamp(28px, 5vw, 42px) 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #2b1f26;
     margin: 12px 0 10px;
 }
@@ -301,7 +301,7 @@
     gap: 16px;
 }
 .picker-header h2 {
-    font: 600 24px Georgia, serif;
+    font: 600 24px var(--ht-serif);
     color: #2b1f26;
     margin: 0 0 6px;
 }
@@ -367,7 +367,7 @@
     font-weight: 700;
 }
 .card-name {
-    font: 600 16px Georgia, serif;
+    font: 600 16px var(--ht-serif);
     color: #2b1f26;
     margin: 3px 0 4px;
 }

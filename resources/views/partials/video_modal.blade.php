@@ -145,7 +145,7 @@
     font-weight: 600;
 }
 .ht-video-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-size: 1.35rem;
     font-weight: 700;
     color: #1e1b18;

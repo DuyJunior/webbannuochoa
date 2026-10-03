@@ -111,7 +111,7 @@
     gap: 20px;
 }
 .ht-wardrobe-title {
-    font: 400 clamp(26px, 4.5vw, 38px) 'Playfair Display', Georgia, serif;
+    font: 400 clamp(26px, 4.5vw, 38px) 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #2b1f26;
     margin: 10px 0 8px;
 }
@@ -167,7 +167,7 @@
     margin-bottom: 14px;
 }
 .ht-wardrobe-empty h3 {
-    font: 600 22px Georgia, serif;
+    font: 600 22px var(--ht-serif);
     color: #3b2832;
     margin: 0 0 8px;
 }
@@ -233,7 +233,7 @@
     font-weight: 700;
 }
 .card-name {
-    font: 600 18px Georgia, serif;
+    font: 600 18px var(--ht-serif);
     margin: 4px 0;
 }
 .card-name a {

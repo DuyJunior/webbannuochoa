@@ -301,7 +301,7 @@
     margin-bottom: 36px;
 }
 .ht-quiz-title {
-    font: 400 clamp(28px, 5vw, 42px) 'Playfair Display', Georgia, serif;
+    font: 400 clamp(28px, 5vw, 42px) 'Playfair Display', 'Soopi Serif', Georgia, serif;
     color: #2b1f26;
     margin: 12px 0 10px;
 }
@@ -371,7 +371,7 @@
     margin-bottom: 6px;
 }
 .ht-quiz-step-header h2 {
-    font: 600 clamp(20px, 3.5vw, 26px) Georgia, serif;
+    font: 600 clamp(20px, 3.5vw, 26px) var(--ht-serif);
     color: #33242c;
     margin: 0;
 }
@@ -474,7 +474,7 @@
     margin-bottom: 12px;
 }
 .ht-quiz-result-hero h2 {
-    font: 600 clamp(24px, 4vw, 32px) Georgia, serif;
+    font: 600 clamp(24px, 4vw, 32px) var(--ht-serif);
     color: #36222c;
     margin: 0 0 10px;
 }
@@ -564,7 +564,7 @@
     font-weight: 700;
 }
 .item-title {
-    font: 600 20px Georgia, serif;
+    font: 600 20px var(--ht-serif);
     margin: 4px 0 6px;
 }
 .item-title a {

@@ -156,11 +156,11 @@
                             </td>
                             <td>
                                 @if($video->placement === 'home')
-                                    <span class="badge badge-info" style="font-size: 11px; padding: 4px 8px;">@include('partials.icon', ['name' => 'home', 'size' => '1em']) Trang chủ</span>
+                                    <span class="studio-placement-badge">@include('partials.icon', ['name' => 'home', 'size' => '1em']) Trang chủ</span>
                                 @elseif($video->placement === 'product')
-                                    <span class="badge badge-warning text-dark" style="font-size: 11px; padding: 4px 8px;">@include('partials.icon', ['name' => 'bottle', 'size' => '1em']) Trang SP</span>
+                                    <span class="studio-placement-badge">@include('partials.icon', ['name' => 'bottle', 'size' => '1em']) Trang SP</span>
                                 @else
-                                    <span class="badge badge-primary" style="font-size: 11px; padding: 4px 8px; background: #8b5cf6;">@include('partials.icon', ['name' => 'globe', 'size' => '1em']) Toàn sàn</span>
+                                    <span class="studio-placement-badge">@include('partials.icon', ['name' => 'globe', 'size' => '1em']) Toàn sàn</span>
                                 @endif
                             </td>
                             <td class="text-center font-weight-bold" style="color: #334155; font-size: 0.9rem;">

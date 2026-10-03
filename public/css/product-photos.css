@@ -8,7 +8,7 @@
 }
 .soopi-store.soopi-interior .luxury-gallery-column.has-shop-photos { position: static; }
 .shop-photo-heading > span { font-size: 10px; font-weight: 700; letter-spacing: .14em; color: #80656c; }
-.shop-photo-heading h2 { margin: 6px 0 8px; font-family: Georgia, serif; font-size: 24px; line-height: 1.25; }
+.shop-photo-heading h2 { margin: 6px 0 8px; font-family: var(--ht-serif); font-size: 24px; line-height: 1.25; }
 .shop-photo-intro { margin: 0 0 16px; font-size: 13px; line-height: 1.65; }
 .shop-photo-feature { margin: 0; }
 .shop-photo-feature > a { display: block; border-radius: 12px; overflow: hidden; background: #fff; }

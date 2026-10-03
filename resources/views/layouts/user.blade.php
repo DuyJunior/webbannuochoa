@@ -31,7 +31,7 @@
             height: 44px;
             border: 1.5px solid #e8728a;
             border-radius: 6px;
-            font-family: 'Playfair Display', Georgia, serif;
+            font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
             font-size: 22px;
             font-weight: bold;
             color: #c94d68;

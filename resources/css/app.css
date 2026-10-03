@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './font-fallbacks.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -60,7 +61,7 @@ body {
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
 }
-h1,h2,h3 { font-family: 'Playfair Display', Georgia, serif; font-weight: 600; letter-spacing: .02em; }
+h1,h2,h3 { font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif; font-weight: 600; letter-spacing: .02em; }
 a { color: inherit; text-decoration: none; }
 button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
@@ -101,10 +102,10 @@ img { max-width: 100%; }
 .store-brand > span {
     display: grid; width: 48px; height: 48px; place-items: center;
     border: 1px solid var(--pink); border-radius: 4px;
-    font-family: 'Playfair Display', Georgia, serif; font-size: 28px; font-weight: 300;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif; font-size: 28px; font-weight: 300;
     background: var(--pink-pale);
 }
-.store-brand strong { font-family: 'Playfair Display', Georgia, serif; font-size: 26px; font-weight: 600; color: var(--text-bright); letter-spacing: .06em; }
+.store-brand strong { font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif; font-size: 26px; font-weight: 600; color: var(--text-bright); letter-spacing: .06em; }
 .store-brand small { display: block; margin-top: 2px; color: var(--gold); font-family: 'Inter', sans-serif; font-size: 8px; letter-spacing: 3px; text-transform: uppercase; }
 .store-search {
     display: flex; height: 46px;
@@ -582,7 +583,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
 }
 .gifting-title {
     font-size: 1.8rem;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-weight: 600;
     color: var(--text-bright);
     margin-bottom: 10px;
@@ -673,7 +674,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
     content: '\201C';
     position: absolute;
     top: -10px; right: 20px;
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-size: 100px;
     line-height: 1;
     color: var(--pink);
@@ -891,7 +892,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
     box-shadow: 0 4px 14px rgba(201,77,104,.3), inset 0 1px 0 rgba(255,255,255,.3);
 }
 .hero-bottle-text {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-size: 14px; font-weight: 600;
     color: var(--text-mid);
     letter-spacing: 2.5px;
@@ -971,7 +972,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
     color: var(--pink-dark); font-weight: 700;
 }
 .hero-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-size: clamp(52px, 5.5vw, 96px);
     font-weight: 300; line-height: 1.0;
     color: var(--text-bright);
@@ -1196,15 +1197,15 @@ details[open] .cat-caret { transform: rotate(180deg); }
 .store-product-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
 .store-product-card:hover .store-product-image img { transform: scale(1.07); }
 .store-product-image > small, .public-sale-badge { position: absolute; top: 12px; left: 12px; padding: 4px 10px; background: linear-gradient(135deg,var(--pink-dark),var(--rose)); color: #fff; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; border-radius: 30px; }
-.mini-bottle { display: grid; width: 90px; height: 130px; place-items: center; border: 1px solid var(--card-border); background: var(--pink-pale); color: var(--pink); font-size: 28px; font-family: 'Playfair Display', Georgia, serif; border-radius: 4px; }
+.mini-bottle { display: grid; width: 90px; height: 130px; place-items: center; border: 1px solid var(--card-border); background: var(--pink-pale); color: var(--pink); font-size: 28px; font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif; border-radius: 4px; }
 .store-product-info { padding: 18px 16px; }
 .store-product-info > span { color: var(--gold); font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; }
-.store-product-info h3 { min-height: 44px; margin: 8px 0 6px; font-size: 17px; font-weight: 400; color: var(--text-bright); font-family: 'Playfair Display', Georgia, serif; line-height: 1.3; }
+.store-product-info h3 { min-height: 44px; margin: 8px 0 6px; font-size: 17px; font-weight: 400; color: var(--text-bright); font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif; line-height: 1.3; }
 .store-product-info h3 a { transition: color .2s; }
 .store-product-info h3 a:hover { color: var(--gold); }
 .store-product-info p { margin: 0 0 12px; color: var(--text-muted); font-size: 11px; }
 .store-product-info > div { display: flex; align-items: baseline; gap: 8px; }
-.store-product-info > div strong { color: var(--gold); font-size: 19px; font-weight: 700; font-family: 'Playfair Display', Georgia, serif; }
+.store-product-info > div strong { color: var(--gold); font-size: 19px; font-weight: 700; font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif; }
 .store-product-info > div del { color: var(--text-muted); font-size: 12px; }
 .store-product-price { display: flex; align-items: center; gap: 8px; }
 .store-product-price strong, .price { color: var(--gold); }
@@ -1301,7 +1302,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
 .public-product-copy h1 { margin: 8px 0; font-size: 36px; color: var(--text-bright); }
 .public-product-meta { color: var(--text-muted); font-size: 12px; }
 .public-product-price { display: flex; align-items: center; gap: 12px; margin: 20px 0 12px; }
-.public-product-price strong { color: var(--gold); font-size: 30px; font-family: 'Playfair Display', Georgia, serif; }
+.public-product-price strong { color: var(--gold); font-size: 30px; font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif; }
 .public-product-price del { color: var(--text-muted); }
 .public-stock { margin-bottom: 20px; color: var(--green-ok); font-size: 12px; font-weight: bold; }
 .public-stock.low { color: var(--red); }
@@ -1344,7 +1345,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
 .checkout-card h2 { margin: 7px 0 20px; font-size: 22px; color: var(--text-bright); }
 .checkout-total, .checkout-grand-total { display: flex; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--card-border); font-size: 13px; color: var(--text-soft); }
 .checkout-grand-total { margin-bottom: 18px; font-weight: bold; color: var(--text-bright); }
-.checkout-grand-total span:last-child { color: var(--gold); font-size: 18px; font-family: 'Playfair Display', Georgia, serif; }
+.checkout-grand-total span:last-child { color: var(--gold); font-size: 18px; font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif; }
 .checkout-card form { display: grid; gap: 12px; }
 .checkout-card label { display: grid; gap: 5px; font-size: 11px; font-weight: bold; color: var(--text-muted); letter-spacing: .5px; text-transform: uppercase; }
 .checkout-card input:not([type="radio"]):not([type="checkbox"]), .checkout-card textarea { width: 100%; padding: 11px 14px; border: 1px solid var(--card-border); background: var(--pink-soft); color: var(--text-dark); border-radius: 4px; }
@@ -1356,7 +1357,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
 /* ── FOOTER ── */
 .store-footer { padding: 60px 0 30px; background: var(--pink-soft); border-top: 1px solid var(--card-border); text-align: center; position: relative; overflow: hidden; }
 .store-footer::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 200px; height: 1px; background: linear-gradient(90deg,transparent,var(--pink),transparent); }
-.store-footer strong { font-family: 'Playfair Display', Georgia, serif; font-size: 36px; font-weight: 300; color: var(--text-dark); letter-spacing: .1em; display: block; margin-bottom: 10px; }
+.store-footer strong { font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif; font-size: 36px; font-weight: 300; color: var(--text-dark); letter-spacing: .1em; display: block; margin-bottom: 10px; }
 .store-footer p { margin: 0 0 6px; color: var(--text-soft); font-size: 12px; letter-spacing: .5px; }
 
 @media (max-width: 900px) {
@@ -2277,7 +2278,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
     box-shadow: 0 8px 20px rgba(232, 114, 138, 0.18);
 }
 .luxury-auth-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-size: 32px;
     font-weight: 700;
     color: var(--text-dark);
@@ -2470,7 +2471,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
     margin-bottom: 4px;
 }
 .store-section-heading > div h2 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-size: 32px;
     font-weight: 700;
     color: var(--text-dark);
@@ -2617,7 +2618,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
     color: var(--pink-dark);
 }
 .scent-card__name {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-size: 20px;
     font-weight: 700;
     color: var(--text-dark);
@@ -2730,7 +2731,7 @@ details[open] .cat-caret { transform: rotate(180deg); }
     margin-bottom: 6px;
 }
 .gifting-title {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-size: 32px;
     font-weight: 700;
     color: var(--text-dark);
@@ -2888,6 +2889,5 @@ details[open] .cat-caret { transform: rotate(180deg); }
     color: var(--pink-dark);
     margin-top: auto;
 }
-
 
 

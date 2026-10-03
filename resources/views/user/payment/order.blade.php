@@ -201,7 +201,7 @@
     text-transform: uppercase;
 }
 .orders-page-header h1 {
-    font-family: 'Playfair Display', Georgia, serif;
+    font-family: 'Playfair Display', 'Soopi Serif', Georgia, serif;
     font-size: 2.2rem;
     font-weight: 600;
     color: #1f2937;
