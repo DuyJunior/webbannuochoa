@@ -27,7 +27,9 @@ class VideoController extends Controller
                 $keyword = trim((string) $request->input('search'));
                 $query->where(function ($q) use ($keyword) {
                     $q->where('title', 'like', "%{$keyword}%")
+                        ->orWhere('title_en', 'like', "%{$keyword}%")
                         ->orWhere('description', 'like', "%{$keyword}%")
+                        ->orWhere('description_en', 'like', "%{$keyword}%")
                         ->orWhereHas('perfume', fn ($pq) => $pq->where('name', 'like', "%{$keyword}%"));
                 });
             })
@@ -127,6 +129,7 @@ class VideoController extends Controller
     {
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
+            'title_en' => ['nullable', 'string', 'max:255'],
             'video_url' => ['bail', 'required', 'string', 'max:2048', new SafeVideoUrl],
             'perfume_id' => ['nullable', 'exists:perfumes,id'],
             'thumbnail_url' => ['nullable', 'string', 'max:2048'],
@@ -134,6 +137,7 @@ class VideoController extends Controller
             'duration' => ['nullable', 'string', 'max:20'],
             'views_count' => ['nullable', 'integer', 'min:0', 'max:4294967295'],
             'description' => ['nullable', 'string', 'max:2000'],
+            'description_en' => ['nullable', 'string', 'max:2000'],
             'placement' => ['required', 'in:home,product,all'],
             'sort_order' => ['nullable', 'integer', 'between:-2147483648,2147483647'],
             'is_active' => ['nullable', 'boolean'],

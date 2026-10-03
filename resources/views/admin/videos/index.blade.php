@@ -120,7 +120,7 @@
                         <tr>
                             <td>
                                 <div class="position-relative" style="width: 80px; height: 100px; border-radius: 8px; overflow: hidden; background: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                    <img src="{{ $video->thumbnail_src }}" alt="{{ $video->title }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.88;">
+                                    <img src="{{ $video->thumbnail_src }}" alt="{{ $video->localized_title }}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.88;">
                                     <span style="position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.75); color: #fff; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 4px;">
                                         {{ $video->duration ?: '0:45' }}
                                     </span>
@@ -130,16 +130,16 @@
                                 </div>
                             </td>
                             <td>
-                                <strong style="color: #0f172a; font-size: 0.92rem; display: block; line-height: 1.4;">{{ $video->title }}</strong>
-                                @if($video->description)
-                                    <p class="text-muted small mb-1 text-truncate" style="max-width: 260px;">{{ $video->description }}</p>
+                                <strong style="color: #0f172a; font-size: 0.92rem; display: block; line-height: 1.4;">{{ $video->localized_title }}</strong>
+                                @if($video->localized_description)
+                                    <p class="text-muted small mb-1 text-truncate" style="max-width: 260px;">{{ $video->localized_description }}</p>
                                 @endif
                                 @php
                                     $remoteVideo = filter_var($video->video_url, FILTER_VALIDATE_URL) && in_array(strtolower((string) parse_url($video->video_url, PHP_URL_SCHEME)), ['http', 'https'], true);
                                     $localVideo = preg_match('~^/?(?:videos|storage|images)/[a-zA-Z0-9/._-]+\.(?:mp4|webm|ogg)$~i', $video->video_url) && !str_contains($video->video_url, '..');
                                 @endphp
                                 @if($remoteVideo || $localVideo)
-                                    <a href="{{ $remoteVideo ? $video->video_url : asset(ltrim($video->video_url, '/')) }}" target="_blank" rel="noopener noreferrer" class="small font-weight-bold d-inline-block" aria-label="Mở video {{ $video->title }} trong tab mới"><i class="fa-solid fa-arrow-up-right-from-square mr-1" aria-hidden="true"></i> {{ __('Mở video') }}</a>
+                                    <a href="{{ $remoteVideo ? $video->video_url : asset(ltrim($video->video_url, '/')) }}" target="_blank" rel="noopener noreferrer" class="small font-weight-bold d-inline-block" aria-label="Mở video {{ $video->localized_title }} trong tab mới"><i class="fa-solid fa-arrow-up-right-from-square mr-1" aria-hidden="true"></i> {{ __('Mở video') }}</a>
                                 @else
                                     <span class="small text-danger">{{ __('Cần cập nhật liên kết video') }}</span>
                                 @endif
@@ -169,7 +169,7 @@
                             <td class="text-center">
                                 <form method="POST" action="{{ route('admin.videos.toggle', $video) }}" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent" title="{{ __('Bấm để bật/tắt') }}" aria-label="{{ $video->is_active ? 'Ẩn' : 'Hiển thị' }} video {{ $video->title }}">
+                                    <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent" title="{{ __('Bấm để bật/tắt') }}" aria-label="{{ $video->is_active ? 'Ẩn' : 'Hiển thị' }} video {{ $video->localized_title }}">
                                         @if($video->is_active)
                                             <span class="badge-active cursor-pointer"><i class="fa-solid fa-circle mr-1" style="font-size:0.5rem;"></i> {{ __('Hiển thị') }}</span>
                                         @else
@@ -179,13 +179,13 @@
                                 </form>
                             </td>
                             <td class="text-center">
-                                <a href="{{ route('admin.videos.edit', $video) }}" class="btn btn-outline-warning btn-sm mr-1" title="{{ __('Chỉnh sửa') }}" aria-label="Sửa video {{ $video->title }}">
+                                <a href="{{ route('admin.videos.edit', $video) }}" class="btn btn-outline-warning btn-sm mr-1" title="{{ __('Chỉnh sửa') }}" aria-label="Sửa video {{ $video->localized_title }}">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form class="d-inline" method="POST" action="{{ route('admin.videos.destroy', $video) }}" data-confirm="Xóa video {{ $video->title }}? Video sẽ bị gỡ khỏi danh sách quản lý.">
+                                <form class="d-inline" method="POST" action="{{ route('admin.videos.destroy', $video) }}" data-confirm="Xóa video {{ $video->localized_title }}? Video sẽ bị gỡ khỏi danh sách quản lý.">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="{{ __('Xóa') }}" aria-label="Xóa video {{ $video->title }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="{{ __('Xóa') }}" aria-label="Xóa video {{ $video->localized_title }}">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>

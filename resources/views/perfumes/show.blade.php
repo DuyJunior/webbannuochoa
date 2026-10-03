@@ -151,9 +151,9 @@
                     @endphp
                     @if($showVidUrl)
                     <button type="button" class="tag-pill tag-pill-video js-open-video"
-                        data-title="{{ $directVid ? $directVid->title : 'Review & Cận Cảnh ' . $perfume->name }}"
+                        data-title="{{ $directVid ? $directVid->localized_title : __('Review & Cận Cảnh :name', ['name' => $perfume->name]) }}"
                         data-embed="{{ $showVidUrl }}"
-                        data-desc="{{ $directVid ? $directVid->description : 'Khám phá sản phẩm cùng Soopi.' }}"
+                        data-desc="{{ $directVid ? $directVid->localized_description : __('Khám phá sản phẩm cùng Soopi.') }}"
                         data-views="{{ $directVid ? $directVid->formatted_views : '' }}"
                         data-perfume-name="{{ $perfume->name }}"
                         data-perfume-brand="{{ $perfume->brand }}"
@@ -397,9 +397,9 @@
             <div class="ht-video-grid">
                 @foreach($perfumeVideos as $pvid)
                 <div class="ht-video-card js-open-video"
-                     data-title="{{ $pvid->title }}"
+                     data-title="{{ $pvid->localized_title }}"
                      data-embed="{{ $pvid->embed_url }}"
-                     data-desc="{{ $pvid->description }}"
+                     data-desc="{{ $pvid->localized_description }}"
                      data-views="{{ $pvid->formatted_views }}"
                      data-perfume-name="{{ $pvid->perfume ? $pvid->perfume->name : $perfume->name }}"
                      data-perfume-brand="{{ $pvid->perfume ? $pvid->perfume->brand : $perfume->brand }}"
@@ -410,14 +410,14 @@
                      role="button"
                      tabindex="0">
                     <div class="video-preview-wrap">
-                        <img src="{{ $pvid->thumbnail_src ?: $perfume->image_src }}" alt="{{ $pvid->title }}">
+                        <img src="{{ $pvid->thumbnail_src ?: $perfume->image_src }}" alt="{{ $pvid->localized_title }}">
                         <div class="video-play-overlay">
                             <span class="play-icon">@include('partials.icon', ['name' => 'play', 'size' => '1em'])</span>
                             <span class="video-duration">{{ $pvid->duration ?: '0:45' }}</span>
                         </div>
                     </div>
-                    <h4>{{ $pvid->title }}</h4>
-                    <p>{{ $pvid->description ?: __('Chuyên gia mùi hương của Soopi đánh giá chi tiết độ lưu hương thực tế trên da.') }}</p>
+                    <h4>{{ $pvid->localized_title }}</h4>
+                    <p>{{ $pvid->localized_description ?: __('Chuyên gia mùi hương của Soopi đánh giá chi tiết độ lưu hương thực tế trên da.') }}</p>
                 </div>
                 @endforeach
             </div>

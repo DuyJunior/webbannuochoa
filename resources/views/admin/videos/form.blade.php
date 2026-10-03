@@ -81,6 +81,20 @@
                 <textarea id="video-description" name="description" rows="4" maxlength="2000" class="form-control @error('description') is-invalid @enderror" placeholder="{{ __('Cảm nhận về các nốt hương và trải nghiệm sử dụng…') }}" @error('description') aria-invalid="true" aria-describedby="video-description-error" @enderror>{{ old('description', $video->description) }}</textarea>
                 @error('description')<div id="video-description-error" class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
+            <fieldset class="p-3 mb-4 border rounded" aria-describedby="video-english-hint">
+                <legend class="h6 px-2 w-auto">{{ __('Nội dung tiếng Anh') }}</legend>
+                <p id="video-english-hint" class="small text-muted">{{ __('Hiển thị khi khách chọn English. Để trống sẽ dùng bản dịch có sẵn; nếu chưa có bản dịch, website giữ nội dung tiếng Việt.') }}</p>
+                <div class="form-group">
+                    <label for="video-title-en" class="font-weight-bold small">{{ __('Tiêu đề tiếng Anh') }}</label>
+                    <input id="video-title-en" name="title_en" type="text" lang="en" maxlength="255" class="form-control @error('title_en') is-invalid @enderror" value="{{ old('title_en', $video->title_en) }}" @error('title_en') aria-invalid="true" aria-describedby="video-title-en-error" @enderror>
+                    @error('title_en')<div id="video-title-en-error" class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="form-group mb-0">
+                    <label for="video-description-en" class="font-weight-bold small">{{ __('Mô tả tiếng Anh') }}</label>
+                    <textarea id="video-description-en" name="description_en" rows="3" lang="en" maxlength="2000" class="form-control @error('description_en') is-invalid @enderror" @error('description_en') aria-invalid="true" aria-describedby="video-description-en-error" @enderror>{{ old('description_en', $video->description_en) }}</textarea>
+                    @error('description_en')<div id="video-description-en-error" class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </fieldset>
             <div class="custom-control custom-switch my-4">
                 <input type="hidden" name="is_active" value="0">
                 <input type="checkbox" class="custom-control-input" id="is_active" name="is_active" value="1" @checked(old('is_active', $video->exists ? $video->is_active : true))>

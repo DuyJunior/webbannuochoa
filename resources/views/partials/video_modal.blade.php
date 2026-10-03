@@ -31,7 +31,7 @@
                         <div class="perfume-price" id="htVideoPerfumePrice"></div>
                     </div>
                     <a id="htVideoPerfumeLink" href="#" class="ht-video-buy-btn">
-                        Xem & Mua Ngay @include('partials.icon', ['name' => 'bag', 'size' => '1em'])
+                        {{ __('Xem & Mua Ngay') }} @include('partials.icon', ['name' => 'bag', 'size' => '1em'])
                     </a>
                 </div>
             </div>

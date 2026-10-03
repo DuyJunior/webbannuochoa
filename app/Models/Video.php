@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\VideoUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,11 +15,13 @@ class Video extends Model
     protected $fillable = [
         'perfume_id',
         'title',
+        'title_en',
         'video_url',
         'thumbnail_url',
         'duration',
         'views_count',
         'description',
+        'description_en',
         'placement',
         'sort_order',
         'is_active',
@@ -36,6 +39,29 @@ class Video extends Model
     public function perfume(): BelongsTo
     {
         return $this->belongsTo(Perfume::class, 'perfume_id');
+    }
+
+    public function getLocalizedTitleAttribute(): string
+    {
+        return $this->localizedCopy('title');
+    }
+
+    public function getLocalizedDescriptionAttribute(): string
+    {
+        return $this->localizedCopy('description');
+    }
+
+    private function localizedCopy(string $field): string
+    {
+        $original = (string) $this->getAttribute($field);
+        if (app()->getLocale() !== 'en') {
+            return $original;
+        }
+
+        $english = trim((string) $this->getAttribute($field.'_en'));
+
+        // Existing video copy has curated translations; new copy can be edited in Admin.
+        return $english !== '' ? $english : __($original);
     }
 
     public function getThumbnailSrcAttribute(): string
@@ -57,11 +83,12 @@ class Video extends Model
     {
         $views = (int) $this->views_count;
         if ($views >= 1000000) {
-            return round($views / 1000000, 1) . 'M';
+            return round($views / 1000000, 1).'M';
         }
         if ($views >= 1000) {
-            return round($views / 1000, 1) . 'K';
+            return round($views / 1000, 1).'K';
         }
+
         return (string) $views;
     }
 
@@ -70,7 +97,7 @@ class Video extends Model
      */
     public function getEmbedUrlAttribute(): string
     {
-        return \App\Support\VideoUrl::embed($this->video_url) ?? '';
+        return VideoUrl::embed($this->video_url) ?? '';
     }
 
     public function getIsYoutubeAttribute(): bool
