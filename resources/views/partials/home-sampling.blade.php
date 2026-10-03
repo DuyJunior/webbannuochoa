@@ -3,27 +3,27 @@
         <div><span class="atelier-kicker">SOOPI / L’ATELIER DES ESSAIS</span><h2 id="sampling-title">Thử một chút.<br><em data-typewriter>Yêu thật lâu.</em></h2></div>
         <div class="sampling-intro"><span class="sampling-edition">THE DISCOVERY RITUAL / 03</span><p>Mùi hương đẹp nhất,<br>là mùi hương <em>hợp với bạn.</em></p><span>Chọn 3 hoặc 5 mẫu · Mỗi mẫu 5 ml · Cảm nhận trên da</span></div>
     </header>
-    <form class="sampling-layout" action="{{ route('store.discovery-box') }}" method="GET" data-sample-form data-vial-src="{{ asset('images/atelier/sample-vial.svg') }}">
+    <form class="sampling-layout" action="{{ route('store.discovery-box') }}" method="GET" data-sample-form data-vial-src="{{ asset('images/atelier/sample-vial.svg') }}?v=ivory">
         <aside class="sample-workbench" id="sample-workbench" aria-label="Hộp thử mùi của bạn">
-            <div class="sample-box-signature"><span>SOOPI / LE COFFRET</span>@include('partials.brand-mark', ['size' => 34, 'light' => true])</div>
+            <div class="sample-box-signature"><span>SOOPI / HỘP THỬ MÙI</span>@include('partials.brand-mark', ['size' => 30])</div>
             <div class="sample-package">
-                <h3>Một chiếc hộp.<br><em>Nhiều rung động.</em></h3>
+                <h3>Một hộp hương.<br><em>Mang dấu ấn bạn.</em></h3>
                 <fieldset class="sample-size-options"><legend>Chọn số mẫu trong hộp</legend>
                     <label><input type="radio" name="size" value="3" checked><span><strong>03 mẫu</strong><small>199.000₫</small></span></label>
                     <label><input type="radio" name="size" value="5"><span><strong>05 mẫu</strong><small>299.000₫</small></span></label>
                 </fieldset>
             </div>
             <div class="sample-display">
-                <div class="sample-display-caption"><span>VOTRE SÉLECTION</span><span>5 ML / MẪU</span></div>
+                <div class="sample-display-caption"><span>TUYỂN CHỌN CỦA BẠN</span><span>5 ML / MẪU</span></div>
                 <div class="sample-tray" data-sample-tray aria-label="Các mẫu đã chọn">
                     @for($slot = 1; $slot <= 3; $slot++)
                         <div class="sample-slot">
-                            <span class="sample-vial" aria-hidden="true"><img src="{{ asset('images/atelier/sample-vial.svg') }}" width="140" height="360" alt=""><span class="sample-vial-label"><b>SOOPI</b><small>0{{ $slot }}</small><span>5 ML</span></span></span>
+                            <span class="sample-vial" aria-hidden="true"><img src="{{ asset('images/atelier/sample-vial.svg') }}?v=ivory" width="140" height="360" alt=""><span class="sample-vial-label"><b>SOOPI</b><small>0{{ $slot }}</small><span>5 ML</span></span></span>
                             <span class="sample-slot-name">Mùi hương 0{{ $slot }}</span>
                         </div>
                     @endfor
                 </div>
-                <p class="sample-display-note">Những điều nhỏ bé.<br><em>Đánh thức mọi giác quan.</em></p>
+                <p class="sample-display-note">Một chút để thử.<br><em>Một mùi để nhớ.</em></p>
             </div>
             <div class="sample-box-progress"><span data-sample-status role="status" aria-live="polite">0/3 mẫu đã chọn</span><span data-sample-remaining>Thêm 3 mùi hương</span><div class="sample-progress-track" aria-hidden="true"><i data-sample-progress></i></div></div>
             <div class="sample-checkout">
