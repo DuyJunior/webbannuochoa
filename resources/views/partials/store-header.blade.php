@@ -23,18 +23,18 @@
                             @include('partials.icon', ['name' => 'external', 'size' => 16])
                         </a>
                         <div class="ht-account-grid">
-                            <a href="{{ route('orders.index') }}">@include('partials.icon', ['name' => 'bag', 'size' => 17]) {{ __('Đơn mua') }}</a>
-                            <a href="{{ route('store.wishlist') }}">@include('partials.icon', ['name' => 'heart', 'size' => 17]) {{ __('Yêu thích') }}</a>
-                            <a href="{{ route('store.wardrobe') }}">@include('partials.icon', ['name' => 'bottle', 'size' => 17]) {{ __('Tủ nước hoa') }}</a>
-                            <a href="{{ route('store.member') }}">@include('partials.icon', ['name' => 'crown', 'size' => 17]) {{ __('Thành viên') }}</a>
+                            <a href="{{ route('orders.index') }}">@include('partials.icon', ['name' => 'bag', 'size' => 17]) <span>{{ __('Đơn mua') }}</span></a>
+                            <a href="{{ route('store.wishlist') }}">@include('partials.icon', ['name' => 'heart', 'size' => 17]) <span>{{ __('Yêu thích') }}</span></a>
+                            <a href="{{ route('store.wardrobe') }}">@include('partials.icon', ['name' => 'bottle', 'size' => 17]) <span>{{ __('Tủ nước hoa') }}</span></a>
+                            <a href="{{ route('store.member') }}">@include('partials.icon', ['name' => 'crown', 'size' => 17]) <span>{{ __('Thành viên') }}</span></a>
                         </div>
                         <a class="ht-account-tracking" href="{{ route('orders.tracking') }}">@include('partials.icon', ['name' => 'truck', 'size' => 17]) {{ __('Tra cứu đơn hàng') }} @include('partials.icon', ['name' => 'arrow', 'size' => 14])</a>
                         @if(Auth::user()->canManageLivestreams())
                             <div class="ht-account-staff">
                                 <span class="ht-account-section-label">{{ __('Quản lý cửa hàng') }}</span>
                                 <div class="ht-account-grid">
-                                    @if(Auth::user()->role === 'admin')<a href="{{ route('admin.dashboard') }}">@include('partials.icon', ['name' => 'building', 'size' => 17]) {{ __('Quản trị') }}</a>@endif
-                                    <a href="{{ route('admin.livestreams.index') }}" aria-label="{{ __('Quản lý livestream') }}">@include('partials.icon', ['name' => 'broadcast', 'size' => 17]) Livestream</a>
+                                    @if(Auth::user()->role === 'admin')<a href="{{ route('admin.dashboard') }}">@include('partials.icon', ['name' => 'building', 'size' => 17]) <span>{{ __('Quản trị') }}</span></a>@endif
+                                    <a href="{{ route('admin.livestreams.index') }}" aria-label="{{ __('Quản lý livestream') }}">@include('partials.icon', ['name' => 'broadcast', 'size' => 17]) <span>Livestream</span></a>
                                 </div>
                             </div>
                         @endif
