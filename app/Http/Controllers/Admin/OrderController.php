@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Services\OrderEmailService;
 use App\Services\OrderInventoryService;
 use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
@@ -49,7 +50,7 @@ class OrderController extends Controller
             'transporting' => 'Đang trung chuyển',
             'sorting' => 'Đang phân loại',
             'delivering' => 'Đang giao hàng',
-            'delivered' => 'Giao hàng thành công',
+            'delivered' => __('Giao hàng thành công'),
             'return' => 'Chờ hoàn hàng',
             'returning' => 'Đang hoàn hàng',
             'returned' => 'Đã hoàn hàng',
@@ -71,9 +72,9 @@ class OrderController extends Controller
             'sort' => ['nullable', Rule::in(['newest', 'oldest', 'amount_desc', 'amount_asc'])],
             'page' => ['nullable', 'integer', 'min:1'],
         ], [
-            'date_to.after_or_equal' => 'Ngày kết thúc phải từ ngày bắt đầu trở đi.',
-            '*.date_format' => 'Ngày lọc không hợp lệ.',
-            '*.in' => 'Giá trị bộ lọc không hợp lệ.',
+            'date_to.after_or_equal' => __('Ngày kết thúc phải từ ngày bắt đầu trở đi.'),
+            '*.date_format' => __('Ngày lọc không hợp lệ.'),
+            '*.in' => __('Giá trị bộ lọc không hợp lệ.'),
         ]);
 
         $paymentId = DB::table('payment_transactions')->select('id')->whereColumn('order_id', 'orders.id')
@@ -203,7 +204,7 @@ class OrderController extends Controller
         // Logic Lab 8: "Nếu đơn hàng ở trạng thái đang giao -> KHÔNG cho Hủy"
         $deliveringStatuses = ['delivering', 'picked', 'storing', 'transporting', 'sorting'];
         if (($newStatus === 'cancelled' || $newShippingStatus === 'cancelled') && in_array($order->shipping_status, $deliveringStatuses)) {
-            return back()->with('error', 'Đơn hàng đang giao, không thể hủy!');
+            return back()->with('error', __('Đơn hàng đang giao, không thể hủy!'));
         }
 
         $oldStatus = $order->status;
@@ -235,15 +236,15 @@ class OrderController extends Controller
                         ->where('order_id', $order->id)
                         ->where('status', 'pending')->where('gateway', 'cod')
                         ->update(['status' => 'paid', 'paid_at' => now(), 'updated_at' => now()]);
-                    app(\App\Services\OrderEmailService::class)->paid($order);
+                    app(OrderEmailService::class)->paid($order);
                 }
-                app(\App\Services\OrderEmailService::class)->shipping($order);
+                app(OrderEmailService::class)->shipping($order);
             });
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
 
-        return back()->with('success', 'Cập nhật trạng thái đơn hàng thành công.');
+        return back()->with('success', __('Cập nhật trạng thái đơn hàng thành công.'));
     }
 
     /**
@@ -263,7 +264,7 @@ class OrderController extends Controller
         $bulkShippingStatus = $request->input('bulk_shipping_status');
 
         if (! $bulkStatus && ! $bulkShippingStatus) {
-            return back()->with('error', 'Vui lòng chọn trạng thái cần cập nhật hàng loạt.');
+            return back()->with('error', __('Vui lòng chọn trạng thái cần cập nhật hàng loạt.'));
         }
 
         $deliveringStatuses = ['delivering', 'picked', 'storing', 'transporting', 'sorting'];
@@ -323,9 +324,9 @@ class OrderController extends Controller
                             ->where('order_id', $order->id)
                             ->where('status', 'pending')->where('gateway', 'cod')
                             ->update(['status' => 'paid', 'paid_at' => now(), 'updated_at' => now()]);
-                        app(\App\Services\OrderEmailService::class)->paid($order);
+                        app(OrderEmailService::class)->paid($order);
                     }
-                    app(\App\Services\OrderEmailService::class)->shipping($order);
+                    app(OrderEmailService::class)->shipping($order);
                 });
 
             } catch (ValidationException $e) {
@@ -347,16 +348,16 @@ class OrderController extends Controller
     private function guardTransition(Order $order, ?string $status, ?string $shipping): void
     {
         if ($status === 'completed' && $shipping !== 'delivered') {
-            throw ValidationException::withMessages(['shipping_status' => 'Đơn hoàn thành phải có trạng thái giao thành công. Không ghi nhận đã thu COD cho đơn đang giao hoặc hoàn hàng.']);
+            throw ValidationException::withMessages(['shipping_status' => __('Đơn hoàn thành phải có trạng thái giao thành công. Không ghi nhận đã thu COD cho đơn đang giao hoặc hoàn hàng.')]);
         }
         $ranks = ['pending' => 0, 'not_shipped' => 0, 'processing' => 1, 'ready_to_pick' => 2,
             'picking' => 3, 'picked' => 4, 'storing' => 5, 'transporting' => 5, 'sorting' => 5, 'delivering' => 6, 'delivered' => 7,
             'return' => 8, 'returning' => 8, 'return_transporting' => 8, 'return_sorting' => 8, 'returned' => 9];
         if ($shipping && isset($ranks[$shipping], $ranks[$order->shipping_status]) && $ranks[$shipping] < $ranks[$order->shipping_status]) {
-            throw ValidationException::withMessages(['shipping_status' => 'Không thể lùi trạng thái giao hàng để mở lại hoặc hủy đơn đang giao.']);
+            throw ValidationException::withMessages(['shipping_status' => __('Không thể lùi trạng thái giao hàng để mở lại hoặc hủy đơn đang giao.')]);
         }
         if (($status === 'cancelled' || $shipping === 'cancelled') && $order->ghn_order_code && ! $order->is_demo) {
-            throw ValidationException::withMessages(['status' => 'Đơn đã có vận đơn thật. Cần xác nhận hủy với đơn vị vận chuyển trước; không hoàn kho bằng thao tác cập nhật trạng thái.']);
+            throw ValidationException::withMessages(['status' => __('Đơn đã có vận đơn thật. Cần xác nhận hủy với đơn vị vận chuyển trước; không hoàn kho bằng thao tác cập nhật trạng thái.')]);
         }
         if ((! $status || $status === $order->status) && (! $shipping || $shipping === $order->shipping_status)) {
             return;
@@ -364,11 +365,11 @@ class OrderController extends Controller
         $terminal = in_array($order->status, ['cancelled', 'completed'], true) ||
             in_array($order->shipping_status, ['delivered', 'returned', 'cancelled'], true);
         if ($terminal && (($status && $status !== $order->status) || ($shipping && $shipping !== $order->shipping_status))) {
-            throw ValidationException::withMessages(['status' => 'Đơn đã kết thúc không được mở lại; hãy tạo đơn mới.']);
+            throw ValidationException::withMessages(['status' => __('Đơn đã kết thúc không được mở lại; hãy tạo đơn mới.')]);
         }
         if (($status === 'cancelled' || $shipping === 'cancelled') &&
             ! in_array($order->shipping_status, [null, 'pending', 'not_shipped', 'ready_to_pick'], true)) {
-            throw ValidationException::withMessages(['status' => 'Đơn đang xử lý giao hàng không thể hủy tại đây.']);
+            throw ValidationException::withMessages(['status' => __('Đơn đang xử lý giao hàng không thể hủy tại đây.')]);
         }
     }
 }

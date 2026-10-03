@@ -191,14 +191,14 @@ class StoreExperienceController extends Controller
             ]
         );
 
-        return back()->with('success', 'Đã lưu mùi hương vào Tủ nước hoa cá nhân!');
+        return back()->with('success', __('Đã lưu mùi hương vào Tủ nước hoa cá nhân!'));
     }
 
     public function removeFromWardrobe(Request $request, int $id): RedirectResponse
     {
         ScentWardrobe::where('user_id', $request->user()->id)->where('id', $id)->delete();
 
-        return back()->with('success', 'Đã xóa mùi hương khỏi Tủ cá nhân.');
+        return back()->with('success', __('Đã xóa mùi hương khỏi Tủ cá nhân.'));
     }
 
     public function shareWardrobe(User $user): View
@@ -297,11 +297,11 @@ class StoreExperienceController extends Controller
         $perfume = $all[$dayIndex % $all->count()];
 
         $quotes = [
-            '“Hương thơm là dấu ấn vô hình, nhưng sâu đậm nhất của một người khi bước vào căn phòng.”',
-            '“Hãy khoác lên mình một mùi hương khiến bạn cảm thấy tự tin và đáng yêu nhất hôm nay.”',
-            '“Mỗi giọt nước hoa là một nốt nhạc, và hôm nay là khúc ca của riêng bạn.”',
-            '“Không gì khơi dậy ký ức ngọt ngào nhanh bằng một làn hương thân thuộc.”',
-            '“Thơm tho không chỉ vì người khác nhìn ngắm, mà là để yêu chiều chính tâm hồn mình.”',
+            __('“Hương thơm là dấu ấn vô hình, nhưng sâu đậm nhất của một người khi bước vào căn phòng.”'),
+            __('“Hãy khoác lên mình một mùi hương khiến bạn cảm thấy tự tin và đáng yêu nhất hôm nay.”'),
+            __('“Mỗi giọt nước hoa là một nốt nhạc, và hôm nay là khúc ca của riêng bạn.”'),
+            __('“Không gì khơi dậy ký ức ngọt ngào nhanh bằng một làn hương thân thuộc.”'),
+            __('“Thơm tho không chỉ vì người khác nhìn ngắm, mà là để yêu chiều chính tâm hồn mình.”'),
         ];
         $quote = $quotes[$dayIndex % count($quotes)];
 
@@ -334,7 +334,7 @@ class StoreExperienceController extends Controller
         $senderName = $data['from'] ?? 'Người bạn giấu tên';
         $recipientName = $data['to'] ?? 'Bạn thân mến';
         $cardType = $data['card'] ?? 'birthday';
-        $message = $data['msg'] ?? 'Mong rằng món quà mùi hương ngọt ngào này sẽ mang lại cho bạn thật nhiều niềm vui và nụ cười rạng rỡ!';
+        $message = $data['msg'] ?? __('Mong rằng món quà mùi hương ngọt ngào này sẽ mang lại cho bạn thật nhiều niềm vui và nụ cười rạng rỡ!');
 
         return view('store.gift-share', compact('perfume', 'senderName', 'recipientName', 'cardType', 'message'));
     }
@@ -359,10 +359,10 @@ class StoreExperienceController extends Controller
 
         if ($saved) {
             DB::table('wishlists')->insertOrIgnore($key + ['created_at' => now(), 'updated_at' => now()]);
-            $message = 'Đã lưu mùi hương yêu thích.';
+            $message = __('Đã lưu mùi hương yêu thích.');
         } else {
             DB::table('wishlists')->where($key)->delete();
-            $message = 'Đã bỏ sản phẩm khỏi danh sách yêu thích.';
+            $message = __('Đã bỏ sản phẩm khỏi danh sách yêu thích.');
         }
 
         if ($request->expectsJson()) {
@@ -380,7 +380,7 @@ class StoreExperienceController extends Controller
             ->where(fn ($query) => $query->where('status', 'completed')->orWhere('shipping_status', 'delivered'))
             ->whereHas('items', fn ($items) => $items->where('perfume_id', $perfume->id))->exists();
         if (! $purchased) {
-            return back()->withErrors(['review' => 'Bạn chỉ có thể đánh giá sản phẩm đã mua và nhận hàng thành công.']);
+            return back()->withErrors(['review' => __('Bạn chỉ có thể đánh giá sản phẩm đã mua và nhận hàng thành công.')]);
         }
         $data = $request->validate([
             'rating' => 'required|integer|between:1,5',
@@ -396,19 +396,19 @@ class StoreExperienceController extends Controller
         }
         $review->fill(['rating' => $data['rating'], 'body' => $data['body']])->save();
 
-        return back()->with('success', 'Cảm ơn bạn đã chia sẻ cảm nhận.');
+        return back()->with('success', __('Cảm ơn bạn đã chia sẻ cảm nhận.'));
     }
 
     public function stockAlert(Request $request, Perfume $perfume): RedirectResponse
     {
         abort_unless($perfume->is_active, 404);
         if ($perfume->availableStock() > 0) {
-            return back()->with('success', 'Sản phẩm đang có hàng, bạn có thể đặt ngay.');
+            return back()->with('success', __('Sản phẩm đang có hàng, bạn có thể đặt ngay.'));
         }
         $key = ['user_id' => $request->user()->id, 'perfume_id' => $perfume->id];
         DB::table('stock_alerts')->updateOrInsert($key, ['notified_at' => null, 'updated_at' => now(), 'created_at' => now()]);
 
-        return back()->with('success', 'Đã lưu yêu cầu. Chúng tôi sẽ báo khi sản phẩm có hàng.');
+        return back()->with('success', __('Đã lưu yêu cầu. Chúng tôi sẽ báo khi sản phẩm có hàng.'));
     }
 
     public function faq(): View

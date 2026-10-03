@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Soopi · Hương thơm của riêng bạn')
+@section('title', __('Soopi · Hương thơm của riêng bạn'))
 @section('body_class', 'soopi-homepage')
 
 @push('page-styles')
@@ -11,31 +11,31 @@
 @php
     $isFiltered = request()->anyFilled(['search', 'gender', 'category', 'sort', 'min_price', 'max_price', 'concentration', 'note', 'style', 'longevity']);
     $selectedCategory = request('category') ? $categories->firstWhere('id', (int) request('category')) : null;
-    $collectionTitle = request()->filled('search') ? 'Mùi hương bạn đang tìm'
+    $collectionTitle = request()->filled('search') ? __('Mùi hương bạn đang tìm')
         : ($selectedCategory?->name ?? match (request('gender')) {
-            'nam' => 'Nước hoa dành cho chàng',
-            'nu' => 'Nước hoa dành cho nàng',
-            'unisex' => 'Hương thơm không giới hạn',
-            default => 'Tuyển chọn để thương nhớ',
+            'nam' => __('Nước hoa dành cho chàng'),
+            'nu' => __('Nước hoa dành cho nàng'),
+            'unisex' => __('Hương thơm không giới hạn'),
+            default => __('Tuyển chọn để thương nhớ'),
         });
 @endphp
 
 <section id="home-live-banner" class="store-container ht-home-live" data-state-url="{{ route('livestream.state') }}" data-current-id="{{ $onAir ? $livestream->id : '' }}" @unless($onAir) hidden @endunless aria-live="polite">
     <div>
-        <span class="ht-home-live-badge">● ĐANG TRỰC TIẾP</span>
-        <strong>{{ $onAir ? $livestream->title : 'Soopi đang livestream' }}</strong>
-        <span>Xem và trò chuyện cùng Soopi ngay trên website.</span>
+        <span class="ht-home-live-badge">{{ __('● ĐANG TRỰC TIẾP') }}</span>
+        <strong>{{ $onAir ? $livestream->title : __('Soopi đang livestream') }}</strong>
+        <span>{{ __('Xem và trò chuyện cùng Soopi ngay trên website.') }}</span>
     </div>
     <a class="ht-button" href="{{ route('livestream.show') }}">Xem livestream →</a>
 </section>
 
 @if(!$isFiltered)
 @include('partials.home-bloom')
-<div class="store-container ht-benefits" aria-label="Cam kết của cửa hàng">
-    <div>@include('partials.icon', ['name' => 'shield', 'size' => 25])<span><strong>Nước hoa chính hãng</strong><small>An tâm với từng lựa chọn</small></span></div>
-    <div>@include('partials.icon', ['name' => 'gift', 'size' => 25])<span><strong>Gói trọn yêu thương</strong><small>Chăm chút từng món quà</small></span></div>
-    <div>@include('partials.icon', ['name' => 'truck', 'size' => 25])<span><strong>Giao hàng tận nơi</strong><small>Đóng gói an toàn, cẩn thận</small></span></div>
-    <div>@include('partials.icon', ['name' => 'heart', 'size' => 25])<span><strong>Tư vấn tận tâm</strong><small>Cùng bạn chọn hương phù hợp</small></span></div>
+<div class="store-container ht-benefits" aria-label="{{ __('Cam kết của cửa hàng') }}">
+    <div>@include('partials.icon', ['name' => 'shield', 'size' => 25])<span><strong>{{ __('Nước hoa chính hãng') }}</strong><small>{{ __('An tâm với từng lựa chọn') }}</small></span></div>
+    <div>@include('partials.icon', ['name' => 'gift', 'size' => 25])<span><strong>{{ __('Gói trọn yêu thương') }}</strong><small>{{ __('Chăm chút từng món quà') }}</small></span></div>
+    <div>@include('partials.icon', ['name' => 'truck', 'size' => 25])<span><strong>{{ __('Giao hàng tận nơi') }}</strong><small>{{ __('Đóng gói an toàn, cẩn thận') }}</small></span></div>
+    <div>@include('partials.icon', ['name' => 'heart', 'size' => 25])<span><strong>{{ __('Tư vấn tận tâm') }}</strong><small>{{ __('Cùng bạn chọn hương phù hợp') }}</small></span></div>
 </div>
 
 
@@ -43,7 +43,7 @@
 @endif
 
 @include('partials.scent-gallery')
-<div class="ht-compare-bar" id="htCompareBar" hidden><span id="htCompareCount">0/3 sản phẩm</span><a href="{{ route('store.compare') }}" id="htCompareLink">Xem so sánh →</a><button type="button" id="htCompareClear">Xóa</button></div>
+<div class="ht-compare-bar" id="htCompareBar" hidden><span id="htCompareCount">{{ __('0/3 sản phẩm') }}</span><a href="{{ route('store.compare') }}" id="htCompareLink">{{ __('Xem so sánh →') }}</a><button type="button" id="htCompareClear">{{ __('Xóa') }}</button></div>
 
 @if(!$isFiltered)
 @include('partials.home-journal')
@@ -58,8 +58,8 @@
 <section class="store-container ht-related-section ht-home-recent">
     <div class="ht-section-heading">
         <div>
-            <span class="ht-eyebrow">DÀNH RIÊNG CHO BẠN</span>
-            <h2>Sản phẩm bạn vừa xem gần đây</h2>
+            <span class="ht-eyebrow">{{ __('DÀNH RIÊNG CHO BẠN') }}</span>
+            <h2>{{ __('Sản phẩm bạn vừa xem gần đây') }}</h2>
         </div>
     </div>
     <div class="ht-related-grid">
@@ -92,7 +92,7 @@
  function render() {
    document.querySelectorAll('[data-compare-id]').forEach(button => button.classList.toggle('active', selected.has(button.dataset.compareId)));
    bar.hidden = selected.size === 0;
-   count.textContent = selected.size + '/3 sản phẩm';
+   count.textContent = selected.size + (window.soopiT || (text => text))("/3 sản phẩm");
    link.href = compareBase + '?ids=' + [...selected].join(',');
  }
  document.addEventListener('click', event => {

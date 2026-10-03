@@ -1,14 +1,14 @@
 @extends('layouts.store')
 
-@section('title', 'Thêm sản phẩm · Soopi')
+@section('title', __('Thêm sản phẩm · Soopi'))
 
 @section('content')
     <section class="store-container public-form-page">
         <div class="public-page-heading">
             <div>
-                <a class="back-link" href="{{ route('perfumes.index') }}">← Quay lại danh sách</a>
-                <h1>Thêm sản phẩm</h1>
-                <p>Nhập thông tin sản phẩm vào biểu mẫu bên dưới.</p>
+                <a class="back-link" href="{{ route('perfumes.index') }}">{{ __('← Quay lại danh sách') }}</a>
+                <h1>{{ __('Thêm sản phẩm') }}</h1>
+                <p>{{ __('Nhập thông tin sản phẩm vào biểu mẫu bên dưới.') }}</p>
             </div>
         </div>
 

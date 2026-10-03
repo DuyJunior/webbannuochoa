@@ -1,21 +1,21 @@
 @extends('layouts.store')
 
-@section('title', 'Kiểm tra đơn hàng · Soopi')
+@section('title', __('Kiểm tra đơn hàng · Soopi'))
 
 @section('content')
 <div class="tracking-page-wrapper">
     <div class="store-container">
         {{-- Breadcrumb --}}
         <nav class="tracking-breadcrumb">
-            <a href="{{ route('home') }}">Trang chủ</a>
+            <a href="{{ route('home') }}">{{ __('Trang chủ') }}</a>
             <span>/</span>
-            <span class="active">Kiểm tra đơn hàng</span>
+            <span class="active">{{ __('Kiểm tra đơn hàng') }}</span>
         </nav>
 
         <div class="tracking-header-title">
-            <span class="badge-tag">HÀNH TRÌNH MÙI HƯƠNG</span>
-            <h1>Đơn hàng của bạn đến đâu rồi?</h1>
-            <p>Theo dõi hành trình vận chuyển nước hoa chính hãng qua hệ thống Giao Hàng Nhanh (GHN)</p>
+            <span class="badge-tag">{{ __('HÀNH TRÌNH MÙI HƯƠNG') }}</span>
+            <h1>{{ __('Đơn hàng của bạn đến đâu rồi?') }}</h1>
+            <p>{{ __('Theo dõi hành trình vận chuyển nước hoa chính hãng qua hệ thống Giao Hàng Nhanh (GHN)') }}</p>
         </div>
 
         {{-- Search Card --}}
@@ -23,30 +23,30 @@
             <form method="POST" action="{{ route('orders.tracking.search') }}" class="tracking-form-grid">
                 @csrf
                 <div class="tracking-input-group">
-                    <label for="keyword">Mã đơn hàng hoặc Mã vận đơn GHN</label>
+                    <label for="keyword">{{ __('Mã đơn hàng hoặc Mã vận đơn GHN') }}</label>
                     <div class="input-with-icon">
                         <span class="input-icon">@include('partials.icon', ['name' => 'tag', 'size' => '1em'])</span>
-                        <input type="text" id="keyword" name="keyword" value="{{ old('keyword', $keyword ?? '') }}" placeholder="Ví dụ: L8KXW4 hoặc #12">
+                        <input type="text" id="keyword" name="keyword" value="{{ old('keyword', $keyword ?? '') }}" placeholder="{{ __('Ví dụ: L8KXW4 hoặc #12') }}">
                     </div>
                 </div>
 
                 <div class="tracking-input-group">
-                    <label for="phone">Số điện thoại đặt hàng (10 số)</label>
+                    <label for="phone">{{ __('Số điện thoại đặt hàng (10 số)') }}</label>
                     <div class="input-with-icon">
                         <span class="input-icon">@include('partials.icon', ['name' => 'phone', 'size' => '1em'])</span>
-                        <input type="tel" id="phone" name="phone" value="{{ old('phone', $phone ?? '') }}" placeholder="Ví dụ: 0901234567" maxlength="10" pattern="0[0-9]{9}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
+                        <input type="tel" id="phone" name="phone" value="{{ old('phone', $phone ?? '') }}" placeholder="{{ __('Ví dụ: 0901234567') }}" maxlength="10" pattern="0[0-9]{9}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
                     </div>
                 </div>
 
                 <div class="tracking-btn-group">
                     <button type="submit" class="btn-tracking-search">
-                        <span>@include('partials.icon', ['name' => 'search', 'size' => '1em']) Tra cứu đơn hàng</span>
+                        <span>@include('partials.icon', ['name' => 'search', 'size' => '1em']) {{ __('Tra cứu đơn hàng') }}</span>
                     </button>
                 </div>
             </form>
 
             <div class="tracking-hint">
-                @include('partials.icon', ['name' => 'bulb', 'size' => '1em']) <em>Chỉ tra cứu các đơn thuộc tài khoản đang đăng nhập. Nhập số điện thoại hoặc mã đơn / mã GHN của bạn.</em>
+                @include('partials.icon', ['name' => 'bulb', 'size' => '1em']) <em>{{ __('Chỉ tra cứu các đơn thuộc tài khoản đang đăng nhập. Nhập số điện thoại hoặc mã đơn / mã GHN của bạn.') }}</em>
             </div>
         </div>
 
@@ -54,30 +54,30 @@
         @if(isset($searched) && $searched)
             <div class="tracking-results-section">
                 <h3 class="results-title">
-                    Kết quả tra cứu
+                    {{ __('Kết quả tra cứu') }}
                     @if(!empty($keyword) || !empty($phone))
-                        <small>cho "{{ trim(($keyword ? 'Mã: ' . $keyword : '') . ($phone ? ' - SĐT: ' . $phone : ''), ' -') }}"</small>
+                        <small>cho "{{ trim(($keyword ? __('Mã: ') . $keyword : '') . ($phone ? __(' - SĐT: ') . $phone : ''), ' -') }}"</small>
                     @endif
                 </h3>
 
                 @if($orders->isEmpty())
                     <div class="empty-search-box">
                         <div class="empty-search-icon">@include('partials.icon', ['name' => 'search', 'size' => '1em'])</div>
-                        <h4>Không tìm thấy đơn hàng phù hợp</h4>
-                        <p>Vui lòng kiểm tra lại Mã đơn hàng, Mã GHN hoặc Số điện thoại bạn đã dùng khi đặt hàng tại Soopi.</p>
-                        <a href="{{ route('orders.tracking') }}" class="btn-retry-search">Thử lại</a>
+                        <h4>{{ __('Không tìm thấy đơn hàng phù hợp') }}</h4>
+                        <p>{{ __('Vui lòng kiểm tra lại Mã đơn hàng, Mã GHN hoặc Số điện thoại bạn đã dùng khi đặt hàng tại Soopi.') }}</p>
+                        <a href="{{ route('orders.tracking') }}" class="btn-retry-search">{{ __('Thử lại') }}</a>
                     </div>
                 @else
                     <div class="orders-result-list">
                         @foreach ($orders as $order)
                             @php
                                 $statusLabels = [
-                                    'pending' => ['text' => 'Chờ xác nhận', 'class' => 'status-pending'],
-                                    'ready_to_pick' => ['text' => 'GHN đã tiếp nhận', 'class' => 'status-ready'],
-                                    'delivering' => ['text' => 'Đang giao hàng', 'class' => 'status-shipping'],
-                                    'delivered' => ['text' => 'Giao thành công', 'class' => 'status-delivered'],
-                                    'cancelled' => ['text' => 'Đã hủy', 'class' => 'status-cancelled'],
-                                    'not_shipped' => ['text' => 'Chờ giao', 'class' => 'status-pending'],
+                                    'pending' => ['text' => __('Chờ xác nhận'), 'class' => 'status-pending'],
+                                    'ready_to_pick' => ['text' => __('GHN đã tiếp nhận'), 'class' => 'status-ready'],
+                                    'delivering' => ['text' => __('Đang giao hàng'), 'class' => 'status-shipping'],
+                                    'delivered' => ['text' => __('Giao thành công'), 'class' => 'status-delivered'],
+                                    'cancelled' => ['text' => __('Đã hủy'), 'class' => 'status-cancelled'],
+                                    'not_shipped' => ['text' => __('Chờ giao'), 'class' => 'status-pending'],
                                 ];
                                 $st = $statusLabels[$order->shipping_status] ?? ['text' => $order->shipping_status, 'class' => 'status-pending'];
 
@@ -93,7 +93,7 @@
                             <div class="order-result-card">
                                 <div class="order-result-header">
                                     <div class="order-meta-info">
-                                        <span class="order-number">Đơn hàng #{{ $order->id }}</span>
+                                        <span class="order-number">{{ __('Đơn hàng #') }}{{ $order->id }}</span>
                                         <span class="order-date">{{ $order->created_at->format('d/m/Y H:i') }}</span>
                                         @if($order->ghn_order_code)
                                             <span class="ghn-badge-code">
@@ -111,48 +111,48 @@
                                     <div class="tracking-mini-timeline">
                                         <div class="timeline-step {{ $currentStep >= 1 ? 'active' : '' }}">
                                             <div class="step-dot">1</div>
-                                            <span>Đặt hàng</span>
+                                            <span>{{ __('Đặt hàng') }}</span>
                                         </div>
                                         <div class="timeline-bar {{ $currentStep >= 2 ? 'active' : '' }}"></div>
                                         <div class="timeline-step {{ $currentStep >= 2 ? 'active' : '' }}">
                                             <div class="step-dot">2</div>
-                                            <span>GHN tiếp nhận</span>
+                                            <span>{{ __('GHN tiếp nhận') }}</span>
                                         </div>
                                         <div class="timeline-bar {{ $currentStep >= 3 ? 'active' : '' }}"></div>
                                         <div class="timeline-step {{ $currentStep >= 3 ? 'active' : '' }}">
                                             <div class="step-dot">3</div>
-                                            <span>Đang giao hàng</span>
+                                            <span>{{ __('Đang giao hàng') }}</span>
                                         </div>
                                         <div class="timeline-bar {{ $currentStep >= 4 ? 'active' : '' }}"></div>
                                         <div class="timeline-step {{ $currentStep >= 4 ? 'active' : '' }}">
                                             <div class="step-dot">4</div>
-                                            <span>Hoàn thành</span>
+                                            <span>{{ __('Hoàn thành') }}</span>
                                         </div>
                                     </div>
                                 @else
                                     <div class="cancelled-notice">
-                                        @include('partials.icon', ['name' => 'warning', 'size' => '1em']) Đơn hàng này đã được hủy trên hệ thống.
+                                        @include('partials.icon', ['name' => 'warning', 'size' => '1em']) {{ __('Đơn hàng này đã được hủy trên hệ thống.') }}
                                     </div>
                                 @endif
 
                                 <div class="order-result-body">
                                     <div class="order-customer-details">
                                         <div class="detail-line">
-                                            <span>@include('partials.icon', ['name' => 'user', 'size' => '1em']) Người nhận:</span>
+                                            <span>@include('partials.icon', ['name' => 'user', 'size' => '1em']) {{ __('Người nhận:') }}</span>
                                             <strong>{{ $order->name }}</strong>
                                         </div>
                                         <div class="detail-line">
-                                            <span>@include('partials.icon', ['name' => 'phone', 'size' => '1em']) Số điện thoại:</span>
+                                            <span>@include('partials.icon', ['name' => 'phone', 'size' => '1em']) {{ __('Số điện thoại:') }}</span>
                                             <strong>{{ $order->phone }}</strong>
                                         </div>
                                         <div class="detail-line">
-                                            <span>@include('partials.icon', ['name' => 'pin', 'size' => '1em']) Địa chỉ nhận:</span>
+                                            <span>@include('partials.icon', ['name' => 'pin', 'size' => '1em']) {{ __('Địa chỉ nhận:') }}</span>
                                             <span>{{ $order->address }}</span>
                                         </div>
                                     </div>
 
                                     <div class="order-items-brief">
-                                        <h5>Sản phẩm ({{ $order->items->count() }} loại):</h5>
+                                        <h5>{{ __('Sản phẩm (') }}{{ $order->items->count() }} {{ __('loại):') }}</h5>
                                         @foreach ($order->items as $item)
                                             @php $prod = $item->product ?? $item->perfume; @endphp
                                             <div class="item-brief-row">
@@ -175,14 +175,14 @@
 
                                 <div class="order-result-footer">
                                     <div class="price-breakdown-mini">
-                                        <span>Phí GHN: <strong>{{ number_format($order->ghn_total_fee, 0, ',', '.') }}₫</strong></span>
+                                        <span>{{ __('Phí GHN:') }} <strong>{{ number_format($order->ghn_total_fee, 0, ',', '.') }}₫</strong></span>
                                         <span class="sep">|</span>
-                                        <span>Tổng thanh toán: <strong class="total-pink">{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</strong></span>
+                                        <span>{{ __('Tổng thanh toán:') }} <strong class="total-pink">{{ number_format($order->total_price, 0, ',', '.') }} {{ __('VNĐ') }}</strong></span>
                                     </div>
                                     <div class="action-buttons-group">
                                         @auth
                                             @if($order->user_id === auth()->id())
-                                                <a href="{{ route('orders.show', $order->id) }}" class="btn-view-order">Xem chi tiết đơn →</a>
+                                                <a href="{{ route('orders.show', $order->id) }}" class="btn-view-order">{{ __('Xem chi tiết đơn →') }}</a>
                                             @endif
                                         @endauth
                                     </div>
@@ -197,38 +197,38 @@
             @if(isset($myRecentOrders) && $myRecentOrders->isNotEmpty())
                 <div class="recent-orders-section">
                     <div class="recent-heading">
-                        <h3>Đơn Hàng Gần Đây Của Bạn</h3>
-                        <a href="{{ route('orders.index') }}" class="link-view-all">Xem tất cả đơn mua →</a>
+                        <h3>{{ __('Đơn Hàng Gần Đây Của Bạn') }}</h3>
+                        <a href="{{ route('orders.index') }}" class="link-view-all">{{ __('Xem tất cả đơn mua →') }}</a>
                     </div>
 
                     <div class="recent-orders-grid">
                         @foreach ($myRecentOrders as $order)
                             @php
                                 $statusLabels = [
-                                    'pending' => ['text' => 'Chờ xử lý', 'class' => 'status-pending'],
-                                    'ready_to_pick' => ['text' => 'GHN đã nhận', 'class' => 'status-ready'],
-                                    'delivering' => ['text' => 'Đang giao', 'class' => 'status-shipping'],
-                                    'delivered' => ['text' => 'Thành công', 'class' => 'status-delivered'],
-                                    'cancelled' => ['text' => 'Đã hủy', 'class' => 'status-cancelled'],
+                                    'pending' => ['text' => __('Chờ xử lý'), 'class' => 'status-pending'],
+                                    'ready_to_pick' => ['text' => __('GHN đã nhận'), 'class' => 'status-ready'],
+                                    'delivering' => ['text' => __('Đang giao'), 'class' => 'status-shipping'],
+                                    'delivered' => ['text' => __('Thành công'), 'class' => 'status-delivered'],
+                                    'cancelled' => ['text' => __('Đã hủy'), 'class' => 'status-cancelled'],
                                 ];
                                 $st = $statusLabels[$order->shipping_status] ?? ['text' => $order->shipping_status, 'class' => 'status-pending'];
                             @endphp
                             <div class="recent-card-item">
                                 <div class="recent-card-top">
-                                    <strong>Đơn #{{ $order->id }}</strong>
+                                    <strong>{{ __('Đơn #') }}{{ $order->id }}</strong>
                                     <span class="shipping-status-tag {{ $st['class'] }}">{{ $st['text'] }}</span>
                                 </div>
                                 <div class="recent-card-meta">
                                     <small>{{ $order->created_at->format('d/m/Y H:i') }}</small>
                                     @if($order->ghn_order_code)
-                                        <span class="ghn-code-text">Mã GHN: {{ $order->ghn_order_code }}</span>
+                                        <span class="ghn-code-text">{{ __('Mã GHN:') }} {{ $order->ghn_order_code }}</span>
                                     @endif
                                 </div>
                                 <div class="recent-card-total">
-                                    <span>Tổng tiền:</span>
-                                    <strong>{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</strong>
+                                    <span>{{ __('Tổng tiền:') }}</span>
+                                    <strong>{{ number_format($order->total_price, 0, ',', '.') }} {{ __('VNĐ') }}</strong>
                                 </div>
-                                <a href="{{ route('orders.show', $order->id) }}" class="btn-check-recent">Theo dõi đơn hàng →</a>
+                                <a href="{{ route('orders.show', $order->id) }}" class="btn-check-recent">{{ __('Theo dõi đơn hàng →') }}</a>
                             </div>
                         @endforeach
                     </div>

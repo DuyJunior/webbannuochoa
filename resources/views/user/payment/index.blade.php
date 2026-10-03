@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Thanh toán & Giao hàng GHN · Soopi')
+@section('title', __('Thanh toán & Giao hàng GHN · Soopi'))
 
 @section('content')
 @php
@@ -14,22 +14,22 @@
     <div class="store-container">
         {{-- Breadcrumb --}}
         <nav class="checkout-breadcrumb">
-            <a href="{{ route('home') }}">Trang chủ</a>
+            <a href="{{ route('home') }}">{{ __('Trang chủ') }}</a>
             <span>/</span>
-            <a href="{{ route('cart.index') }}">Giỏ hàng</a>
+            <a href="{{ route('cart.index') }}">{{ __('Giỏ hàng') }}</a>
             <span>/</span>
-            <span class="active">Thanh toán & Vận chuyển GHN</span>
+            <span class="active">{{ __('Thanh toán & Vận chuyển GHN') }}</span>
         </nav>
 
         <div class="checkout-header-title">
             <span class="badge-tag">Soopi Delivery</span>
-            <h1>Hoàn tất đơn hàng</h1>
-            <p>Tính cước phí vận chuyển chính xác thời gian thực qua Giao Hàng Nhanh (GHN)</p>
+            <h1>{{ __('Hoàn tất đơn hàng') }}</h1>
+            <p>{{ __('Tính cước phí vận chuyển chính xác thời gian thực qua Giao Hàng Nhanh (GHN)') }}</p>
         </div>
 
         @if ($errors->any())
             <div class="checkout-alert-error">
-                <strong>Đã có lỗi xảy ra:</strong>
+                <strong>{{ __('Đã có lỗi xảy ra:') }}</strong>
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -53,24 +53,24 @@
                     <div class="card-section-header">
                         <div class="icon-circle">1</div>
                         <div>
-                            <h2>Thông tin người nhận</h2>
-                            <small>Vui lòng cung cấp chính xác để nhân viên giao hàng liên hệ</small>
+                            <h2>{{ __('Thông tin người nhận') }}</h2>
+                            <small>{{ __('Vui lòng cung cấp chính xác để nhân viên giao hàng liên hệ') }}</small>
                         </div>
                     </div>
 
                     <div class="form-row-2">
                         <div class="form-group-item">
-                            <label for="name">Họ và tên người nhận <span class="req">*</span></label>
-                            <input type="text" id="name" name="name" value="{{ $checkoutInput('name', auth()->user()?->name) }}" required placeholder="Ví dụ: Nguyễn Thị Thu Hà">
+                            <label for="name">{{ __('Họ và tên người nhận') }} <span class="req">*</span></label>
+                            <input type="text" id="name" name="name" value="{{ $checkoutInput('name', auth()->user()?->name) }}" required placeholder="{{ __('Ví dụ: Nguyễn Thị Thu Hà') }}">
                         </div>
 
                         <div class="form-group-item">
-                            <label for="phone">Số điện thoại <span class="req">*</span></label>
-                            <input type="tel" id="phone" name="phone" value="{{ $checkoutInput('phone', auth()->user()?->phone) }}" required maxlength="10" minlength="10" pattern="0[0-9]{9}" title="Số điện thoại phải gồm đúng 10 chữ số (bắt đầu bằng số 0)" placeholder="Ví dụ: 0912345678" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
+                            <label for="phone">{{ __('Số điện thoại') }} <span class="req">*</span></label>
+                            <input type="tel" id="phone" name="phone" value="{{ $checkoutInput('phone', auth()->user()?->phone) }}" required maxlength="10" minlength="10" pattern="0[0-9]{9}" title="{{ __('Số điện thoại phải gồm đúng 10 chữ số (bắt đầu bằng số 0)') }}" placeholder="{{ __('Ví dụ: 0912345678') }}" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
                             @error('phone')
                                 <span class="text-danger" style="font-size: 12px; color: #ef4444; margin-top: 4px; display: block;">{{ $message }}</span>
                             @else
-                                <small class="field-hint" style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">Số điện thoại chỉ được đúng 10 chữ số (bắt đầu bằng số 0)</small>
+                                <small class="field-hint" style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">{{ __('Số điện thoại chỉ được đúng 10 chữ số (bắt đầu bằng số 0)') }}</small>
                             @enderror
                         </div>
                     </div>
@@ -80,50 +80,50 @@
                     <div class="card-section-header">
                         <div class="icon-circle">2</div>
                         <div>
-                            <h2>Địa chỉ giao hàng (GHN)</h2>
-                            <small>Chọn khu vực để hệ thống kết nối GHN tính phí tự động</small>
+                            <h2>{{ __('Địa chỉ giao hàng (GHN)') }}</h2>
+                            <small>{{ __('Chọn khu vực để hệ thống kết nối GHN tính phí tự động') }}</small>
                         </div>
                     </div>
 
                     <div class="ghn-partner-banner">
                         <div class="ghn-badge-logo">
                             <span class="truck-icon">@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
-                            <strong>Giao Hàng Nhanh (GHN Express)</strong>
+                            <strong>{{ __('Giao Hàng Nhanh (GHN Express)') }}</strong>
                         </div>
-                        <span class="ghn-status-live">● Kết nối API trực tiếp</span>
+                        <span class="ghn-status-live">{{ __('● Kết nối API trực tiếp') }}</span>
                     </div>
 
                     <div class="form-row-3">
                         <div class="form-group-item">
-                            <label for="province_select">Tỉnh / Thành phố <span class="req">*</span></label>
+                            <label for="province_select">{{ __('Tỉnh / Thành phố') }} <span class="req">*</span></label>
                             <select id="province_select" name="to_province_id" class="form-select" required>
-                                <option value="">-- Đang tải Tỉnh/Thành... --</option>
+                                <option value="">{{ __('-- Đang tải Tỉnh/Thành... --') }}</option>
                             </select>
                         </div>
 
                         <div class="form-group-item">
-                            <label for="district_select">Quận / Huyện <span class="req">*</span></label>
+                            <label for="district_select">{{ __('Quận / Huyện') }} <span class="req">*</span></label>
                             <select id="district_select" name="to_district_id" class="form-select" required disabled>
-                                <option value="">-- Chọn Tỉnh/Thành trước --</option>
+                                <option value="">{{ __('-- Chọn Tỉnh/Thành trước --') }}</option>
                             </select>
                         </div>
 
                         <div class="form-group-item">
-                            <label for="ward_select">Phường / Xã <span class="req">*</span></label>
+                            <label for="ward_select">{{ __('Phường / Xã') }} <span class="req">*</span></label>
                             <select id="ward_select" name="to_ward_code" class="form-select" required disabled>
-                                <option value="">-- Chọn Quận/Huyện trước --</option>
+                                <option value="">{{ __('-- Chọn Quận/Huyện trước --') }}</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="form-group-item" style="margin-top: 16px;">
-                        <label for="address">Địa chỉ chi tiết (Số nhà, tên đường, ngõ ngách) <span class="req">*</span></label>
-                        <textarea id="address" name="address" rows="2" required placeholder="Ví dụ: Số 18, Ngõ 45 Đường Láng">{{ $checkoutInput('address') }}</textarea>
+                        <label for="address">{{ __('Địa chỉ chi tiết (Số nhà, tên đường, ngõ ngách)') }} <span class="req">*</span></label>
+                        <textarea id="address" name="address" rows="2" required placeholder="{{ __('Ví dụ: Số 18, Ngõ 45 Đường Láng') }}">{{ $checkoutInput('address') }}</textarea>
                     </div>
 
                     <div class="form-group-item" style="margin-top: 14px;">
-                        <label for="note">Ghi chú đơn hàng (Tùy chọn)</label>
-                        <input type="text" id="note" name="note" maxlength="500" value="{{ is_string(old('note')) ? old('note') : '' }}" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi đến...">
+                        <label for="note">{{ __('Ghi chú đơn hàng (Tùy chọn)') }}</label>
+                        <input type="text" id="note" name="note" maxlength="500" value="{{ is_string(old('note')) ? old('note') : '' }}" placeholder="{{ __('Ví dụ: Giao giờ hành chính, gọi trước khi đến...') }}">
                     </div>
                 </div>
 
@@ -132,48 +132,48 @@
                     <div class="card-section-header">
                         <div class="icon-circle">@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</div>
                         <div>
-                            <h2>Dịch Vụ Gói Quà Cao Cấp & Thiệp Chúc Mừng</h2>
-                            <small>Món quà hoàn hảo trao tận tay người thương</small>
+                            <h2>{{ __('Dịch Vụ Gói Quà Cao Cấp & Thiệp Chúc Mừng') }}</h2>
+                            <small>{{ __('Món quà hoàn hảo trao tận tay người thương') }}</small>
                         </div>
                     </div>
 
                     <div style="background: #fff8fb; border: 1.5px solid #fbcfe8; border-radius: 14px; padding: 16px; margin-bottom: 16px;">
                         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; color: #be185d; font-size: 15px;">
                             <input type="checkbox" id="giftWrapToggle" name="enable_gift_service" value="1" @checked($giftRequested) style="width: 18px; height: 18px; accent-color: #be185d;">
-                            <span>Yêu cầu Gói Quà Cao Cấp & Thiệp Chúc Mừng</span>
+                            <span>{{ __('Yêu cầu Gói Quà Cao Cấp & Thiệp Chúc Mừng') }}</span>
                         </label>
-                        <p style="margin: 4px 0 0 28px; font-size: 13px; color: #715865;">Đóng hộp cứng cao cấp kèm nơ lụa, xịt hương thơm tinh tế trước khi đóng gói.</p>
+                        <p style="margin: 4px 0 0 28px; font-size: 13px; color: #715865;">{{ __('Đóng hộp cứng cao cấp kèm nơ lụa, xịt hương thơm tinh tế trước khi đóng gói.') }}</p>
                     </div>
 
                     <div id="giftOptionsBox" style="display: {{ $giftRequested ? 'block' : 'none' }}; animation: fadeInGift 0.3s ease;">
                         <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
                             <div class="form-group-item">
-                                <label for="gift_wrap">Mẫu giấy & hộp quà:</label>
+                                <label for="gift_wrap">{{ __('Mẫu giấy & hộp quà:') }}</label>
                                 <select id="gift_wrap" name="gift_wrap" class="form-select" @disabled(!$giftRequested)>
-                                    <option value="Nhung đỏ rượu vang (Wine Velvet)" @selected(old('gift_wrap') === 'Nhung đỏ rượu vang (Wine Velvet)')>Nhung đỏ rượu vang quý phái</option>
-                                    <option value="Giấy Kraft Paris cổ điển (Vintage Kraft)" @selected(old('gift_wrap') === 'Giấy Kraft Paris cổ điển (Vintage Kraft)')>Giấy Kraft Paris vintage mộc mạc</option>
-                                    <option value="Lụa hồng phấn kiêu kỳ (Blush Pink)" @selected(old('gift_wrap') === 'Lụa hồng phấn kiêu kỳ (Blush Pink)')>Lụa hồng phấn ngọt ngào</option>
-                                    <option value="Đen huyền bí sang trọng (Midnight Black)" @selected(old('gift_wrap') === 'Đen huyền bí sang trọng (Midnight Black)')>Đen huyền bí sang trọng</option>
+                                    <option value="Nhung đỏ rượu vang (Wine Velvet)" @selected(old('gift_wrap') === 'Nhung đỏ rượu vang (Wine Velvet)')>{{ __('Nhung đỏ rượu vang quý phái') }}</option>
+                                    <option value="Giấy Kraft Paris cổ điển (Vintage Kraft)" @selected(old('gift_wrap') === 'Giấy Kraft Paris cổ điển (Vintage Kraft)')>{{ __('Giấy Kraft Paris vintage mộc mạc') }}</option>
+                                    <option value="Lụa hồng phấn kiêu kỳ (Blush Pink)" @selected(old('gift_wrap') === 'Lụa hồng phấn kiêu kỳ (Blush Pink)')>{{ __('Lụa hồng phấn ngọt ngào') }}</option>
+                                    <option value="Đen huyền bí sang trọng (Midnight Black)" @selected(old('gift_wrap') === 'Đen huyền bí sang trọng (Midnight Black)')>{{ __('Đen huyền bí sang trọng') }}</option>
                                 </select>
                             </div>
                             <div class="form-group-item">
-                                <label for="gift_card">Mẫu thiệp chúc mừng:</label>
+                                <label for="gift_card">{{ __('Mẫu thiệp chúc mừng:') }}</label>
                                 <select id="gift_card" name="gift_card" class="form-select" @disabled(!$giftRequested)>
-                                    <option value="Sinh nhật (Happy Birthday)" @selected(old('gift_card') === 'Sinh nhật (Happy Birthday)')>Sinh nhật (Happy Birthday)</option>
-                                    <option value="Kỷ niệm (Happy Anniversary)" @selected(old('gift_card') === 'Kỷ niệm (Happy Anniversary)')>Kỷ niệm (Happy Anniversary)</option>
-                                    <option value="Tình yêu (With Love)" @selected(old('gift_card') === 'Tình yêu (With Love)')>Tình yêu ngọt ngào (With Love)</option>
-                                    <option value="Tri ân & Cảm ơn (Thank You)" @selected(old('gift_card') === 'Tri ân & Cảm ơn (Thank You)')>Tri ân & Cảm ơn (Thank You)</option>
+                                    <option value="Sinh nhật (Happy Birthday)" @selected(old('gift_card') === 'Sinh nhật (Happy Birthday)')>{{ __('Sinh nhật (Happy Birthday)') }}</option>
+                                    <option value="Kỷ niệm (Happy Anniversary)" @selected(old('gift_card') === 'Kỷ niệm (Happy Anniversary)')>{{ __('Kỷ niệm (Happy Anniversary)') }}</option>
+                                    <option value="Tình yêu (With Love)" @selected(old('gift_card') === 'Tình yêu (With Love)')>{{ __('Tình yêu ngọt ngào (With Love)') }}</option>
+                                    <option value="Tri ân & Cảm ơn (Thank You)" @selected(old('gift_card') === 'Tri ân & Cảm ơn (Thank You)')>{{ __('Tri ân & Cảm ơn (Thank You)') }}</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group-item" style="margin-bottom: 14px;">
-                            <label for="gift_message">Lời nhắn chúc mừng (in lên thiệp):</label>
-                            <textarea id="gift_message" name="gift_message" rows="2" maxlength="1000" @disabled(!$giftRequested) placeholder="Ví dụ: Chúc em sinh nhật vui vẻ, luôn rạng rỡ và ngát hương thơm mỗi ngày nhé!">{{ $checkoutInput('gift_message') }}</textarea>
+                            <label for="gift_message">{{ __('Lời nhắn chúc mừng (in lên thiệp):') }}</label>
+                            <textarea id="gift_message" name="gift_message" rows="2" maxlength="1000" @disabled(!$giftRequested) placeholder="{{ __('Ví dụ: Chúc em sinh nhật vui vẻ, luôn rạng rỡ và ngát hương thơm mỗi ngày nhé!') }}">{{ $checkoutInput('gift_message') }}</textarea>
                         </div>
 
                         <div class="form-group-item">
-                            <label for="gift_delivery_date">Ngày giao mong muốn (để nhận đúng ngày đặc biệt):</label>
+                            <label for="gift_delivery_date">{{ __('Ngày giao mong muốn (để nhận đúng ngày đặc biệt):') }}</label>
                             <input type="date" id="gift_delivery_date" name="gift_delivery_date" value="{{ $checkoutInput('gift_delivery_date') }}" min="{{ date('Y-m-d') }}" @disabled(!$giftRequested)>
                         </div>
                     </div>
@@ -183,8 +183,8 @@
                     <div class="card-section-header">
                         <div class="icon-circle">3</div>
                         <div>
-                            <h2>Phương thức thanh toán</h2>
-                            <small>Đơn giản, an toàn và tiện lợi</small>
+                            <h2>{{ __('Phương thức thanh toán') }}</h2>
+                            <small>{{ __('Đơn giản, an toàn và tiện lợi') }}</small>
                         </div>
                     </div>
 
@@ -196,11 +196,11 @@
                                 <div class="opt-title">
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <span style="font-size: 1.25rem;">@include('partials.icon', ['name' => 'cash', 'size' => '1em'])</span>
-                                        <strong>Thanh toán khi nhận hàng (COD)</strong>
+                                        <strong>{{ __('Thanh toán khi nhận hàng (COD)') }}</strong>
                                     </div>
-                                    <span class="badge-popular">Phổ biến</span>
+                                    <span class="badge-popular">{{ __('Phổ biến') }}</span>
                                 </div>
-                                <p>Nhận hàng, kiểm tra tem seal nước hoa chính hãng trước khi thanh toán cho shipper GHN.</p>
+                                <p>{{ __('Nhận hàng, kiểm tra tem seal nước hoa chính hãng trước khi thanh toán cho shipper GHN.') }}</p>
                             </div>
                         </label>
 
@@ -211,16 +211,16 @@
                                 <div class="opt-title">
                                     <div style="display: flex; align-items: center; gap: 8px;">
                                         <img src="{{ asset('images/payments/momo.svg') }}" alt="MoMo" style="height: 22px; width: 22px; object-fit: contain; border-radius: 4px;">
-                                        <strong>Cổng thanh toán MoMo (Online)</strong>
+                                        <strong>{{ __('Cổng thanh toán MoMo (Online)') }}</strong>
                                     </div>
                                     <span class="badge-popular" style="background: #a50064; color: #fff;">MoMo Sandbox</span>
                                 </div>
-                                <p>Chuyển hướng đến cổng thanh toán MoMo: Hỗ trợ quét mã QR MoMo, Thẻ ATM Nội Địa (Napas) & Thẻ Quốc Tế.</p>
+                                <p>{{ __('Chuyển hướng đến cổng thanh toán MoMo: Hỗ trợ quét mã QR MoMo, Thẻ ATM Nội Địa (Napas) & Thẻ Quốc Tế.') }}</p>
 
                                 <div class="momo-feature-tags" style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
-                                    <span style="font-size: 0.76rem; background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'phone', 'size' => '1em']) Ví MoMo QR</span>
-                                    <span style="font-size: 0.76rem; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'bank', 'size' => '1em']) Thẻ ATM Nội Địa (Napas)</span>
-                                    <span style="font-size: 0.76rem; background: #fefce8; color: #854d0e; border: 1px solid #fef08a; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'card', 'size' => '1em']) Thẻ Quốc Tế (Visa/Master)</span>
+                                    <span style="font-size: 0.76rem; background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'phone', 'size' => '1em']) {{ __('Ví MoMo QR') }}</span>
+                                    <span style="font-size: 0.76rem; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'bank', 'size' => '1em']) {{ __('Thẻ ATM Nội Địa (Napas)') }}</span>
+                                    <span style="font-size: 0.76rem; background: #fefce8; color: #854d0e; border: 1px solid #fef08a; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'card', 'size' => '1em']) {{ __('Thẻ Quốc Tế (Visa/Master)') }}</span>
                                 </div>
                             </div>
                         </label>
@@ -236,7 +236,7 @@
             {{-- Cột Phải: Tóm tắt đơn hàng & Phí ship GHN --}}
             <div class="checkout-col-side">
                 <div class="order-summary-box">
-                    <h3 class="summary-box-title">Đơn hàng của bạn</h3>
+                    <h3 class="summary-box-title">{{ __('Đơn hàng của bạn') }}</h3>
 
                     <div class="summary-items-list">
                         @if(isset($cartItems) && count($cartItems) > 0)
@@ -253,8 +253,8 @@
                                     <div class="item-details">
                                         <h4 class="item-title">{{ $item['title'] }}</h4>
                                         <span class="item-meta">{{ $item['volume_label'] }} · {{ $item['weight'] ?? 200 }}g</span>
-                                        @if(!empty($item['sample_names']))<p class="item-meta">Mẫu 5ml: {{ implode(' · ', $item['sample_names']) }}</p>@endif
-                                        @if($item['is_gift_bundle'])<p class="item-meta">Hộp quà & thiệp đã gồm trong giá combo.</p>@endif
+                                        @if(!empty($item['sample_names']))<p class="item-meta">{{ __('Mẫu 5ml:') }} {{ implode(' · ', $item['sample_names']) }}</p>@endif
+                                        @if($item['is_gift_bundle'])<p class="item-meta">{{ __('Hộp quà & thiệp đã gồm trong giá combo.') }}</p>@endif
                                         <div class="item-price">{{ number_format($item['price'], 0, ',', '.') }}₫</div>
                                     </div>
                                     <div class="item-subtotal">
@@ -267,41 +267,41 @@
 
                     <div class="summary-cost-breakdown">
                         <div class="cost-row">
-                            <span>Tiền hàng</span>
-                            <strong id="subtotal_text">{{ number_format($totalPrice, 0, ',', '.') }} VNĐ</strong>
+                            <span>{{ __('Tiền hàng') }}</span>
+                            <strong id="subtotal_text">{{ number_format($totalPrice, 0, ',', '.') }} {{ __('VNĐ') }}</strong>
                         </div>
                         <div class="cost-row">
-                            <span>Tổng khối lượng tính phí</span>
+                            <span>{{ __('Tổng khối lượng tính phí') }}</span>
                             <strong style="color: #db2777; font-weight: 700;">{{ isset($totalWeight) ? $totalWeight : 200 }} g</strong>
                         </div>
                         <div class="ht-checkout-promos">
-                            <label>Mã ưu đãi<input name="coupon_code" value="{{ $checkoutInput('coupon_code') }}" placeholder="Nhập mã nếu có" maxlength="30"></label>
-                            @if($availableCoupons->isNotEmpty())<small>Mã hiện có: @foreach($availableCoupons as $coupon)<strong>{{ $coupon->code }}</strong>{{ !$loop->last ? ', ' : '' }}@endforeach</small>@endif
-                            <label>Điểm thành viên muốn dùng<input name="points_used" type="number" min="0" max="{{ min($loyaltyBalance, floor($totalPrice * .2 / 1000)) }}" value="{{ $checkoutInput('points_used', 0) }}"></label>
-                            <small>Bạn có {{ $loyaltyBalance }} điểm · 1 điểm giảm 1.000₫ · tối đa 20% tiền hàng. Ưu đãi được xác nhận khi đặt hàng.</small>
+                            <label>{{ __('Mã ưu đãi') }}<input name="coupon_code" value="{{ $checkoutInput('coupon_code') }}" placeholder="{{ __('Nhập mã nếu có') }}" maxlength="30"></label>
+                            @if($availableCoupons->isNotEmpty())<small>{{ __('Mã hiện có:') }} @foreach($availableCoupons as $coupon)<strong>{{ $coupon->code }}</strong>{{ !$loop->last ? ', ' : '' }}@endforeach</small>@endif
+                            <label>{{ __('Điểm thành viên muốn dùng') }}<input name="points_used" type="number" min="0" max="{{ min($loyaltyBalance, floor($totalPrice * .2 / 1000)) }}" value="{{ $checkoutInput('points_used', 0) }}"></label>
+                            <small>{{ __('Bạn có') }} {{ $loyaltyBalance }} {{ __('điểm · 1 điểm giảm 1.000₫ · tối đa 20% tiền hàng. Ưu đãi được xác nhận khi đặt hàng.') }}</small>
                             @error('coupon_code')<span class="text-danger">{{ $message }}</span>@enderror
                             @error('points_used')<span class="text-danger">{{ $message }}</span>@enderror
                         </div>
-                        <div class="cost-row"><span>Ưu đãi dự tính</span><strong id="discount_preview">0 VNĐ</strong></div>
+                        <div class="cost-row"><span>{{ __('Ưu đãi dự tính') }}</span><strong id="discount_preview">{{ __('0 VNĐ') }}</strong></div>
                         <div class="cost-row shipping-row">
-                            <span>Cước vận chuyển GHN</span>
-                            <strong id="shipping_fee_text" class="fee-waiting" aria-live="polite">-- Chọn địa chỉ --</strong>
+                            <span>{{ __('Cước vận chuyển GHN') }}</span>
+                            <strong id="shipping_fee_text" class="fee-waiting" aria-live="polite">{{ __('-- Chọn địa chỉ --') }}</strong>
                         </div>
-                        <button type="button" id="shipping_retry" class="shipping-retry" hidden>Thử kết nối giao hàng lại ↻</button>
+                        <button type="button" id="shipping_retry" class="shipping-retry" hidden>{{ __('Thử kết nối giao hàng lại ↻') }}</button>
                         <div class="cost-row total-highlight">
-                            <span>Tổng thanh toán</span>
-                            <strong id="final_total_text" class="final-price">{{ number_format($totalPrice, 0, ',', '.') }} VNĐ</strong>
+                            <span>{{ __('Tổng thanh toán') }}</span>
+                            <strong id="final_total_text" class="final-price">{{ number_format($totalPrice, 0, ',', '.') }} {{ __('VNĐ') }}</strong>
                         </div>
                     </div>
 
-                    <p class="store-privacy-note">Thông tin người nhận được dùng để xử lý và giao đơn hàng. <a href="{{ route('store.privacy') }}" target="_blank" rel="noopener">Chính sách riêng tư ↗</a></p>
+                    <p class="store-privacy-note">{{ __('Thông tin người nhận được dùng để xử lý và giao đơn hàng.') }} <a href="{{ route('store.privacy') }}" target="_blank" rel="noopener">{{ __('Chính sách riêng tư ↗') }}</a></p>
                     <button type="submit" class="btn-confirm-checkout" id="btnSubmitPayment">
-                        <span>XÁC NHẬN ĐẶT HÀNG</span>
+                        <span>{{ __('XÁC NHẬN ĐẶT HÀNG') }}</span>
                         <span class="btn-icon">→</span>
                     </button>
 
                     <div class="safe-checkout-badge">
-                        <span>@include('partials.icon', ['name' => 'lock', 'size' => '1em']) Bảo mật thông tin đặt hàng · Cam kết chính hãng 100%</span>
+                        <span>@include('partials.icon', ['name' => 'lock', 'size' => '1em']) {{ __('Bảo mật thông tin đặt hàng · Cam kết chính hãng 100%') }}</span>
                     </div>
                 </div>
             </div>
@@ -860,14 +860,14 @@ document.addEventListener("DOMContentLoaded", function () {
         const maxPoints = Math.min({{ $loyaltyBalance }}, Math.floor((subtotal - couponDiscount) * 0.2 / 1000));
         const points = Math.min(maxPoints, Math.max(0, parseInt(pointsInput?.value || '0', 10) || 0));
         const savings = couponDiscount + points * 1000;
-        discountPreview.textContent = savings ? '- ' + new Intl.NumberFormat('vi-VN').format(savings) + ' VNĐ' : '0 VNĐ';
+        discountPreview.textContent = savings ? '- ' + new Intl.NumberFormat('vi-VN').format(savings) + (window.soopiT || (text => text))(" VNĐ") : (window.soopiT || (text => text))("0 VNĐ");
         const finalAmount = Math.max(0, subtotal + currentShippingFee - savings);
-        finalTotalText.textContent = new Intl.NumberFormat('vi-VN').format(finalAmount) + ' VNĐ';
+        finalTotalText.textContent = new Intl.NumberFormat('vi-VN').format(finalAmount) + (window.soopiT || (text => text))(" VNĐ");
         if (totalPriceInput) totalPriceInput.value = finalAmount;
     }
     couponInput?.addEventListener('input', renderTotal);
     pointsInput?.addEventListener('input', renderTotal);
-    function resetShippingFee(message = '-- Chờ chọn Phường/Xã --') {
+    function resetShippingFee(message = (window.soopiT || (text => text))("-- Chờ chọn Phường/Xã --")) {
         shippingReady = false;
         submitButton.disabled = true;
         currentShippingFee = 0;
@@ -878,7 +878,7 @@ document.addEventListener("DOMContentLoaded", function () {
         shippingReady = true;
         submitButton.disabled = false;
         currentShippingFee = fee;
-        shippingFeeText.textContent = '+ ' + new Intl.NumberFormat('vi-VN').format(fee) + ' VNĐ';
+        shippingFeeText.textContent = '+ ' + new Intl.NumberFormat('vi-VN').format(fee) + (window.soopiT || (text => text))(" VNĐ");
         renderTotal();
     }
     resetShippingFee();
@@ -921,15 +921,15 @@ document.addEventListener("DOMContentLoaded", function () {
     async function loadProvinces(restore = {}) {
         invalidate('province', 'district', 'ward', 'fee');
         const version = versions.province;
-        resetShippingFee('Đang tải khu vực giao hàng…');
-        optionsFor(provinceSelect, '-- Đang tải Tỉnh/Thành... --');
-        optionsFor(districtSelect, '-- Chọn Tỉnh/Thành trước --');
-        optionsFor(wardSelect, '-- Chọn Quận/Huyện trước --');
+        resetShippingFee((window.soopiT || (text => text))("Đang tải khu vực giao hàng…"));
+        optionsFor(provinceSelect, (window.soopiT || (text => text))("-- Đang tải Tỉnh/Thành... --"));
+        optionsFor(districtSelect, (window.soopiT || (text => text))("-- Chọn Tỉnh/Thành trước --"));
+        optionsFor(wardSelect, (window.soopiT || (text => text))("-- Chọn Quận/Huyện trước --"));
         try {
             const response = await requestJSON('province', "{{ route('locations.provinces') }}");
             if (version !== versions.province) return;
             if (!Array.isArray(response.data) || !response.data.length) throw new Error('No provinces');
-            optionsFor(provinceSelect, '-- Chọn Tỉnh/Thành phố --', response.data, 'ProvinceID', 'ProvinceName');
+            optionsFor(provinceSelect, (window.soopiT || (text => text))("-- Chọn Tỉnh/Thành phố --"), response.data, 'ProvinceID', 'ProvinceName');
             resetShippingFee();
             if (restore.province) {
                 provinceSelect.value = restore.province;
@@ -937,8 +937,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         } catch {
             if (version !== versions.province) return;
-            optionsFor(provinceSelect, '-- Chưa tải được tỉnh/thành --');
-            offerRetry(() => loadProvinces(restore), 'Chưa tải được khu vực. Vui lòng thử lại.');
+            optionsFor(provinceSelect, (window.soopiT || (text => text))("-- Chưa tải được tỉnh/thành --"));
+            offerRetry(() => loadProvinces(restore), (window.soopiT || (text => text))("Chưa tải được khu vực. Vui lòng thử lại."));
         }
     }
     async function loadDistricts(restore = {}) {
@@ -946,22 +946,22 @@ document.addEventListener("DOMContentLoaded", function () {
         const version = versions.district;
         const province = provinceSelect.value;
         resetShippingFee();
-        optionsFor(districtSelect, province ? '-- Đang tải Quận/Huyện... --' : '-- Chọn Tỉnh/Thành trước --');
-        optionsFor(wardSelect, '-- Chọn Quận/Huyện trước --');
+        optionsFor(districtSelect, province ? (window.soopiT || (text => text))("-- Đang tải Quận/Huyện... --") : (window.soopiT || (text => text))("-- Chọn Tỉnh/Thành trước --"));
+        optionsFor(wardSelect, (window.soopiT || (text => text))("-- Chọn Quận/Huyện trước --"));
         if (!province) return;
         try {
             const response = await requestJSON('district', districtsUrl.replace('__PROVINCE__', encodeURIComponent(province)));
             if (version !== versions.district || province !== provinceSelect.value) return;
             if (!Array.isArray(response.data) || !response.data.length) throw new Error('No districts');
-            optionsFor(districtSelect, '-- Chọn Quận/Huyện --', response.data, 'DistrictID', 'DistrictName');
+            optionsFor(districtSelect, (window.soopiT || (text => text))("-- Chọn Quận/Huyện --"), response.data, 'DistrictID', 'DistrictName');
             if (restore.district) {
                 districtSelect.value = restore.district;
                 if (districtSelect.value) await loadWards(restore);
             }
         } catch {
             if (version !== versions.district) return;
-            optionsFor(districtSelect, '-- Chưa tải được quận/huyện --');
-            offerRetry(() => loadDistricts(restore), 'Chưa tải được quận/huyện. Vui lòng thử lại.');
+            optionsFor(districtSelect, (window.soopiT || (text => text))("-- Chưa tải được quận/huyện --"));
+            offerRetry(() => loadDistricts(restore), (window.soopiT || (text => text))("Chưa tải được quận/huyện. Vui lòng thử lại."));
         }
     }
     async function loadWards(restore = {}) {
@@ -969,21 +969,21 @@ document.addEventListener("DOMContentLoaded", function () {
         const version = versions.ward;
         const district = districtSelect.value;
         resetShippingFee();
-        optionsFor(wardSelect, district ? '-- Đang tải Phường/Xã... --' : '-- Chọn Quận/Huyện trước --');
+        optionsFor(wardSelect, district ? (window.soopiT || (text => text))("-- Đang tải Phường/Xã... --") : (window.soopiT || (text => text))("-- Chọn Quận/Huyện trước --"));
         if (!district) return;
         try {
             const response = await requestJSON('ward', wardsUrl.replace('__DISTRICT__', encodeURIComponent(district)));
             if (version !== versions.ward || district !== districtSelect.value) return;
             if (!Array.isArray(response.data) || !response.data.length) throw new Error('No wards');
-            optionsFor(wardSelect, '-- Chọn Phường/Xã --', response.data, 'WardCode', 'WardName');
+            optionsFor(wardSelect, (window.soopiT || (text => text))("-- Chọn Phường/Xã --"), response.data, 'WardCode', 'WardName');
             if (restore.ward) {
                 wardSelect.value = restore.ward;
                 if (wardSelect.value) await loadFee();
             }
         } catch {
             if (version !== versions.ward) return;
-            optionsFor(wardSelect, '-- Chưa tải được phường/xã --');
-            offerRetry(() => loadWards(restore), 'Chưa tải được phường/xã. Vui lòng thử lại.');
+            optionsFor(wardSelect, (window.soopiT || (text => text))("-- Chưa tải được phường/xã --"));
+            offerRetry(() => loadWards(restore), (window.soopiT || (text => text))("Chưa tải được phường/xã. Vui lòng thử lại."));
         }
     }
     async function loadFee() {
@@ -991,7 +991,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const version = versions.fee;
         const district = districtSelect.value;
         const ward = wardSelect.value;
-        resetShippingFee(ward && district ? 'Đang tính phí giao hàng…' : 'Chờ chọn Phường/Xã');
+        resetShippingFee(ward && district ? (window.soopiT || (text => text))("Đang tính phí giao hàng…") : (window.soopiT || (text => text))("Chờ chọn Phường/Xã"));
         if (!ward || !district) return;
         try {
             const response = await requestJSON('fee', "{{ route('locations.fee') }}", {
@@ -1008,7 +1008,7 @@ document.addEventListener("DOMContentLoaded", function () {
             applyShippingFee(Math.round(fee));
         } catch {
             if (version !== versions.fee) return;
-            offerRetry(loadFee, 'Chưa lấy được phí giao hàng. Vui lòng thử lại.');
+            offerRetry(loadFee, (window.soopiT || (text => text))("Chưa lấy được phí giao hàng. Vui lòng thử lại."));
         }
     }
     shippingRetry.addEventListener('click', () => retryShipping?.());
@@ -1033,7 +1033,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const val = phoneInput.value.trim();
                 if (!/^0[0-9]{9}$/.test(val)) {
                     e.preventDefault();
-                    alert('Số điện thoại chỉ được gồm đúng 10 chữ số (bắt đầu bằng số 0).');
+                    alert((window.soopiT || (text => text))("Số điện thoại chỉ được gồm đúng 10 chữ số (bắt đầu bằng số 0)."));
                     phoneInput.focus();
                     return false;
                 }
@@ -1041,7 +1041,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!provinceSelect.value || !districtSelect.value || !wardSelect.value) {
                 e.preventDefault();
-                alert('Vui lòng chọn đầy đủ Tỉnh/Thành, Quận/Huyện và Phường/Xã để hệ thống GHN tính chính xác cước vận chuyển trước khi xác nhận đặt hàng.');
+                alert((window.soopiT || (text => text))("Vui lòng chọn đầy đủ Tỉnh/Thành, Quận/Huyện và Phường/Xã để hệ thống GHN tính chính xác cước vận chuyển trước khi xác nhận đặt hàng."));
                 if (!provinceSelect.value) provinceSelect.focus();
                 else if (!districtSelect.value) districtSelect.focus();
                 else wardSelect.focus();
@@ -1049,7 +1049,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             if (!shippingReady) {
                 e.preventDefault();
-                shippingFeeText.textContent = 'Vui lòng đợi phí giao hàng hoặc bấm thử lại trước khi đặt hàng.';
+                shippingFeeText.textContent = (window.soopiT || (text => text))("Vui lòng đợi phí giao hàng hoặc bấm thử lại trước khi đặt hàng.");
                 shippingFeeText.scrollIntoView({ block: 'nearest' });
             }
         });

@@ -20,7 +20,7 @@ class ArticleController extends Controller
             ->when($search !== '', fn ($query) => $query->where(fn ($query) => $query
                 ->where('title', 'like', "%{$search}%")
                 ->orWhere('excerpt', 'like', "%{$search}%")))
-            ->when(!empty($filters['status']), fn ($query) => $query->where('is_published', $filters['status'] === 'published'))
+            ->when(! empty($filters['status']), fn ($query) => $query->where('is_published', $filters['status'] === 'published'))
             ->latest()->paginate(20)->withQueryString();
 
         return view('admin.articles.index', compact('articles'));
@@ -28,7 +28,7 @@ class ArticleController extends Controller
 
     public function create()
     {
-        return view('admin.articles.form', ['article' => new Article()]);
+        return view('admin.articles.form', ['article' => new Article]);
     }
 
     public function store(Request $request)
@@ -37,6 +37,7 @@ class ArticleController extends Controller
         $data['slug'] = $this->uniqueSlug($data['title']);
         $data['is_published'] = $request->boolean('is_published');
         Article::create($data);
+
         return redirect()->route('admin.articles.index')->with('success', 'Đã tạo bài viết.');
     }
 
@@ -48,15 +49,19 @@ class ArticleController extends Controller
     public function update(Request $request, Article $article)
     {
         $data = $this->validated($request);
-        if ($article->title !== $data['title']) $data['slug'] = $this->uniqueSlug($data['title'], $article->id);
+        if ($article->title !== $data['title']) {
+            $data['slug'] = $this->uniqueSlug($data['title'], $article->id);
+        }
         $data['is_published'] = $request->boolean('is_published');
         $article->update($data);
-        return redirect()->route('admin.articles.index')->with('success', 'Đã cập nhật bài viết.');
+
+        return redirect()->route('admin.articles.index')->with('success', __('Đã cập nhật bài viết.'));
     }
 
     public function destroy(Article $article)
     {
         $article->delete();
+
         return redirect()->route('admin.articles.index')->with('success', 'Đã xóa bài viết.');
     }
 
@@ -79,6 +84,7 @@ class ArticleController extends Controller
         while (Article::where('slug', $slug)->when($except, fn ($query) => $query->whereKeyNot($except))->exists()) {
             $slug = $base.'-'.$i++;
         }
+
         return $slug;
     }
 }

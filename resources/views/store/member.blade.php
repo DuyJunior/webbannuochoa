@@ -1,14 +1,14 @@
 @extends('layouts.store')
 
-@section('title', 'Đặc Quyền Thành Viên · Hạng ' . $tier['name'] . ' | Soopi')
-@section('meta_description', 'Khám phá thẻ thành viên ảo, hạng VIP, điểm thưởng tích lũy và đặc quyền riêng của bạn tại Soopi.')
+@section('title', __('Đặc Quyền Thành Viên · Hạng ') . __($tier['name']) . ' | Soopi')
+@section('meta_description', __('Khám phá thẻ thành viên ảo, hạng VIP, điểm thưởng tích lũy và đặc quyền riêng của bạn tại Soopi.'))
 
 @section('content')
 <div class="store-container ht-member-page">
     <header class="ht-member-header">
-        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) CHƯƠNG TRÌNH KHÁCH HÀNG THÂN THIẾT</span>
-        <h1 class="ht-member-title">Đặc Quyền Thành Viên <em>Soopi Club</em></h1>
-        <p class="ht-member-subtitle">100.000đ chi tiêu hợp lệ tích 1 điểm; 1 điểm giảm 1.000đ, tối đa 20% tiền hàng sau mã giảm giá. Chỉ tính đơn hoàn tất và đã thanh toán; đơn cũ nhập vào không có giao dịch được tính khi đã hoàn tất. Đơn hủy hoặc hoàn trả không tích điểm. Điểm demo và điểm thật được tách riêng.</p>
+        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) {{ __('CHƯƠNG TRÌNH KHÁCH HÀNG THÂN THIẾT') }}</span>
+        <h1 class="ht-member-title">{{ __('Đặc Quyền Thành Viên') }} <em>Soopi Club</em></h1>
+        <p class="ht-member-subtitle">{{ __('100.000đ chi tiêu hợp lệ tích 1 điểm; 1 điểm giảm 1.000đ, tối đa 20% tiền hàng sau mã giảm giá. Chỉ tính đơn hoàn tất và đã thanh toán; đơn cũ nhập vào không có giao dịch được tính khi đã hoàn tất. Đơn hủy hoặc hoàn trả không tích điểm. Điểm demo và điểm thật được tách riêng.') }}</p>
     </header>
 
     <div class="ht-member-top-grid">
@@ -19,16 +19,16 @@
                 <span class="member-card-brand">@include('partials.brand-logo', ['class' => 'member-brand-logo'])</span>
             </div>
             <div class="card-middle-row">
-                <span class="card-tier-badge">@include('partials.icon', ['name' => $tier['badge'], 'size' => '1em']) {{ $tier['name'] }}</span>
-                <span class="card-discount-tag">{{ $tier['point_rate'] }}</span>
+                <span class="card-tier-badge">@include('partials.icon', ['name' => $tier['badge'], 'size' => '1em']) {{ __($tier['name']) }}</span>
+                <span class="card-discount-tag">{{ __($tier['point_rate']) }}</span>
             </div>
             <div class="card-bottom-row">
                 <div class="holder-info">
-                    <span class="sub">CHỦ THẺ THÀNH VIÊN</span>
+                    <span class="sub">{{ __('CHỦ THẺ THÀNH VIÊN') }}</span>
                     <strong class="name">{{ Auth::user()->name }}</strong>
                 </div>
                 <div class="card-expiry">
-                    <span class="sub">MÃ THÀNH VIÊN</span>
+                    <span class="sub">{{ __('MÃ THÀNH VIÊN') }}</span>
                     <strong>HT-{{ str_pad(Auth::id(), 6, '0', STR_PAD_LEFT) }}</strong>
                 </div>
             </div>
@@ -37,83 +37,83 @@
         {{-- Points & Progress Box --}}
         <div class="ht-points-summary-box">
             <div class="points-header">
-                <span class="sub-label">ĐIỂM TÍCH LŨY KHẢ DỤNG</span>
+                <span class="sub-label">{{ __('ĐIỂM TÍCH LŨY KHẢ DỤNG') }}</span>
                 <div class="points-number">
                     <span class="num">{{ number_format($points, 0, ',', '.') }}</span>
-                    <span class="unit">điểm</span>
+                    <span class="unit">{{ __('điểm') }}</span>
                 </div>
-                <p class="value-equiv">Tương đương <strong>{{ number_format($points * 1000, 0, ',', '.') }}₫</strong> giảm trực tiếp khi thanh toán đơn hàng.</p>
+                <p class="value-equiv">{{ __('Tương đương') }} <strong>{{ number_format($points * 1000, 0, ',', '.') }}₫</strong> {{ __('giảm trực tiếp khi thanh toán đơn hàng.') }}</p>
             </div>
 
             {{-- Tier Progress --}}
             <div class="tier-progress-card">
                 <div class="progress-labels">
-                    <span>Tổng chi tiêu: <strong>{{ number_format($totalSpent, 0, ',', '.') }}₫</strong></span>
+                    <span>{{ __('Tổng chi tiêu:') }} <strong>{{ number_format($totalSpent, 0, ',', '.') }}₫</strong></span>
                     @if($tier['next_tier'])
-                    <span>Cần thêm <strong>{{ number_format($tier['needed_amount'], 0, ',', '.') }}₫</strong> lên {{ $tier['next_tier'] }}</span>
+                    <span>{{ __('Cần thêm') }} <strong>{{ number_format($tier['needed_amount'], 0, ',', '.') }}₫</strong> {{ __('lên') }} {{ __($tier['next_tier']) }}</span>
                     @else
-                    <span style="color: #d4af37; font-weight: 700;">@include('partials.icon', ['name' => 'star', 'size' => '1em']) Bạn đã đạt hạng VIP cao nhất!</span>
+                    <span style="color: #d4af37; font-weight: 700;">@include('partials.icon', ['name' => 'star', 'size' => '1em']) {{ __('Bạn đã đạt hạng VIP cao nhất!') }}</span>
                     @endif
                 </div>
                 <div class="progress-track">
                     <div class="progress-bar-fill" style="width: {{ $tier['progress_percent'] }}%"></div>
                 </div>
                 <div class="progress-milestones">
-                    <span>Bạc (Silver)</span>
-                    <span>Hoa Hồng (1.5Tr)</span>
-                    <span>Hoàng Gia (5Tr)</span>
+                    <span>{{ __('Bạc (Silver)') }}</span>
+                    <span>{{ __('Hoa Hồng (1.5Tr)') }}</span>
+                    <span>{{ __('Hoàng Gia (5Tr)') }}</span>
                 </div>
             </div>
 
             <div class="points-actions">
-                <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary">Mua Sắm Để Tích Điểm</a>
-                <a href="{{ route('orders.index') }}" class="ht-button ht-button-outline">Lịch Sử Mua Hàng</a>
+                <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary">{{ __('Mua Sắm Để Tích Điểm') }}</a>
+                <a href="{{ route('orders.index') }}" class="ht-button ht-button-outline">{{ __('Lịch Sử Mua Hàng') }}</a>
             </div>
         </div>
     </div>
 
     {{-- Tier Comparison Perks Table --}}
     <section class="ht-tier-perks-section">
-        <h2 class="section-title">Các Mốc Thành Viên</h2>
-        <p class="section-sub">Hạng thẻ ghi nhận mức chi tiêu. Hiện tất cả các hạng áp dụng cùng chính sách điểm, chưa có giảm giá tự động theo hạng.</p>
+        <h2 class="section-title">{{ __('Các Mốc Thành Viên') }}</h2>
+        <p class="section-sub">{{ __('Hạng thẻ ghi nhận mức chi tiêu. Hiện tất cả các hạng áp dụng cùng chính sách điểm, chưa có giảm giá tự động theo hạng.') }}</p>
 
         <div class="perks-cards-grid">
             {{-- Hạng Bạc --}}
             <div class="tier-perk-card {{ $tier['code'] === 'silver' ? 'current-tier' : '' }}">
-                @if($tier['code'] === 'silver')<span class="current-tag">HẠNG HIỆN TẠI</span>@endif
+                @if($tier['code'] === 'silver')<span class="current-tag">{{ __('HẠNG HIỆN TẠI') }}</span>@endif
                 <div class="card-head silver">
                     <span class="badge">@include('partials.icon', ['name' => 'ribbon', 'size' => '1em'])</span>
-                    <h3>Hạng Bạc (Silver)</h3>
-                    <span class="cond">Chi tiêu dưới 1.500.000₫</span>
+                    <h3>{{ __('Hạng Bạc (Silver)') }}</h3>
+                    <span class="cond">{{ __('Chi tiêu dưới 1.500.000₫') }}</span>
                 </div>
                 <ul class="perks-list">
-                    @foreach($tier['perks'] as $perk)<li>@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ $perk }}</li>@endforeach
+                    @foreach($tier['perks'] as $perk)<li>@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __($perk) }}</li>@endforeach
                 </ul>
             </div>
 
             {{-- Hạng Hoa Hồng --}}
             <div class="tier-perk-card {{ $tier['code'] === 'rose' ? 'current-tier' : '' }}">
-                @if($tier['code'] === 'rose')<span class="current-tag">HẠNG HIỆN TẠI</span>@endif
+                @if($tier['code'] === 'rose')<span class="current-tag">{{ __('HẠNG HIỆN TẠI') }}</span>@endif
                 <div class="card-head rose">
                     <span class="badge">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
-                    <h3>Hạng Hoa Hồng (Rose)</h3>
-                    <span class="cond">Chi tiêu từ 1.500.000₫ đến 5.000.000₫</span>
+                    <h3>{{ __('Hạng Hoa Hồng (Rose)') }}</h3>
+                    <span class="cond">{{ __('Chi tiêu từ 1.500.000₫ đến 5.000.000₫') }}</span>
                 </div>
                 <ul class="perks-list">
-                    @foreach($tier['perks'] as $perk)<li>@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ $perk }}</li>@endforeach
+                    @foreach($tier['perks'] as $perk)<li>@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __($perk) }}</li>@endforeach
                 </ul>
             </div>
 
             {{-- Hạng Hoàng Gia --}}
             <div class="tier-perk-card premium {{ $tier['code'] === 'premium' ? 'current-tier' : '' }}">
-                @if($tier['code'] === 'premium')<span class="current-tag">HẠNG HIỆN TẠI</span>@endif
+                @if($tier['code'] === 'premium')<span class="current-tag">{{ __('HẠNG HIỆN TẠI') }}</span>@endif
                 <div class="card-head royal">
                     <span class="badge">@include('partials.icon', ['name' => 'crown', 'size' => '1em'])</span>
-                    <h3>Hoàng Gia (Premium VIP)</h3>
-                    <span class="cond">Chi tiêu tích lũy trên 5.000.000₫</span>
+                    <h3>{{ __('Hoàng Gia (Premium VIP)') }}</h3>
+                    <span class="cond">{{ __('Chi tiêu tích lũy trên 5.000.000₫') }}</span>
                 </div>
                 <ul class="perks-list">
-                    @foreach($tier['perks'] as $perk)<li>@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ $perk }}</li>@endforeach
+                    @foreach($tier['perks'] as $perk)<li>@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __($perk) }}</li>@endforeach
                 </ul>
             </div>
         </div>

@@ -2,12 +2,12 @@
 <div id="htVideoModal" class="ht-video-modal" aria-hidden="true" style="display:none;">
     <div class="ht-video-modal-backdrop" id="htVideoBackdrop"></div>
     <div class="ht-video-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="htVideoModalTitle">
-        <button type="button" class="ht-video-modal-close" id="htVideoCloseBtn" aria-label="Đóng video">&times;</button>
+        <button type="button" class="ht-video-modal-close" id="htVideoCloseBtn" aria-label="{{ __('Đóng video') }}">&times;</button>
         
         <div class="ht-video-modal-content">
             {{-- Video Player Box --}}
             <div class="ht-video-player-container">
-                <iframe id="htVideoIframe" title="Video giới thiệu nước hoa" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe id="htVideoIframe" title="{{ __('Video giới thiệu nước hoa') }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 <video id="htVideoHtml5" controls style="display:none; width:100%; height:100%; border-radius:12px; background:#000;"></video>
             </div>
 
@@ -15,10 +15,10 @@
             <div class="ht-video-details">
                 <div class="ht-video-meta">
                     <span class="ht-video-tag">@include('partials.icon', ['name' => 'video', 'size' => '1em']) Video Review</span>
-                    <span class="ht-video-views-badge">@include('partials.icon', ['name' => 'flame', 'size' => '1em']) <span id="htVideoViews">12.4K lượt xem</span></span>
+                    <span class="ht-video-views-badge">@include('partials.icon', ['name' => 'flame', 'size' => '1em']) <span id="htVideoViews">{{ __('12.4K lượt xem') }}</span></span>
                 </div>
-                <h3 id="htVideoModalTitle" class="ht-video-title">Tiêu đề video</h3>
-                <p id="htVideoModalDesc" class="ht-video-desc">Mô tả video review...</p>
+                <h3 id="htVideoModalTitle" class="ht-video-title">{{ __('Tiêu đề video') }}</h3>
+                <p id="htVideoModalDesc" class="ht-video-desc">{{ __('Mô tả video review...') }}</p>
 
                 {{-- Linked Product Card --}}
                 <div id="htVideoPerfumeWrap" class="ht-video-perfume-card" style="display:none;">
@@ -276,9 +276,9 @@ document.addEventListener('DOMContentLoaded', function () {
             previousOverflow = document.body.style.overflow;
         }
 
-        titleEl.textContent = data.title || 'Video Trải Nghiệm Nước Hoa';
+        titleEl.textContent = data.title || (window.soopiT || (text => text))("Video Trải Nghiệm Nước Hoa");
         descEl.textContent = data.desc || '';
-        viewsEl.textContent = (data.views || '0') + ' lượt xem';
+        viewsEl.textContent = (data.views || '0') + (window.soopiT || (text => text))(" lượt xem");
 
         // Xử lý player (YouTube vs Direct Video)
         if (/\.(mp4|webm|ogg)(?:[?#]|$)/i.test(embedUrl)) {
@@ -306,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (data.perfumeName && productUrl) {
             perfumeWrap.style.display = 'flex';
             perfumeName.textContent = data.perfumeName;
-            perfumeBrand.textContent = data.perfumeBrand || 'NƯỚC HOA CHÍNH HÃNG';
+            perfumeBrand.textContent = data.perfumeBrand || (window.soopiT || (text => text))("NƯỚC HOA CHÍNH HÃNG");
             perfumePrice.textContent = data.perfumePrice || '';
             perfumeLink.href = productUrl;
             const productImage = safeMediaUrl(data.perfumeImg);

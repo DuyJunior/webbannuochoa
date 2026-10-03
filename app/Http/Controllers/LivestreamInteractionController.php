@@ -15,7 +15,7 @@ class LivestreamInteractionController extends Controller
     public function messages(Request $request, Livestream $livestream): JsonResponse
     {
         $staff = (bool) $request->user()?->canManageLivestreams();
-        abort_unless($staff || $this->onAir($livestream), 409, 'Buổi live chưa bắt đầu.');
+        abort_unless($staff || $this->onAir($livestream), 409, __('Buổi live chưa bắt đầu.'));
 
         $messages = DB::table('livestream_messages')
             ->where('livestream_id', $livestream->id)
@@ -34,7 +34,7 @@ class LivestreamInteractionController extends Controller
 
     public function send(Request $request, Livestream $livestream): JsonResponse
     {
-        abort_unless($this->onAir($livestream), 409, 'Buổi live chưa bắt đầu hoặc đã kết thúc.');
+        abort_unless($this->onAir($livestream), 409, __('Buổi live chưa bắt đầu hoặc đã kết thúc.'));
         $request->merge(['body' => trim((string) $request->input('body'))]);
         $data = $request->validate(['body' => ['required', 'string', 'max:300']]);
         $staff = (bool) $request->user()?->canManageLivestreams();
@@ -66,7 +66,7 @@ class LivestreamInteractionController extends Controller
 
     public function presence(Request $request, Livestream $livestream): JsonResponse
     {
-        abort_unless($this->onAir($livestream), 409, 'Buổi live chưa bắt đầu.');
+        abort_unless($this->onAir($livestream), 409, __('Buổi live chưa bắt đầu.'));
         $now = now();
         DB::table('livestream_viewers')->upsert([[
             'livestream_id' => $livestream->id,

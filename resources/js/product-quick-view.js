@@ -48,10 +48,10 @@ if (dialog && typeof dialog.showModal === 'function') {
         find('original').hidden = !variant.original_price;
         find('original').textContent = variant.original_price ? currency.format(variant.original_price) : '';
         find('stock').textContent = variant.stock < 1
-            ? 'Dung tích này đang hết hàng.'
+            ? (window.soopiT || (text => text))("Dung tích này đang hết hàng.")
             : !canAdd
-                ? 'Số lượng trong giỏ đã đạt giới hạn hiện có.'
-                : `Còn ${variant.stock} sản phẩm${variant.in_cart ? ` · ${variant.in_cart} trong giỏ của bạn` : ''}`;
+                ? (window.soopiT || (text => text))("Số lượng trong giỏ đã đạt giới hạn hiện có.")
+                : `${(window.soopiT || (text => text))("Còn")} ${variant.stock} ${(window.soopiT || (text => text))("sản phẩm")}${variant.in_cart ? ` · ${variant.in_cart} ${(window.soopiT || (text => text))("trong giỏ của bạn")}` : ''}`;
         find('stock').dataset.unavailable = String(!canAdd);
         submit.hidden = !current.authenticated;
         submit.disabled = !canAdd;
@@ -110,7 +110,7 @@ if (dialog && typeof dialog.showModal === 'function') {
             text.textContent = variant.label;
             if (variant.max_quantity < 1) {
                 const note = document.createElement('small');
-                note.textContent = variant.stock < 1 ? 'Hết hàng' : 'Đã đủ trong giỏ';
+                note.textContent = variant.stock < 1 ? (window.soopiT || (text => text))("Hết hàng") : (window.soopiT || (text => text))("Đã đủ trong giỏ");
                 text.append(note);
             }
             input.addEventListener('change', () => selectVariant(variant));
@@ -119,7 +119,7 @@ if (dialog && typeof dialog.showModal === 'function') {
         });
         find('variants').replaceChildren(...options);
         quantity.value = '1';
-        submit.replaceChildren(document.createTextNode('Thêm vào giỏ hàng '));
+        submit.replaceChildren(document.createTextNode((window.soopiT || (text => text))("Thêm vào giỏ hàng ")));
         const arrow = document.createElement('span');
         arrow.setAttribute('aria-hidden', 'true');
         arrow.textContent = '↗';
@@ -140,7 +140,7 @@ if (dialog && typeof dialog.showModal === 'function') {
         product.hidden = true;
         errorPanel.hidden = true;
         loading.hidden = false;
-        status.textContent = 'Đang mở mùi hương của bạn…';
+        status.textContent = (window.soopiT || (text => text))("Đang mở mùi hương của bạn…");
         dialog.setAttribute('aria-busy', 'true');
         try {
             const response = await fetch(source.endpoint, {
@@ -155,8 +155,8 @@ if (dialog && typeof dialog.showModal === 'function') {
         } catch (error) {
             if (id !== serial || !dialog.open || (error.name === 'AbortError' && !timedOut)) return;
             status.textContent = error.message === 'unavailable'
-                ? 'Sản phẩm này hiện không còn được mở bán.'
-                : 'Chưa tải được sản phẩm. Bạn thử lại nhé.';
+                ? (window.soopiT || (text => text))("Sản phẩm này hiện không còn được mở bán.")
+                : (window.soopiT || (text => text))("Chưa tải được sản phẩm. Bạn thử lại nhé.");
             errorPanel.hidden = false;
         } finally {
             clearTimeout(timeout);
@@ -178,7 +178,7 @@ if (dialog && typeof dialog.showModal === 'function') {
         source = { endpoint, fallback };
         opener = trigger;
         find('fallback').href = fallback;
-        find('title').textContent = trigger.dataset.productName || 'Xem nhanh mùi hương';
+        find('title').textContent = trigger.dataset.productName || (window.soopiT || (text => text))("Xem nhanh mùi hương");
         if (!dialog.open) {
             scrollPosition = { x: scrollX, y: scrollY };
             lockWasPresent = document.documentElement.classList.contains('qv-is-open');
@@ -252,11 +252,11 @@ if (dialog && typeof dialog.showModal === 'function') {
         }
         // Use the existing server-authoritative POST. Never infer a successful cart mutation from a redirect.
         submit.disabled = true;
-        submit.textContent = 'Đang thêm vào giỏ…';
+        submit.textContent = (window.soopiT || (text => text))("Đang thêm vào giỏ…");
     });
     window.addEventListener('pageshow', event => {
         if (event.persisted && current && selected) {
-            submit.textContent = 'Thêm vào giỏ hàng ↗';
+            submit.textContent = (window.soopiT || (text => text))("Thêm vào giỏ hàng ↗");
             if (dialog.open) load();
         }
     });

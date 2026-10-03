@@ -23,7 +23,10 @@ use App\Http\Controllers\LivekitRoomController;
 use App\Http\Controllers\LivestreamController;
 use App\Http\Controllers\LivestreamInteractionController;
 use App\Http\Controllers\LivestreamProductController;
+use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PerfumeController;
+use App\Http\Controllers\ProductQuickViewController;
 use App\Http\Controllers\StoreExperienceController;
 use App\Http\Controllers\User\ChatController as UserChatController;
 use App\Http\Controllers\User\GHNController;
@@ -38,8 +41,9 @@ use Illuminate\Support\Facades\URL;
 // TRANG CHỦ & CỬA HÀNG - Giữ nguyên từ Lab 01 & 02
 // ============================================================
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/perfumes/{perfume}/quick-view', [\App\Http\Controllers\ProductQuickViewController::class, 'show'])->name('perfumes.quick-view');
-Route::get('/perfumes/{perfume}/quick-view/login', [\App\Http\Controllers\ProductQuickViewController::class, 'login'])->name('perfumes.quick-view.login');
+Route::post('/language', [LocaleController::class, 'update'])->name('locale.update');
+Route::get('/perfumes/{perfume}/quick-view', [ProductQuickViewController::class, 'show'])->name('perfumes.quick-view');
+Route::get('/perfumes/{perfume}/quick-view/login', [ProductQuickViewController::class, 'login'])->name('perfumes.quick-view.login');
 Route::get('/livestream', [LivestreamController::class, 'show'])->name('livestream.show');
 Route::get('/livestream/state', [LivestreamController::class, 'state'])->name('livestream.state');
 Route::get('/livestream/{livestream}/products', [LivestreamProductController::class, 'index'])->name('livestream.products');
@@ -162,10 +166,10 @@ Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('guest')->group(function () {
-    Route::get('/quen-mat-khau', [\App\Http\Controllers\PasswordResetController::class, 'requestForm'])->name('password.request');
-    Route::post('/quen-mat-khau', [\App\Http\Controllers\PasswordResetController::class, 'sendLink'])->middleware('throttle:5,1,password-email')->name('password.email');
-    Route::get('/dat-lai-mat-khau/{token}', [\App\Http\Controllers\PasswordResetController::class, 'resetForm'])->middleware('throttle:30,1,password-form')->name('password.reset');
-    Route::post('/dat-lai-mat-khau', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->middleware('throttle:10,1,password-reset')->name('password.update');
+    Route::get('/quen-mat-khau', [PasswordResetController::class, 'requestForm'])->name('password.request');
+    Route::post('/quen-mat-khau', [PasswordResetController::class, 'sendLink'])->middleware('throttle:5,1,password-email')->name('password.email');
+    Route::get('/dat-lai-mat-khau/{token}', [PasswordResetController::class, 'resetForm'])->middleware('throttle:30,1,password-form')->name('password.reset');
+    Route::post('/dat-lai-mat-khau', [PasswordResetController::class, 'reset'])->middleware('throttle:10,1,password-reset')->name('password.update');
 });
 
 // ============================================================

@@ -3,16 +3,16 @@
     <div class="atelier-footer-invitation">
         <div class="store-container">
             <span class="ht-eyebrow">SOOPI / L'ART DU PARFUM</span>
-            <h2>Một chút hương.<br><em>Một chút thương.</em></h2>
-            <a class="ht-text-link" href="{{ route('store.finder') }}">Tìm dấu hương của riêng bạn @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a>
+            <h2>{{ __('Một chút hương.') }}<br><em>{{ __('Một chút thương.') }}</em></h2>
+            <a class="ht-text-link" href="{{ route('store.finder') }}">{{ __('Tìm dấu hương của riêng bạn') }} @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a>
         </div>
     </div>
     @endif
     <div class="store-container ht-footer-grid">
         <div class="ht-footer-about">
-            <a class="ht-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ">@include('partials.brand-logo', ['class' => 'footer-logo', 'light' => true])</a>
-            <p>Hương thơm là cách dịu dàng nhất để kể câu chuyện của riêng bạn.</p>
-            <span class="ht-footer-signature">Chọn hương. Chọn chính mình.</span>
+            <a class="ht-brand" href="{{ route('home') }}" aria-label="{{ __('Soopi — Trang chủ') }}">@include('partials.brand-logo', ['class' => 'footer-logo', 'light' => true])</a>
+            <p>{{ __('Hương thơm là cách dịu dàng nhất để kể câu chuyện của riêng bạn.') }}</p>
+            <span class="ht-footer-signature">{{ __('Chọn hương. Chọn chính mình.') }}</span>
             {{-- Social links --}}
             <div class="ht-footer-social">
                 <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener" aria-label="Zalo Soopi {{ config('storefront.zalo_phone') }}" class="ht-footer-social-btn ht-social-zalo">
@@ -29,9 +29,10 @@
                 </a>
             </div>
         </div>
-        <div><h2>Khám phá</h2><a href="{{ route('home', ['gender' => 'nu']) }}#san-pham">Nước hoa nữ</a><a href="{{ route('home', ['gender' => 'nam']) }}#san-pham">Nước hoa nam</a><a href="{{ route('home', ['gender' => 'unisex']) }}#san-pham">Nước hoa unisex</a><a href="{{ route('home', ['sort' => 'sale']) }}#san-pham">Ưu đãi hiện có</a><a href="{{ route('store.faq') }}">Câu hỏi thường gặp</a></div>
-        <div><h2>Dành cho bạn</h2><a href="{{ route('orders.tracking') }}">Theo dõi đơn hàng</a><a href="{{ route('orders.index') }}">Lịch sử mua hàng</a><a href="{{ route('cart.index') }}">Giỏ hàng của bạn</a><a href="{{ route('register') }}">Trở thành thành viên</a><a href="{{ route('store.wishlist') }}">Yêu thích</a><a href="{{ route('store.member') }}">Điểm thành viên</a><a href="{{ route('store.journal') }}">Cẩm nang mùi hương</a></div>
-        <div class="ht-footer-help"><span class="ht-eyebrow">LUÔN CÓ MỘT NƠI ĐỂ KẾT NỐI</span><h2>Trò chuyện <br>cùng Soopi.</h2><div class="footer-shop-contact"><a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener noreferrer">Zalo tư vấn<strong>{{ config('storefront.zalo_phone') }}</strong></a>@if(config('storefront.support_hours'))<p>{{ config('storefront.support_hours') }}</p>@endif @if(config('storefront.address'))<p>{{ config('storefront.address') }}</p>@endif @if(config('storefront.contact_email'))<a href="mailto:{{ config('storefront.contact_email') }}">{{ config('storefront.contact_email') }}</a>@endif</div><a class="ht-text-link" href="{{ route('store.contact') }}">Thông tin cửa hàng @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a></div>
+        <div><h2>{{ __('Khám phá') }}</h2><a href="{{ route('home', ['gender' => 'nu']) }}#san-pham">{{ __('Nước hoa nữ') }}</a><a href="{{ route('home', ['gender' => 'nam']) }}#san-pham">{{ __('Nước hoa nam') }}</a><a href="{{ route('home', ['gender' => 'unisex']) }}#san-pham">{{ __('Nước hoa unisex') }}</a><a href="{{ route('home', ['sort' => 'sale']) }}#san-pham">{{ __('Ưu đãi hiện có') }}</a><a href="{{ route('store.faq') }}">{{ __('Câu hỏi thường gặp') }}</a></div>
+        <div><h2>{{ __('Dành cho bạn') }}</h2><a href="{{ route('orders.tracking') }}">{{ __('Theo dõi đơn hàng') }}</a><a href="{{ route('orders.index') }}">{{ __('Lịch sử mua hàng') }}</a><a href="{{ route('cart.index') }}">{{ __('Giỏ hàng của bạn') }}</a><a href="{{ route('register') }}">{{ __('Trở thành thành viên') }}</a><a href="{{ route('store.wishlist') }}">{{ __('Yêu thích') }}</a><a href="{{ route('store.member') }}">{{ __('Điểm thành viên') }}</a><a href="{{ route('store.journal') }}">{{ __('Cẩm nang mùi hương') }}</a></div>
+        <div class="ht-footer-help"><span class="ht-eyebrow">{{ __('LUÔN CÓ MỘT NƠI ĐỂ KẾT NỐI') }}</span><h2>{{ __('Trò chuyện') }} <br>{{ __('cùng Soopi.') }}</h2><div class="footer-shop-contact"><a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener noreferrer">{{ __('Zalo tư vấn') }}<strong>{{ config('storefront.zalo_phone') }}</strong></a>@if(config('storefront.support_hours'))<p>{{ config('storefront.support_hours') }}</p>@endif @if(config('storefront.address'))<p>{{ config('storefront.address') }}</p>@endif @if(config('storefront.contact_email'))<a href="mailto:{{ config('storefront.contact_email') }}">{{ config('storefront.contact_email') }}</a>@endif</div><a class="ht-text-link" href="{{ route('store.contact') }}">{{ __('Thông tin cửa hàng') }} @include('partials.icon', ['name' => 'arrow', 'size' => 18])</a></div>
     </div>
-    <div class="store-container ht-footer-bottom"><span>© {{ date('Y') }} Soopi.</span><nav class="footer-policy-links" aria-label="Thông tin cửa hàng và chính sách"><a href="{{ route('store.contact') }}">Liên hệ</a><a href="{{ route('store.faq') }}#doi-tra">Chính sách đổi trả</a><a href="{{ route('store.privacy') }}">Chính sách riêng tư</a></nav><a href="#main-content">Về đầu trang ↑</a></div>
+    <div class="store-container ht-footer-bottom"><span>© {{ date('Y') }} Soopi.</span><nav class="footer-policy-links" aria-label="{{ __('Thông tin cửa hàng và chính sách') }}"><a href="{{ route('store.contact') }}">{{ __('Liên hệ') }}</a><a href="{{ route('store.faq') }}#doi-tra">{{ __('Chính sách đổi trả') }}</a><a href="{{ route('store.privacy') }}">{{ __('Chính sách riêng tư') }}</a></nav><a href="#main-content">{{ __('Về đầu trang ↑') }}</a></div>
+<div class="store-container">@include('partials.language-switcher', ['languageClass' => 'language-footer'])</div>
 </footer>

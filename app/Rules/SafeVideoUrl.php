@@ -20,7 +20,7 @@ class SafeVideoUrl implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (! is_string($value) || ! self::accepts($value)) {
-            $fail('Nhập liên kết HTTP/HTTPS hợp lệ hoặc đường dẫn video trong thư mục videos, storage, images.');
+            $fail(__('Nhập liên kết HTTP/HTTPS hợp lệ hoặc đường dẫn video trong thư mục videos, storage, images.'));
         }
     }
 }

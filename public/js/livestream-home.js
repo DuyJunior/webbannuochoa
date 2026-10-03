@@ -14,12 +14,12 @@
             if (!response.ok) return;
             const state = await response.json();
             if (state.on_air && String(state.livestream_id) !== banner.dataset.currentId) {
-                title.textContent = 'Soopi đang livestream';
+                title.textContent = (window.soopiT || (text => text))("Soopi đang livestream");
             }
             banner.dataset.currentId = state.on_air ? String(state.livestream_id) : '';
             banner.hidden = !state.on_air;
             if (journalStatus) journalStatus.hidden = !state.on_air;
-            if (journalLabel) journalLabel.textContent = state.on_air ? 'Vào xem trực tiếp' : 'Xem lịch live';
+            if (journalLabel) journalLabel.textContent = state.on_air ? (window.soopiT || (text => text))("Vào xem trực tiếp") : (window.soopiT || (text => text))("Xem lịch live");
         } catch (_) {
             // Keep the last known state until the next check.
         } finally {

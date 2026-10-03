@@ -1,44 +1,44 @@
 @extends('layouts.store')
 
-@section('title', 'Lịch sử đơn hàng · Soopi')
+@section('title', __('Lịch sử đơn hàng · Soopi'))
 
 @section('content')
 <div class="orders-history-page">
     <div class="store-container">
         {{-- Breadcrumb --}}
         <nav class="orders-breadcrumb">
-            <a href="{{ route('home') }}">Trang chủ</a>
+            <a href="{{ route('home') }}">{{ __('Trang chủ') }}</a>
             <span>/</span>
-            <span class="active">Đơn hàng của tôi</span>
+            <span class="active">{{ __('Đơn hàng của tôi') }}</span>
         </nav>
 
         <div class="orders-page-header">
             <div>
-                <span class="badge-tag">NHỮNG MÙI HƯƠNG BẠN ĐÃ CHỌN</span>
-                <h1>Đơn hàng của bạn</h1>
-                <p>Theo dõi tiến trình vận chuyển đơn hàng qua Giao Hàng Nhanh (GHN)</p>
+                <span class="badge-tag">{{ __('NHỮNG MÙI HƯƠNG BẠN ĐÃ CHỌN') }}</span>
+                <h1>{{ __('Đơn hàng của bạn') }}</h1>
+                <p>{{ __('Theo dõi tiến trình vận chuyển đơn hàng qua Giao Hàng Nhanh (GHN)') }}</p>
             </div>
-            <a href="{{ route('home') }}#san-pham" class="btn-continue-shop">+ Tiếp tục mua sắm</a>
+            <a href="{{ route('home') }}#san-pham" class="btn-continue-shop">{{ __('+ Tiếp tục mua sắm') }}</a>
         </div>
 
         @if($orders->isEmpty())
             <div class="empty-orders-card">
                 <div class="empty-icon">@include('partials.icon', ['name' => 'box', 'size' => '1em'])</div>
-                <h3>Bạn chưa có đơn hàng nào</h3>
-                <p>Hãy khám phá bộ sưu tập nước hoa cao cấp tại Soopi và đặt hàng ngay hôm nay!</p>
-                <a href="{{ route('home') }}#san-pham" class="btn-shop-now">Khám phá sản phẩm</a>
+                <h3>{{ __('Bạn chưa có đơn hàng nào') }}</h3>
+                <p>{{ __('Hãy khám phá bộ sưu tập nước hoa cao cấp tại Soopi và đặt hàng ngay hôm nay!') }}</p>
+                <a href="{{ route('home') }}#san-pham" class="btn-shop-now">{{ __('Khám phá sản phẩm') }}</a>
             </div>
         @else
             <div class="orders-list-wrapper">
                 @foreach ($orders as $order)
                     @php
                         $statusLabels = [
-                            'pending' => ['text' => 'Chờ xử lý', 'class' => 'status-pending'],
-                            'ready_to_pick' => ['text' => 'GHN đã nhận đơn', 'class' => 'status-ready'],
-                            'delivering' => ['text' => 'Đang giao hàng', 'class' => 'status-shipping'],
-                            'delivered' => ['text' => 'Giao thành công', 'class' => 'status-delivered'],
-                            'cancelled' => ['text' => 'Đã hủy', 'class' => 'status-cancelled'],
-                            'not_shipped' => ['text' => 'Chưa giao', 'class' => 'status-pending'],
+                            'pending' => ['text' => __('Chờ xử lý'), 'class' => 'status-pending'],
+                            'ready_to_pick' => ['text' => __('GHN đã nhận đơn'), 'class' => 'status-ready'],
+                            'delivering' => ['text' => __('Đang giao hàng'), 'class' => 'status-shipping'],
+                            'delivered' => ['text' => __('Giao thành công'), 'class' => 'status-delivered'],
+                            'cancelled' => ['text' => __('Đã hủy'), 'class' => 'status-cancelled'],
+                            'not_shipped' => ['text' => __('Chưa giao'), 'class' => 'status-pending'],
                         ];
                         $st = $statusLabels[$order->shipping_status] ?? ['text' => $order->shipping_status, 'class' => 'status-pending'];
                     @endphp
@@ -63,7 +63,7 @@
                             <div class="order-status-group">
                                 @if($order->gift_wrap || $order->gift_card || $order->gift_message)
                                     <span class="badge-gift">
-                                        @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Quà tặng
+                                        @include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ __('Quà tặng') }}
                                     </span>
                                 @endif
                                 <span class="shipping-status-tag {{ $st['class'] }}">{{ $st['text'] }}</span>
@@ -88,7 +88,7 @@
                                             <div class="item-mini-meta">
                                                 <span>{{ $item->volume_label }}</span>
                                                 <span class="meta-dot">·</span>
-                                                <span>Số lượng: <strong>x{{ $item->quantity }}</strong></span>
+                                                <span>{{ __('Số lượng:') }} <strong>x{{ $item->quantity }}</strong></span>
                                                 <span class="meta-dot">·</span>
                                                 <span class="item-price-tag">{{ number_format($item->price, 0, ',', '.') }}₫</span>
                                             </div>
@@ -99,11 +99,11 @@
 
                             <div class="order-finance-summary">
                                 <div class="finance-row">
-                                    <span>Cước vận chuyển GHN:</span>
+                                    <span>{{ __('Cước vận chuyển GHN:') }}</span>
                                     <strong>{{ number_format($order->ghn_total_fee, 0, ',', '.') }}₫</strong>
                                 </div>
                                 <div class="finance-row total-row">
-                                    <span>Tổng thanh toán:</span>
+                                    <span>{{ __('Tổng thanh toán:') }}</span>
                                     <strong class="total-price-highlight">{{ number_format($order->total_price, 0, ',', '.') }}₫</strong>
                                 </div>
                             </div>
@@ -123,16 +123,16 @@
                                     @endphp
                                     @if($order->status === 'paid')
                                         @if($gw === 'atm_domestic')
-                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Thẻ ATM Nội Địa (Đã thanh toán)</span>
+                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __('Thẻ ATM Nội Địa (Đã thanh toán)') }}</span>
                                         @elseif($gw === 'atm_international')
-                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Visa/Mastercard (Đã thanh toán)</span>
+                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __('Visa/Mastercard (Đã thanh toán)') }}</span>
                                         @else
-                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Ví MoMo (Đã thanh toán)</span>
+                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __('Ví MoMo (Đã thanh toán)') }}</span>
                                         @endif
                                     @elseif($order->status === 'cod_ordered')
-                                        <span class="pay-badge pay-cod">@include('partials.icon', ['name' => 'cash', 'size' => '1em']) Thanh toán khi nhận hàng (COD)</span>
+                                        <span class="pay-badge pay-cod">@include('partials.icon', ['name' => 'cash', 'size' => '1em']) {{ __('Thanh toán khi nhận hàng (COD)') }}</span>
                                     @elseif($order->status === 'pending')
-                                        <span class="pay-badge pay-pending">@include('partials.icon', ['name' => 'hourglass', 'size' => '1em']) Chờ thanh toán</span>
+                                        <span class="pay-badge pay-pending">@include('partials.icon', ['name' => 'hourglass', 'size' => '1em']) {{ __('Chờ thanh toán') }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -140,10 +140,10 @@
                                 @if($order->status === 'pending')
                                     <a href="{{ route('user.orders.momo.pay', $order->id) }}" class="btn-pay-again">
                                         <img src="{{ asset('images/payments/momo.svg') }}" alt="MoMo" style="height:17px; width:17px; border-radius:3px; object-fit:contain;">
-                                        <span>Thanh toán lại qua MoMo</span>
+                                        <span>{{ __('Thanh toán lại qua MoMo') }}</span>
                                     </a>
                                 @endif
-                                <a href="{{ route('orders.show', $order->id) }}" class="btn-detail">Xem chi tiết đơn →</a>
+                                <a href="{{ route('orders.show', $order->id) }}" class="btn-detail">{{ __('Xem chi tiết đơn →') }}</a>
                             </div>
                         </div>
                     </div>

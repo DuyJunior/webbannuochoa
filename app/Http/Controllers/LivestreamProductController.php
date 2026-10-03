@@ -52,18 +52,20 @@ class LivestreamProductController extends Controller
 
     public function store(Request $request, Livestream $livestream): JsonResponse
     {
-        abort_if($livestream->status === 'ended', 409, 'Buổi live đã kết thúc.');
+        abort_if($livestream->status === 'ended', 409, __('Buổi live đã kết thúc.'));
         $data = $request->validate([
             'perfume_id' => ['required', 'integer', Rule::exists('perfumes', 'id')->where('is_active', true)],
         ]);
 
         DB::transaction(function () use ($livestream, $data) {
             $stream = Livestream::query()->lockForUpdate()->findOrFail($livestream->id);
-            abort_if($stream->products()->whereKey($data['perfume_id'])->exists(), 409, 'Sản phẩm đã có trong buổi live.');
-            abort_if($stream->products()->count() >= 50, 409, 'Mỗi buổi live tối đa 50 sản phẩm.');
+            abort_if($stream->products()->whereKey($data['perfume_id'])->exists(), 409, __('Sản phẩm đã có trong buổi live.'));
+            abort_if($stream->products()->count() >= 50, 409, __('Mỗi buổi live tối đa 50 sản phẩm.'));
             $nextPosition = (int) $stream->products()->max('sort_order') + 1;
             $stream->products()->attach($data['perfume_id'], ['sort_order' => $nextPosition]);
-            if (!$stream->perfume_id) $stream->update(['perfume_id' => $data['perfume_id']]);
+            if (! $stream->perfume_id) {
+                $stream->update(['perfume_id' => $data['perfume_id']]);
+            }
         });
 
         return $this->studioProducts($livestream);
@@ -71,7 +73,7 @@ class LivestreamProductController extends Controller
 
     public function destroy(Livestream $livestream, Perfume $perfume): JsonResponse
     {
-        abort_if($livestream->status === 'ended', 409, 'Buổi live đã kết thúc.');
+        abort_if($livestream->status === 'ended', 409, __('Buổi live đã kết thúc.'));
         $livestream->products()->detach($perfume->id);
         if ($livestream->pinned_perfume_id === (int) $perfume->id) {
             $livestream->update(['pinned_perfume_id' => null]);
@@ -85,10 +87,10 @@ class LivestreamProductController extends Controller
 
     public function pin(Request $request, Livestream $livestream): JsonResponse
     {
-        abort_if($livestream->status === 'ended', 409, 'Buổi live đã kết thúc.');
+        abort_if($livestream->status === 'ended', 409, __('Buổi live đã kết thúc.'));
         $data = $request->validate(['perfume_id' => ['nullable', 'integer']]);
         $id = $data['perfume_id'] ?? null;
-        abort_if($id && !$livestream->products()->whereKey($id)->exists(), 422, 'Sản phẩm không có trong buổi live.');
+        abort_if($id && ! $livestream->products()->whereKey($id)->exists(), 422, __('Sản phẩm không có trong buổi live.'));
         $livestream->update(['pinned_perfume_id' => $id]);
 
         return $this->studioProducts($livestream);

@@ -9,11 +9,11 @@ use App\Services\LivekitTokenService;
 use App\Services\LivestreamRevenueService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Rule;
-use Illuminate\View\View;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Illuminate\View\View;
 
 class LivestreamController extends Controller
 {
@@ -27,10 +27,11 @@ class LivestreamController extends Controller
         ]);
         $search = trim($filters['search'] ?? '');
         $today = now(self::SCHEDULE_TIMEZONE)->startOfDay();
+
         return view('admin.livestreams.index', [
             'livestreams' => Livestream::with(['products', 'creator'])
                 ->when($search !== '', fn ($query) => $query->where('title', 'like', "%{$search}%"))
-                ->when(!empty($filters['status']), fn ($query) => $query->where('status', $filters['status']))
+                ->when(! empty($filters['status']), fn ($query) => $query->where('status', $filters['status']))
                 ->latest()->paginate(15)->withQueryString(),
             'onAir' => Livestream::where('status', 'live')->latest()->first(),
             'livekitConfigured' => $livekit->configured(),
@@ -51,7 +52,7 @@ class LivestreamController extends Controller
     public function create(): View
     {
         return view('admin.livestreams.form', [
-            'livestream' => new Livestream(),
+            'livestream' => new Livestream,
             'perfumes' => Perfume::where('is_active', true)->orderBy('name')->get(),
         ]);
     }
@@ -95,20 +96,21 @@ class LivestreamController extends Controller
         $livestream = DB::transaction(function () use ($data, $productIds) {
             $stream = Livestream::create($data);
             $this->syncProducts($stream, $productIds);
+
             return $stream;
         });
 
         if ($launchMode === 'schedule') {
             return redirect()->route('admin.livestreams.index')
-                ->with('success', 'Đã đặt lịch livestream. Khi đến giờ, nhân viên vào studio để bắt đầu phát.');
+                ->with('success', __('Đã đặt lịch livestream. Khi đến giờ, nhân viên vào studio để bắt đầu phát.'));
         }
 
         if ($livestream->source === 'browser') {
             return redirect()->route('admin.livestreams.studio', $livestream)
-                ->with('success', 'Đã tạo buổi live. Bật camera và micro trong studio để lên sóng ngay.');
+                ->with('success', __('Đã tạo buổi live. Bật camera và micro trong studio để lên sóng ngay.'));
         }
 
-        return redirect()->route('admin.livestreams.index')->with('success', 'Đã tạo buổi livestream.');
+        return redirect()->route('admin.livestreams.index')->with('success', __('Đã tạo buổi livestream.'));
     }
 
     public function edit(Livestream $livestream): View
@@ -133,19 +135,19 @@ class LivestreamController extends Controller
         DB::transaction(function () use ($livestream, $data, $productIds) {
             $livestream->update($data);
             $this->syncProducts($livestream, $productIds);
-            if ($livestream->pinned_perfume_id && !in_array($livestream->pinned_perfume_id, array_map('intval', $productIds), true)) {
+            if ($livestream->pinned_perfume_id && ! in_array($livestream->pinned_perfume_id, array_map('intval', $productIds), true)) {
                 $livestream->update(['pinned_perfume_id' => null]);
             }
         });
 
-        return redirect()->route('admin.livestreams.index')->with('success', 'Đã cập nhật buổi livestream.');
+        return redirect()->route('admin.livestreams.index')->with('success', __('Đã cập nhật buổi livestream.'));
     }
 
     public function changeStatus(Request $request, Livestream $livestream): RedirectResponse
     {
         $data = $request->validate(['status' => ['required', 'in:live,ended']]);
         if ($livestream->source === 'browser' && $data['status'] === 'live') {
-            throw ValidationException::withMessages(['status' => 'Hãy vào studio, bật camera và micro rồi bắt đầu phát.']);
+            throw ValidationException::withMessages(['status' => __('Hãy vào studio, bật camera và micro rồi bắt đầu phát.')]);
         }
         $this->ensureSingleLive($data['status'], $livestream->id);
         $livestream->update([
@@ -155,17 +157,17 @@ class LivestreamController extends Controller
         ]);
 
         return redirect()->route('admin.livestreams.index')
-            ->with('success', $data['status'] === 'live' ? 'Buổi phát đã hiển thị trên website.' : 'Buổi livestream đã kết thúc.');
+            ->with('success', $data['status'] === 'live' ? __('Buổi phát đã hiển thị trên website.') : __('Buổi livestream đã kết thúc.'));
     }
 
     public function destroy(Livestream $livestream): RedirectResponse
     {
         if ($livestream->orderItems()->exists()) {
-            throw ValidationException::withMessages(['livestream' => 'Buổi live đã có đơn hàng. Hãy giữ lại để xem báo cáo doanh thu.']);
+            throw ValidationException::withMessages(['livestream' => __('Buổi live đã có đơn hàng. Hãy giữ lại để xem báo cáo doanh thu.')]);
         }
         $livestream->delete();
 
-        return redirect()->route('admin.livestreams.index')->with('success', 'Đã xóa buổi livestream.');
+        return redirect()->route('admin.livestreams.index')->with('success', __('Đã xóa buổi livestream.'));
     }
 
     private function validatedData(Request $request, ?Livestream $existing = null): array
@@ -186,10 +188,10 @@ class LivestreamController extends Controller
         $data['perfume_id'] = $data['perfume_ids'][0] ?? null;
         $data['source'] = $data['source'] ?? 'youtube';
 
-        if (!$existing && isset($data['launch_mode'])) {
+        if (! $existing && isset($data['launch_mode'])) {
             if ($data['launch_mode'] === 'schedule') {
                 if (empty($data['starts_at'])) {
-                    throw ValidationException::withMessages(['starts_at' => 'Vui lòng chọn ngày và giờ phát.']);
+                    throw ValidationException::withMessages(['starts_at' => __('Vui lòng chọn ngày và giờ phát.')]);
                 }
                 $data['status'] = 'scheduled';
             } else {
@@ -198,14 +200,14 @@ class LivestreamController extends Controller
             }
         }
 
-        if (!empty($data['starts_at'])) {
-            if (!preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/', $data['starts_at'])) {
-                throw ValidationException::withMessages(['starts_at' => 'Giờ phát phải đúng định dạng ngày và giờ địa phương.']);
+        if (! empty($data['starts_at'])) {
+            if (! preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/', $data['starts_at'])) {
+                throw ValidationException::withMessages(['starts_at' => __('Giờ phát phải đúng định dạng ngày và giờ địa phương.')]);
             }
             $localTime = Carbon::parse($data['starts_at'], self::SCHEDULE_TIMEZONE);
-            $changed = !$existing || $localTime->format('Y-m-d H:i') !== $existing->starts_at?->format('Y-m-d H:i');
+            $changed = ! $existing || $localTime->format('Y-m-d H:i') !== $existing->starts_at?->format('Y-m-d H:i');
             if ($data['status'] === 'scheduled' && $changed && $localTime->lessThanOrEqualTo(now(self::SCHEDULE_TIMEZONE))) {
-                throw ValidationException::withMessages(['starts_at' => 'Giờ đặt lịch phải ở tương lai theo giờ Việt Nam (UTC+7).']);
+                throw ValidationException::withMessages(['starts_at' => __('Giờ đặt lịch phải ở tương lai theo giờ Việt Nam (UTC+7).')]);
             }
             // The existing datetime column stores Vietnam local wall time without timezone.
             $data['starts_at'] = $localTime->format('Y-m-d H:i:s');
@@ -213,16 +215,17 @@ class LivestreamController extends Controller
         unset($data['launch_mode']);
 
         if ($data['source'] === 'browser') {
-            if ($data['status'] === 'live' && !($existing?->source === 'browser' && $existing->status === 'live')) {
-                throw ValidationException::withMessages(['status' => 'Livestream trên web chỉ bắt đầu sau khi camera và micro kết nối trong studio.']);
+            if ($data['status'] === 'live' && ! ($existing?->source === 'browser' && $existing->status === 'live')) {
+                throw ValidationException::withMessages(['status' => __('Livestream trên web chỉ bắt đầu sau khi camera và micro kết nối trong studio.')]);
             }
             unset($data['youtube_url']);
             $data['youtube_video_id'] = null;
+
             return $data;
         }
 
         if (empty($data['youtube_url'])) {
-            throw ValidationException::withMessages(['youtube_url' => 'Vui lòng nhập liên kết YouTube Live.']);
+            throw ValidationException::withMessages(['youtube_url' => __('Vui lòng nhập liên kết YouTube Live.')]);
         }
         $parts = parse_url($data['youtube_url']);
         $host = strtolower($parts['host'] ?? '');
@@ -234,8 +237,8 @@ class LivestreamController extends Controller
         } elseif ($host === 'youtu.be') {
             $id = trim($path, '/');
         }
-        if (!is_string($id) || !preg_match('/^[A-Za-z0-9_-]{11}$/', $id)) {
-            throw ValidationException::withMessages(['youtube_url' => 'Vui lòng nhập link YouTube Live hợp lệ.']);
+        if (! is_string($id) || ! preg_match('/^[A-Za-z0-9_-]{11}$/', $id)) {
+            throw ValidationException::withMessages(['youtube_url' => __('Vui lòng nhập link YouTube Live hợp lệ.')]);
         }
 
         unset($data['youtube_url']);
@@ -247,7 +250,7 @@ class LivestreamController extends Controller
     private function ensureSingleLive(string $status, ?int $exceptId = null): void
     {
         if ($status === 'live' && Livestream::where('status', 'live')->when($exceptId, fn ($q) => $q->whereKeyNot($exceptId))->exists()) {
-            throw ValidationException::withMessages(['status' => 'Hãy kết thúc buổi đang phát trước khi mở buổi mới.']);
+            throw ValidationException::withMessages(['status' => __('Hãy kết thúc buổi đang phát trước khi mở buổi mới.')]);
         }
     }
 

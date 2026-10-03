@@ -21,12 +21,12 @@ class ChatController extends Controller
     {
         $text = $request->input('message');
         if ($text === null || (is_string($text) && trim($text) === '')) {
-            return response()->json(['error' => 'Nội dung tin nhắn không được để trống'], 400);
+            return response()->json(['error' => __('Nội dung tin nhắn không được để trống')], 400);
         }
         $request->validate(['message' => 'required|string|max:1000']);
         $admin = User::where('role', 'admin')->orderBy('id')->first();
         if (! $admin) {
-            return response()->json(['error' => 'Kênh hỗ trợ chưa sẵn sàng. Vui lòng thử lại sau.'], 503);
+            return response()->json(['error' => __('Kênh hỗ trợ chưa sẵn sàng. Vui lòng thử lại sau.')], 503);
         }
         $message = DB::transaction(function () use ($text, $admin, $ai) {
             User::whereKey(Auth::id())->lockForUpdate()->first();
@@ -88,9 +88,9 @@ class ChatController extends Controller
             'ai_available' => $available,
             'mode' => $human ? 'human' : 'ai',
             'pending' => $available && ! $human && $latest?->ai_status === 'pending',
-            'notice' => $human ? 'Đã chọn hỗ trợ từ nhân viên. Nhân viên sẽ phản hồi khi có thể.'
-                : (! $available ? 'AI hiện chưa sẵn sàng. Bạn vẫn có thể gửi tin nhắn cho nhân viên.'
-                    : (in_array($latest?->ai_status, ['failed', 'skipped']) ? 'AI chưa thể phản hồi tin nhắn này. Tin nhắn đã được lưu; bạn có thể chọn Gặp nhân viên.' : null)),
+            'notice' => $human ? __('Đã chọn hỗ trợ từ nhân viên. Nhân viên sẽ phản hồi khi có thể.')
+                : (! $available ? __('AI hiện chưa sẵn sàng. Bạn vẫn có thể gửi tin nhắn cho nhân viên.')
+                    : (in_array($latest?->ai_status, ['failed', 'skipped']) ? __('AI chưa thể phản hồi tin nhắn này. Tin nhắn đã được lưu; bạn có thể chọn Gặp nhân viên.') : null)),
         ]);
     }
 

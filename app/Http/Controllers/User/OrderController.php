@@ -13,6 +13,7 @@ use App\Services\CheckoutSelectionService;
 use App\Services\GHNOrderService;
 use App\Services\GHNService;
 use App\Services\LoyaltyService;
+use App\Services\OrderEmailService;
 use App\Services\OrderInventoryService;
 use App\Support\DemoMode;
 use Illuminate\Http\Request;
@@ -31,7 +32,7 @@ class OrderController extends Controller
     {
         $cart = session('cart', []);
         if (empty($cart)) {
-            return redirect()->route('cart.index')->with('error', 'Giỏ hàng đang trống.');
+            return redirect()->route('cart.index')->with('error', __('Giỏ hàng đang trống.'));
         }
 
         try {
@@ -107,18 +108,18 @@ class OrderController extends Controller
             'gift_message' => 'exclude_unless:enable_gift_service,1|nullable|string|max:1000',
             'gift_delivery_date' => 'exclude_unless:enable_gift_service,1|nullable|date_format:Y-m-d|after_or_equal:today',
         ], [
-            'name.required' => 'Vui lòng nhập họ tên người nhận.',
-            'phone.required' => 'Vui lòng nhập số điện thoại người nhận.',
-            'phone.regex' => 'Số điện thoại chỉ được gồm đúng 10 chữ số (bắt đầu bằng số 0).',
-            'address.required' => 'Vui lòng nhập địa chỉ nhận hàng.',
-            'to_district_id.required' => 'Vui lòng chọn Quận/Huyện giao hàng.',
-            'to_ward_code.required' => 'Vui lòng chọn Phường/Xã giao hàng.',
-            'payment_method.in' => 'Phương thức thanh toán không hợp lệ.',
+            'name.required' => __('Vui lòng nhập họ tên người nhận.'),
+            'phone.required' => __('Vui lòng nhập số điện thoại người nhận.'),
+            'phone.regex' => __('Số điện thoại chỉ được gồm đúng 10 chữ số (bắt đầu bằng số 0).'),
+            'address.required' => __('Vui lòng nhập địa chỉ nhận hàng.'),
+            'to_district_id.required' => __('Vui lòng chọn Quận/Huyện giao hàng.'),
+            'to_ward_code.required' => __('Vui lòng chọn Phường/Xã giao hàng.'),
+            'payment_method.in' => __('Phương thức thanh toán không hợp lệ.'),
         ]);
 
         $cart = session('cart', []);
         if (empty($cart)) {
-            return redirect()->route('user.cart.index')->with('error', 'Không thể thanh toán vì giỏ hàng trống.');
+            return redirect()->route('user.cart.index')->with('error', __('Không thể thanh toán vì giỏ hàng trống.'));
         }
 
         $selectedCart = CheckoutSelectionService::forRequest($request, $cart);
@@ -139,7 +140,7 @@ class OrderController extends Controller
         ], $ghn->packageParameters($totalWeight)));
 
         if (($feeResponse['code'] ?? null) != 200 || ! isset($feeResponse['data']['total'])) {
-            throw ValidationException::withMessages(['shipping' => 'Chưa lấy được phí giao hàng. Vui lòng thử lại, đơn hàng chưa được tạo.']);
+            throw ValidationException::withMessages(['shipping' => __('Chưa lấy được phí giao hàng. Vui lòng thử lại, đơn hàng chưa được tạo.')]);
         }
         $shippingFee = (isset($feeResponse['code']) && $feeResponse['code'] == 200)
             ? (int) $feeResponse['data']['total']
@@ -154,13 +155,13 @@ class OrderController extends Controller
             $couponCode = strtoupper(trim((string) $request->input('coupon_code', '')));
             $coupon = $couponCode ? Coupon::where('code', $couponCode)->lockForUpdate()->first() : null;
             if ($couponCode && (! $coupon || ! $coupon->isAvailableFor((int) $subtotal))) {
-                throw ValidationException::withMessages(['coupon_code' => 'Mã ưu đãi không hợp lệ hoặc chưa đủ điều kiện.']);
+                throw ValidationException::withMessages(['coupon_code' => __('Mã ưu đãi không hợp lệ hoặc chưa đủ điều kiện.')]);
             }
             $discount = $coupon ? $coupon->discountFor((int) $subtotal) : 0;
             $points = (int) $request->input('points_used', 0);
             $maximumPoints = min(LoyaltyService::balance(Auth::id()), (int) floor(($subtotal - $discount) * 0.2 / 1000));
             if ($points > $maximumPoints) {
-                throw ValidationException::withMessages(['points_used' => 'Số điểm sử dụng vượt quá mức hiện có hoặc giới hạn 20% tiền hàng.']);
+                throw ValidationException::withMessages(['points_used' => __('Số điểm sử dụng vượt quá mức hiện có hoặc giới hạn 20% tiền hàng.')]);
             }
             $finalTotal = max(0, $subtotal + $shippingFee - $discount - $points * 1000);
             $order = Order::create([
@@ -211,7 +212,7 @@ class OrderController extends Controller
                 'gateway' => $request->payment_method === 'cod' ? 'cod' : 'momo',
                 'amount' => $order->total_price, 'status' => 'pending',
             ]);
-            app(\App\Services\OrderEmailService::class)->placed($order);
+            app(OrderEmailService::class)->placed($order);
 
             return $order;
         });
@@ -248,14 +249,14 @@ class OrderController extends Controller
             ]);
 
             return redirect()->route('orders.show', $order->id)
-                ->with('success', 'Đặt hàng thành công! Mã vận đơn GHN: '.$ghnOrderResponse['data']['order_code']);
+                ->with('success', __('Đặt hàng thành công! Mã vận đơn GHN: ').$ghnOrderResponse['data']['order_code']);
         }
 
         Log::error('GHN COD Order Failed: ', $ghnOrderResponse ?? []);
         $order->update(['status' => 'cod_ordered']);
 
         return redirect()->route('user.orders.index')
-            ->with('warning', 'Đặt hàng thành công nhưng chưa thể tạo vận đơn GHN tự động.');
+            ->with('warning', __('Đặt hàng thành công nhưng chưa thể tạo vận đơn GHN tự động.'));
     }
 
     public function paymentPending(Order $order)
@@ -289,7 +290,7 @@ class OrderController extends Controller
         abort_unless(DemoMode::enabled() && $order->is_demo, 404);
         $data = $request->validate(['scenario' => 'required|in:success,declined,insufficient,limit']);
         if ($data['scenario'] !== 'success') {
-            return back()->with('error', 'DEMO: giao dịch bị từ chối ('.$data['scenario'].'). Không có tiền thật bị trừ.');
+            return back()->with('error', __('DEMO: giao dịch bị từ chối (').$data['scenario'].__('). Không có tiền thật bị trừ.'));
         }
         DB::transaction(function () use ($order) {
             $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
@@ -297,17 +298,17 @@ class OrderController extends Controller
                 return;
             }
             if (in_array($locked->status, ['cancelled', 'completed'], true)) {
-                throw ValidationException::withMessages(['payment' => 'Không thể thanh toán đơn đã hủy hoặc hoàn tất.']);
+                throw ValidationException::withMessages(['payment' => __('Không thể thanh toán đơn đã hủy hoặc hoàn tất.')]);
             }
             $locked->paymentTransactions()->whereIn('status', ['pending', 'initiated'])->update(['status' => 'cancelled']);
             $locked->paymentTransactions()->create([
                 'gateway' => 'demo', 'amount' => $locked->total_price, 'status' => 'paid',
-                'paid_at' => now(), 'message' => 'DEMO LOCAL — không thu tiền thật',
+                'paid_at' => now(), 'message' => __('DEMO LOCAL — không thu tiền thật'),
             ]);
             $locked->update(['status' => 'paid', 'shipping_status' => 'ready_to_pick']);
         });
 
-        return redirect()->route('orders.show', $order)->with('success', 'DEMO: thanh toán mô phỏng thành công. Không thu tiền thật.');
+        return redirect()->route('orders.show', $order)->with('success', __('DEMO: thanh toán mô phỏng thành công. Không thu tiền thật.'));
     }
 
     public function orderHistory()
@@ -351,20 +352,20 @@ class OrderController extends Controller
         $allowedStatuses = ['pending', 'ready_to_pick'];
 
         if (! in_array($order->shipping_status, $allowedStatuses, true)) {
-            return back()->with('error', 'Đơn hàng không còn ở trạng thái có thể hủy.');
+            return back()->with('error', __('Đơn hàng không còn ở trạng thái có thể hủy.'));
         }
 
         if ($order->ghn_order_code) {
             $response = $ghn->cancelOrder([$order->ghn_order_code]);
             if (($response['code'] ?? null) !== 200) {
-                return back()->with('error', 'GHN không cho phép hủy vận đơn này: '.($response['message'] ?? ''));
+                return back()->with('error', __('GHN không cho phép hủy vận đơn này: ').($response['message'] ?? ''));
             }
         }
 
         DB::transaction(function () use ($order) {
             $order = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
             if (! in_array($order->shipping_status, ['pending', 'ready_to_pick'], true)) {
-                throw ValidationException::withMessages(['order' => 'Đơn hàng không còn ở trạng thái có thể hủy.']);
+                throw ValidationException::withMessages(['order' => __('Đơn hàng không còn ở trạng thái có thể hủy.')]);
             }
             app(OrderInventoryService::class)->release($order);
             $order->update([
@@ -383,7 +384,7 @@ class OrderController extends Controller
             }
         });
 
-        return back()->with('success', 'Đơn hàng đã được hủy thành công.');
+        return back()->with('success', __('Đơn hàng đã được hủy thành công.'));
     }
 
     // ==========================================
@@ -417,7 +418,7 @@ class OrderController extends Controller
         $phone = trim((string) $request->input('phone', ''));
 
         if (empty($keyword) && empty($phone)) {
-            return back()->with('error', 'Vui lòng nhập Mã đơn hàng / Mã GHN hoặc Số điện thoại để tra cứu.')->withInput();
+            return back()->with('error', __('Vui lòng nhập Mã đơn hàng / Mã GHN hoặc Số điện thoại để tra cứu.'))->withInput();
         }
 
         $query = Order::query()->where('user_id', Auth::id())->with(['items.product']);

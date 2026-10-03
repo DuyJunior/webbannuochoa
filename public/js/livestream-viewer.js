@@ -17,7 +17,7 @@
         } else if (track.kind === Track.Kind.Audio) {
             track.attach(audio);
             audio.play().catch(() => {
-                message.textContent = 'Nhấn vào video để bật tiếng.';
+                message.textContent = (window.soopiT || (text => text))("Nhấn vào video để bật tiếng.");
             });
         }
     };
@@ -34,11 +34,11 @@
 
     button.addEventListener('click', async () => {
         if (!Room) {
-            message.textContent = 'Không tải được trình phát. Vui lòng tải lại trang.';
+            message.textContent = (window.soopiT || (text => text))("Không tải được trình phát. Vui lòng tải lại trang.");
             return;
         }
         button.disabled = true;
-        message.textContent = 'Đang kết nối buổi phát...';
+        message.textContent = (window.soopiT || (text => text))("Đang kết nối buổi phát...");
         try {
             const response = await fetch(root.dataset.tokenUrl, {
                 method: 'POST',
@@ -49,7 +49,7 @@
                 },
             });
             const access = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(access.message || 'Buổi phát hiện chưa sẵn sàng.');
+            if (!response.ok) throw new Error(access.message || (window.soopiT || (text => text))("Buổi phát hiện chưa sẵn sàng."));
 
             room = new Room({ adaptiveStream: true });
             room.on(RoomEvent.TrackSubscribed, attachTrack);
@@ -57,26 +57,26 @@
                 track.detach();
                 if (track.kind === Track.Kind.Video) {
                     video.hidden = true;
-                    message.textContent = 'Nhân viên đang kết nối lại camera...';
+                    message.textContent = (window.soopiT || (text => text))("Nhân viên đang kết nối lại camera...");
                 }
             });
             room.on(RoomEvent.Reconnecting, () => {
-                message.textContent = 'Đường truyền đang gián đoạn, đang kết nối lại...';
+                message.textContent = (window.soopiT || (text => text))("Đường truyền đang gián đoạn, đang kết nối lại...");
             });
             room.on(RoomEvent.Reconnected, () => {
-                message.textContent = video.hidden ? 'Đang chờ hình ảnh từ nhân viên...' : '';
+                message.textContent = video.hidden ? (window.soopiT || (text => text))("Đang chờ hình ảnh từ nhân viên...") : '';
             });
             room.on(RoomEvent.Disconnected, () => {
                 document.dispatchEvent(new Event('ha-thu-live-viewer-left'));
                 if (!room) return;
                 clearPlayer().then(() => {
-                    message.textContent = 'Kết nối bị gián đoạn. Hãy thử xem lại.';
+                    message.textContent = (window.soopiT || (text => text))("Kết nối bị gián đoạn. Hãy thử xem lại.");
                 });
             });
             await room.connect(access.server_url, access.participant_token);
             document.dispatchEvent(new Event('ha-thu-live-viewer-joined'));
             button.hidden = true;
-            message.textContent = video.hidden ? 'Đang chờ hình ảnh từ nhân viên...' : '';
+            message.textContent = video.hidden ? (window.soopiT || (text => text))("Đang chờ hình ảnh từ nhân viên...") : '';
             for (const participant of room.remoteParticipants.values()) {
                 for (const publication of participant.trackPublications.values()) {
                     if (publication.track) attachTrack(publication.track);
@@ -84,7 +84,7 @@
             }
         } catch (error) {
             await clearPlayer();
-            message.textContent = error.message || 'Không thể kết nối buổi phát.';
+            message.textContent = error.message || (window.soopiT || (text => text))("Không thể kết nối buổi phát.");
         }
     });
     video.addEventListener('click', () => audio.play().catch(() => {}));

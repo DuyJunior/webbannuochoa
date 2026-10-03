@@ -9,6 +9,7 @@ use App\Services\CartStockService;
 use App\Services\CheckoutSelectionService;
 use App\Services\DiscoveryBoxService;
 use App\Services\GiftBundleService;
+use App\Services\OrderEmailService;
 use App\Services\OrderInventoryService;
 use App\Support\DemoMode;
 use Illuminate\Http\RedirectResponse;
@@ -58,10 +59,10 @@ class CartController extends Controller
             try {
                 $quoted = app(CartQuoteService::class)->quote([$itemKey => $itemData])['items'][0];
                 if ($quantity > CartStockService::limitFor($quoted, array_diff_key($cart, [$itemKey => true]))) {
-                    throw ValidationException::withMessages(['cart' => 'Không đủ tồn kho sau khi tính các món khác trong giỏ. Hãy giảm số lượng hoặc xóa và chọn lại.']);
+                    throw ValidationException::withMessages(['cart' => __('Không đủ tồn kho sau khi tính các món khác trong giỏ. Hãy giảm số lượng hoặc xóa và chọn lại.')]);
                 }
             } catch (ValidationException $exception) {
-                $unavailableItems[] = ['item_key' => (string) $itemKey, 'name' => $product?->name ?? 'Sản phẩm đã ngừng bán', 'reason' => collect($exception->errors())->flatten()->first()];
+                $unavailableItems[] = ['item_key' => (string) $itemKey, 'name' => $product?->name ?? __('Sản phẩm đã ngừng bán'), 'reason' => collect($exception->errors())->flatten()->first()];
 
                 return null;
             }
@@ -74,19 +75,19 @@ class CartController extends Controller
             $sampleNames = $quoted['sample_names'];
             if ($isGiftBundle) {
                 $customTitle = $quoted['product_name'];
-                $volumeLabel = $volumeMl.' ml + 2 mẫu 5 ml + hộp quà';
+                $volumeLabel = $volumeMl.__(' ml + 2 mẫu 5 ml + hộp quà');
                 $hasGift = true;
                 $hasEngrave = false;
                 $engraveText = null;
             } elseif ($isDiscovery) {
-                $volumeLabel = 'Hộp Thử Mùi Discovery Box';
+                $volumeLabel = __('Hộp Thử Mùi Discovery Box');
                 $engraveText = 'Các mùi đã chọn: '.($itemData['sample_names'] ?? '');
             } elseif ($volumeMl === 10) {
-                $volumeLabel = '10ml (Chiết Travel Spray)';
+                $volumeLabel = __('10ml (Chiết Travel Spray)');
             } elseif ($volumeMl === 50) {
-                $volumeLabel = '50ml (Chai Vừa Phải)';
+                $volumeLabel = __('50ml (Chai Vừa Phải)');
             } else {
-                $volumeLabel = $volumeMl.'ml (Fullbox Nguyên Seal)';
+                $volumeLabel = $volumeMl.__('ml (Fullbox Nguyên Seal)');
             }
 
             return [
@@ -126,7 +127,7 @@ class CartController extends Controller
             'sample_ids' => ['prohibited'],
         ]);
         if (GiftBundleService::isLegacyMarker($validated['engrave_text'] ?? null)) {
-            throw ValidationException::withMessages(['bundle' => 'Vui lòng dùng mục Combo Trọn Vẹn và chọn đủ hai mẫu 5 ml; không thêm combo bằng nội dung khắc chữ.']);
+            throw ValidationException::withMessages(['bundle' => __('Vui lòng dùng mục Combo Trọn Vẹn và chọn đủ hai mẫu 5 ml; không thêm combo bằng nội dung khắc chữ.')]);
         }
 
         $volumeMl = (int) ($request->input('volume_ml') ?: ($perfume->volume_ml ?: 100));
@@ -218,7 +219,7 @@ class CartController extends Controller
 
         $request->session()->put('cart', $cart);
 
-        return back()->with('success', 'Đã thêm sản phẩm vào giỏ hàng.');
+        return back()->with('success', __('Đã thêm sản phẩm vào giỏ hàng.'));
     }
 
     public function update(Request $request, string $itemKey): RedirectResponse
@@ -230,7 +231,7 @@ class CartController extends Controller
         $cart = $request->session()->get('cart', []);
 
         if (! isset($cart[$itemKey])) {
-            return back()->withErrors(['quantity' => 'Sản phẩm không tồn tại trong giỏ.']);
+            return back()->withErrors(['quantity' => __('Sản phẩm không tồn tại trong giỏ.')]);
         }
 
         $candidate = is_array($cart[$itemKey]) ? array_replace($cart[$itemKey], ['quantity' => 1]) : 1;
@@ -247,7 +248,7 @@ class CartController extends Controller
 
         $request->session()->put('cart', $cart);
 
-        return back()->with('success', 'Đã cập nhật số lượng.');
+        return back()->with('success', __('Đã cập nhật số lượng.'));
     }
 
     public function remove(Request $request, string $itemKey): RedirectResponse
@@ -256,7 +257,7 @@ class CartController extends Controller
         unset($cart[$itemKey]);
         $request->session()->put('cart', $cart);
 
-        return back()->with('success', 'Đã xóa sản phẩm khỏi giỏ hàng.');
+        return back()->with('success', __('Đã xóa sản phẩm khỏi giỏ hàng.'));
     }
 
     public function checkout(Request $request): RedirectResponse
@@ -279,16 +280,16 @@ class CartController extends Controller
             'gift_message' => ['nullable', 'string', 'max:1000'],
             'gift_delivery_date' => ['nullable', 'date'],
         ], [
-            'customer_name.required' => 'Vui lòng nhập họ và tên.',
-            'phone.required' => 'Vui lòng nhập số điện thoại.',
-            'phone.regex' => 'Số điện thoại chỉ được gồm đúng 10 chữ số (bắt đầu bằng số 0).',
-            'address.required' => 'Vui lòng nhập địa chỉ nhận hàng.',
+            'customer_name.required' => __('Vui lòng nhập họ và tên.'),
+            'phone.required' => __('Vui lòng nhập số điện thoại.'),
+            'phone.regex' => __('Số điện thoại chỉ được gồm đúng 10 chữ số (bắt đầu bằng số 0).'),
+            'address.required' => __('Vui lòng nhập địa chỉ nhận hàng.'),
         ]);
 
         $cart = $request->session()->get('cart', []);
 
         if ($cart === []) {
-            return back()->withErrors(['cart' => 'Giỏ hàng đang trống.']);
+            return back()->withErrors(['cart' => __('Giỏ hàng đang trống.')]);
         }
 
         $selectedCart = CheckoutSelectionService::forRequest($request, $cart);
@@ -321,7 +322,7 @@ class CartController extends Controller
                 $order->items()->create($itemData);
             }
             app(OrderInventoryService::class)->reserve($order);
-            app(\App\Services\OrderEmailService::class)->placed($order);
+            app(OrderEmailService::class)->placed($order);
         });
 
         // Xóa những sản phẩm đã chọn thanh toán khỏi giỏ hàng
@@ -337,7 +338,7 @@ class CartController extends Controller
 
         return redirect()->route('home')->with(
             'success',
-            'Đặt hàng thành công! Soopi sẽ liên hệ '.$validated['customer_name'].' qua số '.$validated['phone'].'.'
+            __('Đặt hàng thành công! Soopi sẽ liên hệ ').$validated['customer_name'].' qua số '.$validated['phone'].'.'
         );
     }
 
@@ -368,7 +369,7 @@ class CartController extends Controller
         ];
         $request->session()->put('cart', $cart);
 
-        return redirect()->route('cart.index')->with('success', 'Đã thêm combo nguyên chai, hai mẫu 5 ml và hộp quà vào giỏ hàng.');
+        return redirect()->route('cart.index')->with('success', __('Đã thêm combo nguyên chai, hai mẫu 5 ml và hộp quà vào giỏ hàng.'));
     }
 
     public function addDiscoveryBox(Request $request): RedirectResponse
@@ -382,12 +383,12 @@ class CartController extends Controller
         $size = (int) $validated['size'];
         $selectedIds = array_map('intval', $validated['perfume_ids']);
         if (count($selectedIds) !== $size) {
-            return back()->withInput()->withErrors(['discovery' => 'Vui lòng chọn đúng số mẫu chiết cho Hộp thử mùi.']);
+            return back()->withInput()->withErrors(['discovery' => __('Vui lòng chọn đúng số mẫu chiết cho Hộp thử mùi.')]);
         }
 
         $perfumes = Perfume::whereIn('id', $selectedIds)->where('is_active', true)->get();
         if ($perfumes->count() !== $size) {
-            return back()->withInput()->withErrors(['discovery' => 'Có mẫu thử đã ngừng bán. Vui lòng chọn lại.']);
+            return back()->withInput()->withErrors(['discovery' => __('Có mẫu thử đã ngừng bán. Vui lòng chọn lại.')]);
         }
         $cart = $request->session()->get('cart', []);
         DiscoveryBoxService::assertAvailable($perfumes, $cart);

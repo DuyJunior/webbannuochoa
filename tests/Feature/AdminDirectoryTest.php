@@ -17,7 +17,8 @@ class AdminDirectoryTest extends TestCase
         $customer = User::factory()->create(['role' => 'user', 'name' => 'Lan Anh']);
         $legacy = User::factory()->create(['role' => 'customer', 'name' => 'Lan Hương']);
         User::factory()->create(['role' => 'livestream_staff', 'name' => 'Lan livestream']);
-        User::factory()->create(['role' => 'user', 'name' => 'Minh']);
+        // Email is searched too; a random address can accidentally contain "Lan".
+        User::factory()->create(['role' => 'user', 'name' => 'Minh', 'email' => 'minh.directory@example.test']);
         $this->actingAs($admin)->get(route('admin.users.index', ['search' => 'Lan', 'role' => 'customer']))
             ->assertOk()->assertViewHas('users', fn ($items) => $items->modelKeys() === [$legacy->id, $customer->id])
             ->assertViewHas('roleCounts', fn ($counts) => $counts->sum() === 5);

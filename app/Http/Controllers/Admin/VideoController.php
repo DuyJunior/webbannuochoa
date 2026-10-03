@@ -43,8 +43,8 @@ class VideoController extends Controller
             ->withQueryString();
 
         $stats = [
-            'total'       => Video::count(),
-            'active'      => Video::where('is_active', true)->count(),
+            'total' => Video::count(),
+            'active' => Video::where('is_active', true)->count(),
             'total_views' => Video::sum('views_count'),
         ];
 
@@ -54,6 +54,7 @@ class VideoController extends Controller
     public function create(): View
     {
         $perfumes = Perfume::orderBy('name')->get();
+
         return view('admin.videos.create', compact('perfumes'));
     }
 
@@ -71,12 +72,13 @@ class VideoController extends Controller
         });
 
         return redirect()->route('admin.videos.index')
-            ->with('success', 'Đã thêm video trải nghiệm / review mới thành công.');
+            ->with('success', __('Đã thêm video trải nghiệm / review mới thành công.'));
     }
 
     public function edit(Video $video): View
     {
         $perfumes = Perfume::orderBy('name')->get();
+
         return view('admin.videos.edit', compact('video', 'perfumes'));
     }
 
@@ -95,7 +97,7 @@ class VideoController extends Controller
         });
 
         return redirect()->route('admin.videos.index')
-            ->with('success', 'Đã cập nhật thông tin video thành công.');
+            ->with('success', __('Đã cập nhật thông tin video thành công.'));
     }
 
     public function destroy(Video $video): RedirectResponse
@@ -104,8 +106,9 @@ class VideoController extends Controller
             $this->clearCopiedProductVideo($video);
             $video->delete();
         });
+
         return redirect()->route('admin.videos.index')
-            ->with('success', 'Đã xóa video khỏi hệ thống.');
+            ->with('success', __('Đã xóa video khỏi hệ thống.'));
     }
 
     public function toggle(Video $video): RedirectResponse
@@ -116,29 +119,30 @@ class VideoController extends Controller
             $this->syncProductVideo($video);
         });
         $statusText = $video->is_active ? 'Hiển thị' : 'Tạm ẩn';
+
         return back()->with('success', "Đã chuyển trạng thái video sang: {$statusText}.");
     }
 
     private function validatedData(Request $request, ?Video $video = null): array
     {
         return $request->validate([
-            'title'          => ['required', 'string', 'max:255'],
-            'video_url'      => ['bail', 'required', 'string', 'max:2048', new SafeVideoUrl],
-            'perfume_id'     => ['nullable', 'exists:perfumes,id'],
-            'thumbnail_url'  => ['nullable', 'string', 'max:2048'],
+            'title' => ['required', 'string', 'max:255'],
+            'video_url' => ['bail', 'required', 'string', 'max:2048', new SafeVideoUrl],
+            'perfume_id' => ['nullable', 'exists:perfumes,id'],
+            'thumbnail_url' => ['nullable', 'string', 'max:2048'],
             'thumbnail_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'duration'       => ['nullable', 'string', 'max:20'],
-            'views_count'    => ['nullable', 'integer', 'min:0', 'max:4294967295'],
-            'description'    => ['nullable', 'string', 'max:2000'],
-            'placement'      => ['required', 'in:home,product,all'],
-            'sort_order'     => ['nullable', 'integer', 'between:-2147483648,2147483647'],
-            'is_active'      => ['nullable', 'boolean'],
+            'duration' => ['nullable', 'string', 'max:20'],
+            'views_count' => ['nullable', 'integer', 'min:0', 'max:4294967295'],
+            'description' => ['nullable', 'string', 'max:2000'],
+            'placement' => ['required', 'in:home,product,all'],
+            'sort_order' => ['nullable', 'integer', 'between:-2147483648,2147483647'],
+            'is_active' => ['nullable', 'boolean'],
         ], [
-            'title.required'     => 'Vui lòng nhập tiêu đề cho video.',
-            'video_url.required' => 'Vui lòng nhập đường dẫn video (YouTube, TikTok hoặc MP4).',
-            'placement.required' => 'Vui lòng chọn vị trí hiển thị video.',
-            'thumbnail_file.image' => 'Ảnh bìa tải lên phải là định dạng hình ảnh.',
-            'thumbnail_file.max' => 'Ảnh bìa không được vượt quá 5MB.',
+            'title.required' => __('Vui lòng nhập tiêu đề cho video.'),
+            'video_url.required' => __('Vui lòng nhập đường dẫn video (YouTube, TikTok hoặc MP4).'),
+            'placement.required' => __('Vui lòng chọn vị trí hiển thị video.'),
+            'thumbnail_file.image' => __('Ảnh bìa tải lên phải là định dạng hình ảnh.'),
+            'thumbnail_file.max' => __('Ảnh bìa không được vượt quá 5MB.'),
         ]);
     }
 
@@ -163,18 +167,18 @@ class VideoController extends Controller
     {
         unset($data['thumbnail_file']);
 
-        if (!$request->hasFile('thumbnail_file')) {
+        if (! $request->hasFile('thumbnail_file')) {
             return $data;
         }
 
         $file = $request->file('thumbnail_file');
-        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $filename = Str::uuid().'.'.$file->getClientOriginalExtension();
         $destination = public_path('images/videos');
-        if (!file_exists($destination)) {
+        if (! file_exists($destination)) {
             mkdir($destination, 0755, true);
         }
         $file->move($destination, $filename);
-        $data['thumbnail_url'] = 'images/videos/' . $filename;
+        $data['thumbnail_url'] = 'images/videos/'.$filename;
 
         return $data;
     }

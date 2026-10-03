@@ -14,7 +14,7 @@
             body: body ? JSON.stringify(body) : undefined,
         });
         const result = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(result.message || 'Không thể cập nhật sản phẩm.');
+        if (!response.ok) throw new Error(result.message || (window.soopiT || (text => text))("Không thể cập nhật sản phẩm."));
         list.innerHTML = result.html;
     };
 
@@ -23,11 +23,11 @@
         if (!select.value) return;
         const button = form.querySelector('button');
         button.disabled = true;
-        message.textContent = 'Đang thêm sản phẩm...';
+        message.textContent = (window.soopiT || (text => text))("Đang thêm sản phẩm...");
         try {
             await send(form.dataset.url, 'POST', { perfume_id: Number(select.value) });
             select.value = '';
-            message.textContent = 'Đã cập nhật sản phẩm cho khách xem.';
+            message.textContent = (window.soopiT || (text => text))("Đã cập nhật sản phẩm cho khách xem.");
         } catch (error) {
             message.textContent = error.message;
         } finally {
@@ -41,7 +41,7 @@
             pin.disabled = true;
             try {
                 await send(form.dataset.pinUrl, 'PATCH', { perfume_id: pin.dataset.pinId ? Number(pin.dataset.pinId) : null });
-                message.textContent = pin.dataset.pinId ? 'Đã ghim sản phẩm nổi bật cho khách.' : 'Đã bỏ ghim sản phẩm.';
+                message.textContent = pin.dataset.pinId ? (window.soopiT || (text => text))("Đã ghim sản phẩm nổi bật cho khách.") : (window.soopiT || (text => text))("Đã bỏ ghim sản phẩm.");
             } catch (error) {
                 pin.disabled = false;
                 message.textContent = error.message;
@@ -53,7 +53,7 @@
         button.disabled = true;
         try {
             await send(button.dataset.removeUrl, 'DELETE');
-            message.textContent = 'Đã gỡ sản phẩm khỏi buổi live.';
+            message.textContent = (window.soopiT || (text => text))("Đã gỡ sản phẩm khỏi buổi live.");
         } catch (error) {
             button.disabled = false;
             message.textContent = error.message;

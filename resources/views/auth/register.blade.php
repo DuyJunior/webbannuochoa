@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Đăng ký tài khoản · Soopi')
+@section('title', __('Đăng ký tài khoản · Soopi'))
 
 @section('content')
 <section class="luxury-auth-section">
@@ -10,8 +10,8 @@
             <div class="luxury-auth-icon-wrap">
                 @include('partials.brand-mark', ['size' => 32])
             </div>
-            <h1 class="luxury-auth-title">Đăng ký tài khoản</h1>
-            <p class="luxury-auth-subtitle">Trở thành thành viên Soopi để tận hưởng đặc quyền mua sắm</p>
+            <h1 class="luxury-auth-title">{{ __('Đăng ký tài khoản') }}</h1>
+            <p class="luxury-auth-subtitle">{{ __('Trở thành thành viên Soopi để tận hưởng đặc quyền mua sắm') }}</p>
         </div>
 
         @if ($errors->any())
@@ -23,7 +23,7 @@
                     @endforeach
                 </ul>
                 @if($errors->has('email'))
-                    <div style="margin-top:8px"><a href="{{ route('login') }}">Đăng nhập để tiếp tục hoặc gửi lại email xác thực →</a></div>
+                    <div style="margin-top:8px"><a href="{{ route('login') }}">{{ __('Đăng nhập để tiếp tục hoặc gửi lại email xác thực →') }}</a></div>
                 @endif
             </div>
         @endif
@@ -33,7 +33,7 @@
 
             <div class="luxury-form-group">
                 <label for="name" class="luxury-form-label">
-                    <span>Họ và tên</span>
+                    <span>{{ __('Họ và tên') }}</span>
                 </label>
                 <div class="luxury-input-wrap">
                     <span class="luxury-input-icon">@include('partials.icon', ['name' => 'user', 'size' => 17])</span>
@@ -41,7 +41,7 @@
                            name="name" autocomplete="name"
                            id="name"
                            class="luxury-form-input"
-                           placeholder="Nhập họ và tên của bạn"
+                           placeholder="{{ __('Nhập họ và tên của bạn') }}"
                            required
                            value="{{ is_string(old('name')) ? old('name') : '' }}"
                            autofocus>
@@ -50,7 +50,7 @@
 
             <div class="luxury-form-group">
                 <label for="email" class="luxury-form-label">
-                    <span>Địa chỉ Email</span>
+                    <span>{{ __('Địa chỉ Email') }}</span>
                 </label>
                 <div class="luxury-input-wrap">
                     <span class="luxury-input-icon">@include('partials.icon', ['name' => 'mail', 'size' => 17])</span>
@@ -62,12 +62,12 @@
                            required
                            value="{{ is_string(old('email')) ? old('email') : '' }}">
                 </div>
-                <span class="luxury-form-hint">Email này sẽ nhận liên kết xác thực tài khoản.</span>
+                <span class="luxury-form-hint">{{ __('Email này sẽ nhận liên kết xác thực tài khoản.') }}</span>
             </div>
 
             <div class="luxury-form-group">
                 <label for="password" class="luxury-form-label">
-                    <span>Mật khẩu</span>
+                    <span>{{ __('Mật khẩu') }}</span>
                 </label>
                 <div class="luxury-input-wrap">
                     <span class="luxury-input-icon">@include('partials.icon', ['name' => 'lock', 'size' => 17])</span>
@@ -75,14 +75,14 @@
                            name="password" autocomplete="new-password"
                            id="password"
                            class="luxury-form-input"
-                           placeholder="Tối thiểu 6 ký tự"
+                           placeholder="{{ __('Tối thiểu 6 ký tự') }}"
                            required>
                 </div>
             </div>
 
             <div class="luxury-form-group">
                 <label for="password_confirmation" class="luxury-form-label">
-                    <span>Xác nhận mật khẩu</span>
+                    <span>{{ __('Xác nhận mật khẩu') }}</span>
                 </label>
                 <div class="luxury-input-wrap">
                     <span class="luxury-input-icon">@include('partials.icon', ['name' => 'shield', 'size' => 17])</span>
@@ -90,20 +90,20 @@
                            name="password_confirmation" autocomplete="new-password"
                            id="password_confirmation"
                            class="luxury-form-input"
-                           placeholder="Nhập lại mật khẩu"
+                           placeholder="{{ __('Nhập lại mật khẩu') }}"
                            required>
                 </div>
             </div>
 
-            <p class="store-privacy-note">Thông tin tài khoản được sử dụng để phục vụ mua sắm và hỗ trợ bạn. <a href="{{ route('store.privacy') }}">Đọc chính sách riêng tư</a>.</p>
+            <p class="store-privacy-note">{{ __('Thông tin tài khoản được sử dụng để phục vụ mua sắm và hỗ trợ bạn.') }} <a href="{{ route('store.privacy') }}">{{ __('Đọc chính sách riêng tư') }}</a>.</p>
             <button type="submit" class="luxury-auth-btn">
-                <span>Đăng ký ngay</span>
+                <span>{{ __('Đăng ký ngay') }}</span>
                 <span>→</span>
             </button>
         </form>
 
         <div class="luxury-auth-footer">
-            Đã có tài khoản? <a href="{{ route('login') }}">Đăng nhập ngay</a>
+            {{ __('Đã có tài khoản?') }} <a href="{{ route('login') }}">{{ __('Đăng nhập ngay') }}</a>
         </div>
     </div>
 </section>

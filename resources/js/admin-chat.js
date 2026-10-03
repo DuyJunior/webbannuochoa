@@ -59,8 +59,8 @@ if (root) {
     async function jsonResponse(response, fallback) {
         if (!response.ok) {
             const message = [401, 419].includes(response.status)
-                ? 'Phiên đăng nhập đã hết hạn. Hãy tải lại trang để tiếp tục. Nội dung chưa gửi vẫn được giữ lại.'
-                : response.status === 429 ? 'Bạn thao tác quá nhanh. Vui lòng thử lại sau ít giây.' : fallback;
+                ? (window.soopiT || (text => text))("Phiên đăng nhập đã hết hạn. Hãy tải lại trang để tiếp tục. Nội dung chưa gửi vẫn được giữ lại.")
+                : response.status === 429 ? (window.soopiT || (text => text))("Bạn thao tác quá nhanh. Vui lòng thử lại sau ít giây.") : fallback;
             throw new Error(message);
         }
         try {
@@ -90,29 +90,29 @@ if (root) {
         usersList.setAttribute('aria-busy', 'true');
         try {
             const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: controller.signal });
-            const users = await jsonResponse(response, 'Không thể tải danh sách khách hàng. Vui lòng thử lại.');
+            const users = await jsonResponse(response, (window.soopiT || (text => text))("Không thể tải danh sách khách hàng. Vui lòng thử lại."));
             if (revision !== usersRevision || !opened) return;
-            if (!Array.isArray(users)) throw new Error('Danh sách khách hàng chưa tải được. Vui lòng thử lại.');
+            if (!Array.isArray(users)) throw new Error((window.soopiT || (text => text))("Danh sách khách hàng chưa tải được. Vui lòng thử lại."));
             const fragment = document.createDocumentFragment();
             users.forEach(user => {
                 const id = Number(user.id);
                 if (!Number.isSafeInteger(id) || id <= 0) return;
-                const name = String(user.name || 'Khách hàng');
+                const name = String(user.name || (window.soopiT || (text => text))("Khách hàng"));
                 const button = element('button', 'user-item', name);
                 button.type = 'button';
                 button.dataset.userId = String(id);
                 button.title = `${name}${user.email ? ` (${user.email})` : ''}`;
-                button.setAttribute('aria-label', `Trò chuyện với ${name}`);
+                button.setAttribute('aria-label', `${(window.soopiT || (text => text))("Trò chuyện với")} ${name}`);
                 button.addEventListener('click', () => selectUser(id, name));
                 fragment.append(button);
             });
-            if (!fragment.childNodes.length) fragment.append(element('div', 'p-2 text-muted small w-100 text-center', 'Không tìm thấy khách hàng nào'));
+            if (!fragment.childNodes.length) fragment.append(element('div', 'p-2 text-muted small w-100 text-center', (window.soopiT || (text => text))("Không tìm thấy khách hàng nào")));
             usersList.replaceChildren(fragment);
             highlightUser();
             setError('users');
         } catch (error) {
             if (error.name !== 'AbortError' && revision === usersRevision && opened) {
-                setError('users', error.message || 'Không thể tải danh sách khách hàng.');
+                setError('users', error.message || (window.soopiT || (text => text))("Không thể tải danh sách khách hàng."));
             }
         } finally {
             if (revision === usersRevision) {
@@ -132,7 +132,7 @@ if (root) {
         if (date.toDateString() === now.toDateString()) return time;
         const yesterday = new Date(now);
         yesterday.setDate(now.getDate() - 1);
-        if (date.toDateString() === yesterday.toDateString()) return `Hôm qua ${time}`;
+        if (date.toDateString() === yesterday.toDateString()) return `${(window.soopiT || (text => text))("Hôm qua")} ${time}`;
         return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')} ${time}`;
     }
 
@@ -148,9 +148,9 @@ if (root) {
         try {
             const url = root.dataset.messagesUrl.replace('__USER__', encodeURIComponent(userId));
             const response = await fetch(url, { headers: { Accept: 'application/json' }, signal: controller.signal });
-            const messages = await jsonResponse(response, 'Không thể tải hội thoại. Hệ thống sẽ thử lại sau ít giây.');
+            const messages = await jsonResponse(response, (window.soopiT || (text => text))("Không thể tải hội thoại. Hệ thống sẽ thử lại sau ít giây."));
             if (revision !== messagesRevision || userId !== selectedId || !opened) return;
-            if (!Array.isArray(messages)) throw new Error('Hội thoại chưa tải được. Hệ thống sẽ thử lại sau ít giây.');
+            if (!Array.isArray(messages)) throw new Error((window.soopiT || (text => text))("Hội thoại chưa tải được. Hệ thống sẽ thử lại sau ít giây."));
             const fingerprint = JSON.stringify(messages);
             if (fingerprint !== renderedMessages) {
                 const wasNearBottom = messagesBox.scrollHeight - messagesBox.scrollTop - messagesBox.clientHeight < 70;
@@ -159,7 +159,7 @@ if (root) {
                 messages.forEach(message => {
                     const isAi = message.is_ai === true || message.is_ai === 1 || message.is_ai === '1';
                     const isAdmin = isAi || message.sender?.role === 'admin' || Number(message.sender_id) === adminId;
-                    const author = isAi ? 'Trợ lý AI · Groq' : Number(message.sender_id) === adminId ? 'Bạn (Admin)' : message.sender?.name || 'Khách hàng';
+                    const author = isAi ? (window.soopiT || (text => text))("Trợ lý AI · Groq") : Number(message.sender_id) === adminId ? (window.soopiT || (text => text))("Bạn (Admin)") : message.sender?.name || (window.soopiT || (text => text))("Khách hàng");
                     const row = element('div', `msg-row ${isAdmin ? 'msg-admin' : 'msg-customer'}`);
                     const meta = element('div', 'msg-meta-header');
                     meta.append(element('span', 'msg-author', author), element('span', 'msg-time', formatTime(message.created_at)));
@@ -172,7 +172,7 @@ if (root) {
                 });
                 if (!messages.length) {
                     const empty = element('div', 'text-center mt-4 text-muted small');
-                    empty.append(element('p', '', `Chưa có tin nhắn nào với ${userName}.`), element('p', 'text-primary', 'Nhập nội dung bên dưới để bắt đầu trò chuyện.'));
+                    empty.append(element('p', '', `${(window.soopiT || (text => text))("Chưa có tin nhắn nào với")} ${userName}.`), element('p', 'text-primary', (window.soopiT || (text => text))("Nhập nội dung bên dưới để bắt đầu trò chuyện.")));
                     fragment.append(empty);
                 }
                 messagesBox.replaceChildren(fragment);
@@ -182,7 +182,7 @@ if (root) {
             setError('messages');
         } catch (error) {
             if (error.name !== 'AbortError' && revision === messagesRevision && userId === selectedId && opened) {
-                setError('messages', error.message || 'Không thể tải hội thoại.');
+                setError('messages', error.message || (window.soopiT || (text => text))("Không thể tải hội thoại."));
             }
         } finally {
             if (revision === messagesRevision) {
@@ -198,9 +198,9 @@ if (root) {
         if (selectedId) drafts.set(selectedId, input.value);
         const changed = id !== selectedId;
         selectedId = id;
-        selectedName = String(name || 'Khách hàng');
+        selectedName = String(name || (window.soopiT || (text => text))("Khách hàng"));
         input.value = drafts.get(id) || '';
-        input.placeholder = `Nhắn tin cho ${selectedName}…`;
+        input.placeholder = `${(window.soopiT || (text => text))("Nhắn tin cho")} ${selectedName}…`;
         activeName.textContent = selectedName;
         activeHeader.style.display = 'block';
         highlightUser();
@@ -208,7 +208,7 @@ if (root) {
         setError('messages');
         if (changed) {
             renderedMessages = null;
-            messagesBox.replaceChildren(element('p', 'p-3 text-center text-muted small', 'Đang tải hội thoại…'));
+            messagesBox.replaceChildren(element('p', 'p-3 text-center text-muted small', (window.soopiT || (text => text))("Đang tải hội thoại…")));
         }
         loadMessages({ reset: changed, force: true });
         input.focus();
@@ -247,8 +247,8 @@ if (root) {
                 headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '' },
                 body: JSON.stringify({ user_id: userId, message }),
             });
-            const sent = await jsonResponse(response, 'Không thể gửi tin nhắn. Nội dung vẫn được giữ lại để bạn thử lại.');
-            if (!sent?.id) throw new Error('Chưa xác nhận tin nhắn đã gửi. Hãy kiểm tra hội thoại trước khi thử lại.');
+            const sent = await jsonResponse(response, (window.soopiT || (text => text))("Không thể gửi tin nhắn. Nội dung vẫn được giữ lại để bạn thử lại."));
+            if (!sent?.id) throw new Error((window.soopiT || (text => text))("Chưa xác nhận tin nhắn đã gửi. Hãy kiểm tra hội thoại trước khi thử lại."));
             if (drafts.get(userId) === rawMessage) drafts.delete(userId);
             if (selectedId === userId) {
                 if (input.value === rawMessage) input.value = '';
@@ -257,8 +257,8 @@ if (root) {
             if (opened) loadUsers();
         } catch (error) {
             setError(`send:${userId}`, error instanceof TypeError
-                ? 'Chưa xác nhận tin nhắn đã gửi. Nội dung vẫn được giữ lại; hãy kiểm tra hội thoại trước khi thử lại.'
-                : error.message || 'Không thể gửi tin nhắn. Nội dung vẫn được giữ lại.');
+                ? (window.soopiT || (text => text))("Chưa xác nhận tin nhắn đã gửi. Nội dung vẫn được giữ lại; hãy kiểm tra hội thoại trước khi thử lại.")
+                : error.message || (window.soopiT || (text => text))("Không thể gửi tin nhắn. Nội dung vẫn được giữ lại."));
         } finally {
             sending = false;
             updateComposer();
@@ -300,7 +300,7 @@ if (root) {
     });
     sendButton.addEventListener('click', sendMessage);
     messagesBox.setAttribute('role', 'log');
-    messagesBox.setAttribute('aria-label', 'Lịch sử hội thoại');
+    messagesBox.setAttribute('aria-label', (window.soopiT || (text => text))("Lịch sử hội thoại"));
     messagesBox.setAttribute('aria-live', 'off');
     messagesBox.setAttribute('tabindex', '0');
     updateComposer();

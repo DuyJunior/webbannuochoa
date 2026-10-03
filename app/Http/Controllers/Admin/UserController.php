@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -27,6 +27,7 @@ class UserController extends Controller
                 ? $query->whereIn('role', ['user', 'customer']) : $query->where('role', $request->input('role')))
             ->orderByDesc('id')->paginate(15)->withQueryString();
         $roleCounts = User::selectRaw('role, count(*) as total')->groupBy('role')->pluck('total', 'role');
+
         return view('admin.users.index', compact('users', 'roleCounts'));
     }
 
@@ -58,7 +59,7 @@ class UserController extends Controller
         ]);
         $user->markEmailAsVerified();
 
-        return redirect()->route('admin.users.index')->with('success', 'Thêm người dùng thành công.');
+        return redirect()->route('admin.users.index')->with('success', __('Thêm người dùng thành công.'));
     }
 
     /**
@@ -84,14 +85,14 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
             'role' => 'required|in:admin,user,customer,livestream_staff',
             'password' => 'nullable|string|min:6',
         ]);
 
         if ($user->id === $request->user()->id && $request->input('role') !== 'admin') {
             throw ValidationException::withMessages([
-                'role' => 'Bạn không thể thay đổi quyền quản trị của tài khoản đang đăng nhập.',
+                'role' => __('Bạn không thể thay đổi quyền quản trị của tài khoản đang đăng nhập.'),
             ]);
         }
 
@@ -107,7 +108,7 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('admin.users.index')->with('success', 'Cập nhật người dùng thành công.');
+        return redirect()->route('admin.users.index')->with('success', __('Cập nhật người dùng thành công.'));
     }
 
     /**
@@ -116,11 +117,11 @@ class UserController extends Controller
     public function destroy(User $user): RedirectResponse
     {
         if ($user->id === auth()->id()) {
-            return redirect()->route('admin.users.index')->with('error', 'Không thể tự xóa tài khoản đang đăng nhập.');
+            return redirect()->route('admin.users.index')->with('error', __('Không thể tự xóa tài khoản đang đăng nhập.'));
         }
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')->with('success', 'Xóa người dùng thành công.');
+        return redirect()->route('admin.users.index')->with('success', __('Xóa người dùng thành công.'));
     }
 }

@@ -20,7 +20,7 @@ if (gallery) {
         request = controller;
         const id = ++serial;
         gallery.setAttribute('aria-busy', 'true');
-        status.textContent = 'Đang chọn những mùi hương phù hợp…';
+        status.textContent = (window.soopiT || (text => text))("Đang chọn những mùi hương phù hợp…");
         try {
             const response = await fetch(url, {
                 signal: controller.signal, cache: 'no-store',
@@ -29,13 +29,13 @@ if (gallery) {
             if (!response.ok) {
                 if (response.status === 422) {
                     const data = await response.json();
-                    throw new Error(Object.values(data.errors || {}).flat()[0] || 'Bạn kiểm tra lại bộ lọc nhé.');
+                    throw new Error(Object.values(data.errors || {}).flat()[0] || (window.soopiT || (text => text))("Bạn kiểm tra lại bộ lọc nhé."));
                 }
-                throw new Error('Chưa tải được sản phẩm. Bạn thử lại nhé.');
+                throw new Error((window.soopiT || (text => text))("Chưa tải được sản phẩm. Bạn thử lại nhé."));
             }
             const html = new DOMParser().parseFromString(await response.text(), 'text/html');
             const next = html.getElementById('san-pham');
-            if (!next || id !== serial) throw new Error('Chưa tải được sản phẩm. Bạn thử lại nhé.');
+            if (!next || id !== serial) throw new Error((window.soopiT || (text => text))("Chưa tải được sản phẩm. Bạn thử lại nhé."));
             if (startsFiltered && heading) {
                 const nextHeading = next.querySelector('.scent-heading');
                 if (nextHeading) heading.replaceChildren(...[...nextHeading.childNodes].map(node => document.importNode(node, true)));
@@ -43,7 +43,7 @@ if (gallery) {
             const content = [...next.children].filter(node => !node.classList.contains('scent-heading'));
             gallery.replaceChildren(heading, ...content.map(node => document.importNode(node, true)));
             attachStatus();
-            status.textContent = `Đã hiển thị ${gallery.querySelectorAll('.gallery-piece').length} mùi hương.`;
+            status.textContent = `${(window.soopiT || (text => text))("Đã hiển thị")} ${gallery.querySelectorAll('.gallery-piece').length} ${(window.soopiT || (text => text))("mùi hương.")}`;
             if (push) history.pushState({ ...history.state, scentGallery: true }, '', url);
             document.dispatchEvent(new CustomEvent('scent-gallery:updated'));
             if (focus) {
@@ -54,7 +54,7 @@ if (gallery) {
             }
         } catch (error) {
             if (error.name === 'AbortError' || id !== serial) return;
-            status.textContent = error.message || 'Kết nối bị gián đoạn. Bạn thử lại nhé.';
+            status.textContent = error.message || (window.soopiT || (text => text))("Kết nối bị gián đoạn. Bạn thử lại nhé.");
         } finally {
             if (id === serial) { gallery.removeAttribute('aria-busy'); request = null; }
         }

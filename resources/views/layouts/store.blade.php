@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi" prefix="og: https://ogp.me/ns#">
+<html lang="{{ app()->getLocale() }}" prefix="og: https://ogp.me/ns#">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +7,8 @@
     <meta name="theme-color" content="#fff6f8">
 
     {{-- SEO: Title & Description --}}
-    <title>@yield('title', 'Soopi · Hương thơm của riêng bạn')</title>
-    <meta name="description" content="@yield('meta_description', 'Soopi — Khám phá nước hoa chính hãng. Giao hàng toàn quốc, hỗ trợ đổi trả trong '.config('storefront.return_days').' ngày theo chính sách.')">
+    <title>@yield('title', __('Soopi · Hương thơm của riêng bạn'))</title>
+    <meta name="description" content="@yield('meta_description', __('Soopi — Khám phá nước hoa chính hãng. Giao hàng toàn quốc, hỗ trợ đổi trả trong :days ngày theo chính sách.', ['days' => config('storefront.return_days')]))">
     <meta name="keywords" content="@yield('meta_keywords', 'nước hoa chính hãng, nước hoa nữ, nước hoa nam, Dior, Chanel, YSL, nước hoa Soopi')">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url()->current() }}">
@@ -16,16 +16,16 @@
     {{-- Open Graph (Facebook / Zalo share) --}}
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Soopi">
-    <meta property="og:title" content="@yield('title', 'Soopi · Hương thơm của riêng bạn')">
-    <meta property="og:description" content="@yield('meta_description', 'Soopi — Nước hoa chính hãng, giao toàn quốc.')">
+    <meta property="og:title" content="@yield('title', __('Soopi · Hương thơm của riêng bạn'))">
+    <meta property="og:description" content="@yield('meta_description', __('Soopi — Nước hoa chính hãng, giao toàn quốc.'))">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="@yield('og_image', asset('images/perfume-hero.jpg'))">
-    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale" content="{{ app()->getLocale() === 'en' ? 'en_US' : 'vi_VN' }}">
 
     {{-- Twitter Card --}}
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="@yield('title', 'Soopi · Hương thơm của riêng bạn')">
-    <meta name="twitter:description" content="@yield('meta_description', 'Soopi — Nước hoa chính hãng, giao toàn quốc.')">
+    <meta name="twitter:title" content="@yield('title', __('Soopi · Hương thơm của riêng bạn'))">
+    <meta name="twitter:description" content="@yield('meta_description', __('Soopi — Nước hoa chính hãng, giao toàn quốc.'))">
     <meta name="twitter:image" content="@yield('og_image', asset('images/perfume-hero.jpg'))">
 
     {{-- Structured Data: Local Business --}}
@@ -50,6 +50,7 @@
     </script>
 
     @include('partials.brand-favicon')
+    @include('partials.localization')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap&subset=vietnamese">
@@ -75,30 +76,30 @@
         @if(session('error'))<div class="store-container public-flash alert-danger" role="alert">{{ session('error') }}</div>@endif
         @if(\App\Support\DemoMode::enabled())
             <div role="status" style="padding:10px 20px;text-align:center;background:#fff3d9;color:#734b13;font-size:13px">
-                BẢN DEMO BÀI TẬP · Không thu tiền thật · Giao hàng mô phỏng · AI cần Internet
+                {{ __('BẢN DEMO BÀI TẬP · Không thu tiền thật · Giao hàng mô phỏng · AI cần Internet') }}
             </div>
         @endif
         @yield('content')
     </main>
     @include('partials.store-footer')
     @unless(request()->routeIs('livestream.show'))
-        <aside id="live-follow" class="ht-live-follow" hidden aria-label="Livestream thu nhỏ"
+        <aside id="live-follow" class="ht-live-follow" hidden aria-label="{{ __('Livestream thu nhỏ') }}"
                data-state-url="{{ route('livestream.state') }}"
                data-live-url="{{ route('livestream.show') }}"
                data-library-url="{{ asset('vendor/livekit-client/livekit-client.umd.js') }}">
             <div class="ht-live-follow-top">
-                <span>● ĐANG TRỰC TIẾP</span>
-                <button id="live-follow-close" type="button" aria-label="Đóng video livestream">×</button>
+                <span>{{ __('● ĐANG TRỰC TIẾP') }}</span>
+                <button id="live-follow-close" type="button" aria-label="{{ __('Đóng video livestream') }}">{{ __('×') }}</button>
             </div>
             <div class="ht-live-follow-stage">
                 <video id="live-follow-video" autoplay muted playsinline hidden></video>
                 <audio id="live-follow-audio" autoplay></audio>
                 <iframe id="live-follow-youtube" title="Livestream Soopi" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen hidden></iframe>
-                <p id="live-follow-message" role="status">Đang kết nối lại buổi live...</p>
+                <p id="live-follow-message" role="status">{{ __('Đang kết nối lại buổi live...') }}</p>
             </div>
             <div class="ht-live-follow-bottom">
-                <strong id="live-follow-title">Soopi đang livestream</strong>
-                <div><button id="live-follow-sound" type="button" hidden>Bật tiếng</button><a href="{{ route('livestream.show') }}">Xem lớn @include('partials.icon', ['name' => 'external', 'size' => '1em'])</a></div>
+                <strong id="live-follow-title">{{ __('Soopi đang livestream') }}</strong>
+                <div><button id="live-follow-sound" type="button" hidden>{{ __('Bật tiếng') }}</button><a href="{{ route('livestream.show') }}">{{ __('Xem lớn') }} @include('partials.icon', ['name' => 'external', 'size' => '1em'])</a></div>
             </div>
         </aside>
         <script defer src="{{ asset('js/livestream-follow.js') }}"></script>

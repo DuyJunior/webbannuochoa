@@ -27,8 +27,8 @@
         if (window.LivekitClient) return resolve(window.LivekitClient);
         const script = document.createElement('script');
         script.src = root.dataset.libraryUrl;
-        script.onload = () => window.LivekitClient ? resolve(window.LivekitClient) : reject(new Error('Không tải được trình phát.'));
-        script.onerror = () => reject(new Error('Không tải được trình phát.'));
+        script.onload = () => window.LivekitClient ? resolve(window.LivekitClient) : reject(new Error((window.soopiT || (text => text))("Không tải được trình phát.")));
+        script.onerror = () => reject(new Error((window.soopiT || (text => text))("Không tải được trình phát.")));
         document.head.append(script);
     });
 
@@ -42,7 +42,7 @@
                 headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content, Accept: 'application/json' },
             });
             const access = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(access.message || 'Không thể xem buổi live.');
+            if (!response.ok) throw new Error(access.message || (window.soopiT || (text => text))("Không thể xem buổi live."));
 
             room = new Room({ adaptiveStream: true });
             const attach = (track) => {
@@ -58,13 +58,13 @@
             room.on(RoomEvent.TrackSubscribed, attach);
             room.on(RoomEvent.TrackUnsubscribed, (track) => {
                 track.detach();
-                if (track.kind === Track.Kind.Video) { video.hidden = true; message.hidden = false; message.textContent = 'Đang chờ camera kết nối lại...'; }
+                if (track.kind === Track.Kind.Video) { video.hidden = true; message.hidden = false; message.textContent = (window.soopiT || (text => text))("Đang chờ camera kết nối lại..."); }
             });
             room.on(RoomEvent.Disconnected, () => {
                 room = null;
                 video.hidden = true;
                 message.hidden = false;
-                message.textContent = 'Mất kết nối. Đang thử kết nối lại...';
+                message.textContent = (window.soopiT || (text => text))("Mất kết nối. Đang thử kết nối lại...");
             });
             await room.connect(access.server_url, access.participant_token);
             for (const participant of room.remoteParticipants.values()) {
@@ -76,7 +76,7 @@
             room?.disconnect();
             room = null;
             message.hidden = false;
-            message.textContent = error.message || 'Không thể kết nối buổi live. Đang thử lại...';
+            message.textContent = error.message || (window.soopiT || (text => text))("Không thể kết nối buổi live. Đang thử lại...");
         } finally {
             connecting = false;
         }
@@ -90,7 +90,7 @@
             const state = await response.json();
             if (!state.on_air || String(state.livestream_id) !== followedId) return stop();
             root.hidden = false;
-            title.textContent = state.title || 'Soopi đang livestream';
+            title.textContent = state.title || (window.soopiT || (text => text))("Soopi đang livestream");
             if (state.source === 'youtube') {
                 if (youtube.hidden) {
                     youtube.src = state.embed_url + '?autoplay=1&mute=1';

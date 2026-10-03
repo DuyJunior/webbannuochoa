@@ -23,11 +23,11 @@
     <div class="scent-info">
         <span class="scent-brand">{{ $perfume->brand }}</span>
         <h3><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->name }}</a></h3>
-        <p class="scent-meta">{{ $perfume->volume_ml }} ml <span>·</span> {{ $perfume->concentration ?: 'Nước hoa' }}</p>
+        <p class="scent-meta">{{ $perfume->volume_ml }} ml <span>·</span> {{ $perfume->concentration ?: __('Nước hoa') }}</p>
         <div class="scent-purchase">
             <div class="scent-price"><strong>{{ number_format((float) ($perfume->sale_price ?? $perfume->price), 0, ',', '.') }}₫</strong>@if($perfume->sale_price !== null && $perfume->sale_price < $perfume->price)<del>{{ number_format((float) $perfume->price, 0, ',', '.') }}₫</del>@endif</div>
-            <a class="scent-buy" href="{{ route('perfumes.show', $perfume) }}" data-quick-view="{{ route('perfumes.quick-view', $perfume) }}" data-product-name="{{ $perfume->name }}" aria-haspopup="dialog" aria-controls="product-quick-view" aria-label="Chọn dung tích {{ $perfume->name }}"><span>{{ $featured ? 'Khám phá mùi hương' : 'Chọn dung tích' }}</span><span aria-hidden="true">↗</span></a>
+            <a class="scent-buy" href="{{ route('perfumes.show', $perfume) }}" data-quick-view="{{ route('perfumes.quick-view', $perfume) }}" data-product-name="{{ $perfume->name }}" aria-haspopup="dialog" aria-controls="product-quick-view" aria-label="Chọn dung tích {{ $perfume->name }}"><span>{{ $featured ? __('Khám phá mùi hương') : __('Chọn dung tích') }}</span><span aria-hidden="true">↗</span></a>
         </div>
-        <button type="button" class="scent-compare ht-compare-add" data-compare-id="{{ $perfume->id }}" aria-label="Thêm {{ $perfume->name }} vào so sánh">+ So sánh</button>
+        <button type="button" class="scent-compare ht-compare-add" data-compare-id="{{ $perfume->id }}" aria-label="Thêm {{ $perfume->name }} vào so sánh">{{ __('+ So sánh') }}</button>
     </div>
 </article>

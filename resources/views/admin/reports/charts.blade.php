@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Biểu đồ báo cáo doanh thu')
-@section('page_title', 'Biểu đồ báo cáo doanh thu')
+@section('title', __('Biểu đồ báo cáo doanh thu'))
+@section('page_title', __('Biểu đồ báo cáo doanh thu'))
 
 @section('content')
 <style>
@@ -12,11 +12,11 @@
 <div class="container-fluid p-0">
     @include('admin.reports._filters', ['filterRoute' => 'admin.reports.charts', 'filterCategories' => $categoriesList])
     <div id="report-chart-error" class="alert alert-warning d-none" role="alert">
-        Không tải được thư viện biểu đồ. Bạn có thể xem số liệu tại trang <a href="{{ route('admin.reports.index', $filters) }}">Bảng số liệu</a>.
+        {{ __('Không tải được thư viện biểu đồ. Bạn có thể xem số liệu tại trang') }} <a href="{{ route('admin.reports.index', $filters) }}">{{ __('Bảng số liệu') }}</a>.
     </div>
 
     @if(!$hasRevenue)
-        <div class="admin-card report-empty"><i class="fa-solid fa-chart-simple mb-3" aria-hidden="true"></i><h3 class="h6">Chưa có doanh thu phù hợp</h3><p class="mb-3">Không có đơn đã thanh toán đủ điều kiện trong bộ lọc này.</p><a href="{{ route('admin.reports.charts', ['mode' => $filters['mode']]) }}" class="btn btn-outline-secondary btn-sm">Xóa bộ lọc</a></div>
+        <div class="admin-card report-empty"><i class="fa-solid fa-chart-simple mb-3" aria-hidden="true"></i><h3 class="h6">{{ __('Chưa có doanh thu phù hợp') }}</h3><p class="mb-3">{{ __('Không có đơn đã thanh toán đủ điều kiện trong bộ lọc này.') }}</p><a href="{{ route('admin.reports.charts', ['mode' => $filters['mode']]) }}" class="btn btn-outline-secondary btn-sm">{{ __('Xóa bộ lọc') }}</a></div>
     @endif
 
     <div class="row" @if(!$hasRevenue) hidden @endif>
@@ -24,10 +24,10 @@
         <div class="col-lg-6 mb-4">
             <div class="admin-card shadow-sm h-100 p-0 overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom font-weight-bold text-dark">
-                    <i class="fa-solid fa-chart-simple text-primary mr-1"></i> Doanh thu theo danh mục
+                    <i class="fa-solid fa-chart-simple text-primary mr-1"></i> {{ __('Doanh thu theo danh mục') }}
                 </div>
                 <div class="card-body chart-wrap p-3">
-                    <canvas id="categoryRevenueChart" role="img" aria-label="Biểu đồ doanh thu theo danh mục. Số liệu chi tiết có trong chế độ Bảng số liệu."></canvas>
+                    <canvas id="categoryRevenueChart" role="img" aria-label="{{ __('Biểu đồ doanh thu theo danh mục. Số liệu chi tiết có trong chế độ Bảng số liệu.') }}"></canvas>
                 </div>
             </div>
         </div>
@@ -36,8 +36,8 @@
         <div class="col-lg-6 mb-4">
             <div class="admin-card shadow-sm h-100 p-0 overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom font-weight-bold text-dark">
-                    <i class="fa-solid fa-chart-line text-success mr-1"></i> Doanh thu theo ngày
-                    <span class="report-card-note">{{ $chartDateRange }} · tối đa 90 ngày cuối kỳ đã chọn</span>
+                    <i class="fa-solid fa-chart-line text-success mr-1"></i> {{ __('Doanh thu theo ngày') }}
+                    <span class="report-card-note">{{ $chartDateRange }} {{ __('· tối đa 90 ngày cuối kỳ đã chọn') }}</span>
                 </div>
                 <div class="card-body chart-wrap p-3">
                     <canvas id="revenueByDateChart" role="img" aria-label="Biểu đồ doanh thu theo ngày, {{ $chartDateRange }}."></canvas>
@@ -49,8 +49,8 @@
         <div class="col-lg-6 mb-4">
             <div class="admin-card shadow-sm h-100 p-0 overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom font-weight-bold text-dark">
-                    <i class="fa-solid fa-chart-column text-warning mr-1"></i> Doanh thu theo tháng
-                    <span class="report-card-note">{{ $chartMonthRange }} · tối đa 12 tháng cuối kỳ đã chọn</span>
+                    <i class="fa-solid fa-chart-column text-warning mr-1"></i> {{ __('Doanh thu theo tháng') }}
+                    <span class="report-card-note">{{ $chartMonthRange }} {{ __('· tối đa 12 tháng cuối kỳ đã chọn') }}</span>
                 </div>
                 <div class="card-body chart-wrap p-3">
                     <canvas id="revenueByMonthChart" role="img" aria-label="Biểu đồ doanh thu theo tháng, {{ $chartMonthRange }}."></canvas>
@@ -62,10 +62,10 @@
         <div class="col-lg-6 mb-4">
             <div class="admin-card shadow-sm h-100 p-0 overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom font-weight-bold text-dark">
-                    <i class="fa-solid fa-calendar-check text-info mr-1"></i> Doanh thu theo năm
+                    <i class="fa-solid fa-calendar-check text-info mr-1"></i> {{ __('Doanh thu theo năm') }}
                 </div>
                 <div class="card-body chart-wrap p-3">
-                    <canvas id="revenueByYearChart" role="img" aria-label="Biểu đồ doanh thu theo năm."></canvas>
+                    <canvas id="revenueByYearChart" role="img" aria-label="{{ __('Biểu đồ doanh thu theo năm.') }}"></canvas>
                 </div>
             </div>
         </div>
@@ -74,11 +74,11 @@
         <div class="col-lg-12 mb-4">
             <div class="admin-card shadow-sm p-0 overflow-hidden">
                 <div class="card-header bg-white py-3 border-bottom font-weight-bold text-dark">
-                    <i class="fa-solid fa-chart-pie text-pink mr-1"></i> Doanh thu theo phương thức thanh toán
+                    <i class="fa-solid fa-chart-pie text-pink mr-1"></i> {{ __('Doanh thu theo phương thức thanh toán') }}
                 </div>
                 <div class="card-body chart-wrap p-3 d-flex justify-content-center">
                     <div style="width: 100%; max-width: 480px;">
-                        <canvas id="revenueByPaymentMethodChart" role="img" aria-label="Tỷ trọng doanh thu theo phương thức thanh toán."></canvas>
+                        <canvas id="revenueByPaymentMethodChart" role="img" aria-label="{{ __('Tỷ trọng doanh thu theo phương thức thanh toán.') }}"></canvas>
                     </div>
                 </div>
             </div>
@@ -150,7 +150,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return new Intl.NumberFormat('vi-VN').format(value) + ' đ';
+                            return new Intl.NumberFormat('vi-VN').format(value) + (window.soopiT || (text => text))(" đ");
                         }
                     }
                 }
@@ -159,7 +159,7 @@ window.addEventListener('DOMContentLoaded', () => {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return (context.dataset.label || '') + ': ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + ' VNĐ';
+                            return (context.dataset.label || '') + ': ' + new Intl.NumberFormat('vi-VN').format(context.parsed.y) + (window.soopiT || (text => text))(" VNĐ");
                         }
                     }
                 }
@@ -168,16 +168,16 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     if (document.getElementById('categoryRevenueChart')) {
-        mk(document.getElementById('categoryRevenueChart'), 'bar', catLabels, catRevenue, 'Doanh thu (VNĐ)', '#bd8da7');
+        mk(document.getElementById('categoryRevenueChart'), 'bar', catLabels, catRevenue, (window.soopiT || (text => text))("Doanh thu (VNĐ)"), '#bd8da7');
     }
     if (document.getElementById('revenueByDateChart')) {
-        mk(document.getElementById('revenueByDateChart'), 'line', revDateLabels, revDateData, 'Doanh thu (VNĐ)');
+        mk(document.getElementById('revenueByDateChart'), 'line', revDateLabels, revDateData, (window.soopiT || (text => text))("Doanh thu (VNĐ)"));
     }
     if (document.getElementById('revenueByMonthChart')) {
-        mk(document.getElementById('revenueByMonthChart'), 'bar', revMonthLabels, revMonthData, 'Doanh thu (VNĐ)', '#89738f');
+        mk(document.getElementById('revenueByMonthChart'), 'bar', revMonthLabels, revMonthData, (window.soopiT || (text => text))("Doanh thu (VNĐ)"), '#89738f');
     }
     if (document.getElementById('revenueByYearChart')) {
-        mk(document.getElementById('revenueByYearChart'), 'bar', revYearLabels, revYearData, 'Doanh thu (VNĐ)', '#bc9c79');
+        mk(document.getElementById('revenueByYearChart'), 'bar', revYearLabels, revYearData, (window.soopiT || (text => text))("Doanh thu (VNĐ)"), '#bc9c79');
     }
 
     if (document.getElementById('revenueByPaymentMethodChart')) {
@@ -186,7 +186,7 @@ window.addEventListener('DOMContentLoaded', () => {
             data: {
                 labels: payLabels,
                 datasets: [{
-                    label: 'Doanh thu (VNĐ)',
+                    label: (window.soopiT || (text => text))("Doanh thu (VNĐ)"),
                     data: payRevenue,
                     backgroundColor: ['#a56385', '#7c9b92', '#8d809f', '#c2a382', '#96a6b8'],
                     borderWidth: 2,
@@ -201,7 +201,7 @@ window.addEventListener('DOMContentLoaded', () => {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return context.label + ': ' + new Intl.NumberFormat('vi-VN').format(context.raw) + ' VNĐ';
+                                return context.label + ': ' + new Intl.NumberFormat('vi-VN').format(context.raw) + (window.soopiT || (text => text))(" VNĐ");
                             }
                         }
                     }

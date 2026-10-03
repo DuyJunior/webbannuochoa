@@ -27,8 +27,8 @@ class ReportController extends Controller
             'preset' => 'nullable|in:today,yesterday,7days,30days,this_month,last_month,this_year',
             'mode' => 'nullable|in:real,demo',
         ], [
-            'date_to.after_or_equal' => 'Ngày kết thúc phải từ ngày bắt đầu trở đi.',
-            '*.date_format' => 'Ngày lọc không hợp lệ.',
+            'date_to.after_or_equal' => __('Ngày kết thúc phải từ ngày bắt đầu trở đi.'),
+            '*.date_format' => __('Ngày lọc không hợp lệ.'),
         ]);
         $preset = $request->get('preset', '');
         $dateFrom = $request->get('date_from');

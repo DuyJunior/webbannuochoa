@@ -10,18 +10,18 @@ function notify(message, needsLogin = false, loginUrl = '') {
     if (!notice) {
         notice = document.createElement('aside');
         notice.className = 'wishlist-notice';
-        notice.setAttribute('aria-label', 'Thông báo yêu thích');
+        notice.setAttribute('aria-label', (window.soopiT || (text => text))("Thông báo yêu thích"));
         const text = document.createElement('span');
         text.setAttribute('role', 'status');
         text.setAttribute('aria-live', 'polite');
         text.setAttribute('aria-atomic', 'true');
         const login = document.createElement('a');
-        login.textContent = 'Đăng nhập';
+        login.textContent = (window.soopiT || (text => text))("Đăng nhập");
         login.hidden = true;
         const close = document.createElement('button');
         close.type = 'button';
-        close.setAttribute('aria-label', 'Đóng thông báo');
-        close.textContent = '×';
+        close.setAttribute('aria-label', (window.soopiT || (text => text))("Đóng thông báo"));
+        close.textContent = (window.soopiT || (text => text))("×");
         close.addEventListener('click', () => { notice.hidden = true; });
         notice.append(text, login, close);
         document.body.append(notice);
@@ -56,9 +56,9 @@ function syncSaved(id, saved) {
         form.dataset.wishlistSaved = String(saved);
         const button = form.querySelector('button[type="submit"]');
         button?.setAttribute('aria-pressed', String(saved));
-        button?.setAttribute('aria-label', `${saved ? 'Bỏ yêu thích' : 'Yêu thích'} ${form.dataset.wishlistName || ''}`.trim());
+        button?.setAttribute('aria-label', `${saved ? (window.soopiT || (text => text))("Bỏ yêu thích") : (window.soopiT || (text => text))("Yêu thích")} ${form.dataset.wishlistName || ''}`.trim());
         const label = form.querySelector('[data-wishlist-label]');
-        if (label) label.textContent = saved ? 'Đã yêu thích' : 'Lưu yêu thích';
+        if (label) label.textContent = saved ? (window.soopiT || (text => text))("Đã yêu thích") : (window.soopiT || (text => text))("Lưu yêu thích");
     });
 
     if (!saved) {
@@ -108,20 +108,20 @@ document.addEventListener('submit', async event => {
             headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
         });
         if (response.status === 401 || response.status === 419) {
-            notify('Phiên đăng nhập đã hết hạn. Đăng nhập lại để lưu mùi hương.', true, form.dataset.wishlistLogin);
+            notify((window.soopiT || (text => text))("Phiên đăng nhập đã hết hạn. Đăng nhập lại để lưu mùi hương."), true, form.dataset.wishlistLogin);
             return;
         }
         if (response.status === 404) {
-            notify('Mùi hương này hiện không còn được mở bán.');
+            notify((window.soopiT || (text => text))("Mùi hương này hiện không còn được mở bán."));
             return;
         }
         if (!response.ok) throw new Error('save-failed');
         const result = await response.json();
         if (String(result.perfume_id) !== id || typeof result.saved !== 'boolean') throw new Error('invalid-response');
         syncSaved(id, result.saved);
-        notify(result.saved ? 'Đã lưu mùi hương yêu thích.' : 'Đã bỏ mùi hương khỏi danh sách yêu thích.');
+        notify(result.saved ? (window.soopiT || (text => text))("Đã lưu mùi hương yêu thích.") : (window.soopiT || (text => text))("Đã bỏ mùi hương khỏi danh sách yêu thích."));
     } catch {
-        notify('Chưa lưu được thay đổi. Bạn bấm lại để thử nhé.');
+        notify((window.soopiT || (text => text))("Chưa lưu được thay đổi. Bạn bấm lại để thử nhé."));
     } finally {
         clearTimeout(timeout);
         pending.delete(id);

@@ -1,10 +1,10 @@
 <section class="mood-collection" data-mood-collection data-tone="rose" aria-labelledby="mood-collection-title">
     <div class="store-container">
         <div class="mood-collection-heading">
-            <h3 id="mood-collection-title">Từ sắc hoa đến <em>mùi hương của bạn.</em></h3>
-            <span data-mood-count aria-live="polite">{{ count($moodCollections['rose'] ?? []) }} gợi ý · Dịu dàng</span>
+            <h3 id="mood-collection-title">{{ __('Từ sắc hoa đến') }} <em>{{ __('mùi hương của bạn.') }}</em></h3>
+            <span data-mood-count aria-live="polite">{{ count($moodCollections['rose'] ?? []) }} {{ __('gợi ý · Dịu dàng') }}</span>
         </div>
-        @foreach(['rose' => 'Dịu dàng', 'velvet' => 'Cuốn hút', 'sage' => 'Tự do'] as $tone => $name)
+        @foreach(['rose' => __('Dịu dàng'), 'velvet' => __('Cuốn hút'), 'sage' => __('Tự do')] as $tone => $name)
             <div class="mood-collection-grid" data-mood-panel="{{ $tone }}" data-mood-label="{{ $name }}" data-count="{{ count($moodCollections[$tone] ?? []) }}" aria-label="Gợi ý mùi hương {{ mb_strtolower($name) }}" @if(!$loop->first) hidden @endif>
                 @forelse($moodCollections[$tone] ?? [] as $pick)
                     @php($item = $pick['product'])
@@ -22,10 +22,10 @@
                         </div>
                     </article>
                 @empty
-                    <p class="mood-collection-empty">Soopi đang tuyển chọn thêm mùi hương cho cảm xúc này. <a href="{{ route('store.finder') }}">Khám phá theo sở thích ↗</a></p>
+                    <p class="mood-collection-empty">{{ __('Soopi đang tuyển chọn thêm mùi hương cho cảm xúc này.') }} <a href="{{ route('store.finder') }}">{{ __('Khám phá theo sở thích ↗') }}</a></p>
                 @endforelse
             </div>
         @endforeach
-        <p class="mood-collection-footnote">Gợi ý của Soopi dựa trên nốt hương. Hãy thử trên da để tìm cảm nhận riêng.</p>
+        <p class="mood-collection-footnote">{{ __('Gợi ý của Soopi dựa trên nốt hương. Hãy thử trên da để tìm cảm nhận riêng.') }}</p>
     </div>
 </section>

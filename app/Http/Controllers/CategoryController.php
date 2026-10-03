@@ -54,7 +54,7 @@ class CategoryController extends Controller
         $targetRoute = $request->routeIs('admin.*') ? 'admin.categories.index' : 'categories.index';
 
         return redirect()->route($targetRoute)
-            ->with('success', 'Đã thêm danh mục mới thành công.');
+            ->with('success', __('Đã thêm danh mục mới thành công.'));
     }
 
     public function show(Category $category)
@@ -90,7 +90,7 @@ class CategoryController extends Controller
         $targetRoute = $request->routeIs('admin.*') ? 'admin.categories.index' : 'categories.index';
 
         return redirect()->route($targetRoute)
-            ->with('success', 'Đã cập nhật danh mục thành công.');
+            ->with('success', __('Đã cập nhật danh mục thành công.'));
     }
 
     public function destroy(Category $category)
@@ -100,6 +100,6 @@ class CategoryController extends Controller
         $targetRoute = request()->routeIs('admin.*') ? 'admin.categories.index' : 'categories.index';
 
         return redirect()->route($targetRoute)
-            ->with('success', 'Đã xóa danh mục thành công.');
+            ->with('success', __('Đã xóa danh mục thành công.'));
     }
 }

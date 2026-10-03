@@ -34,13 +34,13 @@
             });
             if (!response.ok) {
                 const errors = {
-                    401: 'Vui lòng đăng nhập lại để tiếp tục chat.',
-                    419: 'Phiên làm việc hết hạn. Hãy tải lại trang.',
-                    422: 'Nội dung không hợp lệ hoặc quá dài (tối đa 1.000 ký tự).',
-                    429: 'Bạn thao tác quá nhanh. Vui lòng chờ một phút.',
-                    503: 'Kênh hỗ trợ chưa sẵn sàng. Vui lòng thử lại sau.',
+                    401: (window.soopiT || (text => text))("Vui lòng đăng nhập lại để tiếp tục chat."),
+                    419: (window.soopiT || (text => text))("Phiên làm việc hết hạn. Hãy tải lại trang."),
+                    422: (window.soopiT || (text => text))("Nội dung không hợp lệ hoặc quá dài (tối đa 1.000 ký tự)."),
+                    429: (window.soopiT || (text => text))("Bạn thao tác quá nhanh. Vui lòng chờ một phút."),
+                    503: (window.soopiT || (text => text))("Kênh hỗ trợ chưa sẵn sàng. Vui lòng thử lại sau."),
                 };
-                throw new Error(errors[response.status] || 'Không thể hoàn thành yêu cầu. Vui lòng thử lại.');
+                throw new Error(errors[response.status] || (window.soopiT || (text => text))("Không thể hoàn thành yêu cầu. Vui lòng thử lại."));
             }
             return await response.json();
         } finally {
@@ -51,17 +51,17 @@
     function renderState(value) {
         state = value;
         const human = value.mode === 'human';
-        el('chat-mode-label').textContent = human ? 'Hỗ trợ từ nhân viên' : (value.ai_available ? 'Trợ lý AI · Groq' : 'Hỗ trợ khách hàng');
-        el('chat-assistant-label').textContent = value.pending ? 'AI đang soạn câu trả lời…' : 'Tư vấn mùi hương và mua hàng';
-        modeButton.textContent = human ? 'Bật lại AI' : 'Gặp nhân viên';
+        el('chat-mode-label').textContent = human ? (window.soopiT || (text => text))("Hỗ trợ từ nhân viên") : (value.ai_available ? (window.soopiT || (text => text))("Trợ lý AI · Groq") : (window.soopiT || (text => text))("Hỗ trợ khách hàng"));
+        el('chat-assistant-label').textContent = value.pending ? (window.soopiT || (text => text))("AI đang soạn câu trả lời…") : (window.soopiT || (text => text))("Tư vấn mùi hương và mua hàng");
+        modeButton.textContent = human ? (window.soopiT || (text => text))("Bật lại AI") : (window.soopiT || (text => text))("Gặp nhân viên");
         modeButton.hidden = human && !value.ai_available;
-        const notice = value.pending ? 'AI đang trả lời… Bạn vẫn có thể gửi thêm thông tin.' : value.notice;
+        const notice = value.pending ? (window.soopiT || (text => text))("AI đang trả lời… Bạn vẫn có thể gửi thêm thông tin.") : value.notice;
         el('chat-ai-notice').textContent = notice || '';
         el('chat-ai-notice').hidden = !notice;
     }
 
     function renderMessages(messages, forceScroll) {
-        if (!Array.isArray(messages)) throw new Error('Không tải được lịch sử chat.');
+        if (!Array.isArray(messages)) throw new Error((window.soopiT || (text => text))("Không tải được lịch sử chat."));
         const signature = JSON.stringify(messages.map((m) => [m.id, m.content, m.is_ai, m.products]));
         if (signature === rendered) {
             if (forceScroll) scroll.scrollTop = scroll.scrollHeight;
@@ -78,7 +78,7 @@
             if (!mine) {
                 const author = document.createElement('div');
                 author.className = 'bubble-author';
-                author.textContent = message.is_ai ? 'Trợ lý AI · Groq' : 'Nhân viên Soopi';
+                author.textContent = message.is_ai ? (window.soopiT || (text => text))("Trợ lý AI · Groq") : (window.soopiT || (text => text))("Nhân viên Soopi");
                 bubble.append(author);
             }
             const text = document.createElement('div');
@@ -112,9 +112,9 @@
                     const name = document.createElement('strong');
                     name.textContent = product.name;
                     const price = document.createElement('div');
-                    price.textContent = Number(product.price).toLocaleString('vi-VN') + 'đ · ' + product.volume_ml + 'ml';
+                    price.textContent = Number(product.price).toLocaleString('vi-VN') + (window.soopiT || (text => text))("đ · ") + product.volume_ml + 'ml';
                     const action = document.createElement('small');
-                    action.textContent = product.in_stock ? 'Xem sản phẩm →' : 'Tạm hết dung tích này · Xem chi tiết →';
+                    action.textContent = product.in_stock ? (window.soopiT || (text => text))("Xem sản phẩm →") : (window.soopiT || (text => text))("Tạm hết dung tích này · Xem chi tiết →");
                     detail.append(name, price, action);
                     card.append(detail);
                     bubble.append(card);
@@ -140,7 +140,7 @@
                 renderState(status);
             }
         } catch (error) {
-            showError(error.name === 'AbortError' ? 'Kết nối chậm. Vui lòng thử lại.' : error.message);
+            showError(error.name === 'AbortError' ? (window.soopiT || (text => text))("Kết nối chậm. Vui lòng thử lại.") : error.message);
         } finally {
             refreshing = false;
             if (revision !== version && popup.style.display !== 'none') refresh(forceScroll);
@@ -161,7 +161,7 @@
             await refresh(true);
         } catch (error) {
             showError(error.name === 'AbortError'
-                ? 'Chưa xác nhận được tin nhắn đã gửi. Kiểm tra lịch sử trước khi gửi lại.'
+                ? (window.soopiT || (text => text))("Chưa xác nhận được tin nhắn đã gửi. Kiểm tra lịch sử trước khi gửi lại.")
                 : error.message);
         } finally {
             sending = false;
@@ -206,7 +206,7 @@
             version++;
             renderState(next);
         } catch (error) {
-            showError(error.name === 'AbortError' ? 'Chưa đổi được chế độ hỗ trợ. Vui lòng thử lại.' : error.message);
+            showError(error.name === 'AbortError' ? (window.soopiT || (text => text))("Chưa đổi được chế độ hỗ trợ. Vui lòng thử lại.") : error.message);
         } finally {
             changingMode = false;
             modeButton.disabled = false;

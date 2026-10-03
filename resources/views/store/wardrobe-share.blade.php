@@ -1,49 +1,49 @@
 @extends('layouts.store')
 
-@section('title', 'Tủ Nước Hoa Của ' . $user->name . ' | Soopi')
-@section('meta_description', 'Khám phá bộ sưu tập mùi hương cá nhân tinh tế của ' . $user->name . ' tại Soopi.')
+@section('title', __('Tủ Nước Hoa Của ') . $user->name . ' | Soopi')
+@section('meta_description', __('Khám phá bộ sưu tập mùi hương cá nhân tinh tế của ') . $user->name . __(' tại Soopi.'))
 
 @section('content')
 <div class="store-container ht-wardrobe-share-page">
     <header class="ht-wardrobe-share-hero">
-        <span class="ht-badge-pill">@include('partials.brand-mark', ['size' => 22, 'class' => 'interior-inline-brand-mark']) TỦ NƯỚC HOA CHIA SẺ</span>
-        <h1 class="ht-share-title">Ghé Thăm Tủ Nước Hoa Của <em>{{ $user->name }}</em></h1>
-        <p class="ht-share-sub">Dưới đây là những nốt hương yêu thích được {{ $user->name }} tuyển chọn và phân loại cẩn thận theo từng khoảnh khắc cuộc sống.</p>
+        <span class="ht-badge-pill">@include('partials.brand-mark', ['size' => 22, 'class' => 'interior-inline-brand-mark']) {{ __('TỦ NƯỚC HOA CHIA SẺ') }}</span>
+        <h1 class="ht-share-title">{{ __('Ghé Thăm Tủ Nước Hoa Của') }} <em>{{ $user->name }}</em></h1>
+        <p class="ht-share-sub">{{ __('Dưới đây là những nốt hương yêu thích được :name tuyển chọn và phân loại cẩn thận theo từng khoảnh khắc cuộc sống.', ['name' => $user->name]) }}</p>
         <div class="share-hero-actions">
-            <a href="{{ route('store.wardrobe') }}" class="ht-button ht-button-outline">Tạo Tủ Nước Hoa Của Riêng Bạn</a>
-            <a href="{{ route('home') }}" class="ht-button ht-button-primary">Khám Phá Cửa Hàng Soopi</a>
+            <a href="{{ route('store.wardrobe') }}" class="ht-button ht-button-outline">{{ __('Tạo Tủ Nước Hoa Của Riêng Bạn') }}</a>
+            <a href="{{ route('home') }}" class="ht-button ht-button-primary">{{ __('Khám Phá Cửa Hàng Soopi') }}</a>
         </div>
     </header>
 
     @if($wardrobeItems->isEmpty())
     <div class="ht-share-empty">
-        <p>Tủ của {{ $user->name }} hiện chưa có mùi hương đang mở bán để hiển thị.</p>
+        <p>{{ __('Tủ của') }} {{ $user->name }} {{ __('hiện chưa có mùi hương đang mở bán để hiển thị.') }}</p>
     </div>
     @else
     <div class="ht-share-grid">
         @foreach($wardrobeItems as $item)
         <article class="ht-share-card">
-            <div class="card-tag">@include('partials.icon', ['name' => $item->occasion_icon, 'size' => '1em']) {{ $item->occasion_label }}</div>
+            <div class="card-tag">@include('partials.icon', ['name' => $item->occasion_icon, 'size' => '1em']) {{ __($item->occasion_label) }}</div>
             <div class="card-img">
                 <img src="{{ $item->perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $item->perfume->name }}" loading="lazy">
             </div>
             <div class="card-info">
                 <span class="brand">{{ $item->perfume->brand }}</span>
                 <h3 class="name"><a href="{{ route('perfumes.show', $item->perfume) }}">{{ $item->perfume->name }}</a></h3>
-                <p class="specs">{{ $item->perfume->category->name ?? 'Nước hoa' }} · {{ match($item->perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
+                <p class="specs">{{ $item->perfume->category->name ?? __('Nước hoa') }} · {{ match($item->perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
                 
                 @if($item->notes)
                 <div class="user-quote">“{{ $item->notes }}”</div>
                 @endif
 
                 <div class="scent-brief">
-                    <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em']) {{ Str::limit($item->perfume->scent_profile['top']['notes'] ?? 'Tươi mát', 35) }}</span>
-                    <span>@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Độ lưu: {{ $item->perfume->scent_profile['longevity']['text'] ?? '8h' }}</span>
+                    <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em']) {{ Str::limit(__($item->perfume->scent_profile['top']['notes'] ?? __('Tươi mát')), 35) }}</span>
+                    <span>@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) {{ __('Độ lưu:') }} {{ __($item->perfume->scent_profile['longevity']['text'] ?? '8h') }}</span>
                 </div>
 
                 <div class="card-foot">
                     <span class="price">{{ number_format($item->perfume->sale_price ?? $item->perfume->price, 0, ',', '.') }}₫</span>
-                    <a href="{{ route('perfumes.show', $item->perfume) }}" class="ht-button ht-button-primary btn-sm">Xem & Mua Mùi Này</a>
+                    <a href="{{ route('perfumes.show', $item->perfume) }}" class="ht-button ht-button-primary btn-sm">{{ __('Xem & Mua Mùi Này') }}</a>
                 </div>
             </div>
         </article>

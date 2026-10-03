@@ -1,6 +1,6 @@
 @extends('layouts.store')
 
-@section('title', 'Xác thực Email · Soopi')
+@section('title', __('Xác thực Email · Soopi'))
 
 @section('content')
 <section class="luxury-auth-section">
@@ -9,9 +9,9 @@
             <div class="luxury-auth-icon-wrap">
                 @include('partials.brand-mark', ['size' => 32])
             </div>
-            <h1 class="luxury-auth-title">Xác thực Email</h1>
+            <h1 class="luxury-auth-title">{{ __('Xác thực Email') }}</h1>
             <p class="luxury-auth-subtitle" style="margin-top: 8px;">
-                Vui lòng kiểm tra hộp thư và nhấn vào liên kết xác thực. Nếu liên kết cũ đã hết hạn, bạn có thể yêu cầu gửi lại bên dưới.
+                {{ __('Vui lòng kiểm tra hộp thư và nhấn vào liên kết xác thực. Nếu liên kết cũ đã hết hạn, bạn có thể yêu cầu gửi lại bên dưới.') }}
             </p>
         </div>
 
@@ -24,16 +24,16 @@
 
         <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
             @if (\App\Support\DemoMode::enabled() && config('mail.default') === 'log')
-                <p>DEMO LOCAL: email đang ghi vào log, không gửi ra hộp thư thật. Nút dưới mô phỏng mở liên kết xác thực của tài khoản đang đăng nhập.</p>
+                <p>{{ __('DEMO LOCAL: email đang ghi vào log, không gửi ra hộp thư thật. Nút dưới mô phỏng mở liên kết xác thực của tài khoản đang đăng nhập.') }}</p>
                 <form method="POST" action="{{ route('verification.demo') }}">
                     @csrf
-                    <button class="luxury-auth-btn" type="submit">Mở thư xác thực demo</button>
+                    <button class="luxury-auth-btn" type="submit">{{ __('Mở thư xác thực demo') }}</button>
                 </form>
             @endif
             <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
                 <button type="submit" class="luxury-auth-btn">
-                    <span>Gửi lại email xác thực</span>
+                    <span>{{ __('Gửi lại email xác thực') }}</span>
                     <span>@include('partials.icon', ['name' => 'mail', 'size' => '1em'])</span>
                 </button>
             </form>
@@ -41,7 +41,7 @@
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="luxury-auth-secondary-btn">
-                    <span>@include('partials.icon', ['name' => 'logout', 'size' => '1em']) Đăng xuất</span>
+                    <span>@include('partials.icon', ['name' => 'logout', 'size' => '1em']) {{ __('Đăng xuất') }}</span>
                 </button>
             </form>
         </div>

@@ -2,7 +2,7 @@
 @auth
 <div id="chat-box" class="boutique-chat-wrapper">
     {{-- Nút bấm mở chat nổi --}}
-    <button id="chat-toggle" class="chat-floating-btn" type="button" aria-label="Mở tư vấn Soopi" aria-controls="chat-popup" aria-expanded="false">
+    <button id="chat-toggle" class="chat-floating-btn" type="button" aria-label="{{ __('Mở tư vấn Soopi') }}" aria-controls="chat-popup" aria-expanded="false">
         <span class="chat-btn-pulse"></span>
         <span class="chat-icon-wrap">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -10,7 +10,7 @@
             </svg>
         </span>
         <span class="chat-online-dot" aria-hidden="true"></span>
-        <span class="chat-btn-label">Tư vấn</span>
+        <span class="chat-btn-label">{{ __('Tư vấn') }}</span>
     </button>
 
     {{-- Khung cửa sổ chat --}}
@@ -26,12 +26,12 @@
                     <div id="chat-header-title" class="chat-title">Soopi</div>
                     <div class="chat-subtitle">
                         <span class="live-indicator"></span>
-                        <span id="chat-assistant-label">Tư vấn mùi hương và đơn hàng</span>
+                        <span id="chat-assistant-label">{{ __('Tư vấn mùi hương và đơn hàng') }}</span>
                     </div>
                 </div>
             </div>
             <div class="chat-header-actions">
-                <button id="chat-close" class="chat-close-btn" type="button" aria-label="Đóng cửa sổ chat" title="Đóng">
+                <button id="chat-close" class="chat-close-btn" type="button" aria-label="{{ __('Đóng cửa sổ chat') }}" title="{{ __('Đóng') }}">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -41,32 +41,32 @@
         </div>
 
         <div class="chat-mode-bar">
-            <span id="chat-mode-label">Đang kết nối cuộc trò chuyện...</span>
-            <button id="chat-mode-toggle" class="chat-mode-btn" type="button" hidden>Gặp nhân viên</button>
+            <span id="chat-mode-label">{{ __('Đang kết nối cuộc trò chuyện...') }}</span>
+            <button id="chat-mode-toggle" class="chat-mode-btn" type="button" hidden>{{ __('Gặp nhân viên') }}</button>
         </div>
 
         {{-- Vùng hiển thị tin nhắn --}}
         <div id="chat-messages" class="chat-messages-scroll" tabindex="0">
             <div class="chat-welcome-card">
                 <div class="welcome-flower">@include('partials.brand-mark', ['size' => 46])</div>
-                <div class="welcome-heading">Chào mừng bạn đến với Soopi!</div>
-                <div class="welcome-text">Hãy nhắn nhu cầu chọn mùi hương hoặc câu hỏi về đơn hàng. Bạn có thể chọn gặp nhân viên bất cứ lúc nào.</div>
+                <div class="welcome-heading">{{ __('Chào mừng bạn đến với Soopi!') }}</div>
+                <div class="welcome-text">{{ __('Hãy nhắn nhu cầu chọn mùi hương hoặc câu hỏi về đơn hàng. Bạn có thể chọn gặp nhân viên bất cứ lúc nào.') }}</div>
                 <div class="quick-chips-group">
                     <button type="button" class="quick-chip-btn" data-text="Shop tư vấn giúp mình mùi hương nữ nhẹ nhàng, đi làm hàng ngày với ạ! ">
-                        @include('partials.icon', ['name' => 'flower', 'size' => '1em']) Tìm mùi thanh lịch
+                        @include('partials.icon', ['name' => 'flower', 'size' => '1em']) {{ __('Tìm mùi thanh lịch') }}
                     </button>
                     <button type="button" class="quick-chip-btn" data-text="Shop kiểm tra tiến độ đơn hàng gần nhất giúp mình nhé! ">
-                        @include('partials.icon', ['name' => 'box', 'size' => '1em']) Kiểm tra đơn hàng
+                        @include('partials.icon', ['name' => 'box', 'size' => '1em']) {{ __('Kiểm tra đơn hàng') }}
                     </button>
                     <button type="button" class="quick-chip-btn" data-text="Shop có hỗ trợ khắc tên và gói quà tặng không ạ? ">
-                        @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Dịch vụ quà tặng
+                        @include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ __('Dịch vụ quà tặng') }}
                     </button>
                 </div>
             </div>
             <div id="chat-stream-loading" class="text-center py-2 text-muted" style="display:none;">
-                <small class="chat-loading-text">Đang tải cuộc trò chuyện...</small>
+                <small class="chat-loading-text">{{ __('Đang tải cuộc trò chuyện...') }}</small>
             </div>
-            <div id="chat-history" class="chat-history" role="log" aria-label="Lịch sử trò chuyện" aria-live="polite" aria-relevant="additions"></div>
+            <div id="chat-history" class="chat-history" role="log" aria-label="{{ __('Lịch sử trò chuyện') }}" aria-live="polite" aria-relevant="additions"></div>
         </div>
 
         {{-- Footer nhập tin nhắn --}}
@@ -75,9 +75,9 @@
             <div id="chat-error" class="chat-error" role="alert" hidden></div>
             <form id="chat-input-form" class="chat-form-row">
                 <div class="chat-input-wrapper">
-                    <textarea id="chat-input" class="chat-text-input" placeholder="Nhập tin nhắn..." aria-label="Nội dung tin nhắn" autocomplete="off" maxlength="1000" rows="1"></textarea>
+                    <textarea id="chat-input" class="chat-text-input" placeholder="{{ __('Nhập tin nhắn...') }}" aria-label="{{ __('Nội dung tin nhắn') }}" autocomplete="off" maxlength="1000" rows="1"></textarea>
                 </div>
-                <button id="send-btn" class="chat-send-action-btn" type="submit" aria-label="Gửi tin nhắn" title="Gửi (Enter), xuống dòng (Shift + Enter)">
+                <button id="send-btn" class="chat-send-action-btn" type="submit" aria-label="{{ __('Gửi tin nhắn') }}" title="{{ __('Gửi (Enter), xuống dòng (Shift + Enter)') }}">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="22" y1="2" x2="11" y2="13"></line>
                         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -85,14 +85,14 @@
                 </button>
             </form>
             <div class="chat-footer-note">
-                Khi bật AI, lịch sử chat được Groq xử lý để tư vấn. AI có thể trả lời sai. Không gửi mật khẩu, OTP hoặc thông tin thẻ.
+                {{ __('Khi bật AI, lịch sử chat được Groq xử lý để tư vấn. AI có thể trả lời sai. Không gửi mật khẩu, OTP hoặc thông tin thẻ.') }}
             </div>
         </div>
     </div>
 </div>
 @else
 <div id="chat-box" class="boutique-chat-wrapper">
-    <a href="{{ route('login') }}" id="chat-toggle" class="chat-floating-btn guest-btn" title="Đăng nhập để chat trực tiếp với chuyên gia mùi hương Soopi">
+    <a href="{{ route('login') }}" id="chat-toggle" class="chat-floating-btn guest-btn" title="{{ __('Đăng nhập để chat trực tiếp với chuyên gia mùi hương Soopi') }}">
         <span class="chat-btn-pulse"></span>
         <span class="chat-icon-wrap">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -100,7 +100,7 @@
             </svg>
         </span>
         <span class="chat-online-dot"></span>
-        <span class="chat-btn-label">Tư vấn</span>
+        <span class="chat-btn-label">{{ __('Tư vấn') }}</span>
     </a>
 </div>
 @endauth

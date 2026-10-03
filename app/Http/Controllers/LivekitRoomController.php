@@ -27,11 +27,11 @@ class LivekitRoomController extends Controller
     public function hostToken(Request $request, Livestream $livestream, LivekitTokenService $livekit): JsonResponse
     {
         abort_unless($livestream->source === 'browser' && $livestream->status !== 'ended', 409);
-        abort_unless($livekit->configured(), 503, 'Máy chủ video chưa được cấu hình.');
+        abort_unless($livekit->configured(), 503, __('Máy chủ video chưa được cấu hình.'));
         abort_if(
             $livestream->isBrowserOnAir() && $livestream->presenter_id !== $request->user()->id,
             409,
-            'Đã có nhân viên khác đang phát buổi này.'
+            __('Đã có nhân viên khác đang phát buổi này.')
         );
 
         return response()->json([
@@ -42,8 +42,8 @@ class LivekitRoomController extends Controller
 
     public function viewerToken(Livestream $livestream, LivekitTokenService $livekit): JsonResponse
     {
-        abort_unless($livestream->isBrowserOnAir(), 409, 'Buổi phát hiện chưa trực tuyến.');
-        abort_unless($livekit->configured(), 503, 'Máy chủ video chưa sẵn sàng.');
+        abort_unless($livestream->isBrowserOnAir(), 409, __('Buổi phát hiện chưa trực tuyến.'));
+        abort_unless($livekit->configured(), 503, __('Máy chủ video chưa sẵn sàng.'));
 
         return response()->json([
             'server_url' => $livekit->url(),
@@ -53,14 +53,14 @@ class LivekitRoomController extends Controller
 
     public function begin(Request $request, Livestream $livestream, LivekitTokenService $livekit): JsonResponse
     {
-        abort_unless($livekit->configured(), 503, 'Máy chủ video chưa được cấu hình.');
+        abort_unless($livekit->configured(), 503, __('Máy chủ video chưa được cấu hình.'));
         abort_unless($livestream->source === 'browser' && $livestream->status !== 'ended', 409);
         abort_if(
             $livestream->isBrowserOnAir() && $livestream->presenter_id !== $request->user()->id,
             409,
-            'Đã có nhân viên khác đang phát buổi này.'
+            __('Đã có nhân viên khác đang phát buổi này.')
         );
-        abort_if(Livestream::where('status', 'live')->whereKeyNot($livestream->id)->exists(), 409, 'Hãy kết thúc buổi live đang phát trước.');
+        abort_if(Livestream::where('status', 'live')->whereKeyNot($livestream->id)->exists(), 409, __('Hãy kết thúc buổi live đang phát trước.'));
 
         $livestream->update([
             'status' => 'live',

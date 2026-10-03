@@ -26,7 +26,7 @@ final class FragranceEditorialService
                 continue;
             }
 
-            return [
+            return self::localize([
                 'verified' => true,
                 'profile_key' => $key,
                 'mode' => $profile['mode'],
@@ -40,10 +40,10 @@ final class FragranceEditorialService
                 'sources' => $profile['sources'],
                 'reviewed_at' => config('fragrance-editorial.reviewed_at'),
                 'note_label' => $profile['mode'] === 'pyramid' ? 'Ba tầng hương' : 'Những nốt hương nổi bật',
-            ];
+            ]);
         }
 
-        return [
+        return self::localize([
             'verified' => false,
             'profile_key' => null,
             'mode' => 'pending',
@@ -57,7 +57,24 @@ final class FragranceEditorialService
             'sources' => [],
             'reviewed_at' => null,
             'note_label' => 'Cùng tìm hiểu mùi hương',
-        ];
+        ]);
+    }
+
+    /** Translate editorial copy only; catalog matching and mood identifiers stay stable. */
+    private static function localize(array $profile): array
+    {
+        foreach (['family', 'story', 'occasion', 'note_label'] as $field) {
+            $profile[$field] = __($profile[$field]);
+        }
+        $profile['key_notes'] = array_map(fn ($note) => __($note), $profile['key_notes']);
+        $profile['mood_reason'] = array_map(fn ($reason) => __($reason), $profile['mood_reason']);
+        foreach ($profile['layers'] as &$layer) {
+            $layer['label'] = __($layer['label']);
+            $layer['description'] = __($layer['description']);
+            $layer['notes'] = array_map(fn ($note) => __($note), $layer['notes']);
+        }
+
+        return $profile;
     }
 
     private static function normalize(string $value): string

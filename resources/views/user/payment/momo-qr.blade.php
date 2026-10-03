@@ -1,17 +1,17 @@
 @extends('layouts.store')
 
-@section('title', 'Thanh toán MoMo · Soopi')
+@section('title', __('Thanh toán MoMo · Soopi'))
 
 @section('content')
 <div class="momo-qr-page">
     <div class="store-container">
 
         <nav class="momo-breadcrumb">
-            <a href="{{ route('home') }}">Trang chủ</a>
+            <a href="{{ route('home') }}">{{ __('Trang chủ') }}</a>
             <span>/</span>
-            <a href="{{ route('orders.index') }}">Đơn hàng của tôi</a>
+            <a href="{{ route('orders.index') }}">{{ __('Đơn hàng của tôi') }}</a>
             <span>/</span>
-            <span class="active">Thanh toán MoMo</span>
+            <span class="active">{{ __('Thanh toán MoMo') }}</span>
         </nav>
 
         <div class="momo-pay-layout">
@@ -22,10 +22,10 @@
                     <div class="momo-card-header">
                         <img src="{{ asset('images/payments/momo.svg') }}" alt="MoMo" class="momo-logo">
                         <div>
-                            <h2>Thanh toán qua MoMo</h2>
-                            <small>Quét mã QR bằng app MoMo để thanh toán nhanh</small>
+                            <h2>{{ __('Thanh toán qua MoMo') }}</h2>
+                            <small>{{ __('Quét mã QR bằng app MoMo để thanh toán nhanh') }}</small>
                         </div>
-                        <span class="momo-auto-badge">Tự động</span>
+                        <span class="momo-auto-badge">{{ __('Tự động') }}</span>
                     </div>
 
                     {{-- QR Code MoMo --}}
@@ -46,19 +46,19 @@
                         <div class="momo-scan-steps">
                             <div class="scan-step">
                                 <span class="step-num">1</span>
-                                <span>Mở ứng dụng <strong>MoMo</strong> trên điện thoại</span>
+                                <span>{{ __('Mở ứng dụng') }} <strong>MoMo</strong> {{ __('trên điện thoại') }}</span>
                             </div>
                             <div class="scan-step">
                                 <span class="step-num">2</span>
-                                <span>Nhấn biểu tượng <strong>Quét QR</strong> trên thanh điều hướng</span>
+                                <span>{{ __('Nhấn biểu tượng') }} <strong>{{ __('Quét QR') }}</strong> {{ __('trên thanh điều hướng') }}</span>
                             </div>
                             <div class="scan-step">
                                 <span class="step-num">3</span>
-                                <span>Hướng camera vào mã QR phía trên để quét</span>
+                                <span>{{ __('Hướng camera vào mã QR phía trên để quét') }}</span>
                             </div>
                             <div class="scan-step">
                                 <span class="step-num">4</span>
-                                <span>Kiểm tra thông tin và <strong>xác nhận thanh toán</strong></span>
+                                <span>{{ __('Kiểm tra thông tin và') }} <strong>{{ __('xác nhận thanh toán') }}</strong></span>
                             </div>
                         </div>
                     </div>
@@ -66,30 +66,30 @@
                     {{-- Thông tin thanh toán --}}
                     <div class="momo-info-rows">
                         <div class="momo-info-row">
-                            <span class="momo-info-label">Số điện thoại MoMo</span>
+                            <span class="momo-info-label">{{ __('Số điện thoại MoMo') }}</span>
                             <div class="momo-info-val-wrap">
                                 <span id="momo-phone" class="momo-info-value"><strong>0387350999</strong></span>
-                                <button type="button" class="momo-copy-btn" aria-label="Sao chép số điện thoại" onclick="copyMomoText('momo-phone', this)">@include('partials.copy-icon')</button>
+                                <button type="button" class="momo-copy-btn" aria-label="{{ __('Sao chép số điện thoại') }}" onclick="copyMomoText('momo-phone', this)">@include('partials.copy-icon')</button>
                             </div>
                         </div>
                         <div class="momo-info-row">
-                            <span class="momo-info-label">Chủ tài khoản</span>
+                            <span class="momo-info-label">{{ __('Chủ tài khoản') }}</span>
                             <div class="momo-info-val-wrap">
                                 <span class="momo-info-value"><strong>HA THU PERFUME</strong></span>
                             </div>
                         </div>
                         <div class="momo-info-row highlight">
-                            <span class="momo-info-label">Số tiền</span>
+                            <span class="momo-info-label">{{ __('Số tiền') }}</span>
                             <div class="momo-info-val-wrap">
-                                <span class="momo-info-value momo-amount">{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</span>
-                                <button type="button" class="momo-copy-btn" aria-label="Sao chép số tiền" onclick="copyMomoAmount({{ (int)$order->total_price }}, this)">@include('partials.copy-icon')</button>
+                                <span class="momo-info-value momo-amount">{{ number_format($order->total_price, 0, ',', '.') }} {{ __('VNĐ') }}</span>
+                                <button type="button" class="momo-copy-btn" aria-label="{{ __('Sao chép số tiền') }}" onclick="copyMomoAmount({{ (int)$order->total_price }}, this)">@include('partials.copy-icon')</button>
                             </div>
                         </div>
                         <div class="momo-info-row highlight">
-                            <span class="momo-info-label">Nội dung</span>
+                            <span class="momo-info-label">{{ __('Nội dung') }}</span>
                             <div class="momo-info-val-wrap">
                                 <span id="momo-note" class="momo-info-value momo-note-val"><strong>HATHU{{ $order->id }}</strong></span>
-                                <button type="button" class="momo-copy-btn" aria-label="Sao chép nội dung chuyển khoản" onclick="copyMomoText('momo-note', this)">@include('partials.copy-icon')</button>
+                                <button type="button" class="momo-copy-btn" aria-label="{{ __('Sao chép nội dung chuyển khoản') }}" onclick="copyMomoText('momo-note', this)">@include('partials.copy-icon')</button>
                             </div>
                         </div>
                     </div>
@@ -99,14 +99,14 @@
                     <div class="momo-redirect-section">
                         <a href="{{ $momoUrl }}" class="btn-open-momo" id="btnOpenMomo">
                             <img src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="MoMo" style="height:22px;border-radius:4px;" onerror="this.style.display='none'">
-                            Mở ứng dụng MoMo để thanh toán
+                            {{ __('Mở ứng dụng MoMo để thanh toán') }}
                         </a>
-                        <p class="redirect-hint">Hoặc click nút trên nếu đang dùng điện thoại có cài app MoMo</p>
+                        <p class="redirect-hint">{{ __('Hoặc click nút trên nếu đang dùng điện thoại có cài app MoMo') }}</p>
                     </div>
                     @endif
 
                     <div class="momo-notice-box">
-                        @include('partials.icon', ['name' => 'info', 'size' => '1em']) <strong>Lưu ý:</strong> Vui lòng ghi đúng nội dung <strong>HATHU{{ $order->id }}</strong> để hệ thống tự xác nhận. Đơn hàng sẽ được xử lý trong vòng 5–10 phút sau khi thanh toán thành công.
+                        @include('partials.icon', ['name' => 'info', 'size' => '1em']) <strong>{{ __('Lưu ý:') }}</strong> {{ __('Vui lòng ghi đúng nội dung') }} <strong>HATHU{{ $order->id }}</strong> {{ __('để hệ thống tự xác nhận. Đơn hàng sẽ được xử lý trong vòng 5–10 phút sau khi thanh toán thành công.') }}
                     </div>
 
                     {{-- Nút xác nhận đã thanh toán --}}
@@ -115,7 +115,7 @@
                         <input type="hidden" name="gateway" value="momo">
                         <button type="submit" style="width:100%; padding:14px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; border:none; border-radius:12px; font-weight:700; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(16,185,129,0.3); transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                             <span>@include('partials.icon', ['name' => 'check', 'size' => '1em'])</span>
-                            <span>Tôi Đã Chuyển Tiền Thành Công</span>
+                            <span>{{ __('Tôi Đã Chuyển Tiền Thành Công') }}</span>
                         </button>
                     </form>
                 </div>
@@ -124,7 +124,7 @@
             {{-- Cột phải: Tóm tắt đơn hàng --}}
             <div class="momo-side-col">
                 <div class="momo-summary-box">
-                    <h3 class="momo-summary-title">@include('partials.icon', ['name' => 'box', 'size' => '1em']) Đơn hàng #{{ $order->id }}</h3>
+                    <h3 class="momo-summary-title">@include('partials.icon', ['name' => 'box', 'size' => '1em']) {{ __('Đơn hàng #') }}{{ $order->id }}</h3>
 
                     <div class="momo-sum-items">
                         @foreach($order->items as $item)
@@ -151,21 +151,21 @@
                     @php $itemsTotal = $order->items->sum(fn($i) => $i->price * $i->quantity); @endphp
                     <div class="momo-sum-costs">
                         <div class="momo-cost-row">
-                            <span>Tiền hàng</span>
-                            <span>{{ number_format($itemsTotal, 0, ',', '.') }} VNĐ</span>
+                            <span>{{ __('Tiền hàng') }}</span>
+                            <span>{{ number_format($itemsTotal, 0, ',', '.') }} {{ __('VNĐ') }}</span>
                         </div>
                         <div class="momo-cost-row">
-                            <span>Phí vận chuyển</span>
-                            <span>{{ number_format($order->ghn_total_fee ?? 0, 0, ',', '.') }} VNĐ</span>
+                            <span>{{ __('Phí vận chuyển') }}</span>
+                            <span>{{ number_format($order->ghn_total_fee ?? 0, 0, ',', '.') }} {{ __('VNĐ') }}</span>
                         </div>
                         <div class="momo-cost-row momo-total-row">
-                            <span>Tổng thanh toán</span>
-                            <strong class="momo-total-price">{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</strong>
+                            <span>{{ __('Tổng thanh toán') }}</span>
+                            <strong class="momo-total-price">{{ number_format($order->total_price, 0, ',', '.') }} {{ __('VNĐ') }}</strong>
                         </div>
                     </div>
 
                     <div class="momo-receiver">
-                        <h4>@include('partials.icon', ['name' => 'mail', 'size' => '1em']) Giao đến</h4>
+                        <h4>@include('partials.icon', ['name' => 'mail', 'size' => '1em']) {{ __('Giao đến') }}</h4>
                         <p><strong>{{ $order->name }}</strong></p>
                         <p>@include('partials.icon', ['name' => 'phone', 'size' => '1em']) {{ $order->phone }}</p>
                         <p>@include('partials.icon', ['name' => 'pin', 'size' => '1em']) {{ $order->address }}</p>
@@ -174,12 +174,12 @@
                     <div class="momo-timer-box">
                         <span>@include('partials.icon', ['name' => 'clock', 'size' => '1em'])</span>
                         <div>
-                            <strong>Thời hạn thanh toán</strong>
+                            <strong>{{ __('Thời hạn thanh toán') }}</strong>
                             <div id="momo-countdown" class="momo-countdown">15:00</div>
                         </div>
                     </div>
 
-                    <a href="{{ route('orders.index') }}" class="btn-momo-back">Xem lịch sử đơn hàng</a>
+                    <a href="{{ route('orders.index') }}" class="btn-momo-back">{{ __('Xem lịch sử đơn hàng') }}</a>
                 </div>
             </div>
 

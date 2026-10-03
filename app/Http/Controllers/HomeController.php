@@ -28,7 +28,7 @@ class HomeController extends Controller
             'note' => ['nullable', 'string', 'max:100'],
             'style' => ['nullable', 'string', 'max:100'],
             'longevity' => ['nullable', 'in:light,medium,strong'],
-        ], ['max_price.gte' => 'Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu.']);
+        ], ['max_price.gte' => __('Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu.')]);
 
         $perfumes = Perfume::query()
             ->with('variants')

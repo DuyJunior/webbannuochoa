@@ -11,7 +11,7 @@ if (hero && buttons.length) {
     let version = 0, source = '', mask, disposed = false;
     let requestedMood = hero.dataset.mood || 'rose';
     const surfaces = new Map();
-    const names = { rose: 'hồng phấn', velvet: 'đỏ rượu', sage: 'xanh sage' };
+    const names = { rose: (window.soopiT || (text => text))("hồng phấn"), velvet: (window.soopiT || (text => text))("đỏ rượu"), sage: 'xanh sage' };
     const clearSurfaces = () => {
         for (const canvas of surfaces.values()) canvas.remove();
         surfaces.clear(); mask = null;
@@ -56,7 +56,7 @@ if (hero && buttons.length) {
         requestedMood = mood;
         const run = ++version;
         hero.dataset.paletteState = 'loading';
-        if (announce) status.textContent = 'Đang đổi sắc cánh hoa…';
+        if (announce) status.textContent = (window.soopiT || (text => text))("Đang đổi sắc cánh hoa…");
         try {
             const canvas = await paint(mood);
             if (run !== version || disposed) return;
@@ -70,11 +70,11 @@ if (hero && buttons.length) {
             buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.bloomMood === mood)));
             selectedName.textContent = names[mood];
             hero.dataset.paletteState = 'ready';
-            if (announce) status.textContent = `Đã đổi cánh hoa sang ${names[mood]}.`;
+            if (announce) status.textContent = `${(window.soopiT || (text => text))("Đã đổi cánh hoa sang")} ${names[mood]}.`;
         } catch {
             if (run !== version) return;
             hero.dataset.paletteState = 'error';
-            status.textContent = 'Chưa đổi được màu hoa. Bạn thử lại nhé.';
+            status.textContent = (window.soopiT || (text => text))("Chưa đổi được màu hoa. Bạn thử lại nhé.");
         }
     };
     buttons.forEach(button => button.addEventListener('click', () => choose(button.dataset.bloomMood)));

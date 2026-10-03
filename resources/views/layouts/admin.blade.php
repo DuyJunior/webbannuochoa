@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Quản trị') · Soopi</title>
+    <title>@yield('title', __('Quản trị')) · Soopi</title>
     @include('partials.brand-favicon')
+    @include('partials.localization')
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,16 +17,16 @@
     @vite('resources/css/admin-polish.css')
 </head>
 <body class="boutique-admin">
-    <a class="studio-skip-link" href="#admin-main">Đến nội dung chính</a>
-    <button type="button" class="ht-admin-backdrop" aria-label="Đóng menu quản trị" hidden></button>
+    <a class="studio-skip-link" href="#admin-main">{{ __('Đến nội dung chính') }}</a>
+    <button type="button" class="ht-admin-backdrop" aria-label="{{ __('Đóng menu quản trị') }}" hidden></button>
 
     {{-- Sidebar --}}
-    <aside class="admin-sidebar" id="admin-sidebar" aria-label="Menu quản trị">
-        <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('admin.livestreams.index') }}" class="sidebar-brand" aria-label="Soopi · Trang quản trị">
+    <aside class="admin-sidebar" id="admin-sidebar" aria-label="{{ __('Menu quản trị') }}">
+        <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('admin.livestreams.index') }}" class="sidebar-brand" aria-label="{{ __('Soopi · Trang quản trị') }}">
             @include('partials.brand-logo', ['class' => 'studio-sidebar-logo', 'light' => true])
         </a>
 
-        <button type="button" class="studio-sidebar-close" aria-label="Đóng menu quản trị">@include('partials.icon', ['name' => 'close'])</button>
+        <button type="button" class="studio-sidebar-close" aria-label="{{ __('Đóng menu quản trị') }}">@include('partials.icon', ['name' => 'close'])</button>
         @include('partials.admin-navigation')
 
         <div class="sidebar-footer">
@@ -33,13 +34,13 @@
                 <div class="admin-avatar">{{ mb_strtoupper(mb_substr(Auth::user()->name ?? 'A', 0, 1)) }}</div>
                 <div class="admin-meta">
                     <div class="name">{{ Auth::user()->name ?? 'Admin' }}</div>
-                    <div class="role">{{ Auth::user()->role === 'admin' ? 'Quản trị viên' : 'Nhân viên livestream' }}</div>
+                    <div class="role">{{ Auth::user()->role === 'admin' ? __('Quản trị viên') : __('Nhân viên livestream') }}</div>
                 </div>
             </div>
             <form method="POST" action="{{ route('admin.logout') }}">
                 @csrf
                 <button type="submit" class="btn-sidebar-logout">
-                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    <i class="fa-solid fa-right-from-bracket"></i> {{ __('Đăng xuất') }}
                 </button>
             </form>
         </div>
@@ -48,21 +49,22 @@
     {{-- Main Content --}}
     <div class="admin-main-wrapper">
         <header class="admin-topbar">
-            <div class="topbar-left"><button type="button" class="ht-admin-toggle" aria-label="Mở menu quản trị" aria-controls="admin-sidebar" aria-expanded="false">@include('partials.icon', ['name' => 'menu'])<span>Menu</span></button>
+            <div class="topbar-left"><button type="button" class="ht-admin-toggle" aria-label="{{ __('Mở menu quản trị') }}" aria-controls="admin-sidebar" aria-expanded="false">@include('partials.icon', ['name' => 'menu'])<span>Menu</span></button>
                 <div>
-                    <span class="studio-topbar-kicker">SOOPI / QUẢN TRỊ</span><h1>@yield('page_title', 'Quản trị hệ thống')</h1>
+                    <span class="studio-topbar-kicker">{{ __('SOOPI / QUẢN TRỊ') }}</span><h1>@yield('page_title', __('Quản trị hệ thống'))</h1>
                 </div>
             </div>
             <div class="topbar-right">
-                <button type="button" class="studio-command-open" aria-label="Tìm chức năng quản trị" aria-haspopup="dialog" aria-controls="studio-command-menu"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>Tìm chức năng</span><kbd>Ctrl K</kbd></button>
-                <button type="button" class="studio-motion-toggle" aria-pressed="true" title="Bật hoặc tắt hiệu ứng chuyển động">
-                    <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i><span>Hiệu ứng</span>
+                @include('partials.language-switcher')
+                <button type="button" class="studio-command-open" aria-label="{{ __('Tìm chức năng quản trị') }}" aria-haspopup="dialog" aria-controls="studio-command-menu"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>{{ __('Tìm chức năng') }}</span><kbd>Ctrl K</kbd></button>
+                <button type="button" class="studio-motion-toggle" aria-pressed="true" title="{{ __('Bật hoặc tắt hiệu ứng chuyển động') }}">
+                    <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i><span>{{ __('Hiệu ứng') }}</span>
                 </button>
                 <div class="topbar-date">
                     <i class="fa-regular fa-calendar"></i>
                     {{ date('d/m/Y') }}
                 </div>
-                <a class="studio-store-link" href="{{ route('home') }}" target="_blank" rel="noopener" aria-label="Xem cửa hàng trong tab mới"><span>Xem cửa hàng</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                <a class="studio-store-link" href="{{ route('home') }}" target="_blank" rel="noopener" aria-label="{{ __('Xem cửa hàng trong tab mới') }}"><span>{{ __('Xem cửa hàng') }}</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
             </div>
         </header>
 
@@ -71,20 +73,20 @@
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
                     <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Đóng thông báo"><span>&times;</span></button>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="{{ __('Đóng thông báo') }}"><span>&times;</span></button>
                 </div>
             @endif
 
             @if(session('error'))
                 <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
                     <i class="fa-solid fa-triangle-exclamation mr-2"></i> {{ session('error') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Đóng thông báo"><span>&times;</span></button>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="{{ __('Đóng thông báo') }}"><span>&times;</span></button>
                 </div>
             @endif
 
             @if($errors->any())
                 <div class="alert alert-danger mb-4" role="alert" tabindex="-1" data-validation-summary>
-                    <strong>Chưa thể hoàn tất thao tác. Vui lòng kiểm tra lại:</strong>
+                    <strong>{{ __('Chưa thể hoàn tất thao tác. Vui lòng kiểm tra lại:') }}</strong>
                     <ul class="mb-0 mt-2 pl-3">@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
                 </div>
             @endif

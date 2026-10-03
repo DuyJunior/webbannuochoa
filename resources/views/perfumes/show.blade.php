@@ -1,13 +1,13 @@
 @php
     use Illuminate\Support\Str;
     $fragranceEditorial = \App\Services\FragranceEditorialService::forPerfume($perfume);
-    $productStory = $fragranceEditorial['verified'] ? $fragranceEditorial['story'] : 'Khám phá '.$perfume->name.' của '.$perfume->brand.' cùng Soopi. Liên hệ để được tư vấn chi tiết về mùi hương.';
+    $productStory = $fragranceEditorial['verified'] ? $fragranceEditorial['story'] : __('Khám phá ').$perfume->name.__(' của ').$perfume->brand.__(' cùng Soopi. Liên hệ để được tư vấn chi tiết về mùi hương.');
 @endphp
 @extends('layouts.store')
 
 @section('title', $perfume->name.' · '.$perfume->brand.' · Soopi')
 @section('meta_description', Str::limit($productStory, 155))
-@section('meta_keywords', $perfume->name.', '.$perfume->brand.', nước hoa chính hãng, '.$perfume->concentration.', Soopi')
+@section('meta_keywords', $perfume->name.', '.$perfume->brand.__(', nước hoa chính hãng, ').$perfume->concentration.', Soopi')
 @if($perfume->image_src)
     @section('og_image', $perfume->image_src)
 @endif
@@ -55,9 +55,9 @@
     <section class="store-container luxury-product-page">
         {{-- Breadcrumb --}}
         <nav class="luxury-breadcrumb" aria-label="Breadcrumb">
-            <a href="{{ route('home') }}">Trang chủ</a>
+            <a href="{{ route('home') }}">{{ __('Trang chủ') }}</a>
             <span>/</span>
-            <a href="{{ route('home') }}#san-pham">{{ $perfume->category?->name ?? 'Nước hoa' }}</a>
+            <a href="{{ route('home') }}#san-pham">{{ __($perfume->category?->name ?? __('Nước hoa')) }}</a>
             <span>/</span>
             <span class="current">{{ $perfume->name }}</span>
         </nav>
@@ -82,24 +82,24 @@
                     @endif
 
                     @if ($perfume->price > 0 && $perfume->sale_price !== null && $perfume->sale_price < $perfume->price)
-                        <span class="luxury-badge-sale">ƯU ĐÃI -{{ round((($perfume->price - $perfume->sale_price) / $perfume->price) * 100) }}%</span>
+                        <span class="luxury-badge-sale">{{ __('ƯU ĐÃI -') }}{{ round((($perfume->price - $perfume->sale_price) / $perfume->price) * 100) }}%</span>
                     @endif
 
                     <div class="luxury-authenticity-tag">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
-                        Cam kết nước hoa chính hãng
+                        {{ __('Cam kết nước hoa chính hãng') }}
                     </div>
                 </div>
 
                 @if($editorialImage && $perfume->image_src)
-                <div class="interior-product-views" role="group" aria-label="Chọn hình sản phẩm">
-                    <button type="button" data-product-image="{{ asset($editorialImage) }}" aria-pressed="true"><img src="{{ asset($editorialImage) }}" alt="" width="48" height="48">Góc nghệ thuật</button>
-                    <button type="button" data-product-image="{{ $perfume->image_src }}" aria-pressed="false"><img src="{{ $perfume->image_src }}" alt="" width="48" height="48">Ảnh sản phẩm</button>
+                <div class="interior-product-views" role="group" aria-label="{{ __('Chọn hình sản phẩm') }}">
+                    <button type="button" data-product-image="{{ asset($editorialImage) }}" aria-pressed="true"><img src="{{ asset($editorialImage) }}" alt="" width="48" height="48">{{ __('Góc nghệ thuật') }}</button>
+                    <button type="button" data-product-image="{{ $perfume->image_src }}" aria-pressed="false"><img src="{{ $perfume->image_src }}" alt="" width="48" height="48">{{ __('Ảnh sản phẩm') }}</button>
                 </div>
                 @endif
-                <nav class="interior-product-chapters" aria-label="Khám phá sản phẩm"><a href="#scent-story-title">01 / Câu chuyện</a><a href="#danh-gia">02 / Cảm nhận</a><a href="{{ route('store.finder') }}">03 / Chọn hương ↗</a></nav>
+                <nav class="interior-product-chapters" aria-label="{{ __('Khám phá sản phẩm') }}"><a href="#scent-story-title">{{ __('01 / Câu chuyện') }}</a><a href="#danh-gia">{{ __('02 / Cảm nhận') }}</a><a href="{{ route('store.finder') }}">{{ __('03 / Chọn hương ↗') }}</a></nav>
                 {{-- Live Viewers & Social Proof --}}
-                <p class="ht-product-advice">Một mùi hương riêng, một dấu ấn khó quên.</p>
+                <p class="ht-product-advice">{{ __('Một mùi hương riêng, một dấu ấn khó quên.') }}</p>
 
                 @include('partials.shop-product-photos')
 
@@ -108,29 +108,29 @@
                     <div class="guarantee-item">
                         <div class="guarantee-icon">@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</div>
                         <div>
-                            <strong>Giao hàng toàn quốc</strong>
-                            <small>Đóng gói 3 lớp chống vỡ</small>
+                            <strong>{{ __('Giao hàng toàn quốc') }}</strong>
+                            <small>{{ __('Đóng gói 3 lớp chống vỡ') }}</small>
                         </div>
                     </div>
                     <div class="guarantee-item">
                         <div class="guarantee-icon">@include('partials.icon', ['name' => 'chat', 'size' => '1em'])</div>
                         <div>
-                            <strong>Hỗ trợ sau mua</strong>
-                            <small>Tư vấn khi cần hỗ trợ</small>
+                            <strong>{{ __('Hỗ trợ sau mua') }}</strong>
+                            <small>{{ __('Tư vấn khi cần hỗ trợ') }}</small>
                         </div>
                     </div>
                     <div class="guarantee-item">
                         <div class="guarantee-icon">@include('partials.icon', ['name' => 'shield', 'size' => '1em'])</div>
                         <div>
-                            <strong>Cam kết chính hãng</strong>
-                            <small>Thông tin sản phẩm rõ ràng</small>
+                            <strong>{{ __('Cam kết chính hãng') }}</strong>
+                            <small>{{ __('Thông tin sản phẩm rõ ràng') }}</small>
                         </div>
                     </div>
                     <div class="guarantee-item">
                         <div class="guarantee-icon">@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</div>
                         <div>
-                            <strong>Tư vấn chọn mùi</strong>
-                            <small>Gợi ý theo sở thích của bạn</small>
+                            <strong>{{ __('Tư vấn chọn mùi') }}</strong>
+                            <small>{{ __('Gợi ý theo sở thích của bạn') }}</small>
                         </div>
                     </div>
                 </div>
@@ -142,8 +142,8 @@
                 <h1 class="luxury-product-title">{{ $perfume->name }}</h1>
 
                 <div class="luxury-category-tags">
-                    <span class="tag-pill">{{ $perfume->category?->name ?? 'Nước hoa' }}</span>
-                    <span class="tag-pill">{{ ['nam' => 'Dành cho Nam', 'nu' => 'Dành cho Nữ', 'unisex' => 'Unisex - Mọi giới tính'][$perfume->gender] }}</span>
+                    <span class="tag-pill">{{ __($perfume->category?->name ?? __('Nước hoa')) }}</span>
+                    <span class="tag-pill">{{ ['nam' => __('Dành cho Nam'), 'nu' => __('Dành cho Nữ'), 'unisex' => __('Unisex - Mọi giới tính')][$perfume->gender] }}</span>
                     @if($perfume->concentration)<span class="tag-pill">{{ $perfume->concentration }}</span>@endif
                     @php
                         $directVid = $perfume->videos()->where('is_active', true)->whereIn('placement', ['product', 'all'])->orderBy('sort_order')->first();
@@ -160,7 +160,7 @@
                         data-perfume-price="{{ number_format($perfume->price) }}đ"
                         data-perfume-url="{{ route('perfumes.show', $perfume) }}"
                         data-perfume-img="{{ $perfume->image_src }}">
-                        @include('partials.icon', ['name' => 'video', 'size' => '1em']) Xem video sản phẩm
+                        @include('partials.icon', ['name' => 'video', 'size' => '1em']) {{ __('Xem video sản phẩm') }}
                     </button>
                     @endif
                 </div>
@@ -186,13 +186,13 @@
                     <div class="current-price" id="displayPrice">{{ number_format($priceFull, 0, ',', '.') }}₫</div>
                     @if ($perfume->sale_price !== null && $perfume->sale_price < $perfume->price)
                         <del class="old-price" id="displayOldPrice">{{ number_format($originalFullPrice, 0, ',', '.') }}₫</del>
-                        <span class="save-tag" id="displaySaveTag">Tiết kiệm {{ number_format($originalFullPrice - $priceFull, 0, ',', '.') }}₫</span>
+                        <span class="save-tag" id="displaySaveTag">{{ __('Tiết kiệm') }} {{ number_format($originalFullPrice - $priceFull, 0, ',', '.') }}₫</span>
                     @endif
                 </div>
 
                 <div class="luxury-stock-status {{ $stockFull <= 5 && $stockFull > 0 ? 'low' : ($stockFull <= 0 ? 'out-of-stock' : '') }}" id="luxuryStockStatus">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
-                    <span id="stockStatusText">{{ $stockFull > 0 ? 'Còn hàng trong kho ('.$stockFull.' chai '.$volume100.'ml Fullbox sẵn sàng giao)' : 'Tạm thời hết hàng dung tích '.$volume100.'ml' }}</span>
+                    <span id="stockStatusText">{{ $stockFull > 0 ? __('Còn hàng trong kho (').$stockFull.__(' chai ').$volume100.__('ml Fullbox sẵn sàng giao)') : __('Tạm thời hết hàng dung tích ').$volume100.'ml' }}</span>
                 </div>
 
                 <form class="luxury-purchase-form" method="POST" action="{{ route('cart.add', $perfume) }}" id="purchaseForm">
@@ -201,23 +201,23 @@
                     {{-- Dung tích (Volume Options) --}}
                     <div class="form-option-section">
                         <div class="option-header">
-                            <label class="option-title">Chọn Dung Tích:</label>
-                            <span class="option-sub" id="volumeSelectedLabel">{{ $volume100 }}ml (Fullbox Nguyên Seal) · Còn {{ $stockFull }} chai</span>
+                            <label class="option-title">{{ __('Chọn Dung Tích:') }}</label>
+                            <span class="option-sub" id="volumeSelectedLabel">{{ $volume100 }}{{ __('ml (Fullbox Nguyên Seal) · Còn') }} {{ $stockFull }} {{ __('chai') }}</span>
                         </div>
                         <div class="volume-options-grid">
                             @if($volume100 !== 10)
                             {{-- Option 10ml Chiết --}}
                             <label class="volume-card-option" data-volume="10" data-stock="{{ $stock10ml }}" data-desc="Chiết Travel Spray" data-price="{{ $price10ml }}" data-oldprice="{{ $price10ml }}">
                                 <input type="radio" name="volume_ml" value="10">
-                                <div class="volume-card-badge">Dùng thử</div>
+                                <div class="volume-card-badge">{{ __('Dùng thử') }}</div>
                                 <div class="volume-card-size">10ml</div>
-                                <div class="volume-card-desc">Chiết Travel Spray</div>
+                                <div class="volume-card-desc">{{ __('Chiết Travel Spray') }}</div>
                                 <div class="volume-card-price">{{ number_format($price10ml, 0, ',', '.') }}₫</div>
                                 <div class="volume-card-stock {{ $stock10ml <= 5 && $stock10ml > 0 ? 'stock-low' : ($stock10ml <= 0 ? 'stock-out' : '') }}">
                                     @if($stock10ml > 0)
-                                        <span class="stock-dot"></span> Còn {{ $stock10ml }} chai
+                                        <span class="stock-dot"></span> {{ __('Còn') }} {{ $stock10ml }} {{ __('chai') }}
                                     @else
-                                        <span class="stock-dot" style="background:#ef4444;"></span> Tạm hết
+                                        <span class="stock-dot" style="background:#ef4444;"></span> {{ __('Tạm hết') }}
                                     @endif
                                 </div>
                             </label>
@@ -227,15 +227,15 @@
                             {{-- Option 50ml --}}
                             <label class="volume-card-option" data-volume="50" data-stock="{{ $stock50ml }}" data-desc="Chai Vừa Phải" data-price="{{ $price50ml }}" data-oldprice="{{ $price50ml }}">
                                 <input type="radio" name="volume_ml" value="50">
-                                <div class="volume-card-badge">Phổ biến</div>
+                                <div class="volume-card-badge">{{ __('Phổ biến') }}</div>
                                 <div class="volume-card-size">50ml</div>
-                                <div class="volume-card-desc">Chai Vừa Phải</div>
+                                <div class="volume-card-desc">{{ __('Chai Vừa Phải') }}</div>
                                 <div class="volume-card-price">{{ number_format($price50ml, 0, ',', '.') }}₫</div>
                                 <div class="volume-card-stock {{ $stock50ml <= 5 && $stock50ml > 0 ? 'stock-low' : ($stock50ml <= 0 ? 'stock-out' : '') }}">
                                     @if($stock50ml > 0)
-                                        <span class="stock-dot"></span> Còn {{ $stock50ml }} chai
+                                        <span class="stock-dot"></span> {{ __('Còn') }} {{ $stock50ml }} {{ __('chai') }}
                                     @else
-                                        <span class="stock-dot" style="background:#ef4444;"></span> Tạm hết
+                                        <span class="stock-dot" style="background:#ef4444;"></span> {{ __('Tạm hết') }}
                                     @endif
                                 </div>
                             </label>
@@ -244,40 +244,40 @@
                             @endif
                             <label class="volume-card-option active" data-volume="{{ $volume100 }}" data-stock="{{ $stockFull }}" data-desc="Fullbox Nguyên Seal" data-price="{{ $priceFull }}" data-oldprice="{{ $originalFullPrice }}">
                                 <input type="radio" name="volume_ml" value="{{ $volume100 }}" checked>
-                                <div class="volume-card-badge best-seller">Nguyên hộp</div>
+                                <div class="volume-card-badge best-seller">{{ __('Nguyên hộp') }}</div>
                                 <div class="volume-card-size">{{ $volume100 }}ml</div>
-                                <div class="volume-card-desc">Fullbox Nguyên Seal</div>
+                                <div class="volume-card-desc">{{ __('Fullbox Nguyên Seal') }}</div>
                                 <div class="volume-card-price">{{ number_format($priceFull, 0, ',', '.') }}₫</div>
                                 <div class="volume-card-stock {{ $stockFull <= 5 && $stockFull > 0 ? 'stock-low' : ($stockFull <= 0 ? 'stock-out' : '') }}">
                                     @if($stockFull > 0)
-                                        <span class="stock-dot"></span> Còn {{ $stockFull }} chai
+                                        <span class="stock-dot"></span> {{ __('Còn') }} {{ $stockFull }} {{ __('chai') }}
                                     @else
-                                        <span class="stock-dot" style="background:#ef4444;"></span> Tạm hết
+                                        <span class="stock-dot" style="background:#ef4444;"></span> {{ __('Tạm hết') }}
                                     @endif
                                 </div>
                             </label>
                             @foreach($perfume->variants->where('is_active', true) as $variant)
                             <label class="volume-card-option" data-volume="{{ $variant->volume_ml }}" data-stock="{{ $variant->stock }}" data-desc="Chai {{ $variant->volume_ml }} ml" data-price="{{ $variant->price }}" data-oldprice="{{ $variant->price }}">
                                 <input type="radio" name="volume_ml" value="{{ $variant->volume_ml }}">
-                                <div class="volume-card-badge">Thêm lựa chọn</div>
+                                <div class="volume-card-badge">{{ __('Thêm lựa chọn') }}</div>
                                 <div class="volume-card-size">{{ $variant->volume_ml }}ml</div>
-                                <div class="volume-card-desc">{{ $perfume->concentration ?: 'Nước hoa' }}</div>
+                                <div class="volume-card-desc">{{ $perfume->concentration ?: __('Nước hoa') }}</div>
                                 <div class="volume-card-price">{{ number_format($variant->price, 0, ',', '.') }}₫</div>
-                                <div class="volume-card-stock {{ $variant->stock <= 0 ? 'stock-out' : ($variant->stock <= 5 ? 'stock-low' : '') }}"><span class="stock-dot"></span>{{ $variant->stock > 0 ? 'Còn '.$variant->stock.' chai' : 'Tạm hết' }}</div>
+                                <div class="volume-card-stock {{ $variant->stock <= 0 ? 'stock-out' : ($variant->stock <= 5 ? 'stock-low' : '') }}"><span class="stock-dot"></span>{{ $variant->stock > 0 ? __('Còn ').$variant->stock.__(' chai') : __('Tạm hết') }}</div>
                             </label>
                             @endforeach
                         </div>
                     </div>
                     {{-- Dịch Vụ Đi Kèm & Quà Tặng (Add-ons / Options) --}}
                     <div class="form-option-section">
-                        <label class="option-title">Dịch Vụ & Tuỳ Chọn Cao Cấp:</label>
+                        <label class="option-title">{{ __('Dịch Vụ & Tuỳ Chọn Cao Cấp:') }}</label>
                         <div class="addon-options-list">
                             <label class="addon-card-option">
                                 <input type="checkbox" name="addon_gift" id="addonGift" value="1" onchange="calculateTotalPrice()">
                                 <div class="addon-icon">@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</div>
                                 <div class="addon-text">
-                                    <strong>Gói quà Luxury & Thiệp chúc mừng</strong>
-                                    <small>Hộp quà cao cấp thắt nơ lụa thủ công + thiệp viết tay theo yêu cầu (+50.000₫)</small>
+                                    <strong>{{ __('Gói quà Luxury & Thiệp chúc mừng') }}</strong>
+                                    <small>{{ __('Hộp quà cao cấp thắt nơ lụa thủ công + thiệp viết tay theo yêu cầu (+50.000₫)') }}</small>
                                 </div>
                             </label>
 
@@ -285,29 +285,29 @@
                                 <input type="checkbox" name="addon_engrave" id="addonEngrave" value="1" onchange="toggleEngraveField()">
                                 <div class="addon-icon">@include('partials.icon', ['name' => 'pen', 'size' => '1em'])</div>
                                 <div class="addon-text">
-                                    <strong>Khắc tên / Lời chúc Laser lên thân chai</strong>
-                                    <small>Cá nhân hóa dấu ấn riêng (Miễn phí quà tặng)</small>
+                                    <strong>{{ __('Khắc tên / Lời chúc Laser lên thân chai') }}</strong>
+                                    <small>{{ __('Cá nhân hóa dấu ấn riêng (Miễn phí quà tặng)') }}</small>
                                 </div>
                             </label>
                             
                             <div class="engrave-input-box" id="engraveInputBox" style="display: none;">
-                                <input type="text" name="engrave_text" maxlength="30" placeholder="Nhập tên hoặc lời chúc muốn khắc (tối đa 30 ký tự)...">
+                                <input type="text" name="engrave_text" maxlength="30" placeholder="{{ __('Nhập tên hoặc lời chúc muốn khắc (tối đa 30 ký tự)...') }}">
                             </div>
                         </div>
                     </div>
 
                     {{-- Số lượng & Action Buttons --}}
                     <div class="form-option-section">
-                        <label class="option-title">Số Lượng:</label>
+                        <label class="option-title">{{ __('Số Lượng:') }}</label>
                         <div class="quantity-and-action-row">
                             <div class="luxury-quantity-picker" data-quantity-picker>
-                                <button type="button" data-quantity-minus aria-label="Giảm số lượng">−</button>
-                                <input type="number" name="quantity" id="productQuantity" value="1" min="1" max="{{ max(1, $perfume->stock) }}" aria-label="Số lượng sản phẩm">
-                                <button type="button" data-quantity-plus aria-label="Tăng số lượng">+</button>
+                                <button type="button" data-quantity-minus aria-label="{{ __('Giảm số lượng') }}">−</button>
+                                <input type="number" name="quantity" id="productQuantity" value="1" min="1" max="{{ max(1, $perfume->stock) }}" aria-label="{{ __('Số lượng sản phẩm') }}">
+                                <button type="button" data-quantity-plus aria-label="{{ __('Tăng số lượng') }}">+</button>
                             </div>
 
                             <div class="subtotal-indicator">
-                                <span>Tạm tính: </span>
+                                <span>{{ __('Tạm tính:') }} </span>
                                 <strong id="dynamicSubtotal">{{ number_format($priceFull, 0, ',', '.') }}₫</strong>
                             </div>
                         </div>
@@ -316,7 +316,7 @@
                     <div class="luxury-purchase-actions">
                         <button class="luxury-add-cart-btn" type="submit" @disabled($perfume->stock < 1)>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                            Thêm vào giỏ hàng
+                            {{ __('Thêm vào giỏ hàng') }}
                         </button>
                         <button class="luxury-buy-now-btn" type="submit" name="buy_now" value="1" @disabled($perfume->stock < 1)>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
@@ -325,45 +325,45 @@
                     </div>
                 </form>
 
-                <div class="purchase-assurance" aria-label="Giao hàng và hỗ trợ mua hàng">
-                    <div>@include('partials.icon', ['name'=>'truck','size'=>19])<span><strong>Giao hàng toàn quốc</strong><small>Phí vận chuyển được tính khi thanh toán.</small></span></div>
-                    <a href="{{ route('store.faq') }}#doi-tra">@include('partials.icon', ['name'=>'shield','size'=>19])<span><strong>Đổi trả {{ config('storefront.return_days') }} ngày</strong><small>Theo điều kiện đổi trả · Xem chính sách ↗</small></span></a>
-                    <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener">@include('partials.icon', ['name'=>'chat','size'=>19])<span><strong>Hỏi Soopi trước khi chọn</strong><small>Zalo {{ config('storefront.zalo_phone') }} ↗</small></span></a>
+                <div class="purchase-assurance" aria-label="{{ __('Giao hàng và hỗ trợ mua hàng') }}">
+                    <div>@include('partials.icon', ['name'=>'truck','size'=>19])<span><strong>{{ __('Giao hàng toàn quốc') }}</strong><small>{{ __('Phí vận chuyển được tính khi thanh toán.') }}</small></span></div>
+                    <a href="{{ route('store.faq') }}#doi-tra">@include('partials.icon', ['name'=>'shield','size'=>19])<span><strong>{{ __('Đổi trả') }} {{ config('storefront.return_days') }} {{ __('ngày') }}</strong><small>{{ __('Theo điều kiện đổi trả · Xem chính sách ↗') }}</small></span></a>
+                    <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener">@include('partials.icon', ['name'=>'chat','size'=>19])<span><strong>{{ __('Hỏi Soopi trước khi chọn') }}</strong><small>Zalo {{ config('storefront.zalo_phone') }} ↗</small></span></a>
                 </div>
                 <div class="ht-product-utilities">
                     @auth
-                    <form method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}" data-wishlist="{{ $perfume->id }}" data-wishlist-saved="{{ $isFavorite ? 'true' : 'false' }}" data-wishlist-name="{{ $perfume->name }}" data-wishlist-login="{{ route('login') }}">@csrf<button type="submit" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}" aria-label="{{ $isFavorite ? 'Bỏ yêu thích' : 'Yêu thích' }} {{ $perfume->name }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <span data-wishlist-label>{{ $isFavorite ? 'Đã yêu thích' : 'Lưu yêu thích' }}</span></button></form>
-                    <button type="button" id="openWardrobeModalBtn" class="ht-utility-btn">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) {{ $inWardrobe ? ' Đã trong Tủ hương' : '+ Tủ nước hoa' }}</button>
+                    <form method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}" data-wishlist="{{ $perfume->id }}" data-wishlist-saved="{{ $isFavorite ? 'true' : 'false' }}" data-wishlist-name="{{ $perfume->name }}" data-wishlist-login="{{ route('login') }}">@csrf<button type="submit" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}" aria-label="{{ $isFavorite ? 'Bỏ yêu thích' : 'Yêu thích' }} {{ $perfume->name }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <span data-wishlist-label>{{ $isFavorite ? __('Đã yêu thích') : __('Lưu yêu thích') }}</span></button></form>
+                    <button type="button" id="openWardrobeModalBtn" class="ht-utility-btn">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) {{ $inWardrobe ? __(' Đã trong Tủ hương') : __('+ Tủ nước hoa') }}</button>
                     @if($perfume->availableStock() <= 0)
-                    <form method="POST" action="{{ route('store.stock-alert', $perfume) }}">@csrf<button type="submit">Báo khi có hàng</button></form>
+                    <form method="POST" action="{{ route('store.stock-alert', $perfume) }}">@csrf<button type="submit">{{ __('Báo khi có hàng') }}</button></form>
                     @endif
                     @endauth
                     @guest
-                    <a href="{{ route('login') }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) Đăng nhập lưu yêu thích</a>
-                    <a href="{{ route('login') }}">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) Thêm vào Tủ hương</a>
+                    <a href="{{ route('login') }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) {{ __('Đăng nhập lưu yêu thích') }}</a>
+                    <a href="{{ route('login') }}">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) {{ __('Thêm vào Tủ hương') }}</a>
                     @endguest
-                    <button type="button" id="openGiftModalBtn" class="ht-utility-btn">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) Gửi tặng bạn bè</button>
-                    <a href="{{ route('store.compare', ['ids' => $perfume->id]) }}">@include('partials.icon', ['name' => 'scale', 'size' => '1em']) So sánh sản phẩm</a>
+                    <button type="button" id="openGiftModalBtn" class="ht-utility-btn">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ __('Gửi tặng bạn bè') }}</button>
+                    <a href="{{ route('store.compare', ['ids' => $perfume->id]) }}">@include('partials.icon', ['name' => 'scale', 'size' => '1em']) {{ __('So sánh sản phẩm') }}</a>
                 </div>
                 {{-- Thông số kỹ thuật nhanh --}}
                 <div class="luxury-specs-card">
-                    <h3>Thông Tin Chi Tiết</h3>
+                    <h3>{{ __('Thông Tin Chi Tiết') }}</h3>
                     <div class="specs-grid">
                         <div class="spec-row">
-                            <span class="spec-label">Thương hiệu</span>
+                            <span class="spec-label">{{ __('Thương hiệu') }}</span>
                             <span class="spec-value">{{ $perfume->brand }}</span>
                         </div>
                         <div class="spec-row">
-                            <span class="spec-label">Nồng độ</span>
-                            <span class="spec-value">{{ $perfume->concentration ?: 'Đang cập nhật' }}</span>
+                            <span class="spec-label">{{ __('Nồng độ') }}</span>
+                            <span class="spec-value">{{ $perfume->concentration ?: __('Đang cập nhật') }}</span>
                         </div>
                         <div class="spec-row">
-                            <span class="spec-label">Dung tích chọn</span>
+                            <span class="spec-label">{{ __('Dung tích chọn') }}</span>
                             <span class="spec-value" id="specVolumeValue">{{ $volume100 }}ml</span>
                         </div>
                         <div class="spec-row">
-                            <span class="spec-label">Giới tính</span>
-                            <span class="spec-value">{{ ['nam' => 'Nam giới', 'nu' => 'Nữ giới', 'unisex' => 'Unisex'][$perfume->gender] }}</span>
+                            <span class="spec-label">{{ __('Giới tính') }}</span>
+                            <span class="spec-value">{{ ['nam' => __('Nam giới'), 'nu' => __('Nữ giới'), 'unisex' => 'Unisex'][$perfume->gender] }}</span>
                         </div>
                     </div>
                 </div>
@@ -389,9 +389,9 @@
         <section class="ht-video-review-section" id="video-review">
             <div class="ht-section-heading">
                 <div>
-                    <span class="ht-eyebrow">REVIEW TRỰC DIỆN</span>
-                    <h2>Video Trải Nghiệm & Cận Cảnh Mùi Hương</h2>
-                    <p>Chiêm ngưỡng thiết kế chai thực tế, kiểm tra độ tỏa hương và vòi xịt phun sương.</p>
+                    <span class="ht-eyebrow">{{ __('REVIEW TRỰC DIỆN') }}</span>
+                    <h2>{{ __('Video Trải Nghiệm & Cận Cảnh Mùi Hương') }}</h2>
+                    <p>{{ __('Chiêm ngưỡng thiết kế chai thực tế, kiểm tra độ tỏa hương và vòi xịt phun sương.') }}</p>
                 </div>
             </div>
             <div class="ht-video-grid">
@@ -417,7 +417,7 @@
                         </div>
                     </div>
                     <h4>{{ $pvid->title }}</h4>
-                    <p>{{ $pvid->description ?: 'Chuyên gia mùi hương của Soopi đánh giá chi tiết độ lưu hương thực tế trên da.' }}</p>
+                    <p>{{ $pvid->description ?: __('Chuyên gia mùi hương của Soopi đánh giá chi tiết độ lưu hương thực tế trên da.') }}</p>
                 </div>
                 @endforeach
             </div>
@@ -425,24 +425,24 @@
         @endif
 
         <section class="ht-reviews" id="danh-gia">
-            <div class="ht-section-heading"><div><span class="ht-eyebrow">CẢM NHẬN THỰC TẾ</span><h2>Đánh giá từ khách hàng</h2><p>{{ $reviews->total() }} đánh giá · {{ $averageRating ?: 'Chưa có điểm' }}{{ $averageRating ? '/5 sao' : '' }}</p></div></div>
+            <div class="ht-section-heading"><div><span class="ht-eyebrow">{{ __('CẢM NHẬN THỰC TẾ') }}</span><h2>{{ __('Đánh giá từ khách hàng') }}</h2><p>{{ $reviews->total() }} {{ __('đánh giá ·') }} {{ $averageRating ?: __('Chưa có điểm') }}{{ $averageRating ? '/5 sao' : '' }}</p></div></div>
             <div class="ht-review-grid">
                 <div>
                     @forelse($reviews as $review)
-                    <article class="ht-review-card"><div><strong>{{ $review->user?->name ?? 'Khách hàng' }}</strong><span role="img" aria-label="{{ $review->rating }} trên 5 sao">@for($star = 1; $star <= 5; $star++)@include('partials.icon', ['name' => $star <= $review->rating ? 'star-filled' : 'star', 'size' => '1em'])@endfor</span></div><p>{{ $review->body }}</p>@if($review->image_path)<img src="{{ asset($review->image_path) }}" alt="Ảnh do khách hàng chia sẻ" loading="lazy">@endif<small>{{ $review->created_at->format('d/m/Y') }}</small></article>
-                    @empty<p>Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ cảm nhận.</p>@endforelse
+                    <article class="ht-review-card"><div><strong>{{ $review->user?->name ?? __('Khách hàng') }}</strong><span role="img" aria-label="{{ $review->rating }} trên 5 sao">@for($star = 1; $star <= 5; $star++)@include('partials.icon', ['name' => $star <= $review->rating ? 'star-filled' : 'star', 'size' => '1em'])@endfor</span></div><p>{{ $review->body }}</p>@if($review->image_path)<img src="{{ asset($review->image_path) }}" alt="{{ __('Ảnh do khách hàng chia sẻ') }}" loading="lazy">@endif<small>{{ $review->created_at->format('d/m/Y') }}</small></article>
+                    @empty<p>{{ __('Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ cảm nhận.') }}</p>@endforelse
                     {{ $reviews->links() }}
                 </div>
                 <div class="ht-feature-panel">
-                    <h3>Chia sẻ cảm nhận của bạn</h3>
+                    <h3>{{ __('Chia sẻ cảm nhận của bạn') }}</h3>
                     @auth
                     <form method="POST" action="{{ route('store.review', $perfume) }}" enctype="multipart/form-data" class="ht-review-form">@csrf
-                        <label>Đánh giá<select name="rating" required><option value="5">5 sao · Rất thích</option><option value="4">4 sao · Hài lòng</option><option value="3">3 sao · Khá</option><option value="2">2 sao · Chưa hợp</option><option value="1">1 sao · Không hợp</option></select></label>
-                        <label>Cảm nhận<textarea name="body" minlength="10" maxlength="2000" rows="5" required placeholder="Bạn cảm nhận mùi hương như thế nào?">{{ old('body') }}</textarea></label>
-                        <label>Ảnh trải nghiệm (không bắt buộc)<input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
-                        <button class="ht-button" type="submit">Gửi đánh giá</button>
+                        <label>{{ __('Đánh giá') }}<select name="rating" required><option value="5">{{ __('5 sao · Rất thích') }}</option><option value="4">{{ __('4 sao · Hài lòng') }}</option><option value="3">{{ __('3 sao · Khá') }}</option><option value="2">{{ __('2 sao · Chưa hợp') }}</option><option value="1">{{ __('1 sao · Không hợp') }}</option></select></label>
+                        <label>{{ __('Cảm nhận') }}<textarea name="body" minlength="10" maxlength="2000" rows="5" required placeholder="{{ __('Bạn cảm nhận mùi hương như thế nào?') }}">{{ old('body') }}</textarea></label>
+                        <label>{{ __('Ảnh trải nghiệm (không bắt buộc)') }}<input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
+                        <button class="ht-button" type="submit">{{ __('Gửi đánh giá') }}</button>
                     </form>
-                    @else<a class="ht-button" href="{{ route('login') }}">Đăng nhập để đánh giá</a>@endauth
+                    @else<a class="ht-button" href="{{ route('login') }}">{{ __('Đăng nhập để đánh giá') }}</a>@endauth
                 </div>
             </div>
         </section>
@@ -455,8 +455,8 @@
     <section class="store-container ht-related-section" aria-labelledby="related-title">
         <div class="ht-section-heading">
             <div>
-                <span class="ht-eyebrow">HƯƠNG THƠM TƯƠNG TỰ</span>
-                <h2 id="related-title">Có thể bạn cũng thích</h2>
+                <span class="ht-eyebrow">{{ __('HƯƠNG THƠM TƯƠNG TỰ') }}</span>
+                <h2 id="related-title">{{ __('Có thể bạn cũng thích') }}</h2>
             </div>
         </div>
         <div class="ht-related-grid">
@@ -493,8 +493,8 @@
     <section class="store-container ht-related-section ht-recent-section" aria-labelledby="recent-title">
         <div class="ht-section-heading">
             <div>
-                <span class="ht-eyebrow">LỊCH SỬ DUYỆT CỦA BẠN</span>
-                <h2 id="recent-title">Sản phẩm bạn vừa xem gần đây</h2>
+                <span class="ht-eyebrow">{{ __('LỊCH SỬ DUYỆT CỦA BẠN') }}</span>
+                <h2 id="recent-title">{{ __('Sản phẩm bạn vừa xem gần đây') }}</h2>
             </div>
         </div>
         <div class="ht-related-grid">
@@ -519,31 +519,31 @@
     {{-- MODAL 1: THÊM VÀO TỦ NƯỚC HOA CÁ NHÂN --}}
     <div id="htWardrobeModal" class="ht-popup-backdrop" hidden>
         <div class="ht-popup-modal">
-            <button type="button" class="ht-popup-close-x" aria-label="Đóng tủ hương" onclick="document.getElementById('htWardrobeModal').hidden=true">@include('partials.icon', ['name' => 'close', 'size' => '1em'])</button>
+            <button type="button" class="ht-popup-close-x" aria-label="{{ __('Đóng tủ hương') }}" onclick="document.getElementById('htWardrobeModal').hidden=true">@include('partials.icon', ['name' => 'close', 'size' => '1em'])</button>
             <div class="modal-icon">@include('partials.icon', ['name' => 'gem', 'size' => '1em'])</div>
-            <h3>Lưu Vào Tủ Nước Hoa Cá Nhân</h3>
-            <p>Chọn dịp bạn cảm thấy phù hợp nhất để dùng mùi hương <strong>{{ $perfume->name }}</strong>:</p>
+            <h3>{{ __('Lưu Vào Tủ Nước Hoa Cá Nhân') }}</h3>
+            <p>{{ __('Chọn dịp bạn cảm thấy phù hợp nhất để dùng mùi hương') }} <strong>{{ $perfume->name }}</strong>:</p>
             @auth
             <form action="{{ route('store.wardrobe.add') }}" method="POST">
                 @csrf
                 <input type="hidden" name="perfume_id" value="{{ $perfume->id }}">
                 <div class="occasion-select-grid">
-                    <label class="occ-radio"><input type="radio" name="occasion" value="work" checked> <span>@include('partials.icon', ['name' => 'briefcase', 'size' => '1em']) Đi làm & Công sở</span></label>
-                    <label class="occ-radio"><input type="radio" name="occasion" value="date"> <span>@include('partials.icon', ['name' => 'glass', 'size' => '1em']) Hẹn hò & Lãng mạn</span></label>
-                    <label class="occ-radio"><input type="radio" name="occasion" value="party"> <span>@include('partials.icon', ['name' => 'crown', 'size' => '1em']) Đi tiệc & Dạ hội</span></label>
-                    <label class="occ-radio"><input type="radio" name="occasion" value="casual"> <span>@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Thường ngày & Dạo phố</span></label>
+                    <label class="occ-radio"><input type="radio" name="occasion" value="work" checked> <span>@include('partials.icon', ['name' => 'briefcase', 'size' => '1em']) {{ __('Đi làm & Công sở') }}</span></label>
+                    <label class="occ-radio"><input type="radio" name="occasion" value="date"> <span>@include('partials.icon', ['name' => 'glass', 'size' => '1em']) {{ __('Hẹn hò & Lãng mạn') }}</span></label>
+                    <label class="occ-radio"><input type="radio" name="occasion" value="party"> <span>@include('partials.icon', ['name' => 'crown', 'size' => '1em']) {{ __('Đi tiệc & Dạ hội') }}</span></label>
+                    <label class="occ-radio"><input type="radio" name="occasion" value="casual"> <span>@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) {{ __('Thường ngày & Dạo phố') }}</span></label>
                 </div>
                 <div style="margin-top: 14px;">
-                    <label style="font-size: 13px; color: #55444e; display: block; margin-bottom: 6px;">Ghi chú cảm xúc của bạn (không bắt buộc):</label>
-                    <input type="text" name="notes" class="form-control" placeholder="VD: Mùi này tuyệt nhất vào ngày mưa hoặc trời lạnh..." style="width: 100%; border: 1px solid #f3d4e0; border-radius: 8px; padding: 10px;">
+                    <label style="font-size: 13px; color: #55444e; display: block; margin-bottom: 6px;">{{ __('Ghi chú cảm xúc của bạn (không bắt buộc):') }}</label>
+                    <input type="text" name="notes" class="form-control" placeholder="{{ __('VD: Mùi này tuyệt nhất vào ngày mưa hoặc trời lạnh...') }}" style="width: 100%; border: 1px solid #f3d4e0; border-radius: 8px; padding: 10px;">
                 </div>
                 <div style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button type="submit" class="ht-button ht-button-primary" style="flex: 1;">Lưu Vào Tủ Hương</button>
-                    <a href="{{ route('store.wardrobe') }}" class="ht-button ht-button-outline">Xem Tủ Hương</a>
+                    <button type="submit" class="ht-button ht-button-primary" style="flex: 1;">{{ __('Lưu Vào Tủ Hương') }}</button>
+                    <a href="{{ route('store.wardrobe') }}" class="ht-button ht-button-outline">{{ __('Xem Tủ Hương') }}</a>
                 </div>
             </form>
             @else
-            <p><a href="{{ route('login') }}" class="ht-button ht-button-primary">Đăng Nhập Để Lưu Tủ Nước Hoa</a></p>
+            <p><a href="{{ route('login') }}" class="ht-button ht-button-primary">{{ __('Đăng Nhập Để Lưu Tủ Nước Hoa') }}</a></p>
             @endauth
         </div>
     </div>
@@ -551,22 +551,22 @@
     {{-- MODAL 2: GỬI TẶNG BẠN BÈ --}}
     <div id="htGiftModal" class="ht-popup-backdrop" hidden>
         <div class="ht-popup-modal">
-            <button type="button" class="ht-popup-close-x" aria-label="Đóng quà tặng" onclick="document.getElementById('htGiftModal').hidden=true">@include('partials.icon', ['name' => 'close', 'size' => '1em'])</button>
+            <button type="button" class="ht-popup-close-x" aria-label="{{ __('Đóng quà tặng') }}" onclick="document.getElementById('htGiftModal').hidden=true">@include('partials.icon', ['name' => 'close', 'size' => '1em'])</button>
             <div class="modal-icon">@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</div>
-            <h3>Gửi Tặng Món Quà Này Cho Bạn Bè</h3>
-            <p>Tạo link thiệp điện tử kèm lời nhắn gửi trao để gửi qua Zalo, Messenger hoặc SMS:</p>
+            <h3>{{ __('Gửi Tặng Món Quà Này Cho Bạn Bè') }}</h3>
+            <p>{{ __('Tạo link thiệp điện tử kèm lời nhắn gửi trao để gửi qua Zalo, Messenger hoặc SMS:') }}</p>
             <div class="gift-form-fields">
-                <label>Tên của bạn (Người gửi):</label>
+                <label>{{ __('Tên của bạn (Người gửi):') }}</label>
                 <input type="text" id="giftFromInput" value="{{ Auth::user()->name ?? 'Người bạn thân' }}" class="form-input">
-                <label>Tên người nhận:</label>
+                <label>{{ __('Tên người nhận:') }}</label>
                 <input type="text" id="giftToInput" placeholder="VD: Mai Lan" class="form-input">
-                <label>Lời chúc / Nhắn nhủ:</label>
-                <textarea id="giftMsgInput" rows="3" class="form-input">Chúc bạn luôn ngát hương thơm và rạng rỡ mỗi ngày nhé!</textarea>
+                <label>{{ __('Lời chúc / Nhắn nhủ:') }}</label>
+                <textarea id="giftMsgInput" rows="3" class="form-input">{{ __('Chúc bạn luôn ngát hương thơm và rạng rỡ mỗi ngày nhé!') }}</textarea>
                 <div style="margin-top: 14px;">
-                    <button type="button" id="generateGiftLinkBtn" class="ht-button ht-button-primary" style="width: 100%;"><span data-gift-link-label>Tạo & Sao Chép Link Tặng Quà</span> @include('partials.icon', ['name' => 'link', 'size' => '1em'])</button>
+                    <button type="button" id="generateGiftLinkBtn" class="ht-button ht-button-primary" style="width: 100%;"><span data-gift-link-label>{{ __('Tạo & Sao Chép Link Tặng Quà') }}</span> @include('partials.icon', ['name' => 'link', 'size' => '1em'])</button>
                 </div>
                 <div id="giftLinkOutputWrap" style="display: none; margin-top: 12px; background: #fff0f5; padding: 10px; border-radius: 8px; font-size: 12px;">
-                    <strong style="color: #c2476a;">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Đã sao chép link!</strong>
+                    <strong style="color: #c2476a;">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __('Đã sao chép link!') }}</strong>
                     <p style="word-break: break-all; margin: 4px 0 0;" id="giftLinkOutputText"></p>
                 </div>
             </div>
@@ -607,7 +607,7 @@
                 }
                 if (displaySaveTag) {
                     displaySaveTag.style.display = currentOldPrice > currentBasePrice ? '' : 'none';
-                    if (currentOldPrice > currentBasePrice) displaySaveTag.textContent = 'Tiết kiệm ' + formatCurrency(currentOldPrice - currentBasePrice);
+                    if (currentOldPrice > currentBasePrice) displaySaveTag.textContent = (window.soopiT || (text => text))("Tiết kiệm ") + formatCurrency(currentOldPrice - currentBasePrice);
                 }
 
                 if (dynamicSubtotal) {
@@ -648,7 +648,7 @@
                     const desc = this.getAttribute('data-desc') || this.querySelector('.volume-card-desc')?.textContent || '';
 
                     if (volumeSelectedLabel) {
-                        volumeSelectedLabel.textContent = `${currentVolume}ml (${desc}) · Còn ${stockNum} chai`;
+                        volumeSelectedLabel.textContent = `${currentVolume}ml (${desc}${(window.soopiT || (text => text))(") · Còn")} ${stockNum} ${(window.soopiT || (text => text))('chai')}`;
                     }
                     if (specVolumeValue) {
                         specVolumeValue.textContent = `${currentVolume}ml`;
@@ -657,9 +657,9 @@
                     // Cập nhật trạng thái và số lượng còn lại cho dung tích đang bấm chọn
                     if (stockStatusText) {
                         if (stockNum > 0) {
-                            stockStatusText.textContent = `Còn hàng trong kho (${stockNum} chai ${currentVolume}ml ${desc} sẵn sàng giao)`;
+                            stockStatusText.textContent = `${(window.soopiT || (text => text))("Còn hàng trong kho (")}${stockNum} ${(window.soopiT || (text => text))('chai')} ${currentVolume}ml ${desc} ${(window.soopiT || (text => text))("sẵn sàng giao)")}`;
                         } else {
-                            stockStatusText.textContent = `Tạm thời hết hàng dung tích ${currentVolume}ml`;
+                            stockStatusText.textContent = `${(window.soopiT || (text => text))("Tạm thời hết hàng dung tích")} ${currentVolume}ml`;
                         }
                     }
 
@@ -730,8 +730,8 @@
 
             if (genGiftBtn) {
                 genGiftBtn.addEventListener('click', function () {
-                    const from = encodeURIComponent(document.getElementById('giftFromInput').value || 'Bạn thân');
-                    const to = encodeURIComponent(document.getElementById('giftToInput').value || 'Người nhận');
+                    const from = encodeURIComponent(document.getElementById('giftFromInput').value || (window.soopiT || (text => text))("Bạn thân"));
+                    const to = encodeURIComponent(document.getElementById('giftToInput').value || (window.soopiT || (text => text))("Người nhận"));
                     const msg = encodeURIComponent(document.getElementById('giftMsgInput').value || '');
                     const baseUrl = "{{ route('store.gift-share') }}";
                     const fullUrl = `${baseUrl}?id={{ $perfume->id }}&from=${from}&to=${to}&msg=${msg}`;
@@ -741,8 +741,8 @@
                     }
                     giftOutText.textContent = fullUrl;
                     giftOutWrap.style.display = 'block';
-                    genGiftBtn.querySelector('[data-gift-link-label]').textContent = 'Đã Sao Chép Link Tặng Quà!';
-                    setTimeout(() => { genGiftBtn.querySelector('[data-gift-link-label]').textContent = 'Tạo & Sao Chép Link Tặng Quà'; }, 3000);
+                    genGiftBtn.querySelector('[data-gift-link-label]').textContent = (window.soopiT || (text => text))("Đã Sao Chép Link Tặng Quà!");
+                    setTimeout(() => { genGiftBtn.querySelector('[data-gift-link-label]').textContent = (window.soopiT || (text => text))("Tạo & Sao Chép Link Tặng Quà"); }, 3000);
                 });
             }
         });

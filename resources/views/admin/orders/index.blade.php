@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý đơn hàng')
-@section('page_title', 'Quản lý đơn hàng')
+@section('title', __('Quản lý đơn hàng'))
+@section('page_title', __('Quản lý đơn hàng'))
 
 @section('content')
 <div class="admin-orders-container">
-    @include('admin.partials.print-brand', ['printTitle' => 'Danh sách đơn hàng', 'printSubtitle' => number_format($orders->total()).' đơn phù hợp · Trang '.$orders->currentPage().' / '.$orders->lastPage()])
+    @include('admin.partials.print-brand', ['printTitle' => __('Danh sách đơn hàng'), 'printSubtitle' => number_format($orders->total()).__(' đơn phù hợp · Trang ').$orders->currentPage().' / '.$orders->lastPage()])
     {{-- 1. BỘ LỌC TABS THEO QUY CHUẨN LAB 8 (PDF Trang 1, 6) --}}
     <div class="order-tabs-wrapper mb-3">
-        <div class="nav-tabs-scroll" aria-label="Lọc theo trạng thái đơn hàng">
+        <div class="nav-tabs-scroll" aria-label="{{ __('Lọc theo trạng thái đơn hàng') }}">
             @foreach($tabs as $tabKey => $tabItem)
                 @php
                     $isActive = ($activeTab === $tabKey);
@@ -19,7 +19,7 @@
                     $tabUrl = route('admin.orders.index', $urlParams);
                 @endphp
                 <a href="{{ $tabUrl }}" @if($isActive) aria-current="page" @endif class="order-tab-btn {{ $isActive ? 'active' : '' }} tab-{{ $tabItem['color'] }}">
-                    <span>{{ $tabItem['label'] }}</span>
+                    <span>{{ __($tabItem['label']) }}</span>
                     <span class="tab-badge {{ $isActive ? 'badge-active' : '' }}">{{ $tabItem['count'] }}</span>
                 </a>
             @endforeach
@@ -35,37 +35,37 @@
 
             <div class="order-filter-grid">
                 <div class="order-filter-field order-filter-search">
-                    <label for="order-search">Tìm đơn hàng</label>
-                    <input id="order-search" type="search" name="search" class="form-control" maxlength="100" placeholder="Mã đơn, khách hàng, số điện thoại…" value="{{ request('search') }}">
+                    <label for="order-search">{{ __('Tìm đơn hàng') }}</label>
+                    <input id="order-search" type="search" name="search" class="form-control" maxlength="100" placeholder="{{ __('Mã đơn, khách hàng, số điện thoại…') }}" value="{{ request('search') }}">
                 </div>
                 <div class="order-filter-field">
-                    <label for="order-payment">Thanh toán</label>
+                    <label for="order-payment">{{ __('Thanh toán') }}</label>
                     <select id="order-payment" name="payment_status" class="form-control">
-                        <option value="">Tất cả trạng thái</option>
+                        <option value="">{{ __('Tất cả trạng thái') }}</option>
                         @foreach($paymentLabels as $pKey => $pLabel)
-                            <option value="{{ $pKey }}" @selected(request('payment_status') === $pKey)>{{ $pLabel }}</option>
+                            <option value="{{ $pKey }}" @selected(request('payment_status') === $pKey)>{{ __($pLabel) }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="order-filter-field">
-                    <label for="order-gateway">Phương thức</label>
+                    <label for="order-gateway">{{ __('Phương thức') }}</label>
                     <select id="order-gateway" name="gateway" class="form-control">
-                        <option value="">Tất cả phương thức</option>
-                        <option value="cod" @selected(request('gateway') === 'cod')>Tiền mặt (COD)</option>
-                        <option value="momo" @selected(request('gateway') === 'momo')>Ví MoMo</option>
-                        <option value="unknown" @selected(request('gateway') === 'unknown')>Chưa xác định</option>
+                        <option value="">{{ __('Tất cả phương thức') }}</option>
+                        <option value="cod" @selected(request('gateway') === 'cod')>{{ __('Tiền mặt (COD)') }}</option>
+                        <option value="momo" @selected(request('gateway') === 'momo')>{{ __('Ví MoMo') }}</option>
+                        <option value="unknown" @selected(request('gateway') === 'unknown')>{{ __('Chưa xác định') }}</option>
                     </select>
                 </div>
                 <div class="order-filter-field">
-                    <label for="order-date-from">Từ ngày</label>
+                    <label for="order-date-from">{{ __('Từ ngày') }}</label>
                     <input id="order-date-from" type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
                 </div>
                 <div class="order-filter-field">
-                    <label for="order-date-to">Đến ngày</label>
+                    <label for="order-date-to">{{ __('Đến ngày') }}</label>
                     <input id="order-date-to" type="date" name="date_to" class="form-control" min="{{ request('date_from') }}" value="{{ request('date_to') }}">
                 </div>
                 <div class="order-filter-field order-filter-limit">
-                    <label for="order-per-page">Số đơn / trang</label>
+                    <label for="order-per-page">{{ __('Số đơn / trang') }}</label>
                     <select id="order-per-page" name="per_page" class="form-control">
                         @foreach([25, 50, 100] as $limit)
                             <option value="{{ $limit }}" @selected(request('per_page', 25) == $limit)>{{ $limit }}</option>
@@ -73,41 +73,41 @@
                     </select>
                 </div>
                 <div class="order-filter-field">
-                    <label for="order-status">Trạng thái đơn</label>
+                    <label for="order-status">{{ __('Trạng thái đơn') }}</label>
                     <select id="order-status" name="status" class="form-control">
-                        <option value="">Tất cả trạng thái đơn</option>
-                        @foreach(['pending' => 'Chờ xử lý', 'confirmed' => 'Đã xác nhận', 'paid' => 'Đã thanh toán', 'paid_momo' => 'Đã thanh toán MoMo', 'cod_ordered' => 'Chờ thu COD', 'cod_paid' => 'Đã thu COD', 'completed' => 'Đã hoàn thành', 'cancelled' => 'Đã hủy'] as $value => $label)
-                            <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
+                        <option value="">{{ __('Tất cả trạng thái đơn') }}</option>
+                        @foreach(['pending' => __('Chờ xử lý'), 'confirmed' => __('Đã xác nhận'), 'paid' => __('Đã thanh toán'), 'paid_momo' => __('Đã thanh toán MoMo'), 'cod_ordered' => __('Chờ thu COD'), 'cod_paid' => __('Đã thu COD'), 'completed' => __('Đã hoàn thành'), 'cancelled' => __('Đã hủy')] as $value => $label)
+                            <option value="{{ $value }}" @selected(request('status') === $value)>{{ __($label) }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="order-filter-field">
-                    <label for="order-shipping">Trạng thái vận chuyển</label>
+                    <label for="order-shipping">{{ __('Trạng thái vận chuyển') }}</label>
                     <select id="order-shipping" name="shipping_status" class="form-control">
-                        <option value="">Tất cả trạng thái giao hàng</option>
+                        <option value="">{{ __('Tất cả trạng thái giao hàng') }}</option>
                         @foreach($shippingLabels as $value => $label)
-                            <option value="{{ $value }}" @selected(request('shipping_status') === $value)>{{ $label }}</option>
+                            <option value="{{ $value }}" @selected(request('shipping_status') === $value)>{{ __($label) }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="order-filter-field order-filter-sort">
-                    <label for="order-sort">Sắp xếp</label>
+                    <label for="order-sort">{{ __('Sắp xếp') }}</label>
                     <select id="order-sort" name="sort" class="form-control">
-                        <option value="newest" @selected(request('sort', 'newest') === 'newest')>Mới nhất</option>
-                        <option value="oldest" @selected(request('sort') === 'oldest')>Cũ nhất</option>
-                        <option value="amount_desc" @selected(request('sort') === 'amount_desc')>Giá trị cao nhất</option>
-                        <option value="amount_asc" @selected(request('sort') === 'amount_asc')>Giá trị thấp nhất</option>
+                        <option value="newest" @selected(request('sort', 'newest') === 'newest')>{{ __('Mới nhất') }}</option>
+                        <option value="oldest" @selected(request('sort') === 'oldest')>{{ __('Cũ nhất') }}</option>
+                        <option value="amount_desc" @selected(request('sort') === 'amount_desc')>{{ __('Giá trị cao nhất') }}</option>
+                        <option value="amount_asc" @selected(request('sort') === 'amount_asc')>{{ __('Giá trị thấp nhất') }}</option>
                     </select>
                 </div>
             </div>
             <div class="order-filter-footer">
-                <span class="order-result-count"><strong>{{ number_format($orders->total()) }}</strong> đơn hàng phù hợp</span>
+                <span class="order-result-count"><strong>{{ number_format($orders->total()) }}</strong> {{ __('đơn hàng phù hợp') }}</span>
                 <div class="order-filter-actions">
                     @if(request()->anyFilled(['search', 'status', 'payment_status', 'gateway', 'date_from', 'date_to', 'shipping_status']))
-                        <a href="{{ route('admin.orders.index', request('tab') ? ['tab' => request('tab')] : []) }}" class="btn btn-light">Xóa bộ lọc</a>
+                        <a href="{{ route('admin.orders.index', request('tab') ? ['tab' => request('tab')] : []) }}" class="btn btn-light">{{ __('Xóa bộ lọc') }}</a>
                     @endif
-                    <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="fa-solid fa-print" aria-hidden="true"></i> In danh sách</button>
-                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter" aria-hidden="true"></i> Áp dụng bộ lọc</button>
+                    <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="fa-solid fa-print" aria-hidden="true"></i> {{ __('In danh sách') }}</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter" aria-hidden="true"></i> {{ __('Áp dụng bộ lọc') }}</button>
                 </div>
             </div>
         </form>
@@ -120,34 +120,34 @@
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                 <div class="d-flex align-items-center gap-2">
                     <span class="badge badge-dark px-3 py-2" style="font-size: 0.9rem; border-radius: 20px;">
-                        Đã chọn <strong id="selectedCountNumber" aria-live="polite">0</strong> đơn hàng trên trang
+                        {{ __('Đã chọn') }} <strong id="selectedCountNumber" aria-live="polite">0</strong> {{ __('đơn hàng trên trang') }}
                     </span>
-                    <button type="button" class="btn btn-link btn-sm text-secondary" id="btnDeselectAll">Bỏ chọn tất cả</button>
+                    <button type="button" class="btn btn-link btn-sm text-secondary" id="btnDeselectAll">{{ __('Bỏ chọn tất cả') }}</button>
                 </div>
 
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <label class="mb-0 small font-weight-bold text-dark" for="bulkShippingStatus">Vận chuyển:</label>
+                    <label class="mb-0 small font-weight-bold text-dark" for="bulkShippingStatus">{{ __('Vận chuyển:') }}</label>
                     <select name="bulk_shipping_status" id="bulkShippingStatus" class="form-control form-control-sm" style="width: 170px;">
-                        <option value="">-- Trạng thái giao --</option>
-                        <option value="pending">Chờ tạo vận đơn</option>
-                        <option value="ready_to_pick">Chờ lấy hàng</option>
-                        <option value="picking">Đang lấy hàng</option>
-                        <option value="delivering">Đang giao hàng</option>
-                        <option value="delivered">Giao thành công</option>
-                        <option value="cancelled">Hủy đơn (Không giao)</option>
+                        <option value="">{{ __('-- Trạng thái giao --') }}</option>
+                        <option value="pending">{{ __('Chờ tạo vận đơn') }}</option>
+                        <option value="ready_to_pick">{{ __('Chờ lấy hàng') }}</option>
+                        <option value="picking">{{ __('Đang lấy hàng') }}</option>
+                        <option value="delivering">{{ __('Đang giao hàng') }}</option>
+                        <option value="delivered">{{ __('Giao thành công') }}</option>
+                        <option value="cancelled">{{ __('Hủy đơn (Không giao)') }}</option>
                     </select>
 
-                    <label class="sr-only" for="bulkOrderStatus">Trạng thái đơn hàng</label>
+                    <label class="sr-only" for="bulkOrderStatus">{{ __('Trạng thái đơn hàng') }}</label>
                     <select name="bulk_status" id="bulkOrderStatus" class="form-control form-control-sm" style="width: 170px;">
-                        <option value="">-- Trạng thái đơn --</option>
-                        <option value="pending">Chờ xử lý</option>
-                        <option value="confirmed">Đã xác nhận</option>
-                        <option value="completed">Đã hoàn thành</option>
-                        <option value="cancelled">Đã hủy đơn</option>
+                        <option value="">{{ __('-- Trạng thái đơn --') }}</option>
+                        <option value="pending">{{ __('Chờ xử lý') }}</option>
+                        <option value="confirmed">{{ __('Đã xác nhận') }}</option>
+                        <option value="completed">{{ __('Đã hoàn thành') }}</option>
+                        <option value="cancelled">{{ __('Đã hủy đơn') }}</option>
                     </select>
 
                     <button type="submit" class="btn btn-success btn-sm font-weight-bold px-3" onclick="return confirmBulkAction()">
-                        <i class="fa-solid fa-bolt mr-1"></i> Cập nhật hàng loạt
+                        <i class="fa-solid fa-bolt mr-1"></i> {{ __('Cập nhật hàng loạt') }}
                     </button>
                 </div>
             </div>
@@ -160,13 +160,13 @@
                     @if($orders->isNotEmpty())
                     <thead>
                         <tr>
-                            <th class="order-select-cell"><label class="order-select-all"><input type="checkbox" id="selectAllOrders" aria-label="Chọn tất cả đơn hàng trên trang"><span>Chọn tất cả</span></label></th>
-                            <th class="order-meta-cell" scope="col">Đơn hàng</th>
-                            <th class="order-customer-cell" scope="col">Khách hàng</th>
-                            <th class="order-products-cell" scope="col">Sản phẩm</th>
-                            <th class="order-payment-cell" scope="col">Thanh toán</th>
-                            <th class="order-shipping-cell" scope="col">Vận chuyển</th>
-                            <th class="order-actions-cell" scope="col"><span class="sr-only">Thao tác</span></th>
+                            <th class="order-select-cell"><label class="order-select-all"><input type="checkbox" id="selectAllOrders" aria-label="{{ __('Chọn tất cả đơn hàng trên trang') }}"><span>{{ __('Chọn tất cả') }}</span></label></th>
+                            <th class="order-meta-cell" scope="col">{{ __('Đơn hàng') }}</th>
+                            <th class="order-customer-cell" scope="col">{{ __('Khách hàng') }}</th>
+                            <th class="order-products-cell" scope="col">{{ __('Sản phẩm') }}</th>
+                            <th class="order-payment-cell" scope="col">{{ __('Thanh toán') }}</th>
+                            <th class="order-shipping-cell" scope="col">{{ __('Vận chuyển') }}</th>
+                            <th class="order-actions-cell" scope="col"><span class="sr-only">{{ __('Thao tác') }}</span></th>
                         </tr>
                     </thead>
                     @endif
@@ -199,54 +199,54 @@
                                     @if($order->is_demo)<span class="badge badge-warning mt-1">DEMO</span>@endif
                                     <time class="order-secondary" datetime="{{ $order->created_at->toIso8601String() }}">{{ $order->created_at->format('d/m/Y') }}<br> {{ $order->created_at->format('H:i') }}</time>
                                 </td>
-                                <td class="order-customer-cell" data-label="Khách hàng">
+                                <td class="order-customer-cell" data-label="{{ __('Khách hàng') }}">
                                     <strong class="order-customer-name">{{ $order->name ?? $order->customer_name }}</strong>
                                     <span class="order-secondary">{{ $order->phone }}</span>
                                     @if($order->user_id)
-                                        <button type="button" class="order-chat-link" data-user-id="{{ $order->user_id }}" data-customer-name="{{ $order->name ?? $order->customer_name }}" onclick="openChatWithUser(Number(this.dataset.userId), this.dataset.customerName)">@include('partials.icon', ['name' => 'chat', 'size' => '1em']) Nhắn tin</button>
+                                        <button type="button" class="order-chat-link" data-user-id="{{ $order->user_id }}" data-customer-name="{{ $order->name ?? $order->customer_name }}" onclick="openChatWithUser(Number(this.dataset.userId), this.dataset.customerName)">@include('partials.icon', ['name' => 'chat', 'size' => '1em']) {{ __('Nhắn tin') }}</button>
                                     @endif
                                 </td>
-                                <td class="order-products-cell" data-label="Sản phẩm">
+                                <td class="order-products-cell" data-label="{{ __('Sản phẩm') }}">
                                     <div class="order-items-snippet">
                                         @foreach($order->items->take(2) as $item)
                                             <div class="order-product-line">
                                                 <span>{{ $item->display_name }}</span>
-                                                <span class="order-secondary">× {{ $item->quantity }} · {{ $item->volume_label }}</span>
+                                                <span class="order-secondary">{{ __('×') }} {{ $item->quantity }} · {{ $item->volume_label }}</span>
                                             </div>
                                         @endforeach
                                         @if($order->items->count() > 2)
-                                            <a class="order-more-items" href="{{ route('admin.orders.show', $order->id) }}">+ {{ $order->items->count() - 2 }} sản phẩm khác</a>
+                                            <a class="order-more-items" href="{{ route('admin.orders.show', $order->id) }}">+ {{ $order->items->count() - 2 }} {{ __('sản phẩm khác') }}</a>
                                         @endif
                                     </div>
                                 </td>
-                                <td class="order-payment-cell" data-label="Thanh toán">
-                                    <strong class="order-amount">{{ number_format($order->total_price, 0, ',', '.') }} đ</strong>
-                                    <span class="badge {{ $paymentBadgeClass }} order-payment-badge">{{ $paymentLabels[$order->payment_status] ?? strtoupper($order->status) }}</span>
-                                    <span class="order-secondary">{{ ['cod' => 'Tiền mặt (COD)', 'momo' => 'Ví MoMo', 'demo' => 'Thanh toán mô phỏng'][$order->gateway] ?? 'Chưa xác định phương thức' }}</span>
+                                <td class="order-payment-cell" data-label="{{ __('Thanh toán') }}">
+                                    <strong class="order-amount">{{ number_format($order->total_price, 0, ',', '.') }} {{ __('đ') }}</strong>
+                                    <span class="badge {{ $paymentBadgeClass }} order-payment-badge">{{ __($paymentLabels[$order->payment_status] ?? strtoupper($order->status)) }}</span>
+                                    <span class="order-secondary">{{ ['cod' => __('Tiền mặt (COD)'), 'momo' => __('Ví MoMo'), 'demo' => __('Thanh toán mô phỏng')][$order->gateway] ?? __('Chưa xác định phương thức') }}</span>
                                     @if($order->gateway === 'cod' && in_array($order->payment_status, ['pending', 'failed']) && $order->status !== 'cancelled' && !in_array($order->shipping_status, ['cancelled', 'return', 'returning', 'returned', 'return_transporting', 'return_sorting']))
-                                        <span class="order-secondary">COD cần thu: <span class="order-cod">{{ number_format($order->total_price, 0, ',', '.') }} đ</span></span>
+                                        <span class="order-secondary">{{ __('COD cần thu:') }} <span class="order-cod">{{ number_format($order->total_price, 0, ',', '.') }} {{ __('đ') }}</span></span>
                                     @endif
                                 </td>
-                                <td class="order-shipping-cell" data-label="Vận chuyển">
-                                    <span class="order-shipping-status" style="color: {{ $dotColor }}"><span class="order-status-dot" aria-hidden="true"></span>{{ $shippingLabels[$shStatus] ?? $shStatus }}</span>
+                                <td class="order-shipping-cell" data-label="{{ __('Vận chuyển') }}">
+                                    <span class="order-shipping-status" style="color: {{ $dotColor }}"><span class="order-status-dot" aria-hidden="true"></span>{{ __($shippingLabels[$shStatus] ?? $shStatus) }}</span>
                                     @if($order->ghn_order_code)
                                         <span class="order-secondary">GHN Express</span>
                                         <span class="order-tracking-code">{{ $order->ghn_order_code }}</span>
                                     @else
-                                        <span class="order-secondary">Chưa tạo vận đơn</span>
+                                        <span class="order-secondary">{{ __('Chưa tạo vận đơn') }}</span>
                                     @endif
                                 </td>
                                 <td class="order-actions-cell">
-                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="order-detail-link" aria-label="Chi tiết đơn hàng {{ $order->id }}">Chi tiết <span aria-hidden="true">→</span></a>
+                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="order-detail-link" aria-label="Chi tiết đơn hàng {{ $order->id }}">{{ __('Chi tiết') }} <span aria-hidden="true">→</span></a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
                                 <td colspan="7" class="text-center text-muted order-empty-state">
                                     <i class="fa-solid fa-box-open mb-2" style="font-size: 2.2rem; opacity: 0.3;"></i>
-                                    <div>Không tìm thấy đơn hàng nào phù hợp với bộ lọc hiện tại.</div>
+                                    <div>{{ __('Không tìm thấy đơn hàng nào phù hợp với bộ lọc hiện tại.') }}</div>
                                     @if(request()->anyFilled(['search', 'status', 'payment_status', 'gateway', 'date_from', 'date_to', 'shipping_status', 'tab']))
-                                        <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary btn-sm mt-3">Xem tất cả đơn hàng</a>
+                                        <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary btn-sm mt-3">{{ __('Xem tất cả đơn hàng') }}</a>
                                     @endif
                                 </td>
                             </tr>
@@ -260,7 +260,7 @@
     {{-- PHÂN TRANG --}}
     <div class="mt-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div class="small text-muted">
-            Hiển thị {{ $orders->firstItem() ?? 0 }} - {{ $orders->lastItem() ?? 0 }} trong tổng số <strong>{{ $orders->total() }}</strong> đơn hàng
+            {{ __('Hiển thị') }} {{ $orders->firstItem() ?? 0 }} - {{ $orders->lastItem() ?? 0 }} {{ __('trong tổng số') }} <strong>{{ $orders->total() }}</strong> {{ __('đơn hàng') }}
         </div>
         <div>
             {{ $orders->links() }}
@@ -404,7 +404,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.confirmBulkAction = function () {
         const checkedBoxes = document.querySelectorAll(".order-checkbox:checked");
         if (checkedBoxes.length === 0) {
-            alert("Vui lòng tích chọn ít nhất 1 đơn hàng để thao tác.");
+            alert((window.soopiT || (text => text))("Vui lòng tích chọn ít nhất 1 đơn hàng để thao tác."));
             return false;
         }
 
@@ -412,7 +412,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const orderStatus = document.getElementById("bulkOrderStatus").value;
 
         if (!shippingStatus && !orderStatus) {
-            alert("Vui lòng chọn trạng thái mới cần cập nhật.");
+            alert((window.soopiT || (text => text))("Vui lòng chọn trạng thái mới cần cập nhật."));
             return false;
         }
 
@@ -427,11 +427,11 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             if (hasDelivering) {
-                return confirm("CẢNH BÁO: Trong các đơn đã chọn có đơn hàng đang ở trạng thái 'Đang giao'.\nTheo quy định, đơn hàng đang giao sẽ KHÔNG bị hủy.\nHệ thống sẽ chỉ hủy các đơn chưa giao. Bạn có muốn tiếp tục?");
+                return confirm((window.soopiT || (text => text))("CẢNH BÁO: Trong các đơn đã chọn có đơn hàng đang ở trạng thái 'Đang giao'.\nTheo quy định, đơn hàng đang giao sẽ KHÔNG bị hủy.\nHệ thống sẽ chỉ hủy các đơn chưa giao. Bạn có muốn tiếp tục?"));
             }
         }
 
-        return confirm(`Bạn có chắc chắn muốn cập nhật trạng thái cho ${checkedBoxes.length} đơn hàng đã chọn?`);
+        return confirm(`${(window.soopiT || (text => text))("Bạn có chắc chắn muốn cập nhật trạng thái cho")} ${checkedBoxes.length} ${(window.soopiT || (text => text))("đơn hàng đã chọn?")}`);
     };
 });
 </script>

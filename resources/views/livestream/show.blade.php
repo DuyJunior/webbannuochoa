@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'Livestream nước hoa · Soopi')
-@section('meta_description', 'Xem livestream thử mùi nước hoa, nhận gợi ý chọn hương và khám phá sản phẩm tại Soopi.')
+@section('title', __('Livestream nước hoa · Soopi'))
+@section('meta_description', __('Xem livestream thử mùi nước hoa, nhận gợi ý chọn hương và khám phá sản phẩm tại Soopi.'))
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('css/livestream.css') }}">
@@ -14,8 +14,8 @@
          data-on-air="{{ $livestream && (($livestream->source === 'youtube' && $livestream->status === 'live') || $livestream->isBrowserOnAir()) ? '1' : '0' }}">
     <header class="ht-live-hero">
         <span class="ht-live-eyebrow">Soopi</span>
-        <h1 id="ht-live-heading">Chuyện hương <em>trực tiếp</em></h1>
-        <p>Thử mùi cùng Soopi, lắng nghe câu chuyện phía sau mỗi hương thơm và tìm ra chai nước hoa dành cho bạn.</p>
+        <h1 id="ht-live-heading">{{ __('Chuyện hương') }} <em>{{ __('trực tiếp') }}</em></h1>
+        <p>{{ __('Thử mùi cùng Soopi, lắng nghe câu chuyện phía sau mỗi hương thơm và tìm ra chai nước hoa dành cho bạn.') }}</p>
     </header>
 
     @if($livestream)
@@ -35,29 +35,29 @@
                             <audio id="live-viewer-audio" autoplay></audio>
                             <div class="ht-live-native-overlay">
                                 <span class="ht-live-flower" aria-hidden="true">@include('partials.brand-mark', ['size' => '1em', 'light' => true])</span>
-                                <strong>Đang phát trực tiếp</strong>
+                                <strong>{{ __('Đang phát trực tiếp') }}</strong>
                                 <button id="live-viewer-join" class="ht-live-button" type="button">Xem livestream</button>
-                                <span id="live-viewer-message" role="status">Nhấn để bắt đầu xem và nghe.</span>
+                                <span id="live-viewer-message" role="status">{{ __('Nhấn để bắt đầu xem và nghe.') }}</span>
                             </div>
                         </div>
                     @else
                         <div class="ht-live-wait">
                             <span class="ht-live-flower" aria-hidden="true">@include('partials.brand-mark', ['size' => '1em'])</span>
-                            <strong>{{ $livestream->status === 'live' ? 'Buổi phát đang tạm gián đoạn' : ($livestream->isOverdue() ? 'Đã đến giờ phát' : 'Hẹn bạn ở buổi phát sắp tới') }}</strong>
-                            <span>{{ $livestream->status === 'live' ? 'Nhân viên đang kết nối lại. Vui lòng tải lại trang sau ít phút.' : ($livestream->isOverdue() ? 'Nhân viên đang chuẩn bị lên sóng. Trang này sẽ tự cập nhật khi buổi phát bắt đầu.' : 'Nhân viên sẽ bắt đầu buổi phát vào giờ hẹn. Trang này sẽ tự cập nhật khi lên sóng.') }}</span>
+                            <strong>{{ $livestream->status === 'live' ? __('Buổi phát đang tạm gián đoạn') : ($livestream->isOverdue() ? __('Đã đến giờ phát') : __('Hẹn bạn ở buổi phát sắp tới')) }}</strong>
+                            <span>{{ $livestream->status === 'live' ? __('Nhân viên đang kết nối lại. Vui lòng tải lại trang sau ít phút.') : ($livestream->isOverdue() ? __('Nhân viên đang chuẩn bị lên sóng. Trang này sẽ tự cập nhật khi buổi phát bắt đầu.') : __('Nhân viên sẽ bắt đầu buổi phát vào giờ hẹn. Trang này sẽ tự cập nhật khi lên sóng.')) }}</span>
                         </div>
                     @endif
                 </div>
                 <div class="ht-live-card-body">
-                    <span class="ht-live-status {{ $onAir ? 'ht-live-status--on' : '' }}">{{ $onAir ? 'Đang phát trực tiếp' : ($livestream->status === 'live' ? 'Tạm gián đoạn' : ($livestream->isOverdue() ? 'Đã tới giờ · chờ lên sóng' : 'Sắp phát')) }}</span>
+                    <span class="ht-live-status {{ $onAir ? 'ht-live-status--on' : '' }}">{{ $onAir ? __('Đang phát trực tiếp') : ($livestream->status === 'live' ? __('Tạm gián đoạn') : ($livestream->isOverdue() ? __('Đã tới giờ · chờ lên sóng') : __('Sắp phát'))) }}</span>
                     <h2>{{ $livestream->title }}</h2>
-                    @if($livestream->starts_at)<p class="ht-live-date">◷ {{ $livestream->starts_at->format('H:i · d/m/Y') }} · Giờ Việt Nam</p>@endif
+                    @if($livestream->starts_at)<p class="ht-live-date">◷ {{ $livestream->starts_at->format('H:i · d/m/Y') }} {{ __('· Giờ Việt Nam') }}</p>@endif
                     @if($livestream->description)<p class="ht-live-description">{{ $livestream->description }}</p>@endif
                     <div class="ht-live-actions">
                         @if($onAir && $livestream->source === 'youtube')
-                            <a class="ht-live-button" href="https://www.youtube.com/watch?v={{ $livestream->youtube_video_id }}" target="_blank" rel="noopener noreferrer">Trò chuyện trên YouTube @include('partials.icon', ['name' => 'external', 'size' => '1em'])</a>
+                            <a class="ht-live-button" href="https://www.youtube.com/watch?v={{ $livestream->youtube_video_id }}" target="_blank" rel="noopener noreferrer">{{ __('Trò chuyện trên YouTube') }} @include('partials.icon', ['name' => 'external', 'size' => '1em'])</a>
                         @endif
-                        <a class="ht-live-text-link" href="{{ route('home') }}">Khám phá nước hoa →</a>
+                        <a class="ht-live-text-link" href="{{ route('home') }}">{{ __('Khám phá nước hoa →') }}</a>
                     </div>
                 </div>
             </article>
@@ -71,17 +71,17 @@
     @else
         <div class="ht-live-empty">
             <div class="ht-live-empty-copy">
-                <span class="ht-live-eyebrow">Studio đang chuẩn bị</span>
-                <h2>Hẹn bạn ở buổi phát <em>tiếp theo.</em></h2>
-                <p>Chưa có lịch livestream mới. Trong lúc chờ, hãy tìm mùi hương hợp với mình hoặc khám phá những chai nước hoa được yêu thích tại Soopi.</p>
+                <span class="ht-live-eyebrow">{{ __('Studio đang chuẩn bị') }}</span>
+                <h2>{{ __('Hẹn bạn ở buổi phát') }} <em>{{ __('tiếp theo.') }}</em></h2>
+                <p>{{ __('Chưa có lịch livestream mới. Trong lúc chờ, hãy tìm mùi hương hợp với mình hoặc khám phá những chai nước hoa được yêu thích tại Soopi.') }}</p>
                 <div class="ht-live-empty-actions">
-                    <a class="ht-live-button" href="{{ route('store.quiz') }}">Chọn hương của bạn →</a>
-                    <a class="ht-live-text-link" href="{{ route('home') }}#san-pham">Xem bộ sưu tập</a>
+                    <a class="ht-live-button" href="{{ route('store.quiz') }}">{{ __('Chọn hương của bạn →') }}</a>
+                    <a class="ht-live-text-link" href="{{ route('home') }}#san-pham">{{ __('Xem bộ sưu tập') }}</a>
                 </div>
-                <span class="ht-live-empty-footnote">@include('partials.brand-mark', ['size' => 18]) Một chút hương, một chút thương.</span>
+                <span class="ht-live-empty-footnote">@include('partials.brand-mark', ['size' => 18]) {{ __('Một chút hương, một chút thương.') }}</span>
             </div>
             <div class="ht-live-empty-visual">
-                <img src="{{ asset('images/bloom/flower-open.webp') }}" alt="Chai nước hoa giữa những cánh lụa hồng của Soopi" loading="lazy">
+                <img src="{{ asset('images/bloom/flower-open.webp') }}" alt="{{ __('Chai nước hoa giữa những cánh lụa hồng của Soopi') }}" loading="lazy">
                 <span>THE SOOPI LIVE EDIT</span>
             </div>
         </div>

@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'Câu hỏi thường gặp · Soopi')
-@section('meta_description', 'Giải đáp thắc mắc về nước hoa, đổi trả, giao hàng và thanh toán tại Soopi.')
+@section('title', __('Câu hỏi thường gặp · Soopi'))
+@section('meta_description', __('Giải đáp thắc mắc về nước hoa, đổi trả, giao hàng và thanh toán tại Soopi.'))
 
 @push('styles')
 <style>
@@ -178,219 +178,219 @@
 @section('content')
 <div class="ht-faq-page">
     <header>
-        <span class="ht-eyebrow">HỖ TRỢ KHÁCH HÀNG</span>
-        <h1>Câu hỏi thường gặp</h1>
-        <p>Giải đáp mọi thắc mắc để bạn an tâm mua hàng tại Soopi.</p>
+        <span class="ht-eyebrow">{{ __('HỖ TRỢ KHÁCH HÀNG') }}</span>
+        <h1>{{ __('Câu hỏi thường gặp') }}</h1>
+        <p>{{ __('Giải đáp mọi thắc mắc để bạn an tâm mua hàng tại Soopi.') }}</p>
     </header>
 
-    <nav class="ht-faq-tabs" aria-label="Chủ đề câu hỏi">
-        <a class="ht-faq-tab active" href="#chinh-hang">Chính hãng</a>
-        <a class="ht-faq-tab" href="#giao-hang">Giao hàng</a>
-        <a class="ht-faq-tab" href="#thanh-toan">Thanh toán</a>
-        <a class="ht-faq-tab" href="#doi-tra">Đổi & trả</a>
-        <a class="ht-faq-tab" href="#bao-quan">Bảo quản</a>
+    <nav class="ht-faq-tabs" aria-label="{{ __('Chủ đề câu hỏi') }}">
+        <a class="ht-faq-tab active" href="#chinh-hang">{{ __('Chính hãng') }}</a>
+        <a class="ht-faq-tab" href="#giao-hang">{{ __('Giao hàng') }}</a>
+        <a class="ht-faq-tab" href="#thanh-toan">{{ __('Thanh toán') }}</a>
+        <a class="ht-faq-tab" href="#doi-tra">{{ __('Đổi & trả') }}</a>
+        <a class="ht-faq-tab" href="#bao-quan">{{ __('Bảo quản') }}</a>
     </nav>
 
     {{-- NHÓM 1: Chính hãng --}}
     <div class="ht-faq-group" id="chinh-hang">
-        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'shield', 'size' => '1em']) Chính hãng &amp; nguồn gốc</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'shield', 'size' => '1em']) {{ __('Chính hãng & nguồn gốc') }}</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Soopi có bán nước hoa chính hãng 100% không?
+                {{ __('Soopi có bán nước hoa chính hãng 100% không?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Có. Soopi chỉ kinh doanh nước hoa <strong>chính hãng 100%</strong>, được nhập trực tiếp từ nhà phân phối ủy quyền hoặc nhập khẩu chính ngạch từ Pháp, Ý và các nước sản xuất. Mỗi sản phẩm đều có tem kiểm định và hóa đơn nguồn gốc rõ ràng.
+                {{ __('Có. Soopi chỉ kinh doanh nước hoa') }} <strong>{{ __('chính hãng 100%') }}</strong>{{ __(', được nhập trực tiếp từ nhà phân phối ủy quyền hoặc nhập khẩu chính ngạch từ Pháp, Ý và các nước sản xuất. Mỗi sản phẩm đều có tem kiểm định và hóa đơn nguồn gốc rõ ràng.') }}
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Làm sao để phân biệt nước hoa chính hãng với hàng nhái?
+                {{ __('Làm sao để phân biệt nước hoa chính hãng với hàng nhái?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Bạn có thể nhận biết qua một số dấu hiệu:
+                {{ __('Bạn có thể nhận biết qua một số dấu hiệu:') }}
                 <ul>
-                    <li>Barcode trên vỏ hộp tra cứu được trên website thương hiệu</li>
-                    <li>Số batch code (mã lô sản xuất) dập nổi hoặc in đáy chai</li>
-                    <li>Mùi hương tồn lưu lâu, nồng độ ổn định qua từng xịt</li>
-                    <li>Hộp giấy in sắc nét, nắp chai khớp chặt, không rỉ nước</li>
+                    <li>{{ __('Barcode trên vỏ hộp tra cứu được trên website thương hiệu') }}</li>
+                    <li>{{ __('Số batch code (mã lô sản xuất) dập nổi hoặc in đáy chai') }}</li>
+                    <li>{{ __('Mùi hương tồn lưu lâu, nồng độ ổn định qua từng xịt') }}</li>
+                    <li>{{ __('Hộp giấy in sắc nét, nắp chai khớp chặt, không rỉ nước') }}</li>
                 </ul>
-                Soopi cam kết hoàn tiền 100% nếu sản phẩm được xác nhận không chính hãng.
+                {{ __('Soopi cam kết hoàn tiền 100% nếu sản phẩm được xác nhận không chính hãng.') }}
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Soopi có cho phép xịt thử trước khi mua không?
+                {{ __('Soopi có cho phép xịt thử trước khi mua không?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Bạn có thể chọn <a href="{{ route('store.discovery-box') }}">hộp thử mùi gồm 3 hoặc 5 mẫu, mỗi mẫu 5 ml</a> để trải nghiệm tại nhà trước khi chọn chai lớn. Nếu cần tư vấn trước khi mua, hãy <a href="{{ route('store.contact') }}">liên hệ Soopi</a>.
+                {{ __('Bạn có thể chọn') }} <a href="{{ route('store.discovery-box') }}">{{ __('hộp thử mùi gồm 3 hoặc 5 mẫu, mỗi mẫu 5 ml') }}</a> {{ __('để trải nghiệm tại nhà trước khi chọn chai lớn. Nếu cần tư vấn trước khi mua, hãy') }} <a href="{{ route('store.contact') }}">{{ __('liên hệ Soopi') }}</a>.
             </div></div>
         </div>
     </div>
 
     {{-- NHÓM 2: Giao hàng --}}
     <div class="ht-faq-group" id="giao-hang">
-        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'truck', 'size' => '1em']) Giao hàng &amp; vận chuyển</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'truck', 'size' => '1em']) {{ __('Giao hàng & vận chuyển') }}</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Soopi giao hàng trong bao lâu?
+                {{ __('Soopi giao hàng trong bao lâu?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
                 <ul>
-                    <li><strong>Nội thành HCM/HN:</strong> 1–2 ngày làm việc</li>
-                    <li><strong>Các tỉnh thành khác:</strong> 2–4 ngày làm việc</li>
-                    <li><strong>Vùng sâu, vùng xa:</strong> 4–7 ngày làm việc</li>
+                    <li><strong>{{ __('Nội thành HCM/HN:') }}</strong> {{ __('1–2 ngày làm việc') }}</li>
+                    <li><strong>{{ __('Các tỉnh thành khác:') }}</strong> {{ __('2–4 ngày làm việc') }}</li>
+                    <li><strong>{{ __('Vùng sâu, vùng xa:') }}</strong> {{ __('4–7 ngày làm việc') }}</li>
                 </ul>
-                Đơn hàng đặt trước 15:00 sẽ được xử lý và giao cho đơn vị vận chuyển ngay trong ngày.
+                {{ __('Đơn hàng đặt trước 15:00 sẽ được xử lý và giao cho đơn vị vận chuyển ngay trong ngày.') }}
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Phí giao hàng được tính như thế nào?
+                {{ __('Phí giao hàng được tính như thế nào?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Phí vận chuyển được tính qua GHN dựa trên địa chỉ nhận hàng và trọng lượng đơn hàng. Bạn sẽ thấy phí giao hàng và tổng tiền tại bước thanh toán trước khi xác nhận đặt hàng.
+                {{ __('Phí vận chuyển được tính qua GHN dựa trên địa chỉ nhận hàng và trọng lượng đơn hàng. Bạn sẽ thấy phí giao hàng và tổng tiền tại bước thanh toán trước khi xác nhận đặt hàng.') }}
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Tôi có thể theo dõi đơn hàng ở đâu?
+                {{ __('Tôi có thể theo dõi đơn hàng ở đâu?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Đăng nhập để tra cứu tại trang <a href="{{ route('orders.tracking') }}">Theo dõi đơn hàng</a> hoặc xem <a href="{{ route('orders.index') }}">lịch sử mua hàng</a>. Email đơn hàng được gửi theo các mốc đặt hàng, ghi nhận thanh toán, giao cho đơn vị vận chuyển và giao thành công; bạn vẫn nên xem trạng thái mới nhất trên website.
+                {{ __('Đăng nhập để tra cứu tại trang') }} <a href="{{ route('orders.tracking') }}">{{ __('Theo dõi đơn hàng') }}</a> {{ __('hoặc xem') }} <a href="{{ route('orders.index') }}">{{ __('lịch sử mua hàng') }}</a>{{ __('. Email đơn hàng được gửi theo các mốc đặt hàng, ghi nhận thanh toán, giao cho đơn vị vận chuyển và giao thành công; bạn vẫn nên xem trạng thái mới nhất trên website.') }}
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Sản phẩm có được đóng gói cẩn thận không?
+                {{ __('Sản phẩm có được đóng gói cẩn thận không?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Bạn có thể chọn <strong>gói quà với phụ phí 50.000₫</strong> tại trang sản phẩm. Combo Trọn Vẹn đã bao gồm hộp quà theo mô tả của combo. Với yêu cầu đóng gói cụ thể, hãy <a href="{{ route('store.contact') }}">liên hệ Soopi</a> trước khi đặt hàng.
+                {{ __('Bạn có thể chọn') }} <strong>{{ __('gói quà với phụ phí 50.000₫') }}</strong> {{ __('tại trang sản phẩm. Combo Trọn Vẹn đã bao gồm hộp quà theo mô tả của combo. Với yêu cầu đóng gói cụ thể, hãy') }} <a href="{{ route('store.contact') }}">{{ __('liên hệ Soopi') }}</a> {{ __('trước khi đặt hàng.') }}
             </div></div>
         </div>
     </div>
 
     {{-- NHÓM 3: Thanh toán --}}
     <div class="ht-faq-group" id="thanh-toan">
-        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'card', 'size' => '1em']) Thanh toán</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'card', 'size' => '1em']) {{ __('Thanh toán') }}</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Soopi hỗ trợ những phương thức thanh toán nào?
+                {{ __('Soopi hỗ trợ những phương thức thanh toán nào?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Chúng tôi hỗ trợ đầy đủ các hình thức:
+                {{ __('Chúng tôi hỗ trợ đầy đủ các hình thức:') }}
                 <ul>
-                    <li>@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <strong>MoMo</strong> – thanh toán QR nhanh chóng</li>
-                    <li>@include('partials.icon', ['name' => 'bank', 'size' => '1em']) <strong>Thẻ ATM nội địa hoặc thẻ quốc tế qua cổng MoMo</strong></li>
-                    <li>@include('partials.icon', ['name' => 'cash', 'size' => '1em']) <strong>COD</strong> – thanh toán khi nhận hàng</li>
+                    <li>@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <strong>MoMo</strong> {{ __('– thanh toán QR nhanh chóng') }}</li>
+                    <li>@include('partials.icon', ['name' => 'bank', 'size' => '1em']) <strong>{{ __('Thẻ ATM nội địa hoặc thẻ quốc tế qua cổng MoMo') }}</strong></li>
+                    <li>@include('partials.icon', ['name' => 'cash', 'size' => '1em']) <strong>COD</strong> {{ __('– thanh toán khi nhận hàng') }}</li>
                 </ul>
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Mã giảm giá (coupon) dùng như thế nào?
+                {{ __('Mã giảm giá (coupon) dùng như thế nào?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Tại trang thanh toán, bạn sẽ thấy ô nhập mã giảm giá. Nhập mã và nhấn <strong>"Áp dụng"</strong> để hệ thống tự tính lại tổng tiền. Mỗi đơn hàng chỉ dùng được một mã, và mỗi mã có thể có điều kiện áp dụng riêng (giá trị đơn tối thiểu, thời hạn...).
+                {{ __('Tại trang thanh toán, bạn sẽ thấy ô nhập mã giảm giá. Nhập mã và nhấn') }} <strong>{{ __('"Áp dụng"') }}</strong> {{ __('để hệ thống tự tính lại tổng tiền. Mỗi đơn hàng chỉ dùng được một mã, và mỗi mã có thể có điều kiện áp dụng riêng (giá trị đơn tối thiểu, thời hạn...).') }}
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Thanh toán MoMo có an toàn không?
+                {{ __('Thanh toán MoMo có an toàn không?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Hoàn toàn an toàn. Giao dịch MoMo được xử lý trực tiếp qua cổng thanh toán chính thức của MoMo với mã hóa SSL. Soopi không lưu trữ thông tin thẻ hay tài khoản ví của bạn.
+                {{ __('Hoàn toàn an toàn. Giao dịch MoMo được xử lý trực tiếp qua cổng thanh toán chính thức của MoMo với mã hóa SSL. Soopi không lưu trữ thông tin thẻ hay tài khoản ví của bạn.') }}
             </div></div>
         </div>
     </div>
 
     {{-- NHÓM 4: Đổi & Trả --}}
     <div class="ht-faq-group" id="doi-tra">
-        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'refresh', 'size' => '1em']) Đổi &amp; trả hàng</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'refresh', 'size' => '1em']) {{ __('Đổi & trả hàng') }}</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Chính sách đổi trả của Soopi như thế nào?
+                {{ __('Chính sách đổi trả của Soopi như thế nào?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Soopi chấp nhận đổi/trả trong vòng <strong>{{ config('storefront.return_days') }} ngày</strong> kể từ ngày nhận hàng nếu:
+                {{ __('Soopi chấp nhận đổi/trả trong vòng') }} <strong>{{ config('storefront.return_days') }} {{ __('ngày') }}</strong> {{ __('kể từ ngày nhận hàng nếu:') }}
                 <ul>
-                    <li>Sản phẩm bị lỗi do nhà sản xuất (nứt vỡ, rỉ chai, mùi không đúng)</li>
-                    <li>Giao nhầm sản phẩm so với đơn đặt hàng</li>
-                    <li>Sản phẩm bị hư hỏng trong quá trình vận chuyển</li>
+                    <li>{{ __('Sản phẩm bị lỗi do nhà sản xuất (nứt vỡ, rỉ chai, mùi không đúng)') }}</li>
+                    <li>{{ __('Giao nhầm sản phẩm so với đơn đặt hàng') }}</li>
+                    <li>{{ __('Sản phẩm bị hư hỏng trong quá trình vận chuyển') }}</li>
                 </ul>
-                Sản phẩm cần còn nguyên seal hoặc còn trên 90% lượng nước để được chấp thuận đổi trả.
+                {{ __('Sản phẩm cần còn nguyên seal hoặc còn trên 90% lượng nước để được chấp thuận đổi trả.') }}
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Tôi cần làm gì để yêu cầu đổi/trả hàng?
+                {{ __('Tôi cần làm gì để yêu cầu đổi/trả hàng?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                <strong>Bước 1:</strong> Chụp ảnh/video sản phẩm lỗi rõ ràng.<br>
-                <strong>Bước 2:</strong> Liên hệ Soopi qua Zalo hoặc inbox fanpage Facebook kèm mã đơn hàng và ảnh minh chứng.<br>
-                <strong>Bước 3:</strong> Đội ngũ sẽ phản hồi trong vòng 24 giờ và hướng dẫn các bước tiếp theo.<br><br>
-                Chi phí giao hàng hoàn trả do Soopi chi trả nếu lỗi từ phía cửa hàng.
+                <strong>{{ __('Bước 1:') }}</strong> {{ __('Chụp ảnh/video sản phẩm lỗi rõ ràng.') }}<br>
+                <strong>{{ __('Bước 2:') }}</strong> {{ __('Liên hệ Soopi qua Zalo hoặc inbox fanpage Facebook kèm mã đơn hàng và ảnh minh chứng.') }}<br>
+                <strong>{{ __('Bước 3:') }}</strong> {{ __('Đội ngũ sẽ phản hồi trong vòng 24 giờ và hướng dẫn các bước tiếp theo.') }}<br><br>
+                {{ __('Chi phí giao hàng hoàn trả do Soopi chi trả nếu lỗi từ phía cửa hàng.') }}
             </div></div>
         </div>
     </div>
 
     {{-- NHÓM 5: Bảo quản --}}
     <div class="ht-faq-group" id="bao-quan">
-        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) Bảo quản &amp; sử dụng</div>
+        <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) {{ __('Bảo quản & sử dụng') }}</div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Bảo quản nước hoa như thế nào để giữ được lâu?
+                {{ __('Bảo quản nước hoa như thế nào để giữ được lâu?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
                 <ul>
-                    <li>Để nơi <strong>thoáng mát, tránh ánh nắng trực tiếp</strong></li>
-                    <li>Không để trong phòng tắm (nhiệt độ và độ ẩm thất thường)</li>
-                    <li>Đóng nắp kín sau mỗi lần dùng</li>
-                    <li>Tránh lắc chai mạnh – dễ tạo bọt và làm bay hương liệu</li>
-                    <li>Nước hoa chính hãng có thể dùng được <strong>3–5 năm</strong> nếu bảo quản đúng cách</li>
+                    <li>{{ __('Để nơi') }} <strong>{{ __('thoáng mát, tránh ánh nắng trực tiếp') }}</strong></li>
+                    <li>{{ __('Không để trong phòng tắm (nhiệt độ và độ ẩm thất thường)') }}</li>
+                    <li>{{ __('Đóng nắp kín sau mỗi lần dùng') }}</li>
+                    <li>{{ __('Tránh lắc chai mạnh – dễ tạo bọt và làm bay hương liệu') }}</li>
+                    <li>{{ __('Nước hoa chính hãng có thể dùng được') }} <strong>{{ __('3–5 năm') }}</strong> {{ __('nếu bảo quản đúng cách') }}</li>
                 </ul>
             </div></div>
         </div>
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                Xịt nước hoa ở đâu để mùi hương tỏa lâu nhất?
+                {{ __('Xịt nước hoa ở đâu để mùi hương tỏa lâu nhất?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Xịt vào <strong>điểm mạch</strong> – nơi nhiệt độ da cao giúp khuếch tán hương tốt hơn:
+                {{ __('Xịt vào') }} <strong>{{ __('điểm mạch') }}</strong> {{ __('– nơi nhiệt độ da cao giúp khuếch tán hương tốt hơn:') }}
                 <ul>
-                    <li>Cổ tay, khuỷu tay trong</li>
-                    <li>Sau tai và cổ</li>
-                    <li>Ngực, hõm cổ</li>
-                    <li>Sau đầu gối (nếu muốn mùi bay nhẹ từ dưới lên)</li>
+                    <li>{{ __('Cổ tay, khuỷu tay trong') }}</li>
+                    <li>{{ __('Sau tai và cổ') }}</li>
+                    <li>{{ __('Ngực, hõm cổ') }}</li>
+                    <li>{{ __('Sau đầu gối (nếu muốn mùi bay nhẹ từ dưới lên)') }}</li>
                 </ul>
-                <em>Mẹo nhỏ:</em> Xịt vào quần áo (vải tự nhiên như cotton) giúp mùi hương lưu lâu hơn trên da.
+                <em>{{ __('Mẹo nhỏ:') }}</em> {{ __('Xịt vào quần áo (vải tự nhiên như cotton) giúp mùi hương lưu lâu hơn trên da.') }}
             </div></div>
         </div>
     </div>
@@ -398,8 +398,8 @@
     {{-- CTA liên hệ --}}
     <div class="ht-faq-cta">
         <span style="font-size:32px;">@include('partials.icon', ['name' => 'chat', 'size' => '1em'])</span>
-        <h2>Vẫn còn thắc mắc?</h2>
-        <p>Đội ngũ Soopi luôn sẵn sàng hỗ trợ bạn — nhanh chóng, tận tâm.</p>
+        <h2>{{ __('Vẫn còn thắc mắc?') }}</h2>
+        <p>{{ __('Đội ngũ Soopi luôn sẵn sàng hỗ trợ bạn — nhanh chóng, tận tâm.') }}</p>
         <div class="ht-faq-social-links">
             <a class="ht-faq-social-link zalo" href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener">
                 <svg width="18" height="18" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="white" fill-opacity=".25"/><text x="5" y="28" font-size="22" font-family="Arial" font-weight="bold" fill="white">Z</text></svg>

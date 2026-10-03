@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'Mùi Hương Hôm Nay (Scent of the Day) · ' . $perfume->name . ' | Soopi')
-@section('meta_description', 'Khám phá mùi hương được Soopi tuyển chọn cho ngày hôm nay: ' . $perfume->name)
+@section('title', __('Mùi Hương Hôm Nay (Scent of the Day) · ') . $perfume->name . ' | Soopi')
+@section('meta_description', __('Khám phá mùi hương được Soopi tuyển chọn cho ngày hôm nay: ') . $perfume->name)
 
 @section('content')
 <div class="store-container ht-sotd-page">
@@ -9,23 +9,23 @@
         <div class="public-flash alert-danger" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
     @endif
     <div class="ht-sotd-date-badge">
-        <span>@include('partials.icon', ['name' => 'calendar', 'size' => '1em']) {{ now()->locale('vi')->isoFormat('dddd, [ngày] D [tháng] M, YYYY') }}</span>
+        <span>@include('partials.icon', ['name' => 'calendar', 'size' => '1em']) {{ now()->locale(app()->getLocale())->isoFormat(__('dddd, [ngày] D [tháng] M, YYYY')) }}</span>
     </div>
 
     <div class="ht-sotd-hero-card">
         <div class="sotd-image-col">
             <div class="sotd-img-frame">
                 <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" class="sotd-main-img">
-                <span class="sotd-daily-ribbon">@include('partials.icon', ['name' => 'star', 'size' => '1em']) MÙI HƯƠNG HÔM NAY</span>
+                <span class="sotd-daily-ribbon">@include('partials.icon', ['name' => 'star', 'size' => '1em']) {{ __('MÙI HƯƠNG HÔM NAY') }}</span>
             </div>
             @if($todayCode)
             <div class="sotd-coupon-box">
-                <span class="coupon-label">ƯU ĐÃI ĐANG ÁP DỤNG:</span>
+                <span class="coupon-label">{{ __('ƯU ĐÃI ĐANG ÁP DỤNG:') }}</span>
                 <div class="coupon-code-pill">
                     <span class="code" id="sotdCoupon">{{ $todayCode }}</span>
-                    <button type="button" class="copy-btn" id="copySotdBtn">Sao chép</button>
+                    <button type="button" class="copy-btn" id="copySotdBtn">{{ __('Sao chép') }}</button>
                 </div>
-                <p class="coupon-hint">Giảm {{ number_format($regularPrice - $dealPrice, 0, ',', '.') }}₫ cho chai này khi nhập mã tại bước thanh toán. Ưu đãi tùy điều kiện và lượt sử dụng còn lại.</p>
+                <p class="coupon-hint">{{ __('Giảm') }} {{ number_format($regularPrice - $dealPrice, 0, ',', '.') }}{{ __('₫ cho chai này khi nhập mã tại bước thanh toán. Ưu đãi tùy điều kiện và lượt sử dụng còn lại.') }}</p>
             </div>
             @endif
         </div>
@@ -39,10 +39,10 @@
 
             <span class="sotd-brand">{{ $perfume->brand }}</span>
             <h1 class="sotd-title">{{ $perfume->name }}</h1>
-            <p class="sotd-meta">{{ $perfume->category->name ?? 'Nước hoa cao cấp' }} · {{ match($perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }} · Chai {{ $perfume->volume_ml }}ml</p>
+            <p class="sotd-meta">{{ __($perfume->category->name ?? __('Nước hoa cao cấp')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $perfume->gender } }} · {{ __('Chai') }} {{ $perfume->volume_ml }}ml</p>
 
             <div class="sotd-story">
-                <h3>Vì sao đây là mùi hương lý tưởng cho hôm nay?</h3>
+                <h3>{{ __('Vì sao đây là mùi hương lý tưởng cho hôm nay?') }}</h3>
                 <p>{{ $dailyEditorial['verified'] ? $dailyEditorial['story'] : ($perfume->description ?: $dailyEditorial['story']) }}</p>
             </div>
 
@@ -53,14 +53,14 @@
                         <div class="pyramid-item"><strong>{{ $layer['label'] }}</strong><p>{{ implode(' · ', $layer['notes']) }}</p></div>
                     @endforeach
                 @else
-                    <div class="pyramid-item" style="grid-column:1/-1"><strong>Nốt hương nổi bật</strong><p>{{ implode(' · ', $dailyEditorial['key_notes']) }}</p></div>
+                    <div class="pyramid-item" style="grid-column:1/-1"><strong>{{ __('Nốt hương nổi bật') }}</strong><p>{{ implode(' · ', $dailyEditorial['key_notes']) }}</p></div>
                 @endif
             </div>
             @endif
 
             <div class="sotd-pricing-action">
                 <div class="sotd-price-wrap">
-                    <span class="deal-label">{{ $todayCode ? 'Giá khi áp dụng mã '.$todayCode : 'Giá sản phẩm' }}</span>
+                    <span class="deal-label">{{ $todayCode ? __('Giá khi áp dụng mã ').$todayCode : __('Giá sản phẩm') }}</span>
                     <div class="price-numbers">
                         <span class="deal-price">{{ number_format($dealPrice, 0, ',', '.') }}₫</span>
                         @if($todayCode)<del class="original-price">{{ number_format($regularPrice, 0, ',', '.') }}₫</del>@endif
@@ -72,11 +72,11 @@
                         @csrf
                         <input type="hidden" name="quantity" value="1">
                         <button type="submit" class="ht-button ht-button-primary ht-button-lg">
-                            Đặt Mua Ngay Hôm Nay
+                            {{ __('Đặt Mua Ngay Hôm Nay') }}
                         </button>
                     </form>
                     <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-outline">
-                        Xem Chi Tiết Mùi Hương
+                        {{ __('Xem Chi Tiết Mùi Hương') }}
                     </a>
                 </div>
             </div>
@@ -279,9 +279,9 @@ document.getElementById('copySotdBtn')?.addEventListener('click', async function
     const code = document.getElementById('sotdCoupon').textContent.trim();
     try {
         await navigator.clipboard.writeText(code);
-        this.textContent = 'Đã chép!';
-    } catch { this.textContent = 'Hãy chọn mã để sao chép'; }
-    setTimeout(() => { this.textContent = 'Sao chép'; }, 2000);
+        this.textContent = (window.soopiT || (text => text))("Đã chép!");
+    } catch { this.textContent = (window.soopiT || (text => text))("Hãy chọn mã để sao chép"); }
+    setTimeout(() => { this.textContent = (window.soopiT || (text => text))("Sao chép"); }, 2000);
 });
 </script>
 @endpush

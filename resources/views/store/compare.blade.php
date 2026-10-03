@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'So Sánh Chi Tiết Nước Hoa · Độ Ngọt, Độ Tươi, Độ Lưu Hương | Soopi')
-@section('meta_description', 'So sánh trực quan các dòng nước hoa theo độ ngọt, độ tươi mát, độ tỏa hương, độ lưu hương và giá trị trên từng ml.')
+@section('title', __('So Sánh Chi Tiết Nước Hoa · Độ Ngọt, Độ Tươi, Độ Lưu Hương | Soopi'))
+@section('meta_description', __('So sánh trực quan các dòng nước hoa theo độ ngọt, độ tươi mát, độ tỏa hương, độ lưu hương và giá trị trên từng ml.'))
 
 @section('content')
 <div class="store-container ht-compare-page">
@@ -9,16 +9,16 @@
         <div class="public-flash alert-danger" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
     @endif
     <header class="ht-compare-header">
-        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'scale', 'size' => '1em']) BẢNG ĐỐI CHIẾU MÙI HƯƠNG</span>
-        <h1 class="ht-compare-title">Đặt cạnh nhau.<br><em>Tìm điều khác biệt.</em></h1>
-        <p class="ht-compare-subtitle">Đối chiếu trực quan về độ ngọt, độ tươi mát, độ bền mùi và giá trị trên mỗi ml để tìm ra chai nước hoa chân ái nhất của bạn.</p>
+        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'scale', 'size' => '1em']) {{ __('BẢNG ĐỐI CHIẾU MÙI HƯƠNG') }}</span>
+        <h1 class="ht-compare-title">{{ __('Đặt cạnh nhau.') }}<br><em>{{ __('Tìm điều khác biệt.') }}</em></h1>
+        <p class="ht-compare-subtitle">{{ __('Đối chiếu trực quan về độ ngọt, độ tươi mát, độ bền mùi và giá trị trên mỗi ml để tìm ra chai nước hoa chân ái nhất của bạn.') }}</p>
     </header>
 
     @if($perfumes->isEmpty())
     <div class="ht-compare-empty">
         <div class="empty-icon">@include('partials.icon', ['name' => 'scale', 'size' => '1em'])</div>
-        <h3>Bạn chưa chọn sản phẩm nào để so sánh</h3>
-        <p>Bấm nút <strong>"@include('partials.icon', ['name' => 'scale', 'size' => '1em']) So sánh"</strong> trên các chai nước hoa ở trang chủ, hoặc bấm vào các bộ so sánh kinh điển bên dưới để khám phá ngay:</p>
+        <h3>{{ __('Bạn chưa chọn sản phẩm nào để so sánh') }}</h3>
+        <p>{{ __('Bấm nút') }} <strong>"@include('partials.icon', ['name' => 'scale', 'size' => '1em']) {{ __('So sánh"') }}</strong> {{ __('trên các chai nước hoa ở trang chủ, hoặc bấm vào các bộ so sánh kinh điển bên dưới để khám phá ngay:') }}</p>
         
         <div class="preset-compares">
             @php
@@ -27,22 +27,22 @@
             @if($samplePairs->count() >= 2)
             <div class="preset-links">
                 <a href="{{ route('store.compare', ['ids' => $samplePairs->take(2)->pluck('id')->join(',')]) }}" class="ht-button ht-button-outline">
-                    So sánh: {{ $samplePairs[0]->name }} vs {{ $samplePairs[1]->name }}
+                    {{ __('So sánh:') }} {{ $samplePairs[0]->name }} vs {{ $samplePairs[1]->name }}
                 </a>
                 @if($samplePairs->count() >= 3)
                 <a href="{{ route('store.compare', ['ids' => $samplePairs->take(3)->pluck('id')->join(',')]) }}" class="ht-button ht-button-outline">
-                    So sánh bộ ba gợi ý
+                    {{ __('So sánh bộ ba gợi ý') }}
                 </a>
                 @endif
             </div>
             @endif
         </div>
         <div style="margin-top: 24px;">
-            <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary">Khám Phá Danh Mục Nước Hoa</a>
+            <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary">{{ __('Khám Phá Danh Mục Nước Hoa') }}</a>
         </div>
     </div>
     @else
-    <div class="ht-compare-table-wrap" tabindex="0" role="region" aria-label="Bảng so sánh nước hoa. Cuộn ngang để xem các sản phẩm.">
+    <div class="ht-compare-table-wrap" tabindex="0" role="region" aria-label="{{ __('Bảng so sánh nước hoa. Cuộn ngang để xem các sản phẩm.') }}">
         <div class="ht-compare-columns" style="--col-count: {{ $perfumes->count() }}">
             {{-- Header info card for each perfume --}}
             @foreach($perfumes as $perfume)
@@ -53,7 +53,7 @@
                     </div>
                     <span class="col-brand">{{ $perfume->brand }}</span>
                     <h2 class="col-name"><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->name }}</a></h2>
-                    <p class="col-meta">{{ $perfume->category->name ?? 'Nước hoa' }} · {{ match($perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }} · {{ $perfume->volume_ml }}ml</p>
+                    <p class="col-meta">{{ __($perfume->category->name ?? __('Nước hoa')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }} · {{ $perfume->volume_ml }}ml</p>
                     
                     <div class="col-price-box">
                         <span class="price-val">{{ number_format($perfume->sale_price ?? $perfume->price, 0, ',', '.') }}₫</span>
@@ -66,9 +66,9 @@
                         <form action="{{ route('cart.add', $perfume) }}" method="POST" style="width: 100%;">
                             @csrf
                             <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="ht-button ht-button-primary" style="width: 100%;">Thêm Vào Giỏ</button>
+                            <button type="submit" class="ht-button ht-button-primary" style="width: 100%;">{{ __('Thêm Vào Giỏ') }}</button>
                         </form>
-                        <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light" style="width: 100%; text-align: center;">Xem Chi Tiết</a>
+                        <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light" style="width: 100%; text-align: center;">{{ __('Xem Chi Tiết') }}</a>
                     </div>
                 </div>
 
@@ -77,7 +77,7 @@
                     {{-- 1. Độ ngọt --}}
                     <div class="metric-item">
                         <div class="metric-title-row">
-                            <span class="m-label">@include('partials.icon', ['name' => 'candy', 'size' => '1em']) Độ Ngọt (Sweetness)</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'candy', 'size' => '1em']) {{ __('Độ Ngọt (Sweetness)') }}</span>
                             <span class="m-val">{{ $perfume->metric_sweetness }}/10</span>
                         </div>
                         <div class="m-bar-track">
@@ -88,7 +88,7 @@
                     {{-- 2. Độ tươi mát --}}
                     <div class="metric-item">
                         <div class="metric-title-row">
-                            <span class="m-label">@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Độ Tươi Mát (Freshness)</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) {{ __('Độ Tươi Mát (Freshness)') }}</span>
                             <span class="m-val">{{ $perfume->metric_freshness }}/10</span>
                         </div>
                         <div class="m-bar-track">
@@ -99,8 +99,8 @@
                     {{-- 3. Độ lưu hương --}}
                     <div class="metric-item">
                         <div class="metric-title-row">
-                            <span class="m-label">@include('partials.icon', ['name' => 'clock', 'size' => '1em']) Độ Lưu Hương</span>
-                            <span class="m-val">{{ $perfume->metric_longevity_hours }}</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'clock', 'size' => '1em']) {{ __('Độ Lưu Hương') }}</span>
+                            <span class="m-val">{{ __($perfume->metric_longevity_hours) }}</span>
                         </div>
                         <div class="m-bar-track">
                             <div class="m-bar-fill longevity" style="width: {{ $perfume->metric_longevity_percent }}%"></div>
@@ -110,31 +110,31 @@
                     {{-- 4. Độ tỏa hương --}}
                     <div class="metric-item">
                         <div class="metric-title-row">
-                            <span class="m-label">@include('partials.icon', ['name' => 'sparkles', 'size' => '1em']) Độ Tỏa Hương</span>
-                            <span class="m-val">{{ $perfume->metric_sillage }}</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'sparkles', 'size' => '1em']) {{ __('Độ Tỏa Hương') }}</span>
+                            <span class="m-val">{{ __($perfume->metric_sillage) }}</span>
                         </div>
                     </div>
 
                     {{-- 5. Giá trị trên mỗi ml --}}
                     <div class="metric-item highlight-box">
                         <div class="metric-title-row">
-                            <span class="m-label">@include('partials.icon', ['name' => 'cash', 'size' => '1em']) Giá / 1ml</span>
+                            <span class="m-label">@include('partials.icon', ['name' => 'cash', 'size' => '1em']) {{ __('Giá / 1ml') }}</span>
                             <span class="m-val" style="color: #c2476a; font-weight: 700;">{{ number_format($perfume->metric_price_per_ml, 0, ',', '.') }}₫/ml</span>
                         </div>
-                        <span class="m-sub">Quy đổi từ chai fullsize {{ $perfume->volume_ml }}ml</span>
+                        <span class="m-sub">{{ __('Quy đổi từ chai fullsize') }} {{ $perfume->volume_ml }}ml</span>
                     </div>
 
                     {{-- 6. Tầng hương nổi bật --}}
                     <div class="metric-notes-section">
-                        <h4>Tầng Hương Tiêu Biểu</h4>
-                        <p class="note-line"><strong>Hương đầu:</strong> {{ Str::limit($perfume->scent_profile['top']['notes'] ?? 'Tươi mát', 60) }}</p>
-                        <p class="note-line"><strong>Hương giữa:</strong> {{ Str::limit($perfume->scent_profile['heart']['notes'] ?? 'Hoa cỏ', 60) }}</p>
-                        <p class="note-line"><strong>Hương cuối:</strong> {{ Str::limit($perfume->scent_profile['base']['notes'] ?? 'Gỗ trầm', 60) }}</p>
+                        <h4>{{ __('Tầng Hương Tiêu Biểu') }}</h4>
+                        <p class="note-line"><strong>{{ __('Hương đầu:') }}</strong> {{ Str::limit(__($perfume->scent_profile['top']['notes'] ?? __('Tươi mát')), 60) }}</p>
+                        <p class="note-line"><strong>{{ __('Hương giữa:') }}</strong> {{ Str::limit(__($perfume->scent_profile['heart']['notes'] ?? __('Hoa cỏ')), 60) }}</p>
+                        <p class="note-line"><strong>{{ __('Hương cuối:') }}</strong> {{ Str::limit(__($perfume->scent_profile['base']['notes'] ?? __('Gỗ trầm')), 60) }}</p>
                     </div>
 
                     {{-- 7. Phong cách phù hợp --}}
                     <div class="metric-style-tag">
-                        <span>Phong cách: <strong>{{ $perfume->scent_profile['style']['text'] ?? 'Thanh lịch, lôi cuốn' }}</strong></span>
+                        <span>{{ __('Phong cách:') }} <strong>{{ __($perfume->scent_profile['style']['text'] ?? __('Thanh lịch, lôi cuốn')) }}</strong></span>
                     </div>
                 </div>
             </div>

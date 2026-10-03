@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'Món Quà Mùi Hương Dành Tặng ' . $recipientName . ' · Từ ' . $senderName . ' | Soopi')
-@section('meta_description', 'Một món quà mùi hương ngọt ngào và thiệp chúc mừng được gửi trao từ ' . $senderName . ' dành riêng cho ' . $recipientName)
+@section('title', __('Món Quà Mùi Hương Dành Tặng ') . $recipientName . __(' · Từ ') . $senderName . ' | Soopi')
+@section('meta_description', __('Một món quà mùi hương ngọt ngào và thiệp chúc mừng được gửi trao từ ') . $senderName . __(' dành riêng cho ') . $recipientName)
 
 @section('content')
 <div class="store-container ht-gift-page">
@@ -10,7 +10,7 @@
     @endif
     <div class="ht-gift-envelope-card">
         <div class="envelope-top-bar">
-            <span>@include('partials.icon', ['name' => 'mail', 'size' => '1em']) BẠN VỪA NHẬN ĐƯỢC MỘT MÓN QUÀ MÙI HƯƠNG</span>
+            <span>@include('partials.icon', ['name' => 'mail', 'size' => '1em']) {{ __('BẠN VỪA NHẬN ĐƯỢC MỘT MÓN QUÀ MÙI HƯƠNG') }}</span>
         </div>
 
         <div class="ht-gift-letter">
@@ -18,14 +18,14 @@
                 @include('partials.brand-logo', ['class' => 'gift-stamp-logo'])
             </div>
             <div class="letter-header">
-                <span class="to-label">Gửi người thương mến,</span>
+                <span class="to-label">{{ __('Gửi người thương mến,') }}</span>
                 <h2 class="recipient-name">{{ $recipientName }}</h2>
             </div>
 
             <div class="letter-body">
                 <p class="letter-message">{{ $message }}</p>
                 <div class="letter-signature">
-                    <span class="from-label">Thân gửi từ,</span>
+                    <span class="from-label">{{ __('Thân gửi từ,') }}</span>
                     <strong class="sender-name">{{ $senderName }}</strong>
                 </div>
             </div>
@@ -36,10 +36,10 @@
                 <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" loading="lazy">
             </div>
             <div class="gift-prod-info">
-                <p class="gift-prod-desc">Đây là thiệp gợi ý mùi hương, chưa phải đơn hàng đã thanh toán.</p>
+                <p class="gift-prod-desc">{{ __('Đây là thiệp gợi ý mùi hương, chưa phải đơn hàng đã thanh toán.') }}</p>
                 <span class="gift-prod-brand">{{ $perfume->brand }}</span>
                 <h3 class="gift-prod-title">{{ $perfume->name }}</h3>
-                <p class="gift-prod-meta">{{ $perfume->category->name ?? 'Nước hoa' }} · Chai {{ $perfume->volume_ml }}ml · {{ match($perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
+                <p class="gift-prod-meta">{{ __($perfume->category->name ?? __('Nước hoa')) }} · {{ __('Chai') }} {{ $perfume->volume_ml }}ml · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
                 <p class="gift-prod-desc">{{ Str::limit(strip_tags($perfume->description), 140) }}</p>
 
                 <div class="gift-prod-action">
@@ -48,20 +48,20 @@
                         <input type="hidden" name="quantity" value="1">
                         <input type="hidden" name="addon_gift" value="1">
                         <button type="submit" class="ht-button ht-button-primary ht-button-lg">
-                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Thêm vào giỏ với gói quà (+50.000₫)
+                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ __('Thêm vào giỏ với gói quà (+50.000₫)') }}
                         </button>
                     </form>
                     <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light">
-                        Xem Chi Tiết Chai Nước Hoa Này
+                        {{ __('Xem Chi Tiết Chai Nước Hoa Này') }}
                     </a>
                 </div>
             </div>
         </div>
 
         <div class="ht-gift-create-own">
-            <h3>Bạn cũng muốn gửi tặng một món quà mùi hương cho bạn bè?</h3>
-            <p>Chọn bất kỳ chai nước hoa nào tại Soopi và bấm nút "Gửi tặng bạn bè" để tự tay soạn thiệp chúc mừng nhé!</p>
-            <a href="{{ route('home') }}" class="ht-button ht-button-outline">Khám Phá Cửa Hàng</a>
+            <h3>{{ __('Bạn cũng muốn gửi tặng một món quà mùi hương cho bạn bè?') }}</h3>
+            <p>{{ __('Chọn bất kỳ chai nước hoa nào tại Soopi và bấm nút "Gửi tặng bạn bè" để tự tay soạn thiệp chúc mừng nhé!') }}</p>
+            <a href="{{ route('home') }}" class="ht-button ht-button-outline">{{ __('Khám Phá Cửa Hàng') }}</a>
         </div>
     </div>
 </div>

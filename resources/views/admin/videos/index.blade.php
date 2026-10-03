@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
-@section('title', 'Quản lý Video & Shorts')
-@section('page_title', 'Quản lý Video & Fragrance Shorts')
+@section('title', __('Quản lý Video & Shorts'))
+@section('page_title', __('Quản lý Video & Fragrance Shorts'))
 
 @section('content')
 @php
@@ -16,7 +16,7 @@
                     <i class="fa-solid fa-clapperboard"></i>
                 </div>
                 <div>
-                    <div class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 0.5px;">Tổng số Video</div>
+                    <div class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 0.5px;">{{ __('Tổng số Video') }}</div>
                     <div style="font-size: 22px; font-weight: 800; color: #1e293b;">{{ number_format($stats['total']) }}</div>
                 </div>
             </div>
@@ -27,7 +27,7 @@
                     <i class="fa-solid fa-circle-play"></i>
                 </div>
                 <div>
-                    <div class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 0.5px;">Đang hiển thị</div>
+                    <div class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 0.5px;">{{ __('Đang hiển thị') }}</div>
                     <div style="font-size: 22px; font-weight: 800; color: #10b981;">{{ number_format($stats['active']) }}</div>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                     <i class="fa-solid fa-fire"></i>
                 </div>
                 <div>
-                    <div class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 0.5px;">Tổng lượt xem</div>
+                    <div class="text-muted small text-uppercase font-weight-bold" style="letter-spacing: 0.5px;">{{ __('Tổng lượt xem') }}</div>
                     <div style="font-size: 22px; font-weight: 800; color: #3b82f6;">{{ number_format($stats['total_views']) }}</div>
                 </div>
             </div>
@@ -50,11 +50,11 @@
         {{-- Header & Actions --}}
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <div>
-                <h5 class="font-weight-bold mb-1" style="color: #0f172a;">Danh sách Video Review & Trải Nghiệm</h5>
-                <p class="text-muted mb-0 small">Quản lý các video ngắn shorts trên Trang chủ và video review cận cảnh trên Trang chi tiết sản phẩm</p>
+                <h5 class="font-weight-bold mb-1" style="color: #0f172a;">{{ __('Danh sách Video Review & Trải Nghiệm') }}</h5>
+                <p class="text-muted mb-0 small">{{ __('Quản lý các video ngắn shorts trên Trang chủ và video review cận cảnh trên Trang chi tiết sản phẩm') }}</p>
             </div>
             <a href="{{ route('admin.videos.create') }}" class="btn btn-primary px-3 py-2 font-weight-bold" style="border-radius: 8px;">
-                <i class="fa-solid fa-plus mr-1"></i> Thêm video mới
+                <i class="fa-solid fa-plus mr-1"></i> {{ __('Thêm video mới') }}
             </a>
         </div>
 
@@ -62,57 +62,57 @@
         <form method="GET" action="{{ route('admin.videos.index') }}" class="studio-filter-bar mb-4">
             <div class="form-row align-items-end">
                 <div class="col-md-4 mb-2 mb-md-0">
-                    <label for="video-search" class="small font-weight-bold text-muted mb-1">Tìm kiếm</label>
+                    <label for="video-search" class="small font-weight-bold text-muted mb-1">{{ __('Tìm kiếm') }}</label>
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                             <span class="input-group-text bg-white border-right-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
                         </div>
-                        <input id="video-search" type="search" name="search" maxlength="255" class="form-control border-left-0" placeholder="Tên video, sản phẩm..." value="{{ request('search') }}">
+                        <input id="video-search" type="search" name="search" maxlength="255" class="form-control border-left-0" placeholder="{{ __('Tên video, sản phẩm...') }}" value="{{ request('search') }}">
                     </div>
                 </div>
                 <div class="col-md-3 mb-2 mb-md-0">
-                    <label for="video-filter-placement" class="small font-weight-bold text-muted mb-1">Vị trí hiển thị</label>
+                    <label for="video-filter-placement" class="small font-weight-bold text-muted mb-1">{{ __('Vị trí hiển thị') }}</label>
                     <select id="video-filter-placement" name="placement" class="form-control form-control-sm">
-                        <option value="all_filter" {{ request('placement') === 'all_filter' || !request('placement') ? 'selected' : '' }}>Tất cả vị trí</option>
-                        <option value="home" {{ request('placement') === 'home' ? 'selected' : '' }}>Trang chủ (Shorts)</option>
-                        <option value="product" {{ request('placement') === 'product' ? 'selected' : '' }}>Chi tiết sản phẩm</option>
-                        <option value="all" {{ request('placement') === 'all' ? 'selected' : '' }}>Cả 2 vị trí (Toàn sàn)</option>
+                        <option value="all_filter" {{ request('placement') === 'all_filter' || !request('placement') ? 'selected' : '' }}>{{ __('Tất cả vị trí') }}</option>
+                        <option value="home" {{ request('placement') === 'home' ? 'selected' : '' }}>{{ __('Trang chủ (Shorts)') }}</option>
+                        <option value="product" {{ request('placement') === 'product' ? 'selected' : '' }}>{{ __('Chi tiết sản phẩm') }}</option>
+                        <option value="all" {{ request('placement') === 'all' ? 'selected' : '' }}>{{ __('Cả 2 vị trí (Toàn sàn)') }}</option>
                     </select>
                 </div>
                 <div class="col-md-3 mb-2 mb-md-0">
-                    <label for="video-filter-status" class="small font-weight-bold text-muted mb-1">Trạng thái</label>
+                    <label for="video-filter-status" class="small font-weight-bold text-muted mb-1">{{ __('Trạng thái') }}</label>
                     <select id="video-filter-status" name="status" class="form-control form-control-sm">
-                        <option value="">Tất cả trạng thái</option>
-                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>Hiển thị</option>
-                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>Tạm ẩn</option>
+                        <option value="">{{ __('Tất cả trạng thái') }}</option>
+                        <option value="active" {{ request('status') === 'active' ? 'selected' : '' }}>{{ __('Hiển thị') }}</option>
+                        <option value="inactive" {{ request('status') === 'inactive' ? 'selected' : '' }}>{{ __('Tạm ẩn') }}</option>
                     </select>
                 </div>
                 <div class="col-md-2 d-flex gap-2">
                     <button type="submit" class="btn btn-dark btn-sm flex-fill font-weight-bold">
-                        <i class="fa-solid fa-filter mr-1"></i> Lọc
+                        <i class="fa-solid fa-filter mr-1"></i> {{ __('Lọc') }}
                     </button>
                     @if($hasVideoFilters)
-                        <a href="{{ route('admin.videos.index') }}" class="btn btn-outline-secondary btn-sm" title="Đặt lại bộ lọc" aria-label="Xóa bộ lọc video">
+                        <a href="{{ route('admin.videos.index') }}" class="btn btn-outline-secondary btn-sm" title="{{ __('Đặt lại bộ lọc') }}" aria-label="{{ __('Xóa bộ lọc video') }}">
                             <i class="fa-solid fa-rotate-left"></i>
                         </a>
                     @endif
                 </div>
             </div>
         </form>
-        <p class="studio-result-count text-muted small">{{ number_format($videos->total()) }} video phù hợp</p>
+        <p class="studio-result-count text-muted small">{{ number_format($videos->total()) }} {{ __('video phù hợp') }}</p>
 
         {{-- Table --}}
         <div class="table-responsive">
             <table class="table table-hover table-admin align-middle mb-0">
                 <thead>
                     <tr>
-                        <th width="110">Ảnh Bìa</th>
-                        <th width="280">Tiêu đề Video</th>
-                        <th width="180">Nước hoa gắn kèm</th>
-                        <th width="140">Vị trí</th>
-                        <th width="120" class="text-center">Lượt xem</th>
-                        <th width="120" class="text-center">Trạng thái</th>
-                        <th width="130" class="text-center">Thao tác</th>
+                        <th width="110">{{ __('Ảnh Bìa') }}</th>
+                        <th width="280">{{ __('Tiêu đề Video') }}</th>
+                        <th width="180">{{ __('Nước hoa gắn kèm') }}</th>
+                        <th width="140">{{ __('Vị trí') }}</th>
+                        <th width="120" class="text-center">{{ __('Lượt xem') }}</th>
+                        <th width="120" class="text-center">{{ __('Trạng thái') }}</th>
+                        <th width="130" class="text-center">{{ __('Thao tác') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -139,9 +139,9 @@
                                     $localVideo = preg_match('~^/?(?:videos|storage|images)/[a-zA-Z0-9/._-]+\.(?:mp4|webm|ogg)$~i', $video->video_url) && !str_contains($video->video_url, '..');
                                 @endphp
                                 @if($remoteVideo || $localVideo)
-                                    <a href="{{ $remoteVideo ? $video->video_url : asset(ltrim($video->video_url, '/')) }}" target="_blank" rel="noopener noreferrer" class="small font-weight-bold d-inline-block" aria-label="Mở video {{ $video->title }} trong tab mới"><i class="fa-solid fa-arrow-up-right-from-square mr-1" aria-hidden="true"></i> Mở video</a>
+                                    <a href="{{ $remoteVideo ? $video->video_url : asset(ltrim($video->video_url, '/')) }}" target="_blank" rel="noopener noreferrer" class="small font-weight-bold d-inline-block" aria-label="Mở video {{ $video->title }} trong tab mới"><i class="fa-solid fa-arrow-up-right-from-square mr-1" aria-hidden="true"></i> {{ __('Mở video') }}</a>
                                 @else
-                                    <span class="small text-danger">Cần cập nhật liên kết video</span>
+                                    <span class="small text-danger">{{ __('Cần cập nhật liên kết video') }}</span>
                                 @endif
                             </td>
                             <td>
@@ -151,16 +151,16 @@
                                     </a>
                                     <span class="badge badge-light border text-muted" style="font-size: 10.5px;">{{ $video->perfume->brand }}</span>
                                 @else
-                                    <span class="text-muted small font-italic">Không gắn cụ thể</span>
+                                    <span class="text-muted small font-italic">{{ __('Không gắn cụ thể') }}</span>
                                 @endif
                             </td>
                             <td>
                                 @if($video->placement === 'home')
-                                    <span class="studio-placement-badge">@include('partials.icon', ['name' => 'home', 'size' => '1em']) Trang chủ</span>
+                                    <span class="studio-placement-badge">@include('partials.icon', ['name' => 'home', 'size' => '1em']) {{ __('Trang chủ') }}</span>
                                 @elseif($video->placement === 'product')
                                     <span class="studio-placement-badge">@include('partials.icon', ['name' => 'bottle', 'size' => '1em']) Trang SP</span>
                                 @else
-                                    <span class="studio-placement-badge">@include('partials.icon', ['name' => 'globe', 'size' => '1em']) Toàn sàn</span>
+                                    <span class="studio-placement-badge">@include('partials.icon', ['name' => 'globe', 'size' => '1em']) {{ __('Toàn sàn') }}</span>
                                 @endif
                             </td>
                             <td class="text-center font-weight-bold" style="color: #334155; font-size: 0.9rem;">
@@ -169,23 +169,23 @@
                             <td class="text-center">
                                 <form method="POST" action="{{ route('admin.videos.toggle', $video) }}" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent" title="Bấm để bật/tắt" aria-label="{{ $video->is_active ? 'Ẩn' : 'Hiển thị' }} video {{ $video->title }}">
+                                    <button type="submit" class="btn btn-sm p-0 border-0 bg-transparent" title="{{ __('Bấm để bật/tắt') }}" aria-label="{{ $video->is_active ? 'Ẩn' : 'Hiển thị' }} video {{ $video->title }}">
                                         @if($video->is_active)
-                                            <span class="badge-active cursor-pointer"><i class="fa-solid fa-circle mr-1" style="font-size:0.5rem;"></i> Hiển thị</span>
+                                            <span class="badge-active cursor-pointer"><i class="fa-solid fa-circle mr-1" style="font-size:0.5rem;"></i> {{ __('Hiển thị') }}</span>
                                         @else
-                                            <span class="badge-inactive cursor-pointer"><i class="fa-solid fa-circle mr-1" style="font-size:0.5rem;"></i> Tạm ẩn</span>
+                                            <span class="badge-inactive cursor-pointer"><i class="fa-solid fa-circle mr-1" style="font-size:0.5rem;"></i> {{ __('Tạm ẩn') }}</span>
                                         @endif
                                     </button>
                                 </form>
                             </td>
                             <td class="text-center">
-                                <a href="{{ route('admin.videos.edit', $video) }}" class="btn btn-outline-warning btn-sm mr-1" title="Chỉnh sửa" aria-label="Sửa video {{ $video->title }}">
+                                <a href="{{ route('admin.videos.edit', $video) }}" class="btn btn-outline-warning btn-sm mr-1" title="{{ __('Chỉnh sửa') }}" aria-label="Sửa video {{ $video->title }}">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 <form class="d-inline" method="POST" action="{{ route('admin.videos.destroy', $video) }}" data-confirm="Xóa video {{ $video->title }}? Video sẽ bị gỡ khỏi danh sách quản lý.">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Xóa" aria-label="Xóa video {{ $video->title }}">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="{{ __('Xóa') }}" aria-label="Xóa video {{ $video->title }}">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>
@@ -195,8 +195,8 @@
                         <tr>
                             <td colspan="7" class="text-center py-5 text-muted">
                                 <i class="fa-solid fa-video-slash mb-2" style="font-size: 2.2rem; opacity: 0.35;"></i>
-                                <div class="font-weight-bold">{{ $hasVideoFilters ? 'Không tìm thấy video phù hợp' : 'Chưa có video nào' }}</div>
-                                <div class="small">{{ $hasVideoFilters ? 'Thử từ khóa khác hoặc xóa bộ lọc để xem tất cả video.' : 'Thêm video đầu tiên để giới thiệu sản phẩm và trải nghiệm mùi hương.' }}</div>
+                                <div class="font-weight-bold">{{ $hasVideoFilters ? __('Không tìm thấy video phù hợp') : __('Chưa có video nào') }}</div>
+                                <div class="small">{{ $hasVideoFilters ? __('Thử từ khóa khác hoặc xóa bộ lọc để xem tất cả video.') : __('Thêm video đầu tiên để giới thiệu sản phẩm và trải nghiệm mùi hương.') }}</div>
                             </td>
                         </tr>
                     @endforelse
@@ -207,7 +207,7 @@
         @if($videos->total())
             <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top flex-wrap">
                 <div class="text-muted small">
-                    Hiển thị từ {{ $videos->firstItem() }} đến {{ $videos->lastItem() }} trên tổng số {{ $videos->total() }} video
+                    {{ __('Hiển thị từ') }} {{ $videos->firstItem() }} {{ __('đến') }} {{ $videos->lastItem() }} {{ __('trên tổng số') }} {{ $videos->total() }} video
                 </div>
                 <div>
                     {{ $videos->links() }}

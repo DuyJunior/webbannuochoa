@@ -11,7 +11,7 @@ document.querySelectorAll('[data-shop-photo-gallery]').forEach(gallery => {
         image.src = thumbnail.href;
         image.alt = thumbnail.dataset.photoAlt;
         fullSizeLink.href = thumbnail.href;
-        caption.textContent = `Ảnh ${thumbnail.dataset.photoPosition} / ${thumbnail.dataset.photoCount}`;
+        caption.textContent = `${(window.soopiT || (text => text))("Ảnh")} ${thumbnail.dataset.photoPosition} / ${thumbnail.dataset.photoCount}`;
         thumbnails.forEach(link => {
             if (link === thumbnail) link.setAttribute('aria-current', 'true');
             else link.removeAttribute('aria-current');

@@ -1,10 +1,10 @@
 {{-- FLOATING SOCIAL CONTACT BUTTONS --}}
-<details class="bloom-contact-menu"><summary aria-label="Mở các kênh liên hệ" title="Liên hệ Soopi">@include('partials.icon', ['name' => 'phone', 'size' => 20])</summary>
-<div class="ht-social-float" aria-label="Liên hệ nhanh">
+<details class="bloom-contact-menu"><summary aria-label="{{ __('Mở các kênh liên hệ') }}" title="{{ __('Liên hệ Soopi') }}">@include('partials.icon', ['name' => 'phone', 'size' => 20])</summary>
+<div class="ht-social-float" aria-label="{{ __('Liên hệ nhanh') }}">
     <div class="ht-social-float-inner">
         <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener"
            class="ht-float-btn ht-float-zalo"
-           aria-label="Chat Zalo với Soopi">
+           aria-label="{{ __('Chat Zalo với Soopi') }}">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
                 <path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5 9.5 9.5 0 0 1-4-.9L3 21l1.9-5.5a9.5 9.5 0 0 1-.9-4A8.5 8.5 0 0 1 12.5 3h.5a8.5 8.5 0 0 1 8 8v.5Z"/>
                 <path d="M8 10h9M8 14h6"/>
@@ -13,7 +13,7 @@
         </a>
         <a href="{{ config('storefront.facebook_url') }}" target="_blank" rel="noopener"
            class="ht-float-btn ht-float-messenger"
-           aria-label="Liên hệ qua Facebook">
+           aria-label="{{ __('Liên hệ qua Facebook') }}">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
                 <path d="M12 0C5.374 0 0 4.974 0 11.111c0 3.498 1.744 6.614 4.469 8.652V24l4.088-2.242c1.092.3 2.246.464 3.443.464 6.626 0 12-4.974 12-11.111S18.626 0 12 0zm1.191 14.963l-3.055-3.26-5.963 3.26L10.732 8l3.131 3.26L19.752 8l-6.561 6.963z"/>
             </svg>

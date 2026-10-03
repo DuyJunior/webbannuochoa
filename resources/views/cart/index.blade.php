@@ -1,17 +1,17 @@
 @extends('layouts.store')
 
-@section('title', 'Giỏ hàng · Soopi')
+@section('title', __('Giỏ hàng · Soopi'))
 
 @section('content')
 <section class="store-container cart-page-modern">
     {{-- Header & Breadcrumb --}}
     <div class="cart-top-bar">
         <a class="cart-back-btn" href="{{ route('home') }}#san-pham">
-            ← Tiếp tục mua sắm
+            {{ __('← Tiếp tục mua sắm') }}
         </a>
         <div class="cart-title-wrap">
-            <h1 class="cart-page-title">Giỏ hàng của bạn</h1>
-            <span class="cart-item-count-pill" id="headerItemCountPill">{{ $items->sum('quantity') }} sản phẩm</span>
+            <h1 class="cart-page-title">{{ __('Giỏ hàng của bạn') }}</h1>
+            <span class="cart-item-count-pill" id="headerItemCountPill">{{ $items->sum('quantity') }} {{ __('sản phẩm') }}</span>
         </div>
     </div>
 
@@ -31,25 +31,25 @@
             <div><strong>{{ $unavailable['name'] }}</strong><br>{{ $unavailable['reason'] }}</div>
             <form method="POST" action="{{ route('cart.remove', $unavailable['item_key']) }}">
                 @csrf @method('DELETE')
-                <button class="btn-item-remove" type="submit">Xóa sản phẩm không khả dụng</button>
+                <button class="btn-item-remove" type="submit">{{ __('Xóa sản phẩm không khả dụng') }}</button>
             </form>
         </div>
     @endforeach
     @if ($items->isEmpty())
         <div class="cart-empty-box">
             <div class="empty-icon">@include('partials.icon', ['name' => 'bag', 'size' => '1em'])</div>
-            <h2>Giỏ hàng của bạn đang trống</h2>
-            <p>Hãy khám phá những tuyệt tác mùi hương chính hãng tại Soopi.</p>
-            <a class="btn-empty-shop" href="{{ route('home') }}#san-pham">Khám phá sản phẩm ngay</a>
+            <h2>{{ __('Giỏ hàng của bạn đang trống') }}</h2>
+            <p>{{ __('Hãy khám phá những tuyệt tác mùi hương chính hãng tại Soopi.') }}</p>
+            <a class="btn-empty-shop" href="{{ route('home') }}#san-pham">{{ __('Khám phá sản phẩm ngay') }}</a>
         </div>
     @else
         {{-- Free Shipping Banner --}}
         <div class="cart-freeship-banner">
             <div class="freeship-content">
                 <span class="freeship-icon">@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
-                <span>Phí vận chuyển được tính theo địa chỉ nhận hàng ở bước thanh toán.</span>
+                <span>{{ __('Phí vận chuyển được tính theo địa chỉ nhận hàng ở bước thanh toán.') }}</span>
             </div>
-            <span class="freeship-tag">Phí được báo trước khi đặt</span>
+            <span class="freeship-tag">{{ __('Phí được báo trước khi đặt') }}</span>
         </div>
 
         <div class="cart-main-grid">
@@ -60,10 +60,10 @@
                     <label class="custom-cart-checkbox-label" for="selectAllCart">
                         <input type="checkbox" id="selectAllCart" class="custom-cart-checkbox-input" checked>
                         <span class="custom-cart-checkbox-box"></span>
-                        <span class="select-all-label-text">Chọn tất cả (<span id="totalItemTypesCount">{{ $items->count() }}</span> loại sản phẩm)</span>
+                        <span class="select-all-label-text">{{ __('Chọn tất cả (') }}<span id="totalItemTypesCount">{{ $items->count() }}</span> {{ __('loại sản phẩm)') }}</span>
                     </label>
                     <div class="cart-selected-status-badge">
-                        Đã chọn: <strong id="selectedTypesCount">{{ $items->count() }}</strong> / {{ $items->count() }}
+                        {{ __('Đã chọn:') }} <strong id="selectedTypesCount">{{ $items->count() }}</strong> / {{ $items->count() }}
                     </div>
                 </div>
 
@@ -75,7 +75,7 @@
                     <article class="cart-item-card is-selected" id="item-card-{{ md5($itemKey) }}">
                         {{-- Checkbox Select --}}
                         <div class="item-select-checkbox-wrap">
-                            <label class="custom-cart-checkbox-label" for="check_{{ md5($itemKey) }}" title="Chọn sản phẩm này để thanh toán">
+                            <label class="custom-cart-checkbox-label" for="check_{{ md5($itemKey) }}" title="{{ __('Chọn sản phẩm này để thanh toán') }}">
                                 <input type="checkbox"
                                        name="selected_items[]"
                                        form="checkoutSelectionForm"
@@ -107,14 +107,14 @@
                             
                             {{-- Dung tích --}}
                             <div class="item-option-badge volume-badge">
-                                <span>@include('partials.icon', ['name' => 'drop', 'size' => '1em']) Dung tích: <strong>{{ $item['volume_label'] ?? ($item['volume_ml'].'ml') }}</strong></span>
+                                <span>@include('partials.icon', ['name' => 'drop', 'size' => '1em']) {{ __('Dung tích:') }} <strong>{{ $item['volume_label'] ?? ($item['volume_ml'].'ml') }}</strong></span>
                             </div>
 
                             @if($item['is_discovery_box'])
                                 <p class="item-sample-summary">{{ $item['engrave_text'] }}</p>
                             @endif
                             @if($item['is_gift_bundle'])
-                                <p class="item-sample-summary"><strong>Hai mẫu 5ml:</strong> {{ implode(' · ', $item['sample_names']) }}</p>
+                                <p class="item-sample-summary"><strong>{{ __('Hai mẫu 5ml:') }}</strong> {{ implode(' · ', $item['sample_names']) }}</p>
                             @endif
 
                             {{-- Dịch vụ quà tặng & khắc tên --}}
@@ -122,19 +122,19 @@
                                 <div class="item-addons-group">
                                     @if(!empty($item['has_gift']))
                                         <span class="addon-badge gift-badge">
-                                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ $item['is_gift_bundle'] ? 'Hộp quà & thiệp đã gồm trong giá combo' : ($item['is_discovery_box'] ? 'Giá trọn hộp mẫu thử' : 'Gói quà Luxury & Thiệp (+50.000₫)') }}
+                                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ $item['is_gift_bundle'] ? __('Hộp quà & thiệp đã gồm trong giá combo') : ($item['is_discovery_box'] ? __('Giá trọn hộp mẫu thử') : __('Gói quà Luxury & Thiệp (+50.000₫)')) }}
                                         </span>
                                     @endif
                                     @if(!empty($item['has_engrave']) && !empty($item['engrave_text']))
                                         <span class="addon-badge engrave-badge">
-                                            @include('partials.icon', ['name' => 'pen', 'size' => '1em']) Khắc Laser: "<strong>{{ $item['engrave_text'] }}</strong>"
+                                            @include('partials.icon', ['name' => 'pen', 'size' => '1em']) {{ __('Khắc Laser: "') }}<strong>{{ $item['engrave_text'] }}</strong>"
                                         </span>
                                     @endif
                                 </div>
                             @endif
 
                             <div class="item-unit-price">
-                                Đơn giá: <strong>{{ number_format($item['unit_price'], 0, ',', '.') }}₫</strong>
+                                {{ __('Đơn giá:') }} <strong>{{ number_format($item['unit_price'], 0, ',', '.') }}₫</strong>
                             </div>
                         </div>
 
@@ -143,24 +143,24 @@
                             <form method="POST" action="{{ route('cart.update', $itemKey) }}" class="item-qty-form">
                                 @csrf @method('PATCH')
                                 <div class="custom-qty-picker" data-quantity-picker>
-                                    <button type="button" data-quantity-minus class="qty-btn minus" aria-label="Giảm số lượng">−</button>
+                                    <button type="button" data-quantity-minus class="qty-btn minus" aria-label="{{ __('Giảm số lượng') }}">−</button>
                                     <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ max(1, $item['max_quantity']) }}" class="qty-input" aria-label="Số lượng {{ ($item['is_discovery_box'] || $item['is_gift_bundle']) ? $item['custom_title'] : $product->name }}">
-                                    <button type="button" data-quantity-plus class="qty-btn plus" aria-label="Tăng số lượng">+</button>
+                                    <button type="button" data-quantity-plus class="qty-btn plus" aria-label="{{ __('Tăng số lượng') }}">+</button>
                                 </div>
-                                <button class="btn-qty-update" type="submit" title="Cập nhật số lượng">Cập nhật</button>
+                                <button class="btn-qty-update" type="submit" title="{{ __('Cập nhật số lượng') }}">{{ __('Cập nhật') }}</button>
                             </form>
 
                             {{-- Line Total --}}
                             <div class="item-line-total">
-                                <span class="total-label">Thành tiền</span>
+                                <span class="total-label">{{ __('Thành tiền') }}</span>
                                 <strong class="total-value">{{ number_format($item['line_total'], 0, ',', '.') }}₫</strong>
                             </div>
 
                             {{-- Remove Button --}}
                             <form method="POST" action="{{ route('cart.remove', $itemKey) }}">
                                 @csrf @method('DELETE')
-                                <button class="btn-item-remove" type="submit" title="Xóa khỏi giỏ hàng" onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
-                                    @include('partials.icon', ['name' => 'close', 'size' => '1em']) Xóa
+                                <button class="btn-item-remove" type="submit" title="{{ __('Xóa khỏi giỏ hàng') }}" onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?')">
+                                    @include('partials.icon', ['name' => 'close', 'size' => '1em']) {{ __('Xóa') }}
                                 </button>
                             </form>
                         </div>
@@ -170,15 +170,15 @@
                 <div class="cart-guarantee-box">
                     <div class="guarantee-item">
                         <span>@include('partials.icon', ['name' => 'shield', 'size' => '1em'])</span>
-                        <div><strong>100% Chính hãng</strong><small>Cam kết nguồn gốc rõ ràng</small></div>
+                        <div><strong>{{ __('100% Chính hãng') }}</strong><small>{{ __('Cam kết nguồn gốc rõ ràng') }}</small></div>
                     </div>
                     <div class="guarantee-item">
                         <span>@include('partials.icon', ['name' => 'refresh', 'size' => '1em'])</span>
-                        <div><strong>Đổi trả {{ config('storefront.return_days') }} ngày</strong><small><a href="{{ route('store.faq') }}#doi-tra">Xem điều kiện đổi trả</a></small></div>
+                        <div><strong>{{ __('Đổi trả') }} {{ config('storefront.return_days') }} {{ __('ngày') }}</strong><small><a href="{{ route('store.faq') }}#doi-tra">{{ __('Xem điều kiện đổi trả') }}</a></small></div>
                     </div>
                     <div class="guarantee-item">
                         <span>@include('partials.icon', ['name' => 'box', 'size' => '1em'])</span>
-                        <div><strong>Đóng gói an toàn</strong><small>3 lớp chống sốc chuyên dụng</small></div>
+                        <div><strong>{{ __('Đóng gói an toàn') }}</strong><small>{{ __('3 lớp chống sốc chuyên dụng') }}</small></div>
                     </div>
                 </div>
             </div>
@@ -187,56 +187,56 @@
             <aside class="cart-checkout-sidebar">
                 <div class="checkout-card-box">
                     <div class="purchase-summary-heading">
-                        <h2 class="checkout-box-title">Tóm tắt đơn hàng</h2>
+                        <h2 class="checkout-box-title">{{ __('Tóm tắt đơn hàng') }}</h2>
                         <span class="purchase-summary-badge">@include('partials.icon', ['name' => 'bag', 'size' => '1em'])</span>
                     </div>
 
                     <div class="checkout-summary-lines">
                         <div class="summary-line">
-                            <span>Số lượng sản phẩm</span>
-                            <strong id="checkoutSelectedQuantity">{{ $items->sum('quantity') }} món</strong>
+                            <span>{{ __('Số lượng sản phẩm') }}</span>
+                            <strong id="checkoutSelectedQuantity">{{ $items->sum('quantity') }} {{ __('món') }}</strong>
                         </div>
                         <div class="summary-line">
-                            <span>Tạm tính tiền hàng</span>
+                            <span>{{ __('Tạm tính tiền hàng') }}</span>
                             <strong id="subtotalDisplay">{{ number_format($subtotal, 0, ',', '.') }}₫</strong>
                         </div>
                         <div class="summary-line">
-                            <span>Phí vận chuyển (GHN)</span>
-                            <span class="purchase-shipping-note">Tính ở bước thanh toán</span>
+                            <span>{{ __('Phí vận chuyển (GHN)') }}</span>
+                            <span class="purchase-shipping-note">{{ __('Tính ở bước thanh toán') }}</span>
                         </div>
                         <div class="summary-line total-line">
-                            <span>Ước tính tổng tiền</span>
+                            <span>{{ __('Ước tính tổng tiền') }}</span>
                             <strong class="grand-total-amount" id="final_total_text">{{ number_format($subtotal, 0, ',', '.') }}₫</strong>
                         </div>
                     </div>
 
                     {{-- Warning message when no items checked --}}
                     <div id="noSelectionAlert" class="cart-no-selection-alert" style="display: none; margin: 14px 0;">
-                        <span>@include('partials.icon', ['name' => 'warning', 'size' => '1em']) Vui lòng tick chọn ít nhất 1 sản phẩm để thanh toán.</span>
+                        <span>@include('partials.icon', ['name' => 'warning', 'size' => '1em']) {{ __('Vui lòng tick chọn ít nhất 1 sản phẩm để thanh toán.') }}</span>
                     </div>
 
                     <form method="GET" action="{{ route('payment.index') }}" id="checkoutSelectionForm" class="purchase-checkout-action">
                         <input type="hidden" name="selection" value="1">
                         <button type="submit" class="btn-submit-order" id="btnProceedToCheckout">
-                            <span>Tiếp tục thanh toán</span>
+                            <span>{{ __('Tiếp tục thanh toán') }}</span>
                             <span class="btn-arrow">→</span>
                         </button>
                     </form>
 
                     <div class="purchase-continue">
                         <a href="{{ route('home') }}#san-pham">
-                            ← Chọn thêm nước hoa khác
+                            {{ __('← Chọn thêm nước hoa khác') }}
                         </a>
                     </div>
 
                     <div class="checkout-security-note">
                         <div class="purchase-security-line">
                             <span>@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
-                            <span>Giao hàng tận nơi toàn quốc qua <strong>Giao Hàng Nhanh (GHN)</strong></span>
+                            <span>{{ __('Giao hàng tận nơi toàn quốc qua') }} <strong>{{ __('Giao Hàng Nhanh (GHN)') }}</strong></span>
                         </div>
                         <div class="purchase-security-line">
                             <span>@include('partials.icon', ['name' => 'card', 'size' => '1em'])</span>
-                            <span>Hỗ trợ thanh toán khi nhận hàng (COD) linh hoạt</span>
+                            <span>{{ __('Hỗ trợ thanh toán khi nhận hàng (COD) linh hoạt') }}</span>
                         </div>
                     </div>
                 </div>
@@ -911,7 +911,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (subtotalDisplay) subtotalDisplay.textContent = formatVND(totalAmount);
         if (finalTotalText) finalTotalText.textContent = formatVND(totalAmount);
         if (selectedTypesCount) selectedTypesCount.textContent = selectedCount;
-        if (checkoutSelectedQuantity) checkoutSelectedQuantity.textContent = totalQuantity + ' món';
+        if (checkoutSelectedQuantity) checkoutSelectedQuantity.textContent = totalQuantity + (window.soopiT || (text => text))(" món");
 
         // Select All checkbox state sync
         if (selectAllCheckbox) {

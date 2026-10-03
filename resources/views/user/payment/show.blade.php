@@ -1,31 +1,31 @@
 @extends('layouts.store')
 
-@section('title', 'Chi tiết đơn hàng #' . $order->id . ' · Soopi')
+@section('title', __('Chi tiết đơn hàng #') . $order->id . ' · Soopi')
 
 @section('content')
 <div class="order-detail-page">
     <div class="store-container">
         {{-- Breadcrumb --}}
         <nav class="detail-breadcrumb">
-            <a href="{{ route('home') }}">Trang chủ</a>
+            <a href="{{ route('home') }}">{{ __('Trang chủ') }}</a>
             <span>/</span>
-            <a href="{{ route('orders.index') }}">Đơn hàng của tôi</a>
+            <a href="{{ route('orders.index') }}">{{ __('Đơn hàng của tôi') }}</a>
             <span>/</span>
-            <span class="active">Chi tiết đơn hàng #{{ $order->id }}</span>
+            <span class="active">{{ __('Chi tiết đơn hàng #') }}{{ $order->id }}</span>
         </nav>
 
         <div class="order-detail-header">
             <div>
-                <span class="badge-tag">Đơn hàng #{{ $order->id }}</span>
-                <h1>Chi Tiết Đơn Hàng</h1>
-                <p>Ngày tạo: {{ $order->created_at->format('d/m/Y H:i') }}</p>
+                <span class="badge-tag">{{ __('Đơn hàng #') }}{{ $order->id }}</span>
+                <h1>{{ __('Chi Tiết Đơn Hàng') }}</h1>
+                <p>{{ __('Ngày tạo:') }} {{ $order->created_at->format('d/m/Y H:i') }}</p>
             </div>
             <div class="header-action-group">
-                <a href="{{ route('orders.index') }}" class="btn-back-history">← Lịch sử đơn hàng</a>
+                <a href="{{ route('orders.index') }}" class="btn-back-history">{{ __('← Lịch sử đơn hàng') }}</a>
                 @if(in_array($order->shipping_status, ['pending', 'ready_to_pick']))
                     <form method="POST" action="{{ route('orders.cancel', $order->id) }}" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này? Hệ thống sẽ tự động đồng bộ yêu cầu hủy sang Giao Hàng Nhanh (GHN).');">
                         @csrf
-                        <button type="submit" class="btn-cancel-order">Hủy đơn hàng này</button>
+                        <button type="submit" class="btn-cancel-order">{{ __('Hủy đơn hàng này') }}</button>
                     </form>
                 @endif
             </div>
@@ -49,25 +49,25 @@
                 <div class="tracking-partner">
                     <span class="truck-icon">@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
                     <div>
-                        <strong>Vận chuyển bởi Giao Hàng Nhanh (GHN)</strong>
+                        <strong>{{ __('Vận chuyển bởi Giao Hàng Nhanh (GHN)') }}</strong>
                         @if($order->ghn_order_code)
-                            <p class="tracking-code">Mã vận đơn GHN: <span class="code-bold">{{ $order->ghn_order_code }}</span></p>
+                            <p class="tracking-code">{{ __('Mã vận đơn GHN:') }} <span class="code-bold">{{ $order->ghn_order_code }}</span></p>
                         @else
-                            <p class="tracking-code">Chưa có mã vận đơn GHN</p>
+                            <p class="tracking-code">{{ __('Chưa có mã vận đơn GHN') }}</p>
                         @endif
                     </div>
                 </div>
                 <div class="tracking-status-pill">
                     @if($order->shipping_status === 'cancelled')
-                        <span class="pill-cancelled">Đơn hàng đã hủy</span>
+                        <span class="pill-cancelled">{{ __('Đơn hàng đã hủy') }}</span>
                     @elseif($order->shipping_status === 'delivered')
-                        <span class="pill-delivered">Giao hàng thành công</span>
+                        <span class="pill-delivered">{{ __('Giao hàng thành công') }}</span>
                     @elseif($order->shipping_status === 'delivering')
-                        <span class="pill-delivering">Đang giao hàng</span>
+                        <span class="pill-delivering">{{ __('Đang giao hàng') }}</span>
                     @elseif($order->shipping_status === 'ready_to_pick')
-                        <span class="pill-ready">GHN đã tiếp nhận (Chờ lấy hàng)</span>
+                        <span class="pill-ready">{{ __('GHN đã tiếp nhận (Chờ lấy hàng)') }}</span>
                     @else
-                        <span class="pill-pending">Chờ xác nhận</span>
+                        <span class="pill-pending">{{ __('Chờ xác nhận') }}</span>
                     @endif
                 </div>
             </div>
@@ -76,22 +76,22 @@
                 <div class="tracking-timeline">
                     <div class="timeline-step {{ $currentStep >= 1 ? 'active' : '' }}">
                         <div class="step-circle">1</div>
-                        <span>Đặt hàng</span>
+                        <span>{{ __('Đặt hàng') }}</span>
                     </div>
                     <div class="timeline-line {{ $currentStep >= 2 ? 'active' : '' }}"></div>
                     <div class="timeline-step {{ $currentStep >= 2 ? 'active' : '' }}">
                         <div class="step-circle">2</div>
-                        <span>GHN tiếp nhận</span>
+                        <span>{{ __('GHN tiếp nhận') }}</span>
                     </div>
                     <div class="timeline-line {{ $currentStep >= 3 ? 'active' : '' }}"></div>
                     <div class="timeline-step {{ $currentStep >= 3 ? 'active' : '' }}">
                         <div class="step-circle">3</div>
-                        <span>Đang giao hàng</span>
+                        <span>{{ __('Đang giao hàng') }}</span>
                     </div>
                     <div class="timeline-line {{ $currentStep >= 4 ? 'active' : '' }}"></div>
                     <div class="timeline-step {{ $currentStep >= 4 ? 'active' : '' }}">
                         <div class="step-circle">4</div>
-                        <span>Thành công</span>
+                        <span>{{ __('Thành công') }}</span>
                     </div>
                 </div>
             @endif
@@ -101,7 +101,7 @@
             {{-- Cột trái: Danh sách sản phẩm --}}
             <div class="detail-col-items">
                 <div class="detail-card">
-                    <h3 class="detail-card-title">Sản phẩm trong đơn hàng</h3>
+                    <h3 class="detail-card-title">{{ __('Sản phẩm trong đơn hàng') }}</h3>
                     <div class="detail-items-table">
                         @foreach ($order->items as $item)
                             @php $prod = $item->product ?? $item->perfume; @endphp
@@ -116,21 +116,21 @@
                                 <div class="detail-item-info">
                                     <h4>{{ $item->display_name }}</h4>
                                     <div class="detail-item-meta">
-                                        <span>Dung tích: {{ $item->volume_label }}</span>
+                                        <span>{{ __('Dung tích:') }} {{ $item->volume_label }}</span>
                                         @if($item->addon_gift)
-                                            <span class="badge-gift">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) Hộp quà & Nơ</span>
+                                            <span class="badge-gift">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ __('Hộp quà & Nơ') }}</span>
                                         @endif
                                         @if($item->engrave_text)
-                                            <span class="badge-engrave">@include('partials.icon', ['name' => 'pen', 'size' => '1em']) Khắc tên: "{{ $item->engrave_text }}"</span>
+                                            <span class="badge-engrave">@include('partials.icon', ['name' => 'pen', 'size' => '1em']) {{ __('Khắc tên: "') }}{{ $item->engrave_text }}"</span>
                                         @endif
                                     </div>
                                     @include('partials.order-item-samples')
                                     <div class="detail-item-unitprice">
-                                        Đơn giá: {{ number_format($item->price, 0, ',', '.') }}₫ × {{ $item->quantity }}
+                                        {{ __('Đơn giá:') }} {{ number_format($item->price, 0, ',', '.') }}{{ __('₫ ×') }} {{ $item->quantity }}
                                     </div>
                                 </div>
                                 <div class="detail-item-total">
-                                    {{ number_format($item->price * $item->quantity, 0, ',', '.') }} VNĐ
+                                    {{ number_format($item->price * $item->quantity, 0, ',', '.') }} {{ __('VNĐ') }}
                                 </div>
                             </div>
                         @endforeach
@@ -141,35 +141,35 @@
             {{-- Cột phải: Thông tin nhận hàng & Thanh toán --}}
             <div class="detail-col-side">
                 <div class="detail-card">
-                    <h3 class="detail-card-title">Thông tin giao nhận</h3>
+                    <h3 class="detail-card-title">{{ __('Thông tin giao nhận') }}</h3>
                     <div class="info-list">
                         <div class="info-row">
-                            <span class="info-label">Người nhận:</span>
+                            <span class="info-label">{{ __('Người nhận:') }}</span>
                             <span class="info-value"><strong>{{ $order->name }}</strong></span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label">Số điện thoại:</span>
+                            <span class="info-label">{{ __('Số điện thoại:') }}</span>
                             <span class="info-value">{{ $order->phone }}</span>
                         </div>
                         <div class="info-row">
-                            <span class="info-label">Địa chỉ giao:</span>
+                            <span class="info-label">{{ __('Địa chỉ giao:') }}</span>
                             <span class="info-value">{{ $order->address }}</span>
                         </div>
                         @if($order->note)
                             <div class="info-row">
-                                <span class="info-label">Ghi chú đơn hàng:</span>
+                                <span class="info-label">{{ __('Ghi chú đơn hàng:') }}</span>
                                 <span class="info-value" style="white-space:pre-line;overflow-wrap:anywhere">{{ $order->note }}</span>
                             </div>
                         @endif
                         <div class="info-row">
-                            <span class="info-label">Hình thức:</span>
+                            <span class="info-label">{{ __('Hình thức:') }}</span>
                             <span class="info-value">
                                 @if($order->status === 'paid')
-                                    <strong style="color:#059669;">@include('partials.icon', ['name' => 'check', 'size' => '1em']) Ví MoMo (Đã thanh toán)</strong>
+                                    <strong style="color:#059669;">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __('Ví MoMo (Đã thanh toán)') }}</strong>
                                 @elseif($order->status === 'cod_ordered')
-                                    <span>Thanh toán khi nhận hàng (COD)</span>
+                                    <span>{{ __('Thanh toán khi nhận hàng (COD)') }}</span>
                                 @else
-                                    <strong style="color:#d97706;">Chờ thanh toán (MoMo/COD)</strong>
+                                    <strong style="color:#d97706;">{{ __('Chờ thanh toán (MoMo/COD)') }}</strong>
                                 @endif
                             </span>
                         </div>
@@ -178,30 +178,30 @@
                 @if($order->gift_wrap || $order->gift_card || $order->gift_message || $order->gift_delivery_date)
                     <div class="detail-card" style="margin-top: 20px; border: 1px solid rgba(225, 29, 72, 0.25); background: linear-gradient(180deg, #fff5f7 0%, #ffffff 100%);">
                         <h3 class="detail-card-title" style="color: #be123c; display:flex; align-items:center; gap:8px;">
-                            <span>@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</span> Dịch vụ quà tặng cao cấp
+                            <span>@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</span> {{ __('Dịch vụ quà tặng cao cấp') }}
                         </h3>
                         <div class="info-list">
                             @if($order->gift_wrap)
                                 <div class="info-row">
-                                    <span class="info-label">Gói quà:</span>
+                                    <span class="info-label">{{ __('Gói quà:') }}</span>
                                     <span class="info-value"><strong>{{ $order->gift_wrap }}</strong></span>
                                 </div>
                             @endif
                             @if($order->gift_card)
                                 <div class="info-row">
-                                    <span class="info-label">Thiệp tặng:</span>
+                                    <span class="info-label">{{ __('Thiệp tặng:') }}</span>
                                     <span class="info-value"><strong>{{ $order->gift_card }}</strong></span>
                                 </div>
                             @endif
                             @if($order->gift_delivery_date)
                                 <div class="info-row">
-                                    <span class="info-label">Ngày giao quà:</span>
+                                    <span class="info-label">{{ __('Ngày giao quà:') }}</span>
                                     <span class="info-value"><strong style="color:#e11d48;">{{ \Carbon\Carbon::parse($order->gift_delivery_date)->format('d/m/Y') }}</strong></span>
                                 </div>
                             @endif
                             @if($order->gift_message)
                                 <div class="info-row" style="flex-direction: column; align-items: flex-start; gap: 4px; margin-top: 6px;">
-                                    <span class="info-label">Lời chúc gửi kèm:</span>
+                                    <span class="info-label">{{ __('Lời chúc gửi kèm:') }}</span>
                                     <div style="background:#fff; border:1px dashed #f43f5e; padding:10px 14px; border-radius:8px; font-style:italic; color:#881337; width:100%; box-sizing:border-box;">
                                         “{{ $order->gift_message }}”
                                     </div>
@@ -212,22 +212,22 @@
                 @endif
 
                 <div class="detail-card" style="margin-top: 20px;">
-                    <h3 class="detail-card-title">Tổng kết chi phí</h3>
+                    <h3 class="detail-card-title">{{ __('Tổng kết chi phí') }}</h3>
                     <div class="cost-summary-list">
                         @php
                             $subtotal = $order->items->sum(fn($i) => $i->price * $i->quantity);
                         @endphp
                         <div class="cost-item">
-                            <span>Tiền hàng</span>
-                            <strong>{{ number_format($subtotal, 0, ',', '.') }} VNĐ</strong>
+                            <span>{{ __('Tiền hàng') }}</span>
+                            <strong>{{ number_format($subtotal, 0, ',', '.') }} {{ __('VNĐ') }}</strong>
                         </div>
                         <div class="cost-item">
-                            <span>Cước vận chuyển (GHN)</span>
-                            <strong>{{ number_format($order->ghn_total_fee, 0, ',', '.') }} VNĐ</strong>
+                            <span>{{ __('Cước vận chuyển (GHN)') }}</span>
+                            <strong>{{ number_format($order->ghn_total_fee, 0, ',', '.') }} {{ __('VNĐ') }}</strong>
                         </div>
                         <div class="cost-item grand-cost">
-                            <span>Tổng cộng</span>
-                            <strong class="grand-price">{{ number_format($order->total_price, 0, ',', '.') }} VNĐ</strong>
+                            <span>{{ __('Tổng cộng') }}</span>
+                            <strong class="grand-price">{{ number_format($order->total_price, 0, ',', '.') }} {{ __('VNĐ') }}</strong>
                         </div>
                     </div>
 
@@ -235,7 +235,7 @@
                         <div style="margin-top: 18px;">
                             <a href="{{ route('user.orders.momo.pay', $order->id) }}" style="display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #d82d8b 0%, #a50064 100%); color:#fff; font-weight:700; font-size:0.95rem; padding:12px 18px; border-radius:10px; text-decoration:none; box-shadow:0 4px 14px rgba(165,0,100,0.35);">
                                 <img src="{{ asset('images/payments/momo.svg') }}" alt="MoMo" style="height:20px; width:20px; border-radius:4px; object-fit:contain;">
-                                <span>Thanh toán ngay qua MoMo</span>
+                                <span>{{ __('Thanh toán ngay qua MoMo') }}</span>
                             </a>
                         </div>
                     @endif
@@ -396,6 +396,10 @@
     padding: 10px 20px 0;
 }
 .timeline-step {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    overflow-wrap: anywhere;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -426,7 +430,7 @@
     box-shadow: 0 0 0 4px #fce7f3;
 }
 .timeline-line {
-    flex: 1;
+    flex: 0 1 24px;
     height: 3px;
     background: #e5e7eb;
     margin: 0 10px -20px;

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Soopi · Perfume Studio')</title>
     @include('partials.brand-favicon')
+    @include('partials.localization')
     <!-- Bao gồm Bootstrap CSS hoặc các file CSS khác -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +15,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ" style="width:190px">@include('partials.brand-logo')</a>
+        <a class="navbar-brand" href="{{ route('home') }}" aria-label="{{ __('Soopi — Trang chủ') }}" style="width:190px">@include('partials.brand-logo')</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -46,7 +47,7 @@
                 @else
                     <li class="nav-item">
                         <span class="navbar-text mr-3">
-                            Chào, <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->role }})
+                            {{ __('Chào,') }} <strong>{{ Auth::user()->name }}</strong> ({{ Auth::user()->role }})
                         </span>
                     </li>
                     <li class="nav-item">

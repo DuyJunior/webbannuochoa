@@ -9,7 +9,7 @@ if (moods && flower) {
         if (!active) return;
         panels.forEach(panel => { panel.hidden = panel !== active; });
         moods.dataset.tone = active.dataset.moodPanel;
-        moods.querySelector('[data-mood-count]').textContent = `${active.dataset.count} gợi ý · ${active.dataset.moodLabel}`;
+        moods.querySelector('[data-mood-count]').textContent = `${active.dataset.count} ${(window.soopiT || (text => text))("gợi ý ·")} ${active.dataset.moodLabel}`;
     };
     // The flower commits its colour after its image is ready; rapid clicks must
     // not show suggestions for a different colour while it is still preparing.

@@ -52,9 +52,9 @@ if (hero) {
         document.body.classList.toggle('bloom-motion-on', enabled);
         document.body.classList.toggle('bloom-motion-off', !enabled);
         motionButton.setAttribute('aria-pressed', String(enabled));
-        motionButton.querySelector('[data-motion-label]').textContent = `Hiệu ứng: ${enabled ? 'bật' : 'tắt'}`;
+        motionButton.querySelector('[data-motion-label]').textContent = `${(window.soopiT || (text => text))("Hiệu ứng:")} ${enabled ? (window.soopiT || (text => text))("bật") : (window.soopiT || (text => text))("tắt")}`;
         motionButton.disabled = reduced.matches || saveData();
-        motionButton.title = motionButton.disabled ? 'Theo cài đặt giảm chuyển động hoặc tiết kiệm dữ liệu của thiết bị' : 'Bật hoặc tắt chuyển động trang chủ';
+        motionButton.title = motionButton.disabled ? (window.soopiT || (text => text))("Theo cài đặt giảm chuyển động hoặc tiết kiệm dữ liệu của thiết bị") : (window.soopiT || (text => text))("Bật hoặc tắt chuyển động trang chủ");
         replayButton.disabled = !enabled;
         hint.hidden = !enabled || !fine.matches;
         if (!enabled) { stopOpening(); reset(); }

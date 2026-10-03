@@ -21,7 +21,7 @@
             body: body ? JSON.stringify(body) : undefined,
         });
         const result = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(result.message || 'Không thể cập nhật trò chuyện.');
+        if (!response.ok) throw new Error(result.message || (window.soopiT || (text => text))("Không thể cập nhật trò chuyện."));
         return result;
     };
 
@@ -31,7 +31,7 @@
         if (!messages.length) {
             const empty = document.createElement('p');
             empty.className = 'live-chat-empty';
-            empty.textContent = 'Hãy gửi lời chào hoặc hỏi về mùi hương bạn thích';
+            empty.textContent = (window.soopiT || (text => text))("Hãy gửi lời chào hoặc hỏi về mùi hương bạn thích");
             list.append(empty);
             return;
         }
@@ -52,8 +52,8 @@
                 const hide = document.createElement('button');
                 hide.type = 'button';
                 hide.dataset.hideId = item.id;
-                hide.textContent = 'Ẩn';
-                hide.setAttribute('aria-label', `Ẩn bình luận của ${item.display_name}`);
+                hide.textContent = (window.soopiT || (text => text))("Ẩn");
+                hide.setAttribute('aria-label', `${(window.soopiT || (text => text))("Ẩn bình luận của")} ${item.display_name}`);
                 meta.append(hide);
             }
             const body = document.createElement('p');
@@ -72,7 +72,7 @@
             watching.textContent = result.watching;
             form.querySelector('button').disabled = !result.on_air;
             input.disabled = !result.on_air;
-            input.placeholder = result.on_air ? 'Viết lời nhắn của bạn...' : 'Trò chuyện mở khi buổi live bắt đầu';
+            input.placeholder = result.on_air ? (window.soopiT || (text => text))("Viết lời nhắn của bạn...") : (window.soopiT || (text => text))("Trò chuyện mở khi buổi live bắt đầu");
             const signature = JSON.stringify(result.messages);
             if (signature !== previous) {
                 previous = signature;
@@ -94,7 +94,7 @@
         try {
             await request(root.dataset.sendUrl, 'POST', { body });
             input.value = '';
-            feedback.textContent = 'Đã gửi bình luận.';
+            feedback.textContent = (window.soopiT || (text => text))("Đã gửi bình luận.");
             await refresh();
         } catch (error) {
             feedback.textContent = error.message;
@@ -109,7 +109,7 @@
         button.disabled = true;
         try {
             await request(`${root.dataset.hideBase}/${button.dataset.hideId}`, 'DELETE');
-            feedback.textContent = 'Đã ẩn bình luận.';
+            feedback.textContent = (window.soopiT || (text => text))("Đã ẩn bình luận.");
             await refresh();
         } catch (error) {
             feedback.textContent = error.message;

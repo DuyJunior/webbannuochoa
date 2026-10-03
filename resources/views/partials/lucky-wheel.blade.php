@@ -1,15 +1,15 @@
 {{-- VÒNG QUAY MAY MẮN NHẬN MÃ GIẢM GIÁ (LUCKY SPIN WHEEL) --}}
 <div id="ht-lucky-spin-wrapper">
-    <button type="button" id="ht-spin-floating-btn" title="Vòng quay hương thơm may mắn">
+    <button type="button" id="ht-spin-floating-btn" title="{{ __('Vòng quay hương thơm may mắn') }}">
         <span class="spin-icon">@include('partials.icon', ['name' => 'wheel', 'size' => '1em'])</span>
-        <span class="spin-label">Vòng Quay May Mắn</span>
+        <span class="spin-label">{{ __('Vòng Quay May Mắn') }}</span>
     </button>
 
     {{-- Modal Vòng Quay --}}
     <div id="ht-spin-modal" class="spin-modal-backdrop" hidden>
-        <button type="button" id="ht-spin-backdrop-close" class="spin-backdrop-close-btn" aria-label="Đóng vòng quay" title="Đóng vòng quay (Esc)">@include('partials.icon', ['name' => 'close', 'size' => '1em']) Đóng</button>
+        <button type="button" id="ht-spin-backdrop-close" class="spin-backdrop-close-btn" aria-label="{{ __('Đóng vòng quay') }}" title="{{ __('Đóng vòng quay (Esc)') }}">@include('partials.icon', ['name' => 'close', 'size' => '1em']) {{ __('Đóng') }}</button>
         <div class="spin-modal-card">
-            <button type="button" id="ht-spin-close" class="spin-close-btn" aria-label="Đóng vòng quay" title="Đóng vòng quay (Esc)">
+            <button type="button" id="ht-spin-close" class="spin-close-btn" aria-label="{{ __('Đóng vòng quay') }}" title="{{ __('Đóng vòng quay (Esc)') }}">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -20,14 +20,14 @@
             <div id="spinMainSection" class="spin-main-section">
                 <div class="spin-card-header">
                     <span class="spin-eyebrow">@include('partials.brand-mark', ['size' => 22]) SOOPI PERFUME</span>
-                    <h2>Vòng Quay <em>Hương Thơm</em></h2>
-                    <p>Quay là trúng voucher giảm giá & quà tặng sample!</p>
+                    <h2>{{ __('Vòng Quay') }} <em>{{ __('Hương Thơm') }}</em></h2>
+                    <p>{{ __('Quay là trúng voucher giảm giá & quà tặng sample!') }}</p>
                 </div>
 
                 <div class="spin-wheel-container" id="spinWheelContainer">
                     <div class="spin-pointer">▼</div>
                     <canvas id="htWheelCanvas" width="280" height="280"></canvas>
-                    <button type="button" id="htSpinActionBtn" class="spin-center-btn" title="Bấm để quay ngay">
+                    <button type="button" id="htSpinActionBtn" class="spin-center-btn" title="{{ __('Bấm để quay ngay') }}">
                         <span>QUAY<br>NGAY</span>
                     </button>
                 </div>
@@ -36,21 +36,21 @@
             {{-- 2. Phần Kết Quả Trúng Thưởng (Tự động thay thế vòng quay khi trúng, gọn gàng không tràn màn hình) --}}
             <div id="spinResultBox" class="spin-result-box" style="display:none;">
                 <div class="result-confetti">@include('partials.icon', ['name' => 'party', 'size' => '1em']) @include('partials.icon', ['name' => 'gift', 'size' => '1em']) @include('partials.icon', ['name' => 'ribbon', 'size' => '1em'])</div>
-                <h3 id="spinResultTitle">Chúc mừng bạn đã trúng!</h3>
-                <p id="spinResultDesc">Mã ưu đãi đã sẵn sàng. Nhập mã này tại giỏ hàng để nhận ưu đãi:</p>
+                <h3 id="spinResultTitle">{{ __('Chúc mừng bạn đã trúng!') }}</h3>
+                <p id="spinResultDesc">{{ __('Mã ưu đãi đã sẵn sàng. Nhập mã này tại giỏ hàng để nhận ưu đãi:') }}</p>
                 
                 <div class="spin-code-copy-row" id="spinCodeRow">
                     <span class="spin-code" id="spinRewardCode">SPIN50K</span>
-                    <button type="button" class="ht-button ht-button-primary" id="copyRewardBtn">Sao chép mã</button>
+                    <button type="button" class="ht-button ht-button-primary" id="copyRewardBtn">{{ __('Sao chép mã') }}</button>
                 </div>
 
                 <div class="spin-result-actions">
-                    <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary" id="applySpinShopBtn">@include('partials.icon', ['name' => 'bag', 'size' => '1em']) Mua Sắm Ngay</a>
-                    <button type="button" class="ht-button ht-button-outline" id="closeAfterSpinBtn">@include('partials.icon', ['name' => 'close', 'size' => '1em']) Đóng lại</button>
+                    <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary" id="applySpinShopBtn">@include('partials.icon', ['name' => 'bag', 'size' => '1em']) {{ __('Mua Sắm Ngay') }}</a>
+                    <button type="button" class="ht-button ht-button-outline" id="closeAfterSpinBtn">@include('partials.icon', ['name' => 'close', 'size' => '1em']) {{ __('Đóng lại') }}</button>
                 </div>
 
                 <div class="mt-3">
-                    <button type="button" id="spinBackToWheelBtn" class="btn-back-to-wheel">@include('partials.icon', ['name' => 'wheel', 'size' => '1em']) Xem lại vòng quay</button>
+                    <button type="button" id="spinBackToWheelBtn" class="btn-back-to-wheel">@include('partials.icon', ['name' => 'wheel', 'size' => '1em']) {{ __('Xem lại vòng quay') }}</button>
                 </div>
             </div>
         </div>
@@ -347,13 +347,13 @@
 <script>
 (function () {
     const rewards = [
-        { label: 'Giảm 50.000₫', code: 'SPIN50K', color: '#fbcfe8', textColor: '#831843' },
+        { label: (window.soopiT || (text => text))("Giảm 50.000₫"), code: 'SPIN50K', color: '#fbcfe8', textColor: '#831843' },
         { label: 'Freeship 30K', code: 'FREESHIP', color: '#fce7f3', textColor: '#9d174d' },
-        { label: 'Giảm 10% Đơn', code: 'SPIN10', color: '#fda4af', textColor: '#881337' },
+        { label: (window.soopiT || (text => text))("Giảm 10% Đơn"), code: 'SPIN10', color: '#fda4af', textColor: '#881337' },
         { label: 'Sample 5ml', code: 'SPIN50K', color: '#fdf2f8', textColor: '#9f1239' },
-        { label: 'Giảm 100.000₫', code: 'SPIN100K', color: '#f472b6', textColor: '#ffffff' },
-        { label: 'Chúc may mắn', code: '', color: '#fce7f3', textColor: '#701a75' },
-        { label: 'Giảm 50.000₫', code: 'SPIN50K', color: '#fbcfe8', textColor: '#831843' },
+        { label: (window.soopiT || (text => text))("Giảm 100.000₫"), code: 'SPIN100K', color: '#f472b6', textColor: '#ffffff' },
+        { label: (window.soopiT || (text => text))("Chúc may mắn"), code: '', color: '#fce7f3', textColor: '#701a75' },
+        { label: (window.soopiT || (text => text))("Giảm 50.000₫"), code: 'SPIN50K', color: '#fbcfe8', textColor: '#831843' },
         { label: 'Freeship 30K', code: 'FREESHIP', color: '#fda4af', textColor: '#881337' },
     ];
 
@@ -497,13 +497,13 @@
                 isSpinning = false;
                 const reward = rewards[winIndex];
                 if (reward.code) {
-                    resultTitle.textContent = ' Bạn Đã Trúng ' + reward.label + '!';
-                    resultDesc.textContent = 'Mã ưu đãi đã sẵn sàng. Nhập mã này tại giỏ hàng để nhận giảm giá ngay:';
+                    resultTitle.textContent = (window.soopiT || (text => text))(" Bạn Đã Trúng ") + reward.label + '!';
+                    resultDesc.textContent = (window.soopiT || (text => text))("Mã ưu đãi đã sẵn sàng. Nhập mã này tại giỏ hàng để nhận giảm giá ngay:");
                     rewardCode.textContent = reward.code;
                     codeRow.style.display = 'flex';
                 } else {
-                    resultTitle.textContent = 'Chúc bạn may mắn lần sau!';
-                    resultDesc.textContent = 'Đừng buồn nhé, bạn có thể quay lại vào ngày mai!';
+                    resultTitle.textContent = (window.soopiT || (text => text))("Chúc bạn may mắn lần sau!");
+                    resultDesc.textContent = (window.soopiT || (text => text))("Đừng buồn nhé, bạn có thể quay lại vào ngày mai!");
                     codeRow.style.display = 'none';
                 }
                 // Chuyển sang khung kết quả gọn gàng ngay tại chỗ sau khi quay xong 600ms
@@ -519,8 +519,8 @@
     copyBtn && copyBtn.addEventListener('click', function () {
         const c = rewardCode.textContent.trim();
         if (navigator.clipboard) navigator.clipboard.writeText(c);
-        this.textContent = 'Đã chép!';
-        setTimeout(() => { this.textContent = 'Sao chép mã'; }, 2000);
+        this.textContent = (window.soopiT || (text => text))("Đã chép!");
+        setTimeout(() => { this.textContent = (window.soopiT || (text => text))("Sao chép mã"); }, 2000);
     });
 })();
 </script>

@@ -64,7 +64,7 @@ class ProductController extends Controller
         $this->saveWithPhotos($request, new Product, $data);
 
         return redirect()->route('admin.products.index')
-            ->with('success', 'Đã thêm sản phẩm mới thành công.');
+            ->with('success', __('Đã thêm sản phẩm mới thành công.'));
     }
 
     public function show(Product $product): View
@@ -87,7 +87,7 @@ class ProductController extends Controller
     {
         $data = $this->validatedData($request);
         if ((int) $data['volume_ml'] !== (int) $product->volume_ml && OrderItem::where('perfume_id', $product->id)->exists()) {
-            throw ValidationException::withMessages(['volume_ml' => 'Sản phẩm đã có đơn hàng. Hãy tạo sản phẩm mới nếu thay đổi dung tích gốc để giữ đúng lịch sử kho.']);
+            throw ValidationException::withMessages(['volume_ml' => __('Sản phẩm đã có đơn hàng. Hãy tạo sản phẩm mới nếu thay đổi dung tích gốc để giữ đúng lịch sử kho.')]);
         }
         if ($product->name !== $data['name']) {
             $data['slug'] = $this->uniqueSlug($data['name'], $product->id);
@@ -99,7 +99,7 @@ class ProductController extends Controller
         StockAlertService::notifyIfRestocked($product, $previousStock);
 
         return redirect()->route('admin.products.show', $product)
-            ->with('success', 'Đã cập nhật sản phẩm thành công.');
+            ->with('success', __('Đã cập nhật sản phẩm thành công.'));
     }
 
     public function destroy(Product $product): RedirectResponse
@@ -107,7 +107,7 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('admin.products.index')
-            ->with('success', 'Đã xóa sản phẩm khỏi danh sách.');
+            ->with('success', __('Đã xóa sản phẩm khỏi danh sách.'));
     }
 
     // Hiển thị chi tiết sản phẩm cho người dùng thường
@@ -148,7 +148,7 @@ class ProductController extends Controller
                 if (is_array($files) && array_sum(array_map(
                     fn ($file) => $file instanceof UploadedFile ? $file->getSize() : 0, $files
                 )) > 18 * 1024 * 1024) {
-                    $fail('Tổng dung lượng ảnh thực tế trong một lần tải không được vượt quá 18 MB. Hãy tải thành nhiều lần.');
+                    $fail(__('Tổng dung lượng ảnh thực tế trong một lần tải không được vượt quá 18 MB. Hãy tải thành nhiều lần.'));
                 }
             }],
             'shop_photos.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'extensions:jpg,jpeg,png,webp', 'max:5120', 'dimensions:max_width=8000,max_height=8000'],
@@ -166,47 +166,47 @@ class ProductController extends Controller
             'variants.*.weight' => ['required', 'integer', 'min:1', 'max:50000'],
             'variants.*.is_active' => ['required', 'boolean'],
         ], [
-            'name.required' => 'Vui lòng nhập tên sản phẩm.',
-            'brand.required' => 'Vui lòng chọn hoặc nhập thương hiệu cho sản phẩm.',
-            'gender.required' => 'Vui lòng chọn giới tính.',
-            'volume_ml.required' => 'Vui lòng nhập dung tích chai nước hoa (ml).',
-            'volume_ml.integer' => 'Dung tích phải là một số nguyên hợp lệ.',
-            'volume_ml.min' => 'Dung tích tối thiểu phải từ 1 ml trở lên.',
-            'weight.integer' => 'Khối lượng phải là số nguyên (gram).',
-            'weight.min' => 'Khối lượng tối thiểu phải từ 1 gram trở lên.',
-            'price.required' => 'Vui lòng nhập giá bán sản phẩm.',
-            'price.numeric' => 'Giá sản phẩm phải là định dạng số.',
-            'price.min' => 'Giá sản phẩm không được là số âm.',
-            'stock.required' => 'Vui lòng nhập số lượng hàng trong kho.',
-            'stock.integer' => 'Số lượng tồn kho phải là số nguyên.',
-            'stock.min' => 'Số lượng tồn kho không được là số âm.',
-            'sale_price.lte' => 'Giá khuyến mãi phải nhỏ hơn hoặc bằng giá niêm yết.',
-            'image_url.regex' => 'Ảnh phải là URL http/https hoặc đường dẫn trong thư mục images.',
-            'image_file.image' => 'Tệp tải lên phải là hình ảnh.',
-            'image_file.mimes' => 'Ảnh phải có định dạng JPG, PNG hoặc WEBP.',
-            'image_file.max' => 'Ảnh không được vượt quá dung lượng 5MB.',
-            'shop_photos.array' => 'Vui lòng chọn các tệp ảnh thực tế hợp lệ.',
-            'shop_photos.max' => 'Mỗi sản phẩm có tối đa 6 ảnh thực tế.',
-            'shop_photos.*.image' => 'Ảnh thực tế phải là tệp hình ảnh.',
-            'shop_photos.*.mimes' => 'Ảnh thực tế phải có định dạng JPG, PNG hoặc WEBP.',
-            'shop_photos.*.extensions' => 'Ảnh thực tế phải có phần mở rộng JPG, PNG hoặc WEBP.',
-            'shop_photos.*.max' => 'Mỗi ảnh thực tế không được vượt quá 5 MB.',
-            'shop_photos.*.dimensions' => 'Chiều rộng và chiều cao ảnh không được vượt quá 8.000 pixel.',
-            'variants.max' => 'Mỗi sản phẩm có tối đa 20 dung tích bổ sung.',
-            'variants.*.volume_ml.distinct' => 'Mỗi dung tích chỉ được thêm một lần.',
-            'variants.*.volume_ml.required' => 'Nhập dung tích chai, ví dụ 200 ml.',
-            'variants.*.volume_ml.integer' => 'Dung tích phải là số nguyên (ml).',
-            'variants.*.volume_ml.min' => 'Dung tích phải từ 1 ml trở lên.',
-            'variants.*.volume_ml.max' => 'Dung tích không được vượt quá 5.000 ml.',
-            'variants.*.price.required' => 'Nhập giá bán riêng cho dung tích này.',
-            'variants.*.price.integer' => 'Giá bán phải là số nguyên (đồng).',
-            'variants.*.price.min' => 'Giá bán không được âm.',
-            'variants.*.stock.required' => 'Nhập số chai có trong kho.',
-            'variants.*.stock.integer' => 'Số chai phải là số nguyên.',
-            'variants.*.stock.min' => 'Số chai không được âm.',
-            'variants.*.weight.required' => 'Nhập khối lượng gồm bao bì để tính phí vận chuyển.',
-            'variants.*.weight.integer' => 'Khối lượng phải là số nguyên (gram).',
-            'variants.*.weight.min' => 'Khối lượng phải từ 1 gram trở lên.',
+            'name.required' => __('Vui lòng nhập tên sản phẩm.'),
+            'brand.required' => __('Vui lòng chọn hoặc nhập thương hiệu cho sản phẩm.'),
+            'gender.required' => __('Vui lòng chọn giới tính.'),
+            'volume_ml.required' => __('Vui lòng nhập dung tích chai nước hoa (ml).'),
+            'volume_ml.integer' => __('Dung tích phải là một số nguyên hợp lệ.'),
+            'volume_ml.min' => __('Dung tích tối thiểu phải từ 1 ml trở lên.'),
+            'weight.integer' => __('Khối lượng phải là số nguyên (gram).'),
+            'weight.min' => __('Khối lượng tối thiểu phải từ 1 gram trở lên.'),
+            'price.required' => __('Vui lòng nhập giá bán sản phẩm.'),
+            'price.numeric' => __('Giá sản phẩm phải là định dạng số.'),
+            'price.min' => __('Giá sản phẩm không được là số âm.'),
+            'stock.required' => __('Vui lòng nhập số lượng hàng trong kho.'),
+            'stock.integer' => __('Số lượng tồn kho phải là số nguyên.'),
+            'stock.min' => __('Số lượng tồn kho không được là số âm.'),
+            'sale_price.lte' => __('Giá khuyến mãi phải nhỏ hơn hoặc bằng giá niêm yết.'),
+            'image_url.regex' => __('Ảnh phải là URL http/https hoặc đường dẫn trong thư mục images.'),
+            'image_file.image' => __('Tệp tải lên phải là hình ảnh.'),
+            'image_file.mimes' => __('Ảnh phải có định dạng JPG, PNG hoặc WEBP.'),
+            'image_file.max' => __('Ảnh không được vượt quá dung lượng 5MB.'),
+            'shop_photos.array' => __('Vui lòng chọn các tệp ảnh thực tế hợp lệ.'),
+            'shop_photos.max' => __('Mỗi sản phẩm có tối đa 6 ảnh thực tế.'),
+            'shop_photos.*.image' => __('Ảnh thực tế phải là tệp hình ảnh.'),
+            'shop_photos.*.mimes' => __('Ảnh thực tế phải có định dạng JPG, PNG hoặc WEBP.'),
+            'shop_photos.*.extensions' => __('Ảnh thực tế phải có phần mở rộng JPG, PNG hoặc WEBP.'),
+            'shop_photos.*.max' => __('Mỗi ảnh thực tế không được vượt quá 5 MB.'),
+            'shop_photos.*.dimensions' => __('Chiều rộng và chiều cao ảnh không được vượt quá 8.000 pixel.'),
+            'variants.max' => __('Mỗi sản phẩm có tối đa 20 dung tích bổ sung.'),
+            'variants.*.volume_ml.distinct' => __('Mỗi dung tích chỉ được thêm một lần.'),
+            'variants.*.volume_ml.required' => __('Nhập dung tích chai, ví dụ 200 ml.'),
+            'variants.*.volume_ml.integer' => __('Dung tích phải là số nguyên (ml).'),
+            'variants.*.volume_ml.min' => __('Dung tích phải từ 1 ml trở lên.'),
+            'variants.*.volume_ml.max' => __('Dung tích không được vượt quá 5.000 ml.'),
+            'variants.*.price.required' => __('Nhập giá bán riêng cho dung tích này.'),
+            'variants.*.price.integer' => __('Giá bán phải là số nguyên (đồng).'),
+            'variants.*.price.min' => __('Giá bán không được âm.'),
+            'variants.*.stock.required' => __('Nhập số chai có trong kho.'),
+            'variants.*.stock.integer' => __('Số chai phải là số nguyên.'),
+            'variants.*.stock.min' => __('Số chai không được âm.'),
+            'variants.*.weight.required' => __('Nhập khối lượng gồm bao bì để tính phí vận chuyển.'),
+            'variants.*.weight.integer' => __('Khối lượng phải là số nguyên (gram).'),
+            'variants.*.weight.min' => __('Khối lượng phải từ 1 gram trở lên.'),
         ], [
             'variants' => 'dung tích bổ sung', 'variants.*.volume_ml' => 'dung tích',
             'variants.*.price' => 'giá bán', 'variants.*.stock' => 'tồn kho',

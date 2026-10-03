@@ -6,28 +6,28 @@
 @if($showWelcomeCoupon)
 <div id="ht-discount-popup" class="ht-popup-overlay" aria-modal="true" role="dialog" aria-labelledby="ht-popup-title" hidden>
     <div class="ht-popup-card">
-        <button class="ht-popup-close" id="ht-popup-close" aria-label="Đóng">&times;</button>
+        <button class="ht-popup-close" id="ht-popup-close" aria-label="{{ __('Đóng') }}">&times;</button>
         <div class="ht-popup-visual">
             <span class="ht-popup-icon">@include('partials.brand-mark', ['size' => 40])</span>
             <div class="ht-popup-petals" aria-hidden="true">
                 <span></span><span></span><span></span><span></span><span></span>
             </div>
         </div>
-        <span class="ht-popup-eyebrow">CHÀO MỪNG BẠN ĐẾN VỚI</span>
+        <span class="ht-popup-eyebrow">{{ __('CHÀO MỪNG BẠN ĐẾN VỚI') }}</span>
         <h2 id="ht-popup-title" class="ht-popup-brand">@include('partials.brand-logo', ['class' => 'popup-logo'])</h2>
-        <p class="ht-popup-sub">Ưu đãi <strong>{{ number_format($welcomeCoupon->value, 0, ',', '.') }}{{ $welcomeCoupon->type === 'percent' ? '%' : '₫' }}</strong> cho đơn hàng đủ điều kiện với mã:</p>
+        <p class="ht-popup-sub">{{ __('Ưu đãi') }} <strong>{{ number_format($welcomeCoupon->value, 0, ',', '.') }}{{ $welcomeCoupon->type === 'percent' ? '%' : '₫' }}</strong> {{ __('cho đơn hàng đủ điều kiện với mã:') }}</p>
         <div class="ht-popup-code-wrap">
             <span class="ht-popup-code" id="ht-popup-code">{{ $welcomeCoupon->code }}</span>
-            <button class="ht-popup-copy" id="ht-popup-copy" aria-label="Sao chép mã">
+            <button class="ht-popup-copy" id="ht-popup-copy" aria-label="{{ __('Sao chép mã') }}">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                <span>Sao chép</span>
+                <span>{{ __('Sao chép') }}</span>
             </button>
         </div>
-        <p class="ht-popup-terms">Áp dụng cho đơn từ {{ number_format($welcomeCoupon->minimum_order, 0, ',', '.') }}₫@if($welcomeCoupon->expires_at) · Hết hạn {{ $welcomeCoupon->expires_at->format('d/m/Y') }} @endif</p>
+        <p class="ht-popup-terms">{{ __('Áp dụng cho đơn từ') }} {{ number_format($welcomeCoupon->minimum_order, 0, ',', '.') }}₫@if($welcomeCoupon->expires_at) {{ __('· Hết hạn') }} {{ $welcomeCoupon->expires_at->format('d/m/Y') }} @endif</p>
         <a href="{{ route('home') }}#san-pham" class="ht-popup-cta" id="ht-popup-shop">
-            Khám phá ngay →
+            {{ __('Khám phá ngay →') }}
         </a>
-        <button class="ht-popup-skip" id="ht-popup-skip">Để sau, cảm ơn</button>
+        <button class="ht-popup-skip" id="ht-popup-skip">{{ __('Để sau, cảm ơn') }}</button>
     </div>
 </div>
 
@@ -264,10 +264,10 @@
                 document.body.removeChild(ta);
             }
             copyBtn.classList.add('copied');
-            copyBtn.querySelector('span').textContent = 'Đã sao chép!';
+            copyBtn.querySelector('span').textContent = (window.soopiT || (text => text))("Đã sao chép!");
             setTimeout(function () {
                 copyBtn.classList.remove('copied');
-                copyBtn.querySelector('span').textContent = 'Sao chép';
+                copyBtn.querySelector('span').textContent = (window.soopiT || (text => text))("Sao chép");
             }, 2500);
         });
     }

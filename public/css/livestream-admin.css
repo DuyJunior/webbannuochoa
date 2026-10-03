@@ -36,7 +36,7 @@
 .live-studio-controls label{display:block;font-size:13px;font-weight:700;color:#66414e;margin:16px 0 8px}
 .live-studio-controls input{width:100%;border:1px solid #efd4de;border-radius:10px;padding:10px;color:#614456}
 .live-studio-error{color:#b52d4f!important}
-@media(max-width:850px){.live-studio-grid{grid-template-columns:1fr}.live-studio-preview,.live-studio-preview video{min-height:280px}}
+@media(max-width:850px){.live-studio-grid{grid-template-columns:minmax(0,1fr)}.live-studio-grid>*{min-width:0}.live-studio-placeholder{text-align:center;padding:16px}.live-studio-controls{padding:22px}.live-studio-preview,.live-studio-preview video{min-height:280px}}
 .boutique-admin .live-admin-mode{border:0;padding:0;margin:0 0 24px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .boutique-admin .live-admin-mode legend{grid-column:1/-1;float:none;width:auto;font-size:12px;font-weight:700;color:#503b45;margin-bottom:8px}
 .boutique-admin .live-admin-mode-card{display:flex;align-items:flex-start;gap:11px;padding:16px;border:1px solid #ead0db;border-radius:14px;background:#fffafb;cursor:pointer;margin:0}

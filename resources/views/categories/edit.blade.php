@@ -1,14 +1,14 @@
 @extends('layouts.store')
 
-@section('title', 'Sửa '.$category->name.' · Soopi')
+@section('title', __('Sửa ').$category->name.' · Soopi')
 
 @section('content')
     <section class="store-container public-form-page">
         <div class="public-page-heading">
             <div>
-                <a class="back-link" href="{{ route('categories.show', $category) }}">← Quay lại chi tiết</a>
-                <h1>Sửa danh mục</h1>
-                <p>{{ $category->name }}</p>
+                <a class="back-link" href="{{ route('categories.show', $category) }}">{{ __('← Quay lại chi tiết') }}</a>
+                <h1>{{ __('Sửa danh mục') }}</h1>
+                <p>{{ __($category->name) }}</p>
             </div>
         </div>
 

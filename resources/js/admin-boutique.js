@@ -8,7 +8,7 @@ function setMenu(open) {
     open = open && menuBreakpoint.matches;
     document.body.classList.toggle('admin-menu-open', open);
     toggle?.setAttribute('aria-expanded', String(open));
-    toggle?.setAttribute('aria-label', open ? 'Đóng menu quản trị' : 'Mở menu quản trị');
+    toggle?.setAttribute('aria-label', open ? (window.soopiT || (text => text))("Đóng menu quản trị") : (window.soopiT || (text => text))("Mở menu quản trị"));
     if (backdrop) backdrop.hidden = !open;
     if (sidebar) sidebar.inert = !open && menuBreakpoint.matches;
     document.querySelector('.admin-main-wrapper')?.toggleAttribute('inert', open);
@@ -127,10 +127,10 @@ function syncMotion() {
     const enabled = motionEnabled && !reducedMotion.matches;
     document.body.classList.toggle('studio-motion-off', !enabled);
     motionToggle?.setAttribute('aria-pressed', String(enabled));
-    motionToggle?.setAttribute('aria-label', enabled ? 'Tắt hiệu ứng chuyển động' : 'Bật hiệu ứng chuyển động');
+    motionToggle?.setAttribute('aria-label', enabled ? (window.soopiT || (text => text))("Tắt hiệu ứng chuyển động") : (window.soopiT || (text => text))("Bật hiệu ứng chuyển động"));
     if (motionToggle) {
         motionToggle.disabled = reducedMotion.matches;
-        motionToggle.title = reducedMotion.matches ? 'Hiệu ứng đã tắt theo cài đặt giảm chuyển động của thiết bị' : (enabled ? 'Tắt hiệu ứng chuyển động' : 'Bật hiệu ứng chuyển động');
+        motionToggle.title = reducedMotion.matches ? (window.soopiT || (text => text))("Hiệu ứng đã tắt theo cài đặt giảm chuyển động của thiết bị") : (enabled ? (window.soopiT || (text => text))("Tắt hiệu ứng chuyển động") : (window.soopiT || (text => text))("Bật hiệu ứng chuyển động"));
     }
     document.querySelectorAll('.studio-depth-active').forEach(card => card.classList.remove('studio-depth-active'));
 }
@@ -174,5 +174,5 @@ document.querySelector('[data-validation-summary]')?.focus();
 document.querySelectorAll('.table-responsive').forEach(region => {
     region.tabIndex = 0;
     region.setAttribute('role','region');
-    if (!region.hasAttribute('aria-label')) region.setAttribute('aria-label','Bảng dữ liệu — có thể cuộn ngang trên màn hình nhỏ');
+    if (!region.hasAttribute('aria-label')) region.setAttribute('aria-label',(window.soopiT || (text => text))("Bảng dữ liệu — có thể cuộn ngang trên màn hình nhỏ"));
 });

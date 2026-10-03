@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'Hộp Thử Mùi Tự Chọn (Discovery Box) · Trải Nghiệm 3-5 Mẫu Chiết | Soopi')
-@section('meta_description', 'Tuyển chọn hộp 3 hoặc 5 mẫu nước hoa, mỗi mẫu 5ml. Thử trên da trước khi chọn chai lớn; giá từ 199.000₫ một hộp.')
+@section('title', __('Hộp Thử Mùi Tự Chọn (Discovery Box) · Trải Nghiệm 3-5 Mẫu Chiết | Soopi'))
+@section('meta_description', __('Tuyển chọn hộp 3 hoặc 5 mẫu nước hoa, mỗi mẫu 5ml. Thử trên da trước khi chọn chai lớn; giá từ 199.000₫ một hộp.'))
 
 @section('content')
 <div class="store-container ht-discovery-page">
@@ -9,21 +9,21 @@
         <div class="public-flash alert-danger" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
     @endif
     <header class="ht-discovery-hero">
-        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) BỘ SƯU TẬP TRẢI NGHIỆM</span>
-        <h1 class="ht-discovery-title">Thử một chút.<br><em>Yêu thật lâu.</em></h1>
-        <p class="ht-discovery-subtitle">Chọn 3 hoặc 5 mùi hương, mỗi mẫu 5ml. Dành thời gian thử trên da trước khi tìm ra chai nước hoa dành cho bạn.</p>
+        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ __('BỘ SƯU TẬP TRẢI NGHIỆM') }}</span>
+        <h1 class="ht-discovery-title">{{ __('Thử một chút.') }}<br><em>{{ __('Yêu thật lâu.') }}</em></h1>
+        <p class="ht-discovery-subtitle">{{ __('Chọn 3 hoặc 5 mùi hương, mỗi mẫu 5ml. Dành thời gian thử trên da trước khi tìm ra chai nước hoa dành cho bạn.') }}</p>
     </header>
 
     {{-- Package Switcher --}}
     <div class="ht-box-size-switcher">
         <button type="button" class="size-btn active" data-size="3" data-price="199000" aria-pressed="true">
-            <strong>Hộp 3 Mẫu Chiết</strong>
-            <span>199.000₫ · 3 × 5ml</span>
+            <strong>{{ __('Hộp 3 Mẫu Chiết') }}</strong>
+            <span>{{ __('199.000₫ · 3 × 5ml') }}</span>
         </button>
         <button type="button" class="size-btn" data-size="5" data-price="299000" aria-pressed="false">
-            <span class="hot-tag">TIẾT KIỆM NHẤT</span>
-            <strong>Hộp 5 Mẫu Chiết</strong>
-            <span>299.000₫ · 5 × 5ml</span>
+            <span class="hot-tag">{{ __('TIẾT KIỆM NHẤT') }}</span>
+            <strong>{{ __('Hộp 5 Mẫu Chiết') }}</strong>
+            <span>{{ __('299.000₫ · 5 × 5ml') }}</span>
         </button>
     </div>
 
@@ -38,37 +38,37 @@
         </div>
         <div class="box-summary-bar">
             <div class="box-price-info">
-                <span class="label">Tổng giá trị Hộp Thử Mùi:</span>
+                <span class="label">{{ __('Tổng giá trị Hộp Thử Mùi:') }}</span>
                 <span class="price" id="boxPriceDisplay">199.000₫</span>
-                <span class="extra-benefit">Mỗi mẫu 5ml · Giá trọn hộp, chưa gồm vận chuyển</span>
+                <span class="extra-benefit">{{ __('Mỗi mẫu 5ml · Giá trọn hộp, chưa gồm vận chuyển') }}</span>
             </div>
             <form action="{{ route('cart.add-discovery-box') }}" method="POST" id="discoveryForm">
                 @csrf
                 <input type="hidden" name="size" id="inputBoxSize" value="3">
                 <div id="hiddenInputsWrap"></div>
                 <button type="submit" class="ht-button ht-button-primary" id="addBoxBtn" disabled>
-                    Vui lòng chọn đủ 3 mẫu để thêm vào giỏ
+                    {{ __('Vui lòng chọn đủ 3 mẫu để thêm vào giỏ') }}
                 </button>
             </form>
         </div>
     </div>
-    <p id="discovery-status" role="status" aria-live="polite">@if($unavailableSelectionCount > 0){{ $unavailableSelectionCount }} mẫu đã hết hoặc không còn khả dụng. Các mẫu còn lại được giữ trong hộp để bạn chọn tiếp.@endif</p>
+    <p id="discovery-status" role="status" aria-live="polite">@if($unavailableSelectionCount > 0){{ $unavailableSelectionCount }} {{ __('mẫu đã hết hoặc không còn khả dụng. Các mẫu còn lại được giữ trong hộp để bạn chọn tiếp.') }}@endif</p>
     @if($sampleAvailability->filter(fn ($remaining) => $remaining > 0)->count() < 3)
-        <p class="public-flash">Hiện chưa đủ 3 mùi có mẫu 5ml để hoàn thiện hộp. <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener">Hỏi Soopi về mẫu thử ↗</a></p>
+        <p class="public-flash">{{ __('Hiện chưa đủ 3 mùi có mẫu 5ml để hoàn thiện hộp.') }} <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener">{{ __('Hỏi Soopi về mẫu thử ↗') }}</a></p>
     @endif
-    <noscript><p>Hãy bật JavaScript để chọn và sắp xếp hộp thử, hoặc <a href="{{ config('storefront.zalo_url') }}">nhắn Soopi để được hỗ trợ</a>.</p></noscript>
+    <noscript><p>{{ __('Hãy bật JavaScript để chọn và sắp xếp hộp thử, hoặc') }} <a href="{{ config('storefront.zalo_url') }}">{{ __('nhắn Soopi để được hỗ trợ') }}</a>.</p></noscript>
 
     {{-- Perfume Picker Catalog --}}
     <section class="ht-perfume-picker-section">
         <div class="picker-header">
             <div>
-                <h2>Tuyển chọn cho hộp hương của bạn</h2>
-                <p>Bấm nút <strong>"+ Cho vào hộp"</strong> trên từng chai để lấp đầy các khay mẫu thử.</p>
+                <h2>{{ __('Tuyển chọn cho hộp hương của bạn') }}</h2>
+                <p>{{ __('Bấm nút') }} <strong>{{ __('"+ Cho vào hộp"') }}</strong> {{ __('trên từng chai để lấp đầy các khay mẫu thử.') }}</p>
             </div>
             <div class="picker-filter">
-                <button class="filter-tab active" data-filter="all">Tất Cả</button>
-                <button class="filter-tab" data-filter="nu">Nữ Tính</button>
-                <button class="filter-tab" data-filter="nam">Nam Tính</button>
+                <button class="filter-tab active" data-filter="all">{{ __('Tất Cả') }}</button>
+                <button class="filter-tab" data-filter="nu">{{ __('Nữ Tính') }}</button>
+                <button class="filter-tab" data-filter="nam">{{ __('Nam Tính') }}</button>
                 <button class="filter-tab" data-filter="unisex">Unisex</button>
             </div>
         </div>
@@ -86,11 +86,11 @@
                 <div class="card-details">
                     <span class="card-brand">{{ $perfume->brand }}</span>
                     <h3 class="card-name">{{ $perfume->name }}</h3>
-                    <p class="card-family">{{ $perfume->category->name ?? 'Nước hoa' }} · {{ match($perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
-                    <p class="card-note">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) {{ $editorial['verified'] ? implode(' · ', array_slice($editorial['key_notes'], 0, 3)) : 'Nốt hương đang được đối chiếu.' }}</p>
+                    <p class="card-family">{{ __($perfume->category->name ?? __('Nước hoa')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
+                    <p class="card-note">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) {{ $editorial['verified'] ? implode(' · ', array_slice($editorial['key_notes'], 0, 3)) : __('Nốt hương đang được đối chiếu.') }}</p>
                 </div>
                 <button type="button" class="ht-button ht-button-light select-sample-btn" data-id="{{ $perfume->id }}" aria-pressed="false" @disabled($available < 1)>
-                    {{ $available < 1 ? ($perfume->getStockForVolume(5) > 0 ? 'Đã đủ trong giỏ' : 'Mẫu 5ml đang hết') : '+ Cho vào hộp' }}
+                    {{ $available < 1 ? ($perfume->getStockForVolume(5) > 0 ? __('Đã đủ trong giỏ') : __('Mẫu 5ml đang hết')) : __('+ Cho vào hộp') }}
                 </button>
             </div>
             @endforeach
@@ -421,13 +421,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     <img src="${escapeMarkup(sample.img)}" alt="${escapeMarkup(sample.name)}" class="slot-filled-img">
                     <span class="slot-brand">${escapeMarkup(sample.brand)}</span>
                     <strong class="slot-name">${escapeMarkup(sample.name)}</strong>
-                    <button type="button" class="remove-sample-btn" data-index="${i}">@include('partials.icon', ['name' => 'close', 'size' => '1em']) Đổi mùi khác</button>
+                    <button type="button" class="remove-sample-btn" data-index="${i}">@include('partials.icon', ['name' => 'close', 'size' => '1em']) ${window.soopiT('Đổi mùi khác')}</button>
                 `;
             } else {
                 slot.innerHTML = `
                     <div class="slot-vial-icon">@include('partials.icon', ['name' => 'vial', 'size' => '1em'])</div>
-                    <span class="slot-empty-text">+ Chọn mẫu ${i + 1}</span>
-                    <span class="slot-empty-num">Khe thử mùi số ${i + 1}</span>
+                    <span class="slot-empty-text">${(window.soopiT || (text => text))("+ Chọn mẫu")} ${i + 1}</span>
+                    <span class="slot-empty-num">${(window.soopiT || (text => text))("Khe thử mùi số")} ${i + 1}</span>
                 `;
             }
             boxSlots.appendChild(slot);
@@ -446,10 +446,10 @@ document.addEventListener('DOMContentLoaded', function () {
         // Update add to cart button
         if (selectedSamples.length === currentSize) {
             addBoxBtn.disabled = false;
-            addBoxBtn.textContent = `Thêm Hộp ${currentSize} Mẫu Vào Giỏ Hàng (${currentSize === 5 ? '299.000₫' : '199.000₫'})`;
+            addBoxBtn.textContent = `${(window.soopiT || (text => text))("Thêm Hộp")} ${currentSize} ${(window.soopiT || (text => text))("Mẫu Vào Giỏ Hàng (")}${currentSize === 5 ? '299.000₫' : '199.000₫'})`;
         } else {
             addBoxBtn.disabled = true;
-            addBoxBtn.textContent = `Vui lòng chọn thêm ${currentSize - selectedSamples.length} mẫu nữa`;
+            addBoxBtn.textContent = `${(window.soopiT || (text => text))("Vui lòng chọn thêm")} ${currentSize - selectedSamples.length} ${(window.soopiT || (text => text))("mẫu nữa")}`;
         }
 
         // Highlight selected buttons in picker
@@ -459,7 +459,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const isSel = selectedSamples.some(s => s.id === id);
             b.classList.toggle('selected', isSel);
             b.setAttribute('aria-pressed', String(isSel));
-            b.textContent = isSel ? ' Đã chọn vào hộp' : '+ Cho vào hộp';
+            b.textContent = isSel ? (window.soopiT || (text => text))(" Đã chọn vào hộp") : (window.soopiT || (text => text))("+ Cho vào hộp");
         });
     }
 
@@ -473,7 +473,7 @@ document.addEventListener('DOMContentLoaded', function () {
             inputBoxSize.value = currentSize;
             if (selectedSamples.length > currentSize) {
                 selectedSamples = selectedSamples.slice(0, currentSize);
-                status.textContent = 'Đã giữ 3 mùi đầu tiên theo thứ tự bạn chọn.';
+                status.textContent = (window.soopiT || (text => text))("Đã giữ 3 mùi đầu tiên theo thứ tự bạn chọn.");
             }
             renderBox();
         });
@@ -494,12 +494,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectedSamples.splice(existingIdx, 1);
             } else {
                 if (selectedSamples.length >= currentSize) {
-                    status.textContent = currentSize === 3 ? 'Hộp đã đủ 3 mẫu. Hãy bỏ một mẫu hoặc chuyển sang hộp 5.' : 'Hộp đã đủ 5 mẫu. Hãy bỏ một mẫu để chọn mùi khác.';
+                    status.textContent = currentSize === 3 ? (window.soopiT || (text => text))("Hộp đã đủ 3 mẫu. Hãy bỏ một mẫu hoặc chuyển sang hộp 5.") : (window.soopiT || (text => text))("Hộp đã đủ 5 mẫu. Hãy bỏ một mẫu để chọn mùi khác.");
                     return;
                 }
                 selectedSamples.push({ id, name, brand, img });
             }
-            status.textContent = `${selectedSamples.length}/${currentSize} mẫu đã chọn.`;
+            status.textContent = `${selectedSamples.length}/${currentSize} ${(window.soopiT || (text => text))("mẫu đã chọn.")}`;
             renderBox();
         });
     });
@@ -511,7 +511,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const idx = parseInt(removeButton.dataset.index);
             const removedId = selectedSamples[idx]?.id;
             selectedSamples.splice(idx, 1);
-            status.textContent = `${selectedSamples.length}/${currentSize} mẫu đã chọn.`;
+            status.textContent = `${selectedSamples.length}/${currentSize} ${(window.soopiT || (text => text))("mẫu đã chọn.")}`;
             renderBox();
             const pickerButton = [...document.querySelectorAll('.select-sample-btn')].find(button => Number(button.dataset.id) === removedId);
             if (pickerButton?.getClientRects().length) pickerButton.focus();

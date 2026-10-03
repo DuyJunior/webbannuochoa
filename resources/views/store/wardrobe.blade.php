@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', 'Tủ Nước Hoa Cá Nhân (Scent Wardrobe) | Soopi')
-@section('meta_description', 'Bộ sưu tập mùi hương cá nhân hóa của bạn theo từng dịp: Đi làm, Hẹn hò, Đi tiệc và Thường ngày.')
+@section('title', __('Tủ Nước Hoa Cá Nhân (Scent Wardrobe) | Soopi'))
+@section('meta_description', __('Bộ sưu tập mùi hương cá nhân hóa của bạn theo từng dịp: Đi làm, Hẹn hò, Đi tiệc và Thường ngày.'))
 
 @section('content')
 <div class="store-container ht-wardrobe-page">
@@ -10,37 +10,37 @@
     @endif
     <header class="ht-wardrobe-header">
         <div class="header-left">
-            <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) BỘ SƯU TẬP CÁ NHÂN</span>
-            <h1 class="ht-wardrobe-title">Tủ Nước Hoa Của <em>{{ Auth::user()->name }}</em></h1>
-            <p class="ht-wardrobe-subtitle">Phân loại và lưu giữ những nốt hương đặc trưng theo từng khoảnh khắc cuộc sống: từ thanh lịch chốn công sở đến nồng nàn những đêm hẹn hò.</p>
+            <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) {{ __('BỘ SƯU TẬP CÁ NHÂN') }}</span>
+            <h1 class="ht-wardrobe-title">{{ __('Tủ Nước Hoa Của') }} <em>{{ Auth::user()->name }}</em></h1>
+            <p class="ht-wardrobe-subtitle">{{ __('Phân loại và lưu giữ những nốt hương đặc trưng theo từng khoảnh khắc cuộc sống: từ thanh lịch chốn công sở đến nồng nàn những đêm hẹn hò.') }}</p>
         </div>
         <div class="header-actions">
             <button type="button" class="ht-button ht-button-outline" id="shareWardrobeBtn">
-                @include('partials.icon', ['name' => 'link', 'size' => '1em']) Chia Sẻ Tủ Nước Hoa
+                @include('partials.icon', ['name' => 'link', 'size' => '1em']) {{ __('Chia Sẻ Tủ Nước Hoa') }}
             </button>
             <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary">
-                + Thêm Mùi Hương Mới
+                {{ __('+ Thêm Mùi Hương Mới') }}
             </a>
         </div>
     </header>
 
     {{-- Tabs by Occasion --}}
     <div class="ht-wardrobe-tabs">
-        <button class="w-tab active" data-target="all">Tất Cả ({{ $wardrobeItems->count() }})</button>
-        <button class="w-tab" data-target="work">@include('partials.icon', ['name' => 'briefcase', 'size' => '1em']) Đi Làm & Công Sở ({{ $byOccasion['work']->count() }})</button>
-        <button class="w-tab" data-target="date">@include('partials.icon', ['name' => 'glass', 'size' => '1em']) Hẹn Hò & Lãng Mạn ({{ $byOccasion['date']->count() }})</button>
-        <button class="w-tab" data-target="party">@include('partials.icon', ['name' => 'crown', 'size' => '1em']) Đi Tiệc & Dạ Hội ({{ $byOccasion['party']->count() }})</button>
-        <button class="w-tab" data-target="casual">@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Thường Ngày & Dạo Phố ({{ $byOccasion['casual']->count() }})</button>
+        <button class="w-tab active" data-target="all">{{ __('Tất Cả (') }}{{ $wardrobeItems->count() }})</button>
+        <button class="w-tab" data-target="work">@include('partials.icon', ['name' => 'briefcase', 'size' => '1em']) {{ __('Đi Làm & Công Sở (') }}{{ $byOccasion['work']->count() }})</button>
+        <button class="w-tab" data-target="date">@include('partials.icon', ['name' => 'glass', 'size' => '1em']) {{ __('Hẹn Hò & Lãng Mạn (') }}{{ $byOccasion['date']->count() }})</button>
+        <button class="w-tab" data-target="party">@include('partials.icon', ['name' => 'crown', 'size' => '1em']) {{ __('Đi Tiệc & Dạ Hội (') }}{{ $byOccasion['party']->count() }})</button>
+        <button class="w-tab" data-target="casual">@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) {{ __('Thường Ngày & Dạo Phố (') }}{{ $byOccasion['casual']->count() }})</button>
     </div>
 
     @if($wardrobeItems->isEmpty())
     <div class="ht-wardrobe-empty">
         <div class="empty-icon">@include('partials.icon', ['name' => 'mirror', 'size' => '1em'])</div>
-        <h3>Hiện chưa có mùi hương để hiển thị</h3>
-        <p>Mùi hương đã ngừng bán được tạm ẩn khỏi tủ. Bạn có thể khám phá cửa hàng hoặc làm trắc nghiệm để lưu thêm những lựa chọn mới.</p>
+        <h3>{{ __('Hiện chưa có mùi hương để hiển thị') }}</h3>
+        <p>{{ __('Mùi hương đã ngừng bán được tạm ẩn khỏi tủ. Bạn có thể khám phá cửa hàng hoặc làm trắc nghiệm để lưu thêm những lựa chọn mới.') }}</p>
         <div class="empty-actions">
-            <a href="{{ route('store.quiz') }}" class="ht-button ht-button-secondary">Làm Trắc Nghiệm Mùi Hương</a>
-            <a href="{{ route('home') }}" class="ht-button ht-button-primary">Khám Phá Cửa Hàng</a>
+            <a href="{{ route('store.quiz') }}" class="ht-button ht-button-secondary">{{ __('Làm Trắc Nghiệm Mùi Hương') }}</a>
+            <a href="{{ route('home') }}" class="ht-button ht-button-primary">{{ __('Khám Phá Cửa Hàng') }}</a>
         </div>
     </div>
     @else
@@ -48,7 +48,7 @@
         @foreach($wardrobeItems as $item)
         <article class="ht-wardrobe-card" data-occasion="{{ $item->occasion }}">
             <div class="card-occasion-tag">
-                @include('partials.icon', ['name' => $item->occasion_icon, 'size' => '1em']) {{ $item->occasion_label }}
+                @include('partials.icon', ['name' => $item->occasion_icon, 'size' => '1em']) {{ __($item->occasion_label) }}
             </div>
             <div class="card-img-wrap">
                 <img src="{{ $item->perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $item->perfume->name }}" loading="lazy">
@@ -58,7 +58,7 @@
                 <h3 class="card-name">
                     <a href="{{ route('perfumes.show', $item->perfume) }}">{{ $item->perfume->name }}</a>
                 </h3>
-                <p class="card-specs">Dung tích: {{ $item->perfume->volume_ml }}ml · {{ match($item->perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
+                <p class="card-specs">{{ __('Dung tích:') }} {{ $item->perfume->volume_ml }}ml · {{ match($item->perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
                 
                 @if($item->notes)
                 <div class="card-user-note">
@@ -67,8 +67,8 @@
                 @endif
 
                 <div class="card-scent-notes">
-                    <span>Hương đầu: {{ Str::limit($item->perfume->scent_profile['top']['notes'] ?? 'Tươi mát', 35) }}</span>
-                    <span>@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) Độ lưu: {{ $item->perfume->scent_profile['longevity']['text'] ?? '8h' }}</span>
+                    <span>{{ __('Hương đầu:') }} {{ Str::limit(__($item->perfume->scent_profile['top']['notes'] ?? __('Tươi mát')), 35) }}</span>
+                    <span>@include('partials.icon', ['name' => 'leaf', 'size' => '1em']) {{ __('Độ lưu:') }} {{ __($item->perfume->scent_profile['longevity']['text'] ?? '8h') }}</span>
                 </div>
 
                 <div class="card-footer">
@@ -79,12 +79,12 @@
                         <form action="{{ route('cart.add', $item->perfume) }}" method="POST" style="display:inline;">
                             @csrf
                             <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="ht-button ht-button-primary btn-sm">Mua Thêm</button>
+                            <button type="submit" class="ht-button ht-button-primary btn-sm">{{ __('Mua Thêm') }}</button>
                         </form>
                         <form action="{{ route('store.wardrobe.remove', $item->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn bỏ chai này khỏi tủ cá nhân?');">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="ht-button ht-button-outline btn-sm delete-btn" title="Xóa khỏi tủ">@include('partials.icon', ['name' => 'close', 'size' => '1em'])</button>
+                            <button type="submit" class="ht-button ht-button-outline btn-sm delete-btn" title="{{ __('Xóa khỏi tủ') }}">@include('partials.icon', ['name' => 'close', 'size' => '1em'])</button>
                         </form>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
         </article>
         @endforeach
     </div>
-    <p id="wardrobe-filter-empty" class="public-flash" role="status" hidden>Bạn chưa lưu mùi hương nào cho dịp này.</p>
+    <p id="wardrobe-filter-empty" class="public-flash" role="status" hidden>{{ __('Bạn chưa lưu mùi hương nào cho dịp này.') }}</p>
     @endif
 </div>
 
@@ -325,9 +325,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const shareUrl = @json(route('store.wardrobe.share', Auth::user()));
             try {
                 await navigator.clipboard.writeText(shareUrl);
-                alert('Đã sao chép liên kết tủ nước hoa của bạn!\n' + shareUrl + '\nBạn có thể gửi liên kết này cho bạn bè.');
+                alert((window.soopiT || (text => text))("Đã sao chép liên kết tủ nước hoa của bạn!\n") + shareUrl + (window.soopiT || (text => text))("\nBạn có thể gửi liên kết này cho bạn bè."));
             } catch {
-                prompt('Sao chép liên kết tủ nước hoa để gửi cho bạn bè:', shareUrl);
+                prompt((window.soopiT || (text => text))("Sao chép liên kết tủ nước hoa để gửi cho bạn bè:"), shareUrl);
             }
         });
     }

@@ -1,6 +1,6 @@
 <header class="interior-heading">
     <div class="interior-heading-copy">
-        <a class="interior-back" href="{{ route('home') }}#san-pham">← Trở về bộ sưu tập</a>
+        <a class="interior-back" href="{{ route('home') }}#san-pham">{{ __('← Trở về bộ sưu tập') }}</a>
         <span class="interior-kicker">SOOPI / {{ $eyebrow }}</span>
         <h1>{{ $heading }}<br><em>{{ $accent }}</em></h1>
         <p>{{ $description }}</p>

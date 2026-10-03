@@ -1,30 +1,30 @@
 @extends('layouts.store')
 
-@section('title', 'Trắc Nghiệm Mùi Hương · Tìm Dấu Ấn Hương Thơm Của Bạn | Soopi')
-@section('meta_description', 'Khám phá mùi hương hoàn hảo dành riêng cho bạn qua bài trắc nghiệm tính cách, thời tiết, dịp dùng và nhóm hương ưa thích.')
+@section('title', __('Trắc Nghiệm Mùi Hương · Tìm Dấu Ấn Hương Thơm Của Bạn | Soopi'))
+@section('meta_description', __('Khám phá mùi hương hoàn hảo dành riêng cho bạn qua bài trắc nghiệm tính cách, thời tiết, dịp dùng và nhóm hương ưa thích.'))
 
 @section('content')
 <div class="store-container ht-quiz-page">
     <header class="ht-quiz-hero">
-        <span class="ht-badge-pill">@include('partials.brand-mark', ['size' => 22, 'class' => 'interior-inline-brand-mark']) TRẮC NGHIỆM CHỌN HƯƠNG</span>
-        <h1 class="ht-quiz-title">Lắng nghe bạn.<br><em>Chọn một dấu hương.</em></h1>
-        <p class="ht-quiz-subtitle">Bốn câu hỏi về phong cách, thời tiết, dịp dùng và nốt hương bạn yêu thích. Cùng Soopi tìm những lựa chọn để bạn khám phá.</p>
+        <span class="ht-badge-pill">@include('partials.brand-mark', ['size' => 22, 'class' => 'interior-inline-brand-mark']) {{ __('TRẮC NGHIỆM CHỌN HƯƠNG') }}</span>
+        <h1 class="ht-quiz-title">{{ __('Lắng nghe bạn.') }}<br><em>{{ __('Chọn một dấu hương.') }}</em></h1>
+        <p class="ht-quiz-subtitle">{{ __('Bốn câu hỏi về phong cách, thời tiết, dịp dùng và nốt hương bạn yêu thích. Cùng Soopi tìm những lựa chọn để bạn khám phá.') }}</p>
     </header>
 
     @if($errors->any())
-        <div class="public-flash alert-danger" role="alert">Lựa chọn chưa hợp lệ. Bạn hãy chọn lại các câu trả lời bên dưới.</div>
+        <div class="public-flash alert-danger" role="alert">{{ __('Lựa chọn chưa hợp lệ. Bạn hãy chọn lại các câu trả lời bên dưới.') }}</div>
     @endif
     @if(!$hasResult)
     {{-- Form Quiz Step-by-Step --}}
     <div class="ht-quiz-card">
-        <div class="ht-quiz-progress-bar" role="progressbar" aria-label="Tiến độ trắc nghiệm" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1">
+        <div class="ht-quiz-progress-bar" role="progressbar" aria-label="{{ __('Tiến độ trắc nghiệm') }}" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1">
             <div class="ht-quiz-progress-fill" id="quizProgress" style="width: 25%"></div>
         </div>
         <div class="ht-quiz-steps-indicator">
-            <span class="step-dot active" data-step="1">1. Thần Thái</span>
-            <span class="step-dot" data-step="2">2. Thời Tiết</span>
-            <span class="step-dot" data-step="3">3. Dịp Dùng</span>
-            <span class="step-dot" data-step="4">4. Nốt Hương</span>
+            <span class="step-dot active" data-step="1">{{ __('1. Thần Thái') }}</span>
+            <span class="step-dot" data-step="2">{{ __('2. Thời Tiết') }}</span>
+            <span class="step-dot" data-step="3">{{ __('3. Dịp Dùng') }}</span>
+            <span class="step-dot" data-step="4">{{ __('4. Nốt Hương') }}</span>
         </div>
 
         <form action="{{ route('store.quiz') }}" method="GET" id="quizForm">
@@ -32,195 +32,195 @@
             {{-- Bước 1: Tính cách & Thần thái --}}
             <div class="ht-quiz-step-pane active" id="paneStep1">
                 <div class="ht-quiz-step-header">
-                    <span class="step-number">CÂU 01 / 04</span>
-                    <h2>Bạn muốn người khác cảm nhận thần thái nào nhất ở bạn?</h2>
+                    <span class="step-number">{{ __('CÂU 01 / 04') }}</span>
+                    <h2>{{ __('Bạn muốn người khác cảm nhận thần thái nào nhất ở bạn?') }}</h2>
                 </div>
                 <div class="ht-quiz-grid">
                     <label class="ht-quiz-option">
                         <input type="radio" name="personality" value="charming" required>
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
-                            <strong>Quyến Rũ & Bí Ẩn</strong>
-                            <p>Cuốn hút, gợi cảm, để lại vương vấn khó quên trong tâm trí người đối diện.</p>
+                            <strong>{{ __('Quyến Rũ & Bí Ẩn') }}</strong>
+                            <p>{{ __('Cuốn hút, gợi cảm, để lại vương vấn khó quên trong tâm trí người đối diện.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="personality" value="elegant">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'leaf', 'size' => '1em'])</span>
-                            <strong>Tinh Tế & Thanh Lịch</strong>
-                            <p>Nhẹ nhàng, tao nhã, toát lên phong thái chỉn chu và gu thẩm mỹ đẳng cấp.</p>
+                            <strong>{{ __('Tinh Tế & Thanh Lịch') }}</strong>
+                            <p>{{ __('Nhẹ nhàng, tao nhã, toát lên phong thái chỉn chu và gu thẩm mỹ đẳng cấp.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="personality" value="fresh">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'citrus', 'size' => '1em'])</span>
-                            <strong>Tươi Vui & Năng Động</strong>
-                            <p>Sảng khoái, tràn đầy năng lượng tích cực, tự do như làn gió mùa hạ.</p>
+                            <strong>{{ __('Tươi Vui & Năng Động') }}</strong>
+                            <p>{{ __('Sảng khoái, tràn đầy năng lượng tích cực, tự do như làn gió mùa hạ.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="personality" value="warm">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'tree', 'size' => '1em'])</span>
-                            <strong>Trầm Ấm & Uy Quyền</strong>
-                            <p>Chững chạc, tin cậy, vững vàng và mang chiều sâu của sự từng trải.</p>
+                            <strong>{{ __('Trầm Ấm & Uy Quyền') }}</strong>
+                            <p>{{ __('Chững chạc, tin cậy, vững vàng và mang chiều sâu của sự từng trải.') }}</p>
                         </div>
                     </label>
                 </div>
                 <div class="ht-quiz-actions">
                     <span></span>
-                    <button type="button" class="ht-button ht-button-primary next-step-btn" data-next="2">Tiếp Tục →</button>
+                    <button type="button" class="ht-button ht-button-primary next-step-btn" data-next="2">{{ __('Tiếp Tục →') }}</button>
                 </div>
             </div>
 
             {{-- Bước 2: Thời tiết / Môi trường --}}
             <div class="ht-quiz-step-pane" id="paneStep2">
                 <div class="ht-quiz-step-header">
-                    <span class="step-number">CÂU 02 / 04</span>
-                    <h2>Không gian hoặc tiết trời bạn hay xịt nước hoa nhất?</h2>
+                    <span class="step-number">{{ __('CÂU 02 / 04') }}</span>
+                    <h2>{{ __('Không gian hoặc tiết trời bạn hay xịt nước hoa nhất?') }}</h2>
                 </div>
                 <div class="ht-quiz-grid">
                     <label class="ht-quiz-option">
                         <input type="radio" name="weather" value="cool" required>
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'snowflake', 'size' => '1em'])</span>
-                            <strong>Mát Mẻ & Se Lạnh</strong>
-                            <p>Gió mùa thu đông, những ngày mưa bay hoặc buổi tối trời lành lạnh.</p>
+                            <strong>{{ __('Mát Mẻ & Se Lạnh') }}</strong>
+                            <p>{{ __('Gió mùa thu đông, những ngày mưa bay hoặc buổi tối trời lành lạnh.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="weather" value="hot">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'sun', 'size' => '1em'])</span>
-                            <strong>Nắng Ấm & Nhiệt Đới</strong>
-                            <p>Thời tiết năng động, cần mùi hương nhẹ mát, không gây nồng gắt.</p>
+                            <strong>{{ __('Nắng Ấm & Nhiệt Đới') }}</strong>
+                            <p>{{ __('Thời tiết năng động, cần mùi hương nhẹ mát, không gây nồng gắt.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="weather" value="ac">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'building', 'size' => '1em'])</span>
-                            <strong>Phòng Máy Lạnh Suốt Ngày</strong>
-                            <p>Môi trường kín, điều hòa 24-26°C, cần mùi hương vừa đủ lan tỏa dễ chịu.</p>
+                            <strong>{{ __('Phòng Máy Lạnh Suốt Ngày') }}</strong>
+                            <p>{{ __('Môi trường kín, điều hòa 24-26°C, cần mùi hương vừa đủ lan tỏa dễ chịu.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="weather" value="night">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'moon', 'size' => '1em'])</span>
-                            <strong>Không Gian Đêm Thoáng Đãng</strong>
-                            <p>Những buổi dạo phố, ngắm thành phố về đêm dưới ánh đèn lung linh.</p>
+                            <strong>{{ __('Không Gian Đêm Thoáng Đãng') }}</strong>
+                            <p>{{ __('Những buổi dạo phố, ngắm thành phố về đêm dưới ánh đèn lung linh.') }}</p>
                         </div>
                     </label>
                 </div>
                 <div class="ht-quiz-actions">
-                    <button type="button" class="ht-button ht-button-outline prev-step-btn" data-prev="1">← Quay Lại</button>
-                    <button type="button" class="ht-button ht-button-primary next-step-btn" data-next="3">Tiếp Tục →</button>
+                    <button type="button" class="ht-button ht-button-outline prev-step-btn" data-prev="1">{{ __('← Quay Lại') }}</button>
+                    <button type="button" class="ht-button ht-button-primary next-step-btn" data-next="3">{{ __('Tiếp Tục →') }}</button>
                 </div>
             </div>
 
             {{-- Bước 3: Dịp dùng & Đối tượng --}}
             <div class="ht-quiz-step-pane" id="paneStep3">
                 <div class="ht-quiz-step-header">
-                    <span class="step-number">CÂU 03 / 04</span>
-                    <h2>Dịp sử dụng quan trọng nhất mà bạn đang tìm kiếm?</h2>
+                    <span class="step-number">{{ __('CÂU 03 / 04') }}</span>
+                    <h2>{{ __('Dịp sử dụng quan trọng nhất mà bạn đang tìm kiếm?') }}</h2>
                 </div>
                 <div class="ht-quiz-grid">
                     <label class="ht-quiz-option">
                         <input type="radio" name="occasion" value="work" required>
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'briefcase', 'size' => '1em'])</span>
-                            <strong>Công Sở & Đi Làm Hằng Ngày</strong>
-                            <p>Chuyên nghiệp, lịch sự, tôn trọng không gian chung của đồng nghiệp.</p>
+                            <strong>{{ __('Công Sở & Đi Làm Hằng Ngày') }}</strong>
+                            <p>{{ __('Chuyên nghiệp, lịch sự, tôn trọng không gian chung của đồng nghiệp.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="occasion" value="date">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'glass', 'size' => '1em'])</span>
-                            <strong>Hẹn Hò & Gặp Gỡ Người Ấy</strong>
-                            <p>Ngọt ngào, gần gũi, khiến người bên cạnh chỉ muốn tựa sát vào.</p>
+                            <strong>{{ __('Hẹn Hò & Gặp Gỡ Người Ấy') }}</strong>
+                            <p>{{ __('Ngọt ngào, gần gũi, khiến người bên cạnh chỉ muốn tựa sát vào.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="occasion" value="party">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'crown', 'size' => '1em'])</span>
-                            <strong>Dạ Tiệc & Sự Kiện Sang Trọng</strong>
-                            <p>Tỏa hương xa, nổi bật giữa đám đông, xứng tầm trang phục lộng lẫy.</p>
+                            <strong>{{ __('Dạ Tiệc & Sự Kiện Sang Trọng') }}</strong>
+                            <p>{{ __('Tỏa hương xa, nổi bật giữa đám đông, xứng tầm trang phục lộng lẫy.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="occasion" value="casual">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'beach', 'size' => '1em'])</span>
-                            <strong>Dạo Phố & Du Lịch Cuối Tuần</strong>
-                            <p>Thư thái, xả stress, mang lại cảm giác giải phóng tâm trí và tự do.</p>
+                            <strong>{{ __('Dạo Phố & Du Lịch Cuối Tuần') }}</strong>
+                            <p>{{ __('Thư thái, xả stress, mang lại cảm giác giải phóng tâm trí và tự do.') }}</p>
                         </div>
                     </label>
                 </div>
                 <div class="ht-quiz-actions">
-                    <button type="button" class="ht-button ht-button-outline prev-step-btn" data-prev="2">← Quay Lại</button>
-                    <button type="button" class="ht-button ht-button-primary next-step-btn" data-next="4">Tiếp Tục →</button>
+                    <button type="button" class="ht-button ht-button-outline prev-step-btn" data-prev="2">{{ __('← Quay Lại') }}</button>
+                    <button type="button" class="ht-button ht-button-primary next-step-btn" data-next="4">{{ __('Tiếp Tục →') }}</button>
                 </div>
             </div>
 
             {{-- Bước 4: Nhóm hương ưu tiên & Giới tính --}}
             <div class="ht-quiz-step-pane" id="paneStep4">
                 <div class="ht-quiz-step-header">
-                    <span class="step-number">CÂU 04 / 04</span>
-                    <h2>Nốt hương nào khiến mũi bạn cảm thấy xiêu lòng nhất?</h2>
+                    <span class="step-number">{{ __('CÂU 04 / 04') }}</span>
+                    <h2>{{ __('Nốt hương nào khiến mũi bạn cảm thấy xiêu lòng nhất?') }}</h2>
                 </div>
                 <div class="ht-quiz-grid">
                     <label class="ht-quiz-option">
                         <input type="radio" name="note" value="floral" required>
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
-                            <strong>Hương Hoa Tươi Sáng (Floral)</strong>
-                            <p>Hoa hồng Damask, hoa nhài Sambac, mẫu đơn, hoa linh lan kiều diễm.</p>
+                            <strong>{{ __('Hương Hoa Tươi Sáng (Floral)') }}</strong>
+                            <p>{{ __('Hoa hồng Damask, hoa nhài Sambac, mẫu đơn, hoa linh lan kiều diễm.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="note" value="woody">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'tree', 'size' => '1em'])</span>
-                            <strong>Hương Gỗ Trầm Ấm (Woody)</strong>
-                            <p>Tuyết tùng Virginia, đàn hương Mysore, hổ phách và cỏ hương bài sâu lắng.</p>
+                            <strong>{{ __('Hương Gỗ Trầm Ấm (Woody)') }}</strong>
+                            <p>{{ __('Tuyết tùng Virginia, đàn hương Mysore, hổ phách và cỏ hương bài sâu lắng.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="note" value="citrus">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'citrus', 'size' => '1em'])</span>
-                            <strong>Cam Chanh Thanh Mát (Citrus & Fresh)</strong>
-                            <p>Cam Bergamot Calabria, bưởi hồng, chanh vàng và hương biển khoáng đạt.</p>
+                            <strong>{{ __('Cam Chanh Thanh Mát (Citrus & Fresh)') }}</strong>
+                            <p>{{ __('Cam Bergamot Calabria, bưởi hồng, chanh vàng và hương biển khoáng đạt.') }}</p>
                         </div>
                     </label>
                     <label class="ht-quiz-option">
                         <input type="radio" name="note" value="sweet">
                         <div class="option-card">
                             <span class="option-icon">@include('partials.icon', ['name' => 'candy', 'size' => '1em'])</span>
-                            <strong>Vani & Ngọt Ấm (Gourmand / Amber)</strong>
-                            <p>Hạt vani Madagascar, hạnh nhân, caramel và đậu Tonka béo ngậy êm ái.</p>
+                            <strong>{{ __('Vani & Ngọt Ấm (Gourmand / Amber)') }}</strong>
+                            <p>{{ __('Hạt vani Madagascar, hạnh nhân, caramel và đậu Tonka béo ngậy êm ái.') }}</p>
                         </div>
                     </label>
                 </div>
 
                 <div class="ht-quiz-gender-select">
-                    <p><strong>Ưu tiên dòng sản phẩm:</strong></p>
+                    <p><strong>{{ __('Ưu tiên dòng sản phẩm:') }}</strong></p>
                     <div class="gender-radio-group">
-                        <label><input type="radio" name="gender" value="" checked> Tất cả (Nam / Nữ / Unisex)</label>
-                        <label><input type="radio" name="gender" value="nu"> Dành riêng Nữ</label>
-                        <label><input type="radio" name="gender" value="nam"> Dành riêng Nam</label>
-                        <label><input type="radio" name="gender" value="unisex"> Unisex Phóng Khoáng</label>
+                        <label><input type="radio" name="gender" value="" checked> {{ __('Tất cả (Nam / Nữ / Unisex)') }}</label>
+                        <label><input type="radio" name="gender" value="nu"> {{ __('Dành riêng Nữ') }}</label>
+                        <label><input type="radio" name="gender" value="nam"> {{ __('Dành riêng Nam') }}</label>
+                        <label><input type="radio" name="gender" value="unisex"> {{ __('Unisex Phóng Khoáng') }}</label>
                     </div>
                 </div>
 
                 <div class="ht-quiz-actions">
-                    <button type="button" class="ht-button ht-button-outline prev-step-btn" data-prev="3">← Quay Lại</button>
-                    <button type="submit" class="ht-button ht-button-primary">Khám Phá Mùi Hương Của Bạn →</button>
+                    <button type="button" class="ht-button ht-button-outline prev-step-btn" data-prev="3">{{ __('← Quay Lại') }}</button>
+                    <button type="submit" class="ht-button ht-button-primary">{{ __('Khám Phá Mùi Hương Của Bạn →') }}</button>
                 </div>
             </div>
         </form>
@@ -229,16 +229,15 @@
     {{-- KẾT QUẢ QUIZ --}}
     <div class="ht-quiz-results-wrap">
         <div class="ht-quiz-result-hero">
-            <span class="result-celebration">@include('partials.icon', ['name' => 'party', 'size' => '1em']) CHÚC MỪNG BẠN!</span>
-            <h2>Những dấu hương dành để bạn khám phá</h2>
+            <span class="result-celebration">@include('partials.icon', ['name' => 'party', 'size' => '1em']) {{ __('CHÚC MỪNG BẠN!') }}</span>
+            <h2>{{ __('Những dấu hương dành để bạn khám phá') }}</h2>
             <p class="result-analysis">
-                Dựa trên lựa chọn của bạn: phong cách <strong>{{ match($personality) { 'charming' => 'Quyến rũ bí ẩn', 'elegant' => 'Tinh tế thanh lịch', 'fresh' => 'Tươi vui năng động', default => 'Trầm ấm uy quyền' } }}</strong>, 
-                thích hợp trong tiết trời <strong>{{ match($weather) { 'cool' => 'mát mẻ se lạnh', 'hot' => 'nắng ấm', 'ac' => 'phòng điều hòa', default => 'buổi tối thoáng đãng' } }}</strong> 
-                và dịp <strong>{{ match($occasion) { 'work' => 'công sở', 'date' => 'hẹn hò', 'party' => 'dạ tiệc', default => 'thường ngày' } }}</strong>.
+                {{ __('Dựa trên lựa chọn của bạn: phong cách') }} <strong>{{ match($personality) { 'charming' => __('Quyến rũ bí ẩn'), 'elegant' => __('Tinh tế thanh lịch'), 'fresh' => __('Tươi vui năng động'), default => __('Trầm ấm uy quyền') } }}</strong>{{ __(', thích hợp trong tiết trời') }} <strong>{{ match($weather) { 'cool' => __('mát mẻ se lạnh'), 'hot' => __('nắng ấm'), 'ac' => __('phòng điều hòa'), default => __('buổi tối thoáng đãng') } }}</strong>
+                {{ __('và dịp') }} <strong>{{ match($occasion) { 'work' => __('công sở'), 'date' => __('hẹn hò'), 'party' => __('dạ tiệc'), default => __('thường ngày') } }}</strong>.
             </p>
             <div class="result-actions-top">
-                <a href="{{ route('store.quiz') }}" class="ht-button ht-button-outline">↺ Làm lại trắc nghiệm</a>
-                <a href="{{ route('store.discovery-box') }}" class="ht-button ht-button-secondary">@include('partials.icon', ['name' => 'box', 'size' => '1em']) Khám phá các mẫu thử</a>
+                <a href="{{ route('store.quiz') }}" class="ht-button ht-button-outline">{{ __('↺ Làm lại trắc nghiệm') }}</a>
+                <a href="{{ route('store.discovery-box') }}" class="ht-button ht-button-secondary">@include('partials.icon', ['name' => 'box', 'size' => '1em']) {{ __('Khám phá các mẫu thử') }}</a>
             </div>
         </div>
 
@@ -248,9 +247,9 @@
             <article class="ht-quiz-item-card {{ $index === 0 ? 'top-match' : '' }}">
                 <div @class(['quiz-card-heading', 'top-match-badge' => $index === 0])>
                     @if($index === 0)
-                        @include('partials.brand-mark', ['size' => 18, 'light' => true]) NÊN THỬ ĐẦU TIÊN
+                        @include('partials.brand-mark', ['size' => 18, 'light' => true]) {{ __('NÊN THỬ ĐẦU TIÊN') }}
                     @else
-                        GỢI Ý {{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}
+                        {{ __('GỢI Ý') }} {{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}
                     @endif
                 </div>
                 <div class="item-card-inner">
@@ -260,11 +259,11 @@
                     <div class="item-card-content">
                         <span class="item-brand">{{ $perfume->brand }}</span>
                         <h3 class="item-title"><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->name }}</a></h3>
-                        <p class="item-category">{{ $perfume->category->name ?? 'Nước hoa cao cấp' }} · {{ match($perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
+                        <p class="item-category">{{ __($perfume->category->name ?? __('Nước hoa cao cấp')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
                         <p class="item-desc">{{ Str::limit(strip_tags($perfume->description), 110) }}</p>
-                        
+
                         <div class="item-notes-preview">
-                            <span class="note-pill">{{ $quizNotes['verified'] ? Str::limit(implode(' · ', $quizNotes['key_notes']), 100) : 'Cùng Soopi tìm hiểu thêm về nốt hương' }}</span>
+                            <span class="note-pill">{{ $quizNotes['verified'] ? Str::limit(implode(' · ', $quizNotes['key_notes']), 100) : __('Cùng Soopi tìm hiểu thêm về nốt hương') }}</span>
                         </div>
 
                         <div class="item-card-bottom">
@@ -275,15 +274,15 @@
                                 @endif
                             </div>
                             <div class="item-buttons">
-                                <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light">Chi Tiết</a>
-                                <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-primary" data-quick-view="{{ route('perfumes.quick-view', $perfume) }}" data-product-name="{{ $perfume->name }}" aria-haspopup="dialog" aria-controls="product-quick-view">Chọn dung tích</a>
+                                <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light">{{ __('Chi Tiết') }}</a>
+                                <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-primary" data-quick-view="{{ route('perfumes.quick-view', $perfume) }}" data-product-name="{{ $perfume->name }}" aria-haspopup="dialog" aria-controls="product-quick-view">{{ __('Chọn dung tích') }}</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </article>
             @empty
-                <p class="interior-quiz-empty">Soopi đang bổ sung mùi hương cho lựa chọn này. <a href="{{ route('store.quiz') }}">Thử lựa chọn khác ↗</a></p>
+                <p class="interior-quiz-empty">{{ __('Soopi đang bổ sung mùi hương cho lựa chọn này.') }} <a href="{{ route('store.quiz') }}">{{ __('Thử lựa chọn khác ↗') }}</a></p>
             @endforelse
         </div>
     </div>
@@ -677,7 +676,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const currentPane = this.closest('.ht-quiz-step-pane');
             const selected = currentPane.querySelector('input[type="radio"]:checked');
             if (!selected) {
-                error.textContent = 'Bạn hãy chọn một câu trả lời để tiếp tục nhé.';
+                error.textContent = (window.soopiT || (text => text))("Bạn hãy chọn một câu trả lời để tiếp tục nhé.");
                 error.hidden = false;
                 currentPane.querySelector('input[type="radio"]').focus();
                 return;

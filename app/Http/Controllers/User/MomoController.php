@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\PaymentTransaction;
 use App\Services\GHNOrderService;
 use App\Services\MomoService;
+use App\Services\OrderEmailService;
 use App\Support\DemoMode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -98,20 +99,20 @@ class MomoController extends Controller
 
             $resultCode = (string) $request->input('resultCode');
             $errorMsg = match ($resultCode) {
-                '1006' => 'Thanh toán thất bại: Thẻ của bạn đã bị khóa bởi ngân hàng.',
-                '1005' => 'Thanh toán thất bại: Số dư tài khoản không đủ để thanh toán.',
-                '1004' => 'Thanh toán thất bại: Giao dịch vượt quá hạn mức thanh toán của thẻ.',
-                '1001' => 'Thanh toán thất bại: Giao dịch bị người dùng hủy bỏ.',
-                default => 'Thanh toán MoMo không thành công ('.($request->input('message') ?? 'Lỗi giao dịch').').'
+                '1006' => __('Thanh toán thất bại: Thẻ của bạn đã bị khóa bởi ngân hàng.'),
+                '1005' => __('Thanh toán thất bại: Số dư tài khoản không đủ để thanh toán.'),
+                '1004' => __('Thanh toán thất bại: Giao dịch vượt quá hạn mức thanh toán của thẻ.'),
+                '1001' => __('Thanh toán thất bại: Giao dịch bị người dùng hủy bỏ.'),
+                default => __('Thanh toán MoMo không thành công (').($request->input('message') ?? 'Lỗi giao dịch').').'
             };
 
-            return redirect()->route('user.orders.index')->with('error', $errorMsg.' Bạn có thể nhấn "Thanh toán lại" để tiếp tục.');
+            return redirect()->route('user.orders.index')->with('error', $errorMsg.__(' Bạn có thể nhấn "Thanh toán lại" để tiếp tục.'));
         }
 
         $result = $this->completePayment($request->all(), $ghnOrders, $momo);
         $message = in_array($result, ['created', 'already_created'], true)
-            ? 'Thanh toán MoMo thành công! Vận đơn GHN đã được khởi tạo.'
-            : 'Thanh toán MoMo thành công! Đơn hàng đang được xử lý.';
+            ? __('Thanh toán MoMo thành công! Vận đơn GHN đã được khởi tạo.')
+            : __('Thanh toán MoMo thành công! Đơn hàng đang được xử lý.');
 
         return redirect()->route('user.orders.index')->with('success', $message);
     }
@@ -139,7 +140,7 @@ class MomoController extends Controller
             || ! in_array($order->shipping_status, [null, 'pending', 'not_shipped'], true)
             || ($order->payment_expires_at && $order->payment_expires_at->isPast())
             || $order->paymentTransactions()->where('gateway', 'cod')->exists()
-            || $order->paymentTransactions()->whereIn('status', ['paid', 'refund_pending', 'refunded'])->exists(), 409, 'Đơn hàng không thể thanh toán lại.');
+            || $order->paymentTransactions()->whereIn('status', ['paid', 'refund_pending', 'refunded'])->exists(), 409, __('Đơn hàng không thể thanh toán lại.'));
         $existing = PaymentTransaction::where('order_id', $order->id)
             ->where('gateway', 'momo')
             ->whereNull('gateway_order_id')
@@ -165,7 +166,7 @@ class MomoController extends Controller
 
         return isset($result['payUrl'])
             ? redirect($result['payUrl'])
-            : redirect()->route('user.orders.index')->with('error', 'Không thể kết nối tới MoMo.');
+            : redirect()->route('user.orders.index')->with('error', __('Không thể kết nối tới MoMo.'));
     }
 
     private function completePayment(array $payload, GHNOrderService $ghnOrders, MomoService $momo): string
@@ -219,7 +220,7 @@ class MomoController extends Controller
 
             $order->update(['status' => 'paid', 'shipping_status' => 'processing']);
             $momo->markPaid($transaction, $payload);
-            app(\App\Services\OrderEmailService::class)->paid($order);
+            app(OrderEmailService::class)->paid($order);
 
             return ['create', $order->id];
         });

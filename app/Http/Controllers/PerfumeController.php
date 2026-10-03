@@ -78,7 +78,7 @@ class PerfumeController extends Controller
         Perfume::create($data);
 
         return redirect()->route('perfumes.index')
-            ->with('success', 'Đã thêm nước hoa mới thành công.');
+            ->with('success', __('Đã thêm nước hoa mới thành công.'));
     }
 
     public function show(Perfume $perfume): View
@@ -143,10 +143,10 @@ class PerfumeController extends Controller
     {
         $data = $this->validatedData($request);
         if ($perfume->variants()->where('volume_ml', $data['volume_ml'])->exists()) {
-            throw ValidationException::withMessages(['volume_ml' => 'Dung tích gốc trùng với dung tích bổ sung đã lưu.']);
+            throw ValidationException::withMessages(['volume_ml' => __('Dung tích gốc trùng với dung tích bổ sung đã lưu.')]);
         }
         if ((int) $data['volume_ml'] !== (int) $perfume->volume_ml && OrderItem::where('perfume_id', $perfume->id)->exists()) {
-            throw ValidationException::withMessages(['volume_ml' => 'Sản phẩm đã có đơn hàng. Hãy tạo sản phẩm mới nếu thay đổi dung tích gốc để giữ đúng lịch sử kho.']);
+            throw ValidationException::withMessages(['volume_ml' => __('Sản phẩm đã có đơn hàng. Hãy tạo sản phẩm mới nếu thay đổi dung tích gốc để giữ đúng lịch sử kho.')]);
         }
         $data = $this->storeUploadedImage($request, $data);
 
@@ -160,7 +160,7 @@ class PerfumeController extends Controller
         StockAlertService::notifyIfRestocked($perfume, $previousStock);
 
         return redirect()->route('perfumes.show', $perfume)
-            ->with('success', 'Đã cập nhật nước hoa thành công.');
+            ->with('success', __('Đã cập nhật nước hoa thành công.'));
     }
 
     public function destroy(Perfume $perfume): RedirectResponse
@@ -168,7 +168,7 @@ class PerfumeController extends Controller
         $perfume->delete();
 
         return redirect()->route('perfumes.index')
-            ->with('success', 'Đã xóa nước hoa khỏi danh sách.');
+            ->with('success', __('Đã xóa nước hoa khỏi danh sách.'));
     }
 
     private function validatedData(Request $request): array
@@ -192,25 +192,25 @@ class PerfumeController extends Controller
             'description' => ['nullable', 'string', 'max:5000'],
             'is_active' => ['nullable', 'boolean'],
         ], [
-            'name.required' => 'Vui lòng nhập tên nước hoa.',
-            'brand.required' => 'Vui lòng chọn hoặc nhập thương hiệu cho nước hoa.',
-            'gender.required' => 'Vui lòng chọn giới tính.',
-            'volume_ml.required' => 'Vui lòng nhập dung tích chai nước hoa (ml).',
-            'volume_ml.integer' => 'Dung tích phải là một số nguyên hợp lệ.',
-            'volume_ml.min' => 'Dung tích tối thiểu phải từ 1 ml trở lên.',
-            'weight.integer' => 'Khối lượng phải là số nguyên (gram).',
-            'weight.min' => 'Khối lượng tối thiểu phải từ 1 gram trở lên.',
-            'price.required' => 'Vui lòng nhập giá bán.',
-            'price.numeric' => 'Giá bán phải là định dạng số.',
-            'price.min' => 'Giá bán không được là số âm.',
-            'stock.required' => 'Vui lòng nhập số lượng hàng trong kho.',
-            'stock.integer' => 'Số lượng tồn kho phải là số nguyên.',
-            'stock.min' => 'Số lượng tồn kho không được là số âm.',
-            'sale_price.lte' => 'Giá khuyến mãi phải nhỏ hơn hoặc bằng giá niêm yết.',
-            'image_url.regex' => 'Ảnh phải là URL http/https hoặc đường dẫn trong thư mục images.',
-            'image_file.image' => 'Tệp tải lên phải là hình ảnh.',
-            'image_file.mimes' => 'Ảnh phải có định dạng JPG, PNG hoặc WEBP.',
-            'image_file.max' => 'Ảnh không được lớn hơn 5MB.',
+            'name.required' => __('Vui lòng nhập tên nước hoa.'),
+            'brand.required' => __('Vui lòng chọn hoặc nhập thương hiệu cho nước hoa.'),
+            'gender.required' => __('Vui lòng chọn giới tính.'),
+            'volume_ml.required' => __('Vui lòng nhập dung tích chai nước hoa (ml).'),
+            'volume_ml.integer' => __('Dung tích phải là một số nguyên hợp lệ.'),
+            'volume_ml.min' => __('Dung tích tối thiểu phải từ 1 ml trở lên.'),
+            'weight.integer' => __('Khối lượng phải là số nguyên (gram).'),
+            'weight.min' => __('Khối lượng tối thiểu phải từ 1 gram trở lên.'),
+            'price.required' => __('Vui lòng nhập giá bán.'),
+            'price.numeric' => __('Giá bán phải là định dạng số.'),
+            'price.min' => __('Giá bán không được là số âm.'),
+            'stock.required' => __('Vui lòng nhập số lượng hàng trong kho.'),
+            'stock.integer' => __('Số lượng tồn kho phải là số nguyên.'),
+            'stock.min' => __('Số lượng tồn kho không được là số âm.'),
+            'sale_price.lte' => __('Giá khuyến mãi phải nhỏ hơn hoặc bằng giá niêm yết.'),
+            'image_url.regex' => __('Ảnh phải là URL http/https hoặc đường dẫn trong thư mục images.'),
+            'image_file.image' => __('Tệp tải lên phải là hình ảnh.'),
+            'image_file.mimes' => __('Ảnh phải có định dạng JPG, PNG hoặc WEBP.'),
+            'image_file.max' => __('Ảnh không được lớn hơn 5MB.'),
         ]);
 
         $validated['stock_5ml'] = (int) ($validated['stock_5ml'] ?? 0);

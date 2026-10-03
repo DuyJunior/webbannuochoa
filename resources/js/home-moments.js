@@ -46,7 +46,7 @@ if (form) {
             label.append(brand, number, volume); vial.append(img);
             if (productImage) {
                 vial.classList.add('has-product-image');
-                const badge = document.createElement('span'); badge.className = 'sample-preview-volume'; badge.textContent = 'Mẫu 5 ml';
+                const badge = document.createElement('span'); badge.className = 'sample-preview-volume'; badge.textContent = (window.soopiT || (text => text))("Mẫu 5 ml");
                 vial.append(badge);
                 img.addEventListener('error', () => {
                     vial.classList.remove('has-product-image');
@@ -56,13 +56,13 @@ if (form) {
                 vial.append(label);
             }
             const name = document.createElement('span'); name.className = 'sample-slot-name';
-            name.textContent = sample?.dataset.sampleName || 'Mùi hương ' + String(i + 1).padStart(2, '0');
+            name.textContent = sample?.dataset.sampleName || (window.soopiT || (text => text))("Mùi hương ") + String(i + 1).padStart(2, '0');
             name.title = name.textContent;
             slot.append(vial, name);
             if (sample) {
                 slot.classList.add('is-filled');
                 if (!previouslyShown.has(sample.value)) slot.classList.add('is-arriving');
-                const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = '×'; remove.setAttribute('aria-label', 'Bỏ ' + sample.dataset.sampleName);
+                const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = (window.soopiT || (text => text))("×"); remove.setAttribute('aria-label', (window.soopiT || (text => text))("Bỏ ") + sample.dataset.sampleName);
                 remove.addEventListener('click', () => {
                     selection = selection.filter(item => item !== sample);
                     render();
@@ -78,23 +78,23 @@ if (form) {
             input.checked = index !== -1;
             const card = input.closest('[data-sample-card]');
             card.classList.toggle('is-selected', index !== -1);
-            card.querySelector('[data-sample-action]').textContent = input.disabled ? input.dataset.sampleUnavailableReason : index !== -1 ? 'Đã chọn vào hộp' : 'Thêm vào hộp';
+            card.querySelector('[data-sample-action]').textContent = input.disabled ? input.dataset.sampleUnavailableReason : index !== -1 ? (window.soopiT || (text => text))("Đã chọn vào hộp") : (window.soopiT || (text => text))("Thêm vào hộp");
             card.querySelector('[data-sample-order]').textContent = index !== -1 ? String(index + 1).padStart(2, '0') : input.disabled ? '—' : '+';
             card.querySelector('.sample-choice-mark').textContent = index !== -1 ? '✓' : '+';
         });
         form.querySelector('[data-sample-price]').textContent = (limit === 5 ? 299000 : 199000).toLocaleString('vi-VN') + '₫';
         form.querySelector('[data-sample-count]').textContent = `${samples.length}/${limit}`;
-        form.querySelector('[data-sample-remaining]').textContent = samples.length === limit ? 'Sẵn sàng để khám phá' : available.length ? `Thêm ${limit - samples.length} mùi hương` : 'Đang chờ bổ sung';
+        form.querySelector('[data-sample-remaining]').textContent = samples.length === limit ? (window.soopiT || (text => text))("Sẵn sàng để khám phá") : available.length ? `${(window.soopiT || (text => text))("Thêm")} ${limit - samples.length} ${(window.soopiT || (text => text))("mùi hương")}` : (window.soopiT || (text => text))("Đang chờ bổ sung");
         form.querySelector('[data-sample-progress]').style.width = `${samples.length / limit * 100}%`;
-        status.textContent = message || (available.length ? `${samples.length}/${limit} mẫu đã chọn` : 'Chưa có mẫu để thêm vào hộp');
-        form.querySelector('.sample-complete > span').textContent = samples.length === limit ? `Xem lại hộp ${limit} mẫu` : samples.length ? `Tiếp tục với ${samples.length} mẫu đã chọn` : 'Xem toàn bộ mẫu hương';
+        status.textContent = message || (available.length ? `${samples.length}/${limit} ${(window.soopiT || (text => text))("mẫu đã chọn")}` : (window.soopiT || (text => text))("Chưa có mẫu để thêm vào hộp"));
+        form.querySelector('.sample-complete > span').textContent = samples.length === limit ? `${(window.soopiT || (text => text))("Xem lại hộp")} ${limit} ${(window.soopiT || (text => text))("mẫu")}` : samples.length ? `${(window.soopiT || (text => text))("Tiếp tục với")} ${samples.length} ${(window.soopiT || (text => text))("mẫu đã chọn")}` : (window.soopiT || (text => text))("Xem toàn bộ mẫu hương");
 
     }
     picks.forEach(input => input.addEventListener('change', () => {
         if (input.disabled) return;
         if (input.checked && selection.length >= capacity()) {
             input.checked = false;
-            render(capacity() === 3 ? 'Hộp đã đủ 3 mẫu. Bỏ một mẫu hoặc chọn hộp 5.' : 'Hộp đã đủ 5 mẫu. Bỏ một mẫu để thay bằng mùi hương khác.');
+            render(capacity() === 3 ? (window.soopiT || (text => text))("Hộp đã đủ 3 mẫu. Bỏ một mẫu hoặc chọn hộp 5.") : (window.soopiT || (text => text))("Hộp đã đủ 5 mẫu. Bỏ một mẫu để thay bằng mùi hương khác."));
             return;
         }
         selection = input.checked ? [...selection, input] : selection.filter(item => item !== input);
@@ -103,7 +103,7 @@ if (form) {
     sizes.forEach(size => size.addEventListener('change', () => {
         const overflow = selection.length > capacity();
         selection = selection.slice(0, capacity());
-        render(overflow ? 'Đã giữ 3 mẫu bạn chọn đầu tiên cho hộp nhỏ.' : '');
+        render(overflow ? (window.soopiT || (text => text))("Đã giữ 3 mẫu bạn chọn đầu tiên cho hộp nhỏ.") : '');
     }));
     form.addEventListener('formdata', event => {
         event.formData.delete('samples[]');

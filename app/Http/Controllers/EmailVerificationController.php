@@ -26,7 +26,7 @@ class EmailVerificationController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('login')->with('success', $alreadyVerified
-            ? 'Email của bạn đã được xác thực. Vui lòng đăng nhập để tiếp tục.'
-            : 'Xác thực email thành công! Vui lòng quay lại trang đăng nhập để tiếp tục.');
+            ? __('Email của bạn đã được xác thực. Vui lòng đăng nhập để tiếp tục.')
+            : __('Xác thực email thành công! Vui lòng quay lại trang đăng nhập để tiếp tục.'));
     }
 }

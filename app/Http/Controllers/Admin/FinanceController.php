@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\PaymentStatusEvent;
 use App\Models\PaymentTransaction;
 use App\Services\FinancePaymentPolicy;
+use App\Services\OrderEmailService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -53,9 +54,9 @@ class FinanceController extends Controller
             'mode' => ['nullable', Rule::in(['real', 'demo'])],
             'page' => ['nullable', 'integer', 'min:1'],
         ], [
-            'date_to.after_or_equal' => 'Ngày kết thúc phải từ ngày bắt đầu trở đi.',
-            '*.date_format' => 'Ngày lọc không hợp lệ.',
-            'max_amount.gte' => 'Số tiền tối đa phải lớn hơn hoặc bằng số tiền tối thiểu.',
+            'date_to.after_or_equal' => __('Ngày kết thúc phải từ ngày bắt đầu trở đi.'),
+            '*.date_format' => __('Ngày lọc không hợp lệ.'),
+            'max_amount.gte' => __('Số tiền tối đa phải lớn hơn hoặc bằng số tiền tối thiểu.'),
         ]);
 
         $filters['mode'] = $filters['mode'] ?? 'real';
@@ -156,7 +157,7 @@ class FinanceController extends Controller
         return response()->streamDownload(function () use ($query) {
             $file = fopen('php://output', 'w');
             fwrite($file, "\xEF\xBB\xBF");
-            fputcsv($file, ['Mã đơn', 'Mã thanh toán', 'Ngày tạo', 'Giá trị đơn (VND)', 'Phương thức', 'Trạng thái thanh toán', 'Trạng thái đơn', 'Ngày thu tiền', 'Dữ liệu']);
+            fputcsv($file, ['Mã đơn', 'Mã thanh toán', 'Ngày tạo', 'Giá trị đơn (VND)', 'Phương thức', __('Trạng thái thanh toán'), 'Trạng thái đơn', 'Ngày thu tiền', 'Dữ liệu']);
             foreach ($query->cursor() as $order) {
                 $cells = [$order->id, $order->payment_id, $order->created_at?->format('Y-m-d H:i:s'), $order->total_price,
                     $order->gateway, $order->payment_status, $order->status, $order->payment_paid_at, $order->is_demo ? 'DEMO' : 'REAL'];
@@ -182,13 +183,13 @@ class FinanceController extends Controller
         $changed = DB::transaction(function () use ($request, $order, $input): bool {
             $order = Order::query()->whereKey($order->id)->lockForUpdate()->firstOrFail();
             if ($order->is_demo !== (($input['mode'] ?? 'real') === 'demo')) {
-                throw ValidationException::withMessages(['mode' => 'Loại dữ liệu không khớp. Hãy tải lại đúng trang giao dịch thực hoặc mô phỏng.']);
+                throw ValidationException::withMessages(['mode' => __('Loại dữ liệu không khớp. Hãy tải lại đúng trang giao dịch thực hoặc mô phỏng.')]);
             }
             $payment = $order->paymentTransactions()->orderByRaw(self::PAYMENT_PRIORITY)->orderByDesc('id')->lockForUpdate()->first();
             $currentStatus = $payment?->status ?? FinancePaymentPolicy::status($order);
             $gateway = $payment?->gateway ?? FinancePaymentPolicy::gateway($order);
             if ($gateway !== 'cod') {
-                throw ValidationException::withMessages(['payment_status' => 'Chỉ được đối soát thủ công giao dịch COD. Giao dịch trực tuyến cần xác nhận từ cổng thanh toán.']);
+                throw ValidationException::withMessages(['payment_status' => __('Chỉ được đối soát thủ công giao dịch COD. Giao dịch trực tuyến cần xác nhận từ cổng thanh toán.')]);
             }
             $reference = isset($input['manual_refund_reference']) ? trim($input['manual_refund_reference']) : null;
             if ($reference === '') {
@@ -209,7 +210,7 @@ class FinanceController extends Controller
                     && $lastEvent->order_status_after === $order->status) {
                     return false;
                 }
-                throw ValidationException::withMessages(['payment_status' => 'Giao dịch hoặc đơn hàng đã thay đổi. Hãy tải lại trang trước khi cập nhật.']);
+                throw ValidationException::withMessages(['payment_status' => __('Giao dịch hoặc đơn hàng đã thay đổi. Hãy tải lại trang trước khi cập nhật.')]);
             }
 
             $newStatus = $input['payment_status'];
@@ -217,10 +218,10 @@ class FinanceController extends Controller
                 return false;
             }
             if (! in_array($newStatus, FinancePaymentPolicy::allowedTransitions($order, $currentStatus, $gateway), true)) {
-                throw ValidationException::withMessages(['payment_status' => 'Không được chuyển sang trạng thái này. Không thu tiền đơn đã hủy hoặc đang/đã hoàn hàng; không mở lại giao dịch đã kết thúc.']);
+                throw ValidationException::withMessages(['payment_status' => __('Không được chuyển sang trạng thái này. Không thu tiền đơn đã hủy hoặc đang/đã hoàn hàng; không mở lại giao dịch đã kết thúc.')]);
             }
             if ($newStatus === 'refunded' && ! $order->is_demo && ($reference === null || mb_strlen($reference) < 3)) {
-                throw ValidationException::withMessages(['manual_refund_reference' => 'Nhập mã chứng từ hoàn tiền thực tế (3–120 ký tự). Thao tác này chỉ ghi nhận, không chuyển tiền.']);
+                throw ValidationException::withMessages(['manual_refund_reference' => __('Nhập mã chứng từ hoàn tiền thực tế (3–120 ký tự). Thao tác này chỉ ghi nhận, không chuyển tiền.')]);
             }
 
             $oldOrderStatus = $order->status;
@@ -247,14 +248,14 @@ class FinanceController extends Controller
                 'request_fingerprint' => $fingerprint, 'created_at' => now(),
             ]);
             if ($newStatus === 'paid') {
-                app(\App\Services\OrderEmailService::class)->paid($order);
+                app(OrderEmailService::class)->paid($order);
             }
 
             return true;
         }, 3);
 
         return back()->with('success', $changed
-            ? ($input['payment_status'] === 'refunded' ? 'Đã ghi nhận hoàn tiền thủ công. Hệ thống không chuyển tiền.' : 'Đã cập nhật và lưu lịch sử đối soát COD.')
-            : 'Trạng thái đã được ghi nhận; không có thay đổi mới.');
+            ? ($input['payment_status'] === 'refunded' ? __('Đã ghi nhận hoàn tiền thủ công. Hệ thống không chuyển tiền.') : __('Đã cập nhật và lưu lịch sử đối soát COD.'))
+            : __('Trạng thái đã được ghi nhận; không có thay đổi mới.'));
     }
 }

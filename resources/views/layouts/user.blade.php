@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Soopi · Perfume Studio')</title>
     @include('partials.brand-favicon')
+    @include('partials.localization')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,7 +140,7 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm py-2">
-    <a class="navbar-brand store-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ">
+    <a class="navbar-brand store-brand" href="{{ route('home') }}" aria-label="{{ __('Soopi — Trang chủ') }}">
         @include('partials.brand-logo')
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -151,7 +152,7 @@
         <ul class="navbar-nav mr-auto">
             {{-- Trang chủ --}}
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('welcome') }}">Trang chủ</a>
+                <a class="nav-link" href="{{ route('welcome') }}">{{ __('Trang chủ') }}</a>
             </li>
         </ul>
 
@@ -160,27 +161,27 @@
                 {{-- Link lịch sử đơn hàng --}}
                 @if(Auth::user()->role === 'user' || Auth::user()->role === 'customer')
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('user.orders.index') }}">@include('partials.icon', ['name' => 'copy', 'size' => '1em']) Lịch sử đơn</a>
+                        <a class="nav-link" href="{{ route('user.orders.index') }}">@include('partials.icon', ['name' => 'copy', 'size' => '1em']) {{ __('Lịch sử đơn') }}</a>
                     </li>
                 @endif
 
                 <li class="nav-item">
-                    <span class="nav-link">@include('partials.icon', ['name' => 'user', 'size' => '1em']) Xin chào, {{ Auth::user()->name }}</span>
+                    <span class="nav-link">@include('partials.icon', ['name' => 'user', 'size' => '1em']) {{ __('Xin chào,') }} {{ Auth::user()->name }}</span>
                 </li>
                 <li class="nav-item">
                     <form action="{{ route('logout') }}" method="POST" class="form-inline">
                         @csrf
-                        <button type="submit" class="nav-link-btn nav-link">@include('partials.icon', ['name' => 'logout', 'size' => '1em']) Đăng xuất</button>
+                        <button type="submit" class="nav-link-btn nav-link">@include('partials.icon', ['name' => 'logout', 'size' => '1em']) {{ __('Đăng xuất') }}</button>
                     </form>
                 </li>
             @endauth
 
             @guest
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('register') }}">Đăng ký</a>
+                    <a class="nav-link" href="{{ route('register') }}">{{ __('Đăng ký') }}</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('login') }}">Đăng nhập</a>
+                    <a class="nav-link" href="{{ route('login') }}">{{ __('Đăng nhập') }}</a>
                 </li>
             @endguest
         </ul>

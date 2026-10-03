@@ -40,9 +40,9 @@ if (headerScene || stage || button) {
         document.body.classList.toggle('bloom-motion-off', !enabled);
         document.body.classList.toggle('bloom-motion-on', enabled);
         button.setAttribute('aria-pressed', String(enabled));
-        button.textContent = enabled ? 'Hiệu ứng: bật' : 'Hiệu ứng: tắt';
+        button.textContent = enabled ? (window.soopiT || (text => text))("Hiệu ứng: bật") : (window.soopiT || (text => text))("Hiệu ứng: tắt");
         button.disabled = reduced.matches || !!connection?.saveData;
-        button.title = button.disabled ? 'Theo cài đặt giảm chuyển động hoặc tiết kiệm dữ liệu của thiết bị' : 'Bật hoặc tắt hiệu ứng chuyển động';
+        button.title = button.disabled ? (window.soopiT || (text => text))("Theo cài đặt giảm chuyển động hoặc tiết kiệm dữ liệu của thiết bị") : (window.soopiT || (text => text))("Bật hoặc tắt hiệu ứng chuyển động");
         states.forEach(update);
     }
     button.addEventListener('click', () => {
