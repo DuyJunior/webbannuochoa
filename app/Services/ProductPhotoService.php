@@ -13,13 +13,13 @@ use Throwable;
 class ProductPhotoService
 {
     /** Save catalog fields and actual shop photos together, keeping existing photos on failure. */
-    public function save(Product $product, array $data, array $uploads = [], array $removeIds = []): Product
+    public function save(Product $product, array $data, array $uploads = [], array $removeIds = [], array $variants = []): Product
     {
         $storedPaths = [];
         $removedPaths = [];
 
         try {
-            DB::transaction(function () use ($product, $data, $uploads, $removeIds, &$storedPaths, &$removedPaths) {
+            DB::transaction(function () use ($product, $data, $uploads, $removeIds, $variants, &$storedPaths, &$removedPaths) {
                 // Serialize gallery updates on the parent, including updates to an empty gallery.
                 if ($product->exists) {
                     Product::whereKey($product->id)->lockForUpdate()->firstOrFail();
@@ -48,6 +48,7 @@ class ProductPhotoService
                 }
 
                 $product->fill($data)->save();
+                app(ProductVariantService::class)->save($product, $variants);
                 $removedPaths = $photos->whereIn('id', $removeIds)->pluck('path')->all();
                 $product->shopPhotos()->whereIn('id', $removeIds)->delete();
                 foreach ($storedPaths as $path) {

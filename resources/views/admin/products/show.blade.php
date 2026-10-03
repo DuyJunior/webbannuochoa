@@ -20,6 +20,11 @@
             <div class="col-6 col-lg-3 mb-3"><div class="border rounded p-3"><span class="text-muted small d-block mb-2">{{ $label }}</span><strong class="h3 {{ $stock > 5 ? 'text-success' : 'text-danger' }}">{{ number_format($stock) }}</strong><small class="text-muted"> chai</small><div class="small mt-2">{{ $stock === 0 ? 'Hết hàng' : ($stock <= 5 ? 'Sắp hết hàng' : 'Còn hàng') }}</div></div></div>
             @endforeach
         </div><p class="studio-field-help mb-0">Từng dung tích có số lượng riêng, không quy đổi tự động từ chai gốc.</p></section>
+        @if($product->variants->isNotEmpty())
+        <section class="admin-card studio-form-section"><h3>Dung tích bổ sung</h3><div class="table-responsive"><table class="table mb-0"><thead><tr><th>Dung tích</th><th>Giá bán</th><th>Tồn kho</th><th>Hiển thị</th></tr></thead><tbody>
+        @foreach($product->variants as $variant)<tr><th>{{ $variant->volume_ml }} ml</th><td>{{ number_format($variant->price, 0, ',', '.') }}₫</td><td>{{ $variant->stock }} chai</td><td><span class="{{ $variant->is_active ? 'badge-active' : 'badge-inactive' }}">{{ $variant->is_active ? 'Đang bán' : 'Đã ẩn' }}</span></td></tr>@endforeach
+        </tbody></table></div></section>
+        @endif
         <section class="admin-card studio-form-section"><h3>Mô tả sản phẩm</h3><p class="mb-0 text-muted" style="white-space:pre-line">{{ $product->description ?: 'Chưa có mô tả cho sản phẩm này.' }}</p></section>
     </div>
     <aside class="studio-form-aside"><section class="admin-card studio-form-section"><h3>Hình ảnh sản phẩm</h3><div class="studio-product-preview">@if($product->image_src)<img src="{{ $product->image_src }}" alt="{{ $product->name }}">@else<span><i class="fa-regular fa-image" aria-hidden="true"></i> Chưa có hình ảnh</span>@endif</div>@if($product->is_active)<a href="{{ route('perfumes.show', $product->id) }}" class="btn btn-outline-secondary btn-block mt-3" target="_blank" rel="noopener">Xem trên cửa hàng <i class="fa-solid fa-arrow-up-right-from-square ml-1" aria-hidden="true"></i></a>@endif</section></aside>

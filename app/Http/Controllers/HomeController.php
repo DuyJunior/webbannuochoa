@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\Article;
+use App\Models\Category;
 use App\Models\Livestream;
 use App\Models\Perfume;
 use App\Models\Video;
+use App\Services\DiscoveryBoxService;
+use App\Services\MoodCollectionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -28,6 +31,7 @@ class HomeController extends Controller
         ], ['max_price.gte' => 'Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu.']);
 
         $perfumes = Perfume::query()
+            ->with('variants')
             ->where('is_active', true)
             ->when($request->filled('search'), function ($query) use ($request) {
                 $keyword = trim((string) $request->input('search'));
@@ -59,6 +63,7 @@ class HomeController extends Controller
             $range = (string) $request->input('longevity');
             $perfumes = $perfumes->filter(function (Perfume $perfume) use ($range) {
                 $estimate = (int) $perfume->scent_profile['longevity']['percent'];
+
                 return match ($range) {
                     'light' => $estimate < 80,
                     'medium' => $estimate >= 80 && $estimate < 90,
@@ -68,9 +73,9 @@ class HomeController extends Controller
             });
         }
         $hasFilters = $request->anyFilled(['search', 'gender', 'category', 'sort', 'min_price', 'max_price', 'concentration', 'note', 'style', 'longevity']);
-        $moodCollections = $hasFilters ? [] : \App\Services\MoodCollectionService::from($perfumes);
+        $moodCollections = $hasFilters ? [] : MoodCollectionService::from($perfumes);
         $homeSampleAvailability = $hasFilters ? collect() : $perfumes->mapWithKeys(fn (Perfume $item) => [
-            $item->id => \App\Services\DiscoveryBoxService::remaining($item, $request->session()->get('cart', [])),
+            $item->id => DiscoveryBoxService::remaining($item, $request->session()->get('cart', [])),
         ]);
         $sampleCandidates = $hasFilters ? collect() : $perfumes
             ->sortByDesc(fn (Perfume $item) => $homeSampleAvailability[$item->id] > 0)->take(8)->values();
@@ -105,7 +110,7 @@ class HomeController extends Controller
         $galleryIds = $gallerySelection->pluck('id')->when($galleryFeatured, fn ($ids) => $ids->push($galleryFeatured->id));
         $galleryRemaining = $perfumes->reject(fn (Perfume $item) => $galleryIds->contains($item->id))->values();
         $wishlistIds = $request->user()
-            ? \Illuminate\Support\Facades\DB::table('wishlists')->where('user_id', $request->user()->id)->pluck('perfume_id')->all()
+            ? DB::table('wishlists')->where('user_id', $request->user()->id)->pluck('perfume_id')->all()
             : [];
 
         $journalArticles = $hasFilters ? collect() : Article::where('is_published', true)

@@ -28,7 +28,7 @@ class AiChatService
             ->latest('id')->limit(8)->get()->reverse()->values();
         $keywords = collect(preg_split('/\s+/u', mb_strtolower($incoming->content)))
             ->filter(fn ($word) => mb_strlen($word) >= 3)->unique()->take(12);
-        $catalog = Perfume::where('is_active', true);
+        $catalog = Perfume::with('variants')->where('is_active', true);
         if ($keywords->isNotEmpty()) {
             $score = $keywords->map(fn () => '(CASE WHEN LOWER(name) LIKE ? OR LOWER(brand) LIKE ? THEN 1 ELSE 0 END)')->implode(' + ');
             $bindings = $keywords->flatMap(fn ($word) => ['%'.$word.'%', '%'.$word.'%'])->all();
@@ -44,7 +44,7 @@ class AiChatService
                 'concentration' => $product->concentration,
                 'description' => Str::limit(strip_tags($product->description ?? ''), 180),
                 // Same volume prices as CartController; do not invent discounts.
-                'variants' => collect(array_unique([10, 50, (int) ($product->volume_ml ?: 100)]))->map(fn ($volume) => [
+                'variants' => collect($product->saleVolumes())->map(fn ($volume) => [
                     'volume_ml' => $volume,
                     'price_vnd' => app(CartQuoteService::class)->unitPrice($product, $volume),
                     'stock' => $product->getStockForVolume($volume),

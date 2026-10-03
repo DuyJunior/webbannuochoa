@@ -9,13 +9,14 @@ class CartQuoteService
 {
     public function unitPrice(Perfume $product, int $volume, bool $gift = false): int
     {
-        if (! in_array($volume, [10, 50, (int) ($product->volume_ml ?: 100)], true)) {
+        if (! in_array($volume, $product->saleVolumes(), true)) {
             throw ValidationException::withMessages(['cart' => 'Dung tích sản phẩm không hợp lệ.']);
         }
         $base = (int) ($product->sale_price ?? $product->price);
         $price = $volume === (int) ($product->volume_ml ?: 100) ? $base : match ($volume) {
             10 => max(20000, (int) (round($base * 0.22 / 10000) * 10000)),
             50 => (int) (round($base * 0.65 / 10000) * 10000),
+            default => $product->variantForVolume($volume)->price,
         };
 
         return $price + ($gift ? 50000 : 0);

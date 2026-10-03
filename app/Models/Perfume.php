@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Services\FragranceProfileService;
+use App\Support\VideoUrl;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,7 @@ use Illuminate\Support\Str;
 
 class Perfume extends Model
 {
+    use Concerns\HasPerfumeVariants;
     use HasFactory;
     use SoftDeletes;
 
@@ -74,7 +76,7 @@ class Perfume extends Model
             return $this->stock_50ml;
         }
 
-        return 0;
+        return $this->variantForVolume($v)?->stock ?? 0;
     }
 
     public function reviews(): HasMany
@@ -99,7 +101,7 @@ class Perfume extends Model
 
     public function getEmbedVideoUrlAttribute(): ?string
     {
-        return \App\Support\VideoUrl::embed($this->video_url);
+        return VideoUrl::embed($this->video_url);
     }
 
     public function getImageSrcAttribute(): ?string
@@ -130,6 +132,9 @@ class Perfume extends Model
             $baseWeight = 200;
         }
         $v = (int) ($volume ?: ($this->volume_ml ?: 100));
+        if ($variant = $this->variantForVolume($v)) {
+            return $variant->weight;
+        }
         if ($v === 10) {
             return max(50, (int) round($baseWeight * 0.25));
         }

@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\OrderItem;
 use App\Models\Perfume;
 use App\Models\ScentWardrobe;
+use App\Services\CartStockService;
+use App\Services\GiftBundleService;
 use App\Services\StockAlertService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -83,8 +85,8 @@ class PerfumeController extends Controller
     {
         abort_unless($perfume->is_active || auth()->user()?->role === 'admin', 404);
         $perfume->load(['category', 'shopPhotos']);
-        $bundleSamples = app(\App\Services\GiftBundleService::class)->availableSamples($perfume, session('cart', []));
-        $bundleMainAvailable = \App\Services\CartStockService::remaining($perfume, (int) $perfume->volume_ml, session('cart', []));
+        $bundleSamples = app(GiftBundleService::class)->availableSamples($perfume, session('cart', []));
+        $bundleMainAvailable = CartStockService::remaining($perfume, (int) $perfume->volume_ml, session('cart', []));
         $reviews = $perfume->reviews()->with('user:id,name')->latest()->paginate(5);
         $averageRating = round((float) $perfume->reviews()->avg('rating'), 1);
         $isFavorite = auth()->check() && DB::table('wishlists')
@@ -140,6 +142,9 @@ class PerfumeController extends Controller
     public function update(Request $request, Perfume $perfume): RedirectResponse
     {
         $data = $this->validatedData($request);
+        if ($perfume->variants()->where('volume_ml', $data['volume_ml'])->exists()) {
+            throw ValidationException::withMessages(['volume_ml' => 'Dung tích gốc trùng với dung tích bổ sung đã lưu.']);
+        }
         if ((int) $data['volume_ml'] !== (int) $perfume->volume_ml && OrderItem::where('perfume_id', $perfume->id)->exists()) {
             throw ValidationException::withMessages(['volume_ml' => 'Sản phẩm đã có đơn hàng. Hãy tạo sản phẩm mới nếu thay đổi dung tích gốc để giữ đúng lịch sử kho.']);
         }
@@ -150,7 +155,7 @@ class PerfumeController extends Controller
         }
 
         $data['is_active'] = $request->boolean('is_active');
-        $previousStock = $perfume->stock;
+        $previousStock = $perfume->availableStock();
         $perfume->update($data);
         StockAlertService::notifyIfRestocked($perfume, $previousStock);
 

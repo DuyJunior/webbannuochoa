@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\Perfume;
 use App\Models\PerfumeReview;
 use App\Models\ScentWardrobe;
 use App\Models\User;
 use App\Services\DiscoveryBoxService;
+use App\Services\FragranceEditorialService;
 use App\Services\LoyaltyService;
 use App\Services\ScentFinder;
 use Illuminate\Http\JsonResponse;
@@ -304,11 +306,11 @@ class StoreExperienceController extends Controller
         $quote = $quotes[$dayIndex % count($quotes)];
 
         $regularPrice = (int) ($perfume->sale_price ?? $perfume->price);
-        $coupon = \App\Models\Coupon::where('code', 'TODAY10')->first();
+        $coupon = Coupon::where('code', 'TODAY10')->first();
         $coupon = $coupon?->isAvailableFor($regularPrice) ? $coupon : null;
         $todayCode = $coupon?->code;
         $dealPrice = $regularPrice - ($coupon?->discountFor($regularPrice) ?? 0);
-        $dailyEditorial = \App\Services\FragranceEditorialService::forPerfume($perfume);
+        $dailyEditorial = FragranceEditorialService::forPerfume($perfume);
 
         return view('store.scent-of-the-day', compact('perfume', 'quote', 'todayCode', 'regularPrice', 'dealPrice', 'dailyEditorial'));
     }
@@ -340,7 +342,7 @@ class StoreExperienceController extends Controller
     public function wishlist(Request $request): View
     {
         $ids = DB::table('wishlists')->where('user_id', $request->user()->id)->pluck('perfume_id');
-        $perfumes = Perfume::whereIn('id', $ids)->where('is_active', true)->get();
+        $perfumes = Perfume::with('variants')->whereIn('id', $ids)->where('is_active', true)->get();
         $alerts = DB::table('stock_alerts')->where('user_id', $request->user()->id)->pluck('perfume_id')->all();
 
         return view('store.wishlist', compact('perfumes', 'alerts'));
@@ -400,7 +402,7 @@ class StoreExperienceController extends Controller
     public function stockAlert(Request $request, Perfume $perfume): RedirectResponse
     {
         abort_unless($perfume->is_active, 404);
-        if ($perfume->stock > 0) {
+        if ($perfume->availableStock() > 0) {
             return back()->with('success', 'Sản phẩm đang có hàng, bạn có thể đặt ngay.');
         }
         $key = ['user_id' => $request->user()->id, 'perfume_id' => $perfume->id];

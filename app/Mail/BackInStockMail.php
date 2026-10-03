@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 
 class BackInStockMail extends Mailable
 {
-    public function __construct(public Perfume|Product $perfume) {}
+    public function __construct(public Perfume|Product $perfume, public array $availableVolumes = []) {}
 
     public function build(): self
     {

@@ -25,7 +25,7 @@ class ProductController extends Controller
     {
         $request->validate(['search' => ['nullable', 'string', 'max:100'], 'gender' => ['nullable', 'in:nam,nu,unisex'], 'status' => ['nullable', 'in:active,inactive']]);
         $products = Product::query()
-            ->with('category')
+            ->with(['category', 'variants'])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $keyword = trim((string) $request->input('search'));
                 $query->where(function ($query) use ($keyword) {
@@ -94,7 +94,7 @@ class ProductController extends Controller
         }
 
         $data['is_active'] = $request->boolean('is_active');
-        $previousStock = $product->stock;
+        $previousStock = $product->availableStock();
         $this->saveWithPhotos($request, $product, $data);
         StockAlertService::notifyIfRestocked($product, $previousStock);
 
@@ -111,11 +111,11 @@ class ProductController extends Controller
     }
 
     // Hiển thị chi tiết sản phẩm cho người dùng thường
-    public function show_normal(Product $product): View
+    public function show_normal(Product $product): RedirectResponse
     {
-        $product->load('category');
+        abort_unless($product->is_active, 404);
 
-        return view('products.show', compact('product'));
+        return redirect()->route('perfumes.show', $product->id);
     }
 
     private function validatedData(Request $request): array
@@ -157,6 +157,14 @@ class ProductController extends Controller
             'video_url' => ['bail', 'nullable', 'string', 'max:2048', new SafeVideoUrl],
             'description' => ['nullable', 'string', 'max:5000'],
             'is_active' => ['nullable', 'boolean'],
+            'variants' => ['sometimes', 'array', 'max:20'],
+            'variants.*' => ['required', 'array:id,volume_ml,price,stock,weight,is_active'],
+            'variants.*.id' => ['nullable', 'integer', 'min:1', 'distinct'],
+            'variants.*.volume_ml' => ['required', 'integer', 'min:1', 'max:5000', 'distinct'],
+            'variants.*.price' => ['required', 'integer', 'min:0', 'max:999999999999'],
+            'variants.*.stock' => ['required', 'integer', 'min:0', 'max:999999999'],
+            'variants.*.weight' => ['required', 'integer', 'min:1', 'max:50000'],
+            'variants.*.is_active' => ['required', 'boolean'],
         ], [
             'name.required' => 'Vui lòng nhập tên sản phẩm.',
             'brand.required' => 'Vui lòng chọn hoặc nhập thương hiệu cho sản phẩm.',
@@ -184,6 +192,25 @@ class ProductController extends Controller
             'shop_photos.*.extensions' => 'Ảnh thực tế phải có phần mở rộng JPG, PNG hoặc WEBP.',
             'shop_photos.*.max' => 'Mỗi ảnh thực tế không được vượt quá 5 MB.',
             'shop_photos.*.dimensions' => 'Chiều rộng và chiều cao ảnh không được vượt quá 8.000 pixel.',
+            'variants.max' => 'Mỗi sản phẩm có tối đa 20 dung tích bổ sung.',
+            'variants.*.volume_ml.distinct' => 'Mỗi dung tích chỉ được thêm một lần.',
+            'variants.*.volume_ml.required' => 'Nhập dung tích chai, ví dụ 200 ml.',
+            'variants.*.volume_ml.integer' => 'Dung tích phải là số nguyên (ml).',
+            'variants.*.volume_ml.min' => 'Dung tích phải từ 1 ml trở lên.',
+            'variants.*.volume_ml.max' => 'Dung tích không được vượt quá 5.000 ml.',
+            'variants.*.price.required' => 'Nhập giá bán riêng cho dung tích này.',
+            'variants.*.price.integer' => 'Giá bán phải là số nguyên (đồng).',
+            'variants.*.price.min' => 'Giá bán không được âm.',
+            'variants.*.stock.required' => 'Nhập số chai có trong kho.',
+            'variants.*.stock.integer' => 'Số chai phải là số nguyên.',
+            'variants.*.stock.min' => 'Số chai không được âm.',
+            'variants.*.weight.required' => 'Nhập khối lượng gồm bao bì để tính phí vận chuyển.',
+            'variants.*.weight.integer' => 'Khối lượng phải là số nguyên (gram).',
+            'variants.*.weight.min' => 'Khối lượng phải từ 1 gram trở lên.',
+        ], [
+            'variants' => 'dung tích bổ sung', 'variants.*.volume_ml' => 'dung tích',
+            'variants.*.price' => 'giá bán', 'variants.*.stock' => 'tồn kho',
+            'variants.*.weight' => 'khối lượng', 'variants.*.is_active' => 'trạng thái mở bán',
         ]);
 
         $validated['stock_5ml'] = (int) ($validated['stock_5ml'] ?? 0);
@@ -207,13 +234,15 @@ class ProductController extends Controller
         $uploadedCatalogPath = null;
 
         try {
+            $variants = $data['variants'] ?? [];
+            unset($data['variants']);
             $data = $this->storeUploadedImage($request, $data);
             if ($request->hasFile('image_file')) {
                 $uploadedCatalogPath = $data['image_url'];
             }
 
             app(ProductPhotoService::class)->save(
-                $product, $data, $request->file('shop_photos', []), $request->input('remove_shop_photos', [])
+                $product, $data, $request->file('shop_photos', []), $request->input('remove_shop_photos', []), $variants
             );
         } catch (Throwable $exception) {
             if ($uploadedCatalogPath !== null) {

@@ -41,10 +41,10 @@ class PublicCatalogAccessTest extends TestCase
         $this->actingAs(User::factory()->create(['role' => 'admin']));
         $product = $this->perfume(['volume_ml' => 75, 'stock' => 7]);
 
-        $this->get(route('admin.products.index'))->assertOk()->assertSee('75ml:', false);
+        $this->get(route('admin.products.index'))->assertOk()->assertSee('75 ml · Chai gốc: 7 chai');
         $this->get(route('admin.products.show', $product))->assertOk()->assertSee('Chai gốc 75ml');
-        $this->get(route('admin.products.create'))->assertOk()->assertSee('Kho dung tích gốc');
-        $this->get(route('admin.products.edit', $product))->assertOk()->assertSee('Kho dung tích gốc');
+        $this->get(route('admin.products.create'))->assertOk()->assertSee('Kho chai gốc 100 ml');
+        $this->get(route('admin.products.edit', $product))->assertOk()->assertSee('Kho chai gốc 75 ml');
 
         $this->assertDatabaseHas('perfumes', ['id' => $product->id, 'volume_ml' => 75, 'stock' => 7]);
     }

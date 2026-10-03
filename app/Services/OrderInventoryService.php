@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\Perfume;
+use App\Models\PerfumeVariant;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -29,6 +30,11 @@ class OrderInventoryService
             $demands = [];
             $ids = $locked->items->flatMap(fn ($item) => array_column($item->stock_components ?: [['perfume_id' => $item->perfume_id]], 'perfume_id'));
             $products = Perfume::withTrashed()->whereKey($ids)->orderBy('id')->lockForUpdate()->get()->keyBy('id');
+            $variants = PerfumeVariant::whereIn('perfume_id', $ids)->orderBy('id')->lockForUpdate()->get()->keyBy('id');
+            foreach ($products as $product) {
+                $product->setRelation('variants', $variants->where('perfume_id', $product->id)->values());
+            }
+            $volumes = [];
             foreach ($locked->items as $item) {
                 $components = $item->stock_components ?: [['perfume_id' => $item->perfume_id, 'volume_ml' => $item->volume_ml ?: 100]];
                 foreach ($components as &$component) {
@@ -40,13 +46,14 @@ class OrderInventoryService
                     }
                     // Store the physical bucket at reservation, never infer it again on release.
                     $column = $release ? ($component['stock_column'] ?? null) : null;
-                    $column ??= $volume === (int) ($product->volume_ml ?: 100) ? 'stock' : match ($volume) {
-                        5 => 'stock_5ml', 10 => 'stock_10ml', 50 => 'stock_50ml',
-                        default => throw ValidationException::withMessages(['cart' => 'Dung tích không hợp lệ.']),
-                    };
-                    if (! in_array($column, ['stock', 'stock_5ml', 'stock_10ml', 'stock_50ml'], true)) {
+                    $column ??= $product->stockBucketForVolume($volume);
+                    $variant = is_string($column) && preg_match('/^variant:([1-9][0-9]*)$/', $column, $match)
+                        ? $variants->get((int) $match[1]) : null;
+                    $validVariant = $variant && $variant->perfume_id === $id && ($release || ($variant->is_active && $variant->volume_ml === $volume));
+                    if (! $validVariant && ! in_array($column, ['stock', 'stock_5ml', 'stock_10ml', 'stock_50ml'], true)) {
                         throw ValidationException::withMessages(['cart' => 'Thông tin kho của đơn hàng không hợp lệ.']);
                     }
+                    $volumes[$id][$column] = $volume;
                     $component['stock_column'] = $column;
                     $component['product_name'] ??= $product->name;
                     $demands[$id][$column] = ($demands[$id][$column] ?? 0) + $item->quantity;
@@ -59,17 +66,23 @@ class OrderInventoryService
                 $product = $products->get($id);
                 foreach ($columns as $column => $quantity) {
                     // Null means not yet stocked, not an invented amount of physical inventory.
-                    $available = (int) ($product->getRawOriginal($column) ?? 0);
+                    $variant = str_starts_with($column, 'variant:') ? $variants->get((int) substr($column, 8)) : null;
+                    $available = $variant ? $variant->stock : (int) ($product->getRawOriginal($column) ?? 0);
                     if (! $release && $available < $quantity) {
                         throw ValidationException::withMessages(['cart' => "{$product->name}: biến thể đã chọn chỉ còn {$available} sản phẩm."]);
                     }
-                    $product->setAttribute($column, $available + ($release ? $quantity : -$quantity));
-                    $product->save();
+                    $balance = $available + ($release ? $quantity : -$quantity);
+                    if ($variant) {
+                        $variant->update(['stock' => $balance]);
+                    } else {
+                        $product->setAttribute($column, $balance);
+                        $product->save();
+                    }
                     DB::table('inventory_movements')->insert([
                         'order_id' => $locked->id, 'perfume_id' => $id,
                         'stock_column' => $column, 'operation' => $release ? 'release' : 'reserve',
                         'quantity_change' => $release ? $quantity : -$quantity,
-                        'balance_after' => $product->getAttribute($column), 'created_at' => now(),
+                        'balance_after' => $balance, 'volume_ml' => $volumes[$id][$column], 'created_at' => now(),
                     ]);
                 }
             }

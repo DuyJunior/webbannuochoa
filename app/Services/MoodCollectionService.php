@@ -20,7 +20,7 @@ final class MoodCollectionService
             if (! $profile['verified']) {
                 continue;
             }
-            $volume = collect(array_unique([(int) ($product->volume_ml ?: 100), 50, 10]))
+            $volume = collect($product->saleVolumes())
                 ->first(fn ($size) => $product->getStockForVolume($size) > 0);
             if ($volume === null) {
                 continue;

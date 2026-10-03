@@ -256,9 +256,18 @@
                                     @endif
                                 </div>
                             </label>
+                            @foreach($perfume->variants->where('is_active', true) as $variant)
+                            <label class="volume-card-option" data-volume="{{ $variant->volume_ml }}" data-stock="{{ $variant->stock }}" data-desc="Chai {{ $variant->volume_ml }} ml" data-price="{{ $variant->price }}" data-oldprice="{{ $variant->price }}">
+                                <input type="radio" name="volume_ml" value="{{ $variant->volume_ml }}">
+                                <div class="volume-card-badge">Thêm lựa chọn</div>
+                                <div class="volume-card-size">{{ $variant->volume_ml }}ml</div>
+                                <div class="volume-card-desc">{{ $perfume->concentration ?: 'Nước hoa' }}</div>
+                                <div class="volume-card-price">{{ number_format($variant->price, 0, ',', '.') }}₫</div>
+                                <div class="volume-card-stock {{ $variant->stock <= 0 ? 'stock-out' : ($variant->stock <= 5 ? 'stock-low' : '') }}"><span class="stock-dot"></span>{{ $variant->stock > 0 ? 'Còn '.$variant->stock.' chai' : 'Tạm hết' }}</div>
+                            </label>
+                            @endforeach
                         </div>
                     </div>
-
                     {{-- Dịch Vụ Đi Kèm & Quà Tặng (Add-ons / Options) --}}
                     <div class="form-option-section">
                         <label class="option-title">Dịch Vụ & Tuỳ Chọn Cao Cấp:</label>
@@ -325,7 +334,7 @@
                     @auth
                     <form method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}" data-wishlist="{{ $perfume->id }}" data-wishlist-saved="{{ $isFavorite ? 'true' : 'false' }}" data-wishlist-name="{{ $perfume->name }}" data-wishlist-login="{{ route('login') }}">@csrf<button type="submit" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}" aria-label="{{ $isFavorite ? 'Bỏ yêu thích' : 'Yêu thích' }} {{ $perfume->name }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <span data-wishlist-label>{{ $isFavorite ? 'Đã yêu thích' : 'Lưu yêu thích' }}</span></button></form>
                     <button type="button" id="openWardrobeModalBtn" class="ht-utility-btn">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) {{ $inWardrobe ? ' Đã trong Tủ hương' : '+ Tủ nước hoa' }}</button>
-                    @if($perfume->stock <= 0)
+                    @if($perfume->availableStock() <= 0)
                     <form method="POST" action="{{ route('store.stock-alert', $perfume) }}">@csrf<button type="submit">Báo khi có hàng</button></form>
                     @endif
                     @endauth
@@ -631,8 +640,10 @@
                     if (radio) radio.checked = true;
 
                     currentVolume = this.getAttribute('data-volume');
-                    currentBasePrice = parseFloat(this.getAttribute('data-price')) || {{ $priceFull }};
-                    currentOldPrice = parseFloat(this.getAttribute('data-oldprice')) || currentBasePrice;
+                    const selectedPrice = Number(this.getAttribute('data-price'));
+                    const selectedOldPrice = Number(this.getAttribute('data-oldprice'));
+                    currentBasePrice = Number.isFinite(selectedPrice) ? selectedPrice : {{ $priceFull }};
+                    currentOldPrice = Number.isFinite(selectedOldPrice) ? selectedOldPrice : currentBasePrice;
                     const stockNum = parseInt(this.getAttribute('data-stock')) || 0;
                     const desc = this.getAttribute('data-desc') || this.querySelector('.volume-card-desc')?.textContent || '';
 

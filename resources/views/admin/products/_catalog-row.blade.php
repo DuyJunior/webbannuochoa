@@ -1,6 +1,6 @@
 @php
     $baseVolume = (int) ($product->volume_ml ?: 100);
-    $volumes = collect([5, 10, 50, $baseVolume])->unique()->sort()->values();
+    $volumes = collect(array_merge([5], $product->saleVolumes()))->unique()->sort()->values();
     $isDiscounted = $product->sale_price !== null && $product->sale_price < $product->price;
 @endphp
 <tr class="catalog-row">

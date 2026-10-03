@@ -37,12 +37,24 @@ if (form) {
             const slot = document.createElement('div'); slot.className = 'sample-slot';
             const sample = samples[i];
             const vial = document.createElement('span'); vial.className = 'sample-vial'; vial.setAttribute('aria-hidden', 'true');
-            const img = document.createElement('img'); img.alt = ''; img.src = form.dataset.vialSrc; img.width = 140; img.height = 360;
+            const productImage = sample?.dataset.sampleImg;
+            const img = document.createElement('img'); img.alt = ''; img.src = productImage || form.dataset.vialSrc; img.width = 140; img.height = 360;
             const label = document.createElement('span'); label.className = 'sample-vial-label';
             const brand = document.createElement('b'); brand.textContent = 'SOOPI';
             const number = document.createElement('small'); number.textContent = String(i + 1).padStart(2, '0');
             const volume = document.createElement('span'); volume.textContent = '5 ML';
-            label.append(brand, number, volume); vial.append(img, label);
+            label.append(brand, number, volume); vial.append(img);
+            if (productImage) {
+                vial.classList.add('has-product-image');
+                const badge = document.createElement('span'); badge.className = 'sample-preview-volume'; badge.textContent = 'Mẫu 5 ml';
+                vial.append(badge);
+                img.addEventListener('error', () => {
+                    vial.classList.remove('has-product-image');
+                    badge.remove(); vial.append(label); img.src = form.dataset.vialSrc;
+                }, { once: true });
+            } else {
+                vial.append(label);
+            }
             const name = document.createElement('span'); name.className = 'sample-slot-name';
             name.textContent = sample?.dataset.sampleName || 'Mùi hương ' + String(i + 1).padStart(2, '0');
             name.title = name.textContent;
@@ -56,7 +68,7 @@ if (form) {
                     render();
                     sample.focus({ preventScroll: true });
                 });
-                slot.append(remove);
+                (productImage ? vial : slot).append(remove);
             }
             tray.append(slot);
         }

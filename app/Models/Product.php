@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
+    use Concerns\HasPerfumeVariants;
     use HasFactory;
     use SoftDeletes;
 
@@ -75,7 +76,7 @@ class Product extends Model
             return $this->stock_50ml;
         }
 
-        return 0;
+        return $this->variantForVolume($v)?->stock ?? 0;
     }
 
     public function category(): BelongsTo
@@ -124,6 +125,9 @@ class Product extends Model
             $baseWeight = 200;
         }
         $v = (int) ($volume ?: ($this->volume_ml ?: 100));
+        if ($variant = $this->variantForVolume($v)) {
+            return $variant->weight;
+        }
         if ($v === 10) {
             return max(50, (int) round($baseWeight * 0.25));
         }

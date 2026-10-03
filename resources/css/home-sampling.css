@@ -33,6 +33,11 @@
 .soopi-store .sampling-atelier .sample-slot { min-height:0; background:none; border:0; border-radius:0; padding:12px 3px 0; box-shadow:none; gap:10px; color:#6b554c; isolation:isolate; justify-content:center; }
 .soopi-store .sampling-atelier .sample-slot .sample-vial { display:block; position:relative; width:min(100%,92px); aspect-ratio:140/360; min-height:0; flex-shrink:0; filter:drop-shadow(5px 8px 5px #7d684724); transition:filter .4s,transform .5s; }
 .soopi-store .sampling-atelier .sample-vial img { display:block; width:100%; height:100%; max-width:none; object-fit:contain; border:0; border-radius:0; box-shadow:none; }
+.soopi-store .sampling-atelier .sample-slot .sample-vial.has-product-image { width:100%; max-width:112px; aspect-ratio:4/5; border-radius:9px; background:#fffcf7; border:1px solid #e0d0c1; overflow:hidden; filter:drop-shadow(2px 5px 5px #76593f15); }
+.soopi-store .sampling-atelier .sample-vial.has-product-image img { padding:5px 4px 26px; object-fit:contain; }
+.soopi-store .sampling-atelier .sample-slot .has-product-image button { top:3px; right:3px; width:28px; height:28px; font-size:16px; }
+.sample-preview-volume { position:absolute; bottom:8px; left:0; width:100%; text-align:center; font:400 8px/1.4 var(--ht-sans); color:#80685b; letter-spacing:.02em; }
+.sampling-atelier .sample-tray[data-size="5"] .sample-preview-volume { font-size:7px; letter-spacing:0; }
 .sample-vial-label { position:absolute; top:47.5%; left:28.5%; width:43%; height:21%; display:flex; flex-direction:column; align-items:center; justify-content:space-evenly; color:#513747; }
 .sample-vial-label b { font:400 clamp(6px,.65vw,10px)/1 var(--ht-serif); letter-spacing:.04em; }
 .sample-vial-label small { font:italic 400 clamp(9px,1.1vw,16px)/1 var(--ht-serif); }
@@ -65,6 +70,8 @@
 .soopi-store .sampling-atelier .sample-quiz-link { border-top:1px solid #ded0c3; padding-top:18px; margin-top:23px; display:flex; justify-content:space-between; gap:8px; width:100%; color:#795d64; font:400 10px/1.7 var(--ht-sans); }
 .sampling-atelier .sample-slot:before { content:''; position:absolute; inset:4px 7px 52px; border:1px solid #decec055; border-radius:50px 50px 10px 10px; background:linear-gradient(90deg,#c9b9a718,#fffaf388,#c9b9a712); box-shadow:inset 2px 2px 7px #89705c0c; z-index:-1; }
 .sampling-atelier .sample-slot.is-filled:before { border-color:#ba969780; background:linear-gradient(90deg,#e6d3cb55,#fffaf3,#e6d3cb55); }
+.sampling-atelier .sample-slot:has(.has-product-image):before { display:none; }
+.soopi-store .sampling-atelier .sample-slot:has(.has-product-image) { align-self:stretch; justify-content:flex-end; }
 .sampling-atelier .sample-tray[data-size="5"] .sample-slot:before { inset-inline:1px; }
 .sampling-catalog { min-width:0; display:flex; flex-direction:column; }
 .sampling-catalog-heading { display:flex; gap:16px; justify-content:space-between; align-items:end; padding:0 0 20px; border-bottom:1px solid #dfd0d8; }

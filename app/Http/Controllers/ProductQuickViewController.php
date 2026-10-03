@@ -20,7 +20,7 @@ class ProductQuickViewController extends Controller
         $editorial = FragranceEditorialService::forPerfume($perfume);
         $defaultVolume = (int) ($perfume->volume_ml ?: 100);
         $cart = $request->session()->get('cart', []);
-        $volumes = array_values(array_unique([$defaultVolume, 50, 10]));
+        $volumes = $perfume->saleVolumes();
         $variants = array_map(function (int $volume) use ($perfume, $defaultVolume, $cart, $quotes) {
             $stock = max(0, $perfume->getStockForVolume($volume));
             $remaining = CartStockService::remaining($perfume, $volume, $cart);

@@ -10,7 +10,7 @@
 @endphp
 <div class="studio-list-heading mb-4">
     <div><span class="studio-form-kicker">BỘ SƯU TẬP / {{ $editing ? 'CHỈNH SỬA' : 'TẠO MỚI' }}</span><h2>{{ $editing ? $product->name : 'Thêm sản phẩm mới' }}</h2><p class="text-muted mb-0">Thông tin, giá bán và tồn kho theo từng dung tích.</p></div>
-    <a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i> Danh sách sản phẩm</a>
+    <div class="d-flex flex-wrap" style="gap:8px"><a href="#product-variants" class="btn btn-primary"><i class="fa-solid fa-plus mr-1" aria-hidden="true"></i> Thêm dung tích</a><a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i> Danh sách sản phẩm</a></div>
 </div>
 
 <form action="{{ $editing ? route('admin.products.update', $product) : route('admin.products.store') }}" method="POST" enctype="multipart/form-data" id="studio-product-form">
@@ -75,12 +75,12 @@
                     </div>
                     @endforeach
                 </div>
-                @if($editing)<p class="studio-field-help mb-0"><i class="fa-solid fa-circle-info mr-1" aria-hidden="true"></i> Sản phẩm đã có đơn hàng cần giữ nguyên dung tích chai gốc để bảo toàn lịch sử kho.</p>@endif
+                <p class="studio-field-help mb-0"><i class="fa-solid fa-circle-info mr-1" aria-hidden="true"></i> Muốn bán thêm 200 ml và giữ chai hiện tại? <a href="#product-variants">Thêm dung tích bổ sung bên dưới</a>. Không cần đổi dung tích chai gốc.</p>
             </section>
             <section class="admin-card studio-form-section" aria-labelledby="product-stock">
                 <span class="studio-form-kicker">03 / TỒN KHO</span><h3 id="product-stock">Số lượng từng dung tích</h3><p class="studio-field-help">Nhập số chai thực tế của từng dung tích. Hệ thống không tự quy đổi từ chai lớn.</p>
                 <div class="row">
-                    @foreach(['stock' => 'Kho dung tích gốc', 'stock_5ml' => 'Kho mẫu thử 5ml', 'stock_10ml' => 'Kho chiết 10ml', 'stock_50ml' => 'Kho chai 50ml'] as $field => $label)
+                    @foreach(['stock' => 'Kho chai gốc '.$value('volume_ml', 100).' ml', 'stock_5ml' => 'Kho mẫu thử 5ml', 'stock_10ml' => 'Kho chiết 10ml', 'stock_50ml' => 'Kho chai 50ml'] as $field => $label)
                     <div class="col-sm-6 col-xl-3 form-group mb-3">
                         <label for="{{ $field }}">{{ $label }} @if($field === 'stock')<span class="text-danger">*</span>@endif</label>
                         <input type="number" id="{{ $field }}" name="{{ $field }}" class="form-control @error($field) is-invalid @enderror" value="{{ $value($field, $field === 'stock' ? 10 : 0) }}" min="0" max="999999999" step="1" @required($field === 'stock')>
@@ -89,6 +89,7 @@
                     @endforeach
                 </div>
             </section>
+            @include('admin.products._variants')
         </div>
         <aside class="studio-form-aside">
             <section class="admin-card studio-form-section" aria-labelledby="product-media">

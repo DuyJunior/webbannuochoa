@@ -39,3 +39,18 @@
 @media(max-width:760px){.studio-form-layout,.studio-dashboard-grid{grid-template-columns:1fr}.studio-form-section{padding:20px}.studio-form-actions .btn{flex:1}.studio-overview-heading h2{font-size:25px}}
 @media(max-width:700px){.boutique-admin .studio-workspace-copy h2{font-size:23px}.studio-workspace-action{margin-left:0}.studio-function-metric{padding:15px}.studio-function-metric small{display:block;font-size:10px}.studio-filter-bar{padding:14px}.studio-filter-bar>.btn{flex:1 1 auto}.studio-metric{padding:16px}.studio-metric--attention{padding-top:14px}.studio-metric>strong{font-size:23px}.studio-metric-note{font-size:10px}.boutique-admin .finance-reconcile-table tbody tr{grid-template-columns:repeat(2,minmax(0,1fr))}.studio-panel{padding:20px}.studio-chart-label{font-size:9px}.boutique-admin .live-admin-hero{padding:20px}.boutique-admin .live-admin-actions .live-admin-btn{white-space:normal}}
 @media(max-width:420px){.studio-function-metrics{grid-template-columns:1fr}.studio-function-metric>i{display:grid}.studio-function-metric strong{margin:5px 0}.studio-metric-top i{display:none}.studio-panel-heading{flex-wrap:wrap}.studio-detail-grid{grid-template-columns:1fr}}
+
+/* Additional bottle sizes share the existing product workflow. */
+.boutique-admin .variant-heading { display:flex; align-items:flex-start; gap:20px; justify-content:space-between; }
+.boutique-admin .variant-heading .btn { flex-shrink:0; white-space:nowrap; }
+.boutique-admin .variant-row { min-width:0; border:1px solid #e5dce2; border-radius:12px; padding:18px; margin:8px 0 20px; background:#fcfafb; }
+.boutique-admin .variant-row legend { float:none; width:auto; padding:0 8px; margin:0 0 8px; font-size:13px; font-weight:600; color:#593e50; }
+.boutique-admin .variant-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+.boutique-admin .variant-fields input { min-width:0; }
+.boutique-admin .variant-row-footer { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:18px; padding-top:14px; border-top:1px solid #e9e1e6; }
+.boutique-admin .variant-row-footer input[type=checkbox] { accent-color:#593e50; margin-right:6px; }
+.boutique-admin .variant-empty { border:1px dashed #d9cbd4; border-radius:10px; padding:22px; background:#fcfafb; }
+.boutique-admin .variant-empty[hidden] { display:none; }
+.boutique-admin #product-variants { scroll-margin-top:100px; }
+@media(max-width:600px) { .boutique-admin .variant-heading { flex-direction:column; gap:0; margin-bottom:20px; } .boutique-admin .variant-row-footer { flex-wrap:wrap; } }
+@media(max-width:380px) { .boutique-admin .variant-fields { grid-template-columns:1fr; } }

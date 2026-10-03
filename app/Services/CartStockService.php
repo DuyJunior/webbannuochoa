@@ -70,8 +70,6 @@ final class CartStockService
 
     private static function stockColumn(Perfume $product, int $volume): ?string
     {
-        return $volume === (int) ($product->volume_ml ?: 100) ? 'stock' : match ($volume) {
-            5 => 'stock_5ml', 10 => 'stock_10ml', 50 => 'stock_50ml', default => null,
-        };
+        return $product->stockBucketForVolume($volume);
     }
 }
