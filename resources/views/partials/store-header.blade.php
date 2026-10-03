@@ -2,8 +2,7 @@
 <header class="ht-header soopi-header">
     <div class="sn-bar">
         <a class="sn-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ">
-            @include('partials.icon', ['name' => 'flower', 'size' => 34])
-            <span class="sn-wordmark"><strong>Soopi</strong><small>PERFUME STUDIO</small></span>
+            @include('partials.brand-logo', ['class' => 'sn-logo'])
         </a>
         <nav class="sn-nav" aria-label="Điều hướng chính">
             <button type="button" data-nav-panel="sn-collection" aria-controls="sn-collection" aria-expanded="false">Bộ sưu tập @include('partials.icon', ['name' => 'chevron', 'size' => 13])</button>

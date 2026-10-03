@@ -6,13 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Rules\SafeVideoUrl;
+use App\Services\ProductPhotoService;
 use App\Services\StockAlertService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Throwable;
 
 class ProductController extends Controller
 {
@@ -54,10 +59,9 @@ class ProductController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $data = $this->validatedData($request);
-        $data = $this->storeUploadedImage($request, $data);
         $data['slug'] = $this->uniqueSlug($data['name']);
         $data['is_active'] = $request->boolean('is_active');
-        Product::create($data);
+        $this->saveWithPhotos($request, new Product, $data);
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Đã thêm sản phẩm mới thành công.');
@@ -72,6 +76,7 @@ class ProductController extends Controller
 
     public function edit(Product $product): View
     {
+        $product->load('shopPhotos');
         $categories = Category::orderBy('name')->get();
         $brands = $this->getAvailableBrands();
 
@@ -84,15 +89,13 @@ class ProductController extends Controller
         if ((int) $data['volume_ml'] !== (int) $product->volume_ml && OrderItem::where('perfume_id', $product->id)->exists()) {
             throw ValidationException::withMessages(['volume_ml' => 'Sản phẩm đã có đơn hàng. Hãy tạo sản phẩm mới nếu thay đổi dung tích gốc để giữ đúng lịch sử kho.']);
         }
-        $data = $this->storeUploadedImage($request, $data);
-
         if ($product->name !== $data['name']) {
             $data['slug'] = $this->uniqueSlug($data['name'], $product->id);
         }
 
         $data['is_active'] = $request->boolean('is_active');
         $previousStock = $product->stock;
-        $product->update($data);
+        $this->saveWithPhotos($request, $product, $data);
         StockAlertService::notifyIfRestocked($product, $previousStock);
 
         return redirect()->route('admin.products.show', $product)
@@ -117,10 +120,11 @@ class ProductController extends Controller
 
     private function validatedData(Request $request): array
     {
-        $brand = trim((string) $request->input('brand'));
-        if ($brand === '' || $brand === '__other__') {
+        $brand = $request->input('brand');
+        $name = $request->input('name');
+        if (($brand === null || (is_string($brand) && in_array(trim($brand), ['', '__other__'], true))) && is_string($name)) {
             // Tự động trích xuất thương hiệu từ tên sản phẩm nếu người dùng chưa chọn
-            $detectedBrand = $this->detectBrandFromName((string) $request->input('name'));
+            $detectedBrand = $this->detectBrandFromName($name);
             $request->merge(['brand' => $detectedBrand]);
         }
 
@@ -140,7 +144,17 @@ class ProductController extends Controller
             'stock_50ml' => ['nullable', 'integer', 'min:0', 'max:999999999'],
             'image_url' => ['nullable', 'string', 'max:2048', 'regex:/^(https?:\/\/|\/?images\/)/i'],
             'image_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'video_url' => ['nullable', 'string', 'max:2048'],
+            'shop_photos' => ['sometimes', 'array', 'max:6', function ($attribute, $files, $fail) {
+                if (is_array($files) && array_sum(array_map(
+                    fn ($file) => $file instanceof UploadedFile ? $file->getSize() : 0, $files
+                )) > 18 * 1024 * 1024) {
+                    $fail('Tổng dung lượng ảnh thực tế trong một lần tải không được vượt quá 18 MB. Hãy tải thành nhiều lần.');
+                }
+            }],
+            'shop_photos.*' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'extensions:jpg,jpeg,png,webp', 'max:5120', 'dimensions:max_width=8000,max_height=8000'],
+            'remove_shop_photos' => ['sometimes', 'array', 'max:6'],
+            'remove_shop_photos.*' => ['required', 'integer', 'distinct', 'min:1'],
+            'video_url' => ['bail', 'nullable', 'string', 'max:2048', new SafeVideoUrl],
             'description' => ['nullable', 'string', 'max:5000'],
             'is_active' => ['nullable', 'boolean'],
         ], [
@@ -163,6 +177,13 @@ class ProductController extends Controller
             'image_file.image' => 'Tệp tải lên phải là hình ảnh.',
             'image_file.mimes' => 'Ảnh phải có định dạng JPG, PNG hoặc WEBP.',
             'image_file.max' => 'Ảnh không được vượt quá dung lượng 5MB.',
+            'shop_photos.array' => 'Vui lòng chọn các tệp ảnh thực tế hợp lệ.',
+            'shop_photos.max' => 'Mỗi sản phẩm có tối đa 6 ảnh thực tế.',
+            'shop_photos.*.image' => 'Ảnh thực tế phải là tệp hình ảnh.',
+            'shop_photos.*.mimes' => 'Ảnh thực tế phải có định dạng JPG, PNG hoặc WEBP.',
+            'shop_photos.*.extensions' => 'Ảnh thực tế phải có phần mở rộng JPG, PNG hoặc WEBP.',
+            'shop_photos.*.max' => 'Mỗi ảnh thực tế không được vượt quá 5 MB.',
+            'shop_photos.*.dimensions' => 'Chiều rộng và chiều cao ảnh không được vượt quá 8.000 pixel.',
         ]);
 
         $validated['stock_5ml'] = (int) ($validated['stock_5ml'] ?? 0);
@@ -176,7 +197,30 @@ class ProductController extends Controller
             $validated['stock_50ml'] = 0;
         }
 
+        unset($validated['shop_photos'], $validated['remove_shop_photos']);
+
         return $validated;
+    }
+
+    private function saveWithPhotos(Request $request, Product $product, array $data): void
+    {
+        $uploadedCatalogPath = null;
+
+        try {
+            $data = $this->storeUploadedImage($request, $data);
+            if ($request->hasFile('image_file')) {
+                $uploadedCatalogPath = $data['image_url'];
+            }
+
+            app(ProductPhotoService::class)->save(
+                $product, $data, $request->file('shop_photos', []), $request->input('remove_shop_photos', [])
+            );
+        } catch (Throwable $exception) {
+            if ($uploadedCatalogPath !== null) {
+                File::delete(public_path($uploadedCatalogPath));
+            }
+            throw $exception;
+        }
     }
 
     private function storeUploadedImage(Request $request, array $data): array

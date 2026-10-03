@@ -246,6 +246,9 @@ class FinanceController extends Controller
                 'manual_refund_reference' => $newStatus === 'refunded' ? $reference : null,
                 'request_fingerprint' => $fingerprint, 'created_at' => now(),
             ]);
+            if ($newStatus === 'paid') {
+                app(\App\Services\OrderEmailService::class)->paid($order);
+            }
 
             return true;
         }, 3);

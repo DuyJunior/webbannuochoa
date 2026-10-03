@@ -79,13 +79,14 @@
                                             @if($prod && $prod->image_src)
                                                 <img src="{{ $prod->image_src }}" alt="{{ $prod->name }}">
                                             @else
-                                                <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
+                                                <span>@include('partials.brand-mark', ['size' => '1em'])</span>
                                             @endif
                                         </div>
                                         <div class="item-mini-info">
-                                            <span class="item-mini-name">{{ $item->product_name ?? $prod->name ?? 'Nước hoa cao cấp' }}</span>
+                                            <span class="item-mini-name">{{ $item->display_name }}</span>
+                                            @include('partials.order-item-samples')
                                             <div class="item-mini-meta">
-                                                <span>{{ $item->volume_ml ? $item->volume_ml.'ml' : '100ml' }}</span>
+                                                <span>{{ $item->volume_label }}</span>
                                                 <span class="meta-dot">·</span>
                                                 <span>Số lượng: <strong>x{{ $item->quantity }}</strong></span>
                                                 <span class="meta-dot">·</span>

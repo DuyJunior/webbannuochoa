@@ -134,13 +134,14 @@
                                     @if($prod && $prod->image_src)
                                         <img src="{{ $prod->image_src }}" alt="{{ $prod->name }}">
                                     @else
-                                        <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
+                                        <span>@include('partials.brand-mark', ['size' => '1em'])</span>
                                     @endif
                                     <span class="momo-qty-badge">{{ $item->quantity }}</span>
                                 </div>
                                 <div class="momo-sum-info">
-                                    <span class="momo-sum-name">{{ $prod->name ?? 'Nước hoa' }}</span>
-                                    <span class="momo-sum-meta">{{ $item->volume_ml ?? 100 }}ml · {{ number_format($item->price, 0, ',', '.') }}₫</span>
+                                    <span class="momo-sum-name">{{ $item->display_name }}</span>
+                                    <span class="momo-sum-meta">{{ $item->volume_label }} · {{ number_format($item->price, 0, ',', '.') }}₫</span>
+                                    @include('partials.order-item-samples')
                                 </div>
                                 <span class="momo-sum-price">{{ number_format($item->price * $item->quantity, 0, ',', '.') }}₫</span>
                             </div>

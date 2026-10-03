@@ -5,6 +5,9 @@
 
 @section('content')
 <div class="store-container ht-sotd-page">
+    @if($errors->any())
+        <div class="public-flash alert-danger" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
+    @endif
     <div class="ht-sotd-date-badge">
         <span>@include('partials.icon', ['name' => 'calendar', 'size' => '1em']) {{ now()->locale('vi')->isoFormat('dddd, [ngày] D [tháng] M, YYYY') }}</span>
     </div>
@@ -36,7 +39,7 @@
 
             <span class="sotd-brand">{{ $perfume->brand }}</span>
             <h1 class="sotd-title">{{ $perfume->name }}</h1>
-            <p class="sotd-meta">{{ $perfume->category->name ?? 'Nước hoa cao cấp' }} · {{ ucfirst($perfume->gender) }} · Chai {{ $perfume->volume_ml }}ml</p>
+            <p class="sotd-meta">{{ $perfume->category->name ?? 'Nước hoa cao cấp' }} · {{ match($perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }} · Chai {{ $perfume->volume_ml }}ml</p>
 
             <div class="sotd-story">
                 <h3>Vì sao đây là mùi hương lý tưởng cho hôm nay?</h3>

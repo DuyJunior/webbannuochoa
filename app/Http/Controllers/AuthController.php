@@ -29,12 +29,22 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|confirmed|min:6',
+            'name'     => 'bail|required|string|max:255',
+            'email'    => 'bail|required|string|max:255|email|unique:users,email',
+            'password' => 'bail|required|string|confirmed|min:6',
         ], [
+            'name.required' => 'Vui lòng nhập họ và tên.',
+            'name.string' => 'Họ và tên phải là văn bản.',
+            'name.max' => 'Họ và tên không được dài quá 255 ký tự.',
+            'email.required' => 'Vui lòng nhập địa chỉ email.',
+            'email.string' => 'Vui lòng nhập địa chỉ email hợp lệ.',
+            'email.max' => 'Địa chỉ email không được dài quá 255 ký tự.',
             'email.unique' => 'Email này đã được đăng ký. Vui lòng đăng nhập; nếu chưa xác thực, bạn có thể gửi lại liên kết xác thực.',
             'email.email' => 'Vui lòng nhập địa chỉ email hợp lệ.',
+            'password.required' => 'Vui lòng nhập mật khẩu.',
+            'password.string' => 'Vui lòng nhập mật khẩu hợp lệ.',
+            'password.confirmed' => 'Mật khẩu nhập lại chưa khớp.',
+            'password.min' => 'Mật khẩu cần có ít nhất 6 ký tự.',
         ]);
 
         $user = User::create([
@@ -72,9 +82,9 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+            'email'    => 'bail|required|string|max:255|email',
+            'password' => 'bail|required|string',
+        ], $this->loginValidationMessages());
 
         if (Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
@@ -129,9 +139,9 @@ class AuthController extends Controller
     public function adminLogin(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|string',
-        ]);
+            'email'    => 'bail|required|string|max:255|email',
+            'password' => 'bail|required|string',
+        ], $this->loginValidationMessages());
 
         if (Auth::attempt($request->only('email', 'password'))) {
             if (!Auth::user()->canManageLivestreams()) {
@@ -159,5 +169,17 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('admin.login');
+    }
+
+    private function loginValidationMessages(): array
+    {
+        return [
+            'email.required' => 'Vui lòng nhập địa chỉ email.',
+            'email.string' => 'Vui lòng nhập địa chỉ email hợp lệ.',
+            'email.email' => 'Vui lòng nhập địa chỉ email hợp lệ.',
+            'email.max' => 'Địa chỉ email không được dài quá 255 ký tự.',
+            'password.required' => 'Vui lòng nhập mật khẩu.',
+            'password.string' => 'Vui lòng nhập mật khẩu hợp lệ.',
+        ];
     }
 }

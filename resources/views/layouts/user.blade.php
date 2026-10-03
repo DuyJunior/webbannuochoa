@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Soopi · Perfume Studio')</title>
+    @include('partials.brand-favicon')
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,6 +15,8 @@
             font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
         .store-brand {
+            width: 190px;
+            max-width: 48vw;
             display: inline-flex;
             align-items: center;
             gap: 10px;
@@ -136,9 +139,8 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm py-2">
-    <a class="navbar-brand store-brand" href="{{ route('home') }}">
-        <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
-        <strong>Soopi<small>Perfume Studio</small></strong>
+    <a class="navbar-brand store-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ">
+        @include('partials.brand-logo')
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

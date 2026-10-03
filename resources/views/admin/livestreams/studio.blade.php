@@ -41,7 +41,7 @@
          data-ended="{{ $livestream->status === 'ended' ? '1' : '0' }}">
         <section class="live-studio-preview" aria-label="Hình ảnh camera của bạn">
             <video id="live-studio-video" autoplay muted playsinline></video>
-            <div class="live-studio-placeholder" id="live-studio-placeholder">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])<span>Hình ảnh của bạn sẽ hiện ở đây</span></div>
+            <div class="live-studio-placeholder" id="live-studio-placeholder">@include('partials.brand-mark', ['size' => 80, 'light' => true])<span>Hình ảnh của bạn sẽ hiện ở đây</span></div>
             <span class="live-studio-pill" id="live-studio-pill">Chưa lên sóng</span>
         </section>
         <aside class="live-studio-controls">

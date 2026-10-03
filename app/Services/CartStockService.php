@@ -13,16 +13,27 @@ final class CartStockService
             return 0;
         }
         $allocated = 0;
+        $column = self::stockColumn($perfume, $volume);
+        if ($column === null) {
+            return 0;
+        }
         foreach ($cart as $key => $item) {
             $quantity = max(0, (int) (is_array($item) ? ($item['quantity'] ?? 1) : $item));
-            if (is_array($item) && ! empty($item['is_discovery_box'])) {
-                if ($volume === 5 && in_array($perfume->id, array_map('intval', $item['sample_ids'] ?? []), true)) {
+            if (is_array($item) && (! empty($item['is_discovery_box']) || ! empty($item['is_gift_bundle']))) {
+                $sampleIds = is_array($item['sample_ids'] ?? null) ? $item['sample_ids'] : [];
+                foreach ($sampleIds as $id) {
+                    if (is_scalar($id) && (int) $id === $perfume->id && self::stockColumn($perfume, 5) === $column) {
+                        $allocated += $quantity;
+                    }
+                }
+                if (! empty($item['is_gift_bundle']) && (int) ($item['perfume_id'] ?? 0) === $perfume->id
+                    && $column === 'stock') {
                     $allocated += $quantity;
                 }
             } else {
                 $id = is_array($item) ? (int) ($item['perfume_id'] ?? $item['id'] ?? 0) : (int) $key;
                 $itemVolume = is_array($item) ? (int) ($item['volume_ml'] ?? $perfume->volume_ml ?: 100) : (int) ($perfume->volume_ml ?: 100);
-                if ($id === $perfume->id && $itemVolume === $volume) {
+                if ($id === $perfume->id && self::stockColumn($perfume, $itemVolume) === $column) {
                     $allocated += $quantity;
                 }
             }
@@ -34,14 +45,33 @@ final class CartStockService
     /** Maximum quantity of one quoted line, after the other cart lines have been counted. */
     public static function limitFor(array $quotedItem, array $otherCart): int
     {
-        $components = $quotedItem['stock_components'] ?: [['perfume_id' => $quotedItem['perfume_id'], 'volume_ml' => $quotedItem['volume_ml']]];
+        $components = ($quotedItem['stock_components'] ?? null) ?: [['perfume_id' => $quotedItem['perfume_id'], 'volume_ml' => $quotedItem['volume_ml']]];
         $products = Perfume::whereKey(array_column($components, 'perfume_id'))->get()->keyBy('id');
+        $demands = [];
         $limit = 999;
         foreach ($components as $component) {
             $product = $products->get($component['perfume_id']);
-            $limit = min($limit, $product ? self::remaining($product, (int) $component['volume_ml'], $otherCart) : 0);
+            $column = $product ? self::stockColumn($product, (int) $component['volume_ml']) : null;
+            if (! $product || $column === null) {
+                return 0;
+            }
+            $bucket = $product->id.':'.$column;
+            $demands[$bucket] = ($demands[$bucket] ?? 0) + 1;
+        }
+        foreach ($components as $component) {
+            $product = $products->get($component['perfume_id']);
+            $column = self::stockColumn($product, (int) $component['volume_ml']);
+            $remaining = self::remaining($product, (int) $component['volume_ml'], $otherCart);
+            $limit = min($limit, intdiv($remaining, $demands[$product->id.':'.$column]));
         }
 
         return $limit;
+    }
+
+    private static function stockColumn(Perfume $product, int $volume): ?string
+    {
+        return $volume === (int) ($product->volume_ml ?: 100) ? 'stock' : match ($volume) {
+            5 => 'stock_5ml', 10 => 'stock_10ml', 50 => 'stock_50ml', default => null,
+        };
     }
 }

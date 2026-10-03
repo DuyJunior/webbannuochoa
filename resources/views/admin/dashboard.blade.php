@@ -84,6 +84,6 @@
             <a href="{{ route('admin.products.index') }}" class="studio-text-link">Quản lý bộ sưu tập <span aria-hidden="true">→</span></a>
         </section>
     </div>
-    <footer class="studio-dashboard-footer">SOOPI STUDIO <span>Chăm chút mỗi ngày. Phát triển dài lâu.</span></footer>
+    <footer class="studio-dashboard-footer"><img src="{{ asset('images/brand/soopi-petal-logo.png') }}" width="100" height="37" alt="SOOPI · Perfume Studio" style="display:block;width:100px;height:auto"> <span>Chăm chút mỗi ngày. Phát triển dài lâu.</span></footer>
 </div>
 @endsection

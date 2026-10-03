@@ -10,7 +10,7 @@
                     @php($item = $pick['product'])
                     <article class="mood-pick">
                         <a class="mood-pick-image" href="{{ route('perfumes.show', $item) }}" tabindex="-1" aria-hidden="true">
-                            @if($item->image_src)<img src="{{ $item->image_src }}" alt="" width="128" height="156" loading="lazy">@else<span>@include('partials.icon', ['name'=>'flower','size'=>42])</span>@endif
+                            @if($item->image_src)<img src="{{ $item->image_src }}" alt="" width="128" height="156" loading="lazy">@else<span>@include('partials.brand-mark', ['size' => 42])</span>@endif
                         </a>
                         <div class="mood-pick-copy">
                             <span class="mood-pick-brand">{{ $item->brand }}</span>

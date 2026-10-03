@@ -1,4 +1,7 @@
 @import './admin-workspaces.css';
+.boutique-admin .sidebar-brand{justify-content:center;padding:22px 24px;min-height:110px}
+.boutique-admin .studio-sidebar-logo{display:block;width:190px;max-width:100%;height:auto;object-fit:contain}
+@media(max-width:991px){.boutique-admin .sidebar-brand{padding-top:42px;padding-bottom:20px}}
 .boutique-admin .gap-1{gap:4px}.boutique-admin .gap-2{gap:8px}.boutique-admin .gap-3{gap:16px}.boutique-admin .gap-4{gap:24px}
 .boutique-admin .admin-orders-container .order-tab-btn.active{background:var(--pink);border-color:var(--pink)}
 .boutique-admin .custom-control-input:checked~.custom-control-label::before{background:var(--pink);border-color:var(--pink)}

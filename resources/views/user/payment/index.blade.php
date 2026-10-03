@@ -3,6 +3,13 @@
 @section('title', 'Thanh toán & Giao hàng GHN · Soopi')
 
 @section('content')
+@php
+    $checkoutInput = fn (string $key, mixed $fallback = '') => is_scalar(old($key, $fallback)) ? old($key, $fallback) : $fallback;
+    $checkoutKey = $checkoutInput('checkout_key');
+    $checkoutKey = \Illuminate\Support\Str::isUuid($checkoutKey) ? $checkoutKey : (string) \Illuminate\Support\Str::uuid();
+    $giftRequested = in_array(old('enable_gift_service'), [true, 1, '1'], true);
+    $paymentChoice = in_array($checkoutInput('payment_method'), ['momo', 'atm_domestic', 'atm_international'], true) ? 'momo' : 'cod';
+@endphp
 <div class="checkout-page-wrapper">
     <div class="store-container">
         {{-- Breadcrumb --}}
@@ -37,7 +44,7 @@
             @foreach($selectedKeys as $selectedKey)
                 <input type="hidden" name="selected_items[]" value="{{ $selectedKey }}">
             @endforeach
-            <input type="hidden" name="checkout_key" value="{{ old('checkout_key', (string) \Illuminate\Support\Str::uuid()) }}">
+            <input type="hidden" name="checkout_key" value="{{ $checkoutKey }}">
             <input type="hidden" id="total_price_input" value="{{ $totalPrice }}">
 
             {{-- Cột Trái: Thông tin nhận hàng & Địa chỉ GHN --}}
@@ -54,12 +61,12 @@
                     <div class="form-row-2">
                         <div class="form-group-item">
                             <label for="name">Họ và tên người nhận <span class="req">*</span></label>
-                            <input type="text" id="name" name="name" value="{{ old('name', auth()->user()?->name) }}" required placeholder="Ví dụ: Nguyễn Thị Thu Hà">
+                            <input type="text" id="name" name="name" value="{{ $checkoutInput('name', auth()->user()?->name) }}" required placeholder="Ví dụ: Nguyễn Thị Thu Hà">
                         </div>
 
                         <div class="form-group-item">
                             <label for="phone">Số điện thoại <span class="req">*</span></label>
-                            <input type="tel" id="phone" name="phone" value="{{ old('phone', auth()->user()?->phone) }}" required maxlength="10" minlength="10" pattern="0[0-9]{9}" title="Số điện thoại phải gồm đúng 10 chữ số (bắt đầu bằng số 0)" placeholder="Ví dụ: 0912345678" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
+                            <input type="tel" id="phone" name="phone" value="{{ $checkoutInput('phone', auth()->user()?->phone) }}" required maxlength="10" minlength="10" pattern="0[0-9]{9}" title="Số điện thoại phải gồm đúng 10 chữ số (bắt đầu bằng số 0)" placeholder="Ví dụ: 0912345678" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
                             @error('phone')
                                 <span class="text-danger" style="font-size: 12px; color: #ef4444; margin-top: 4px; display: block;">{{ $message }}</span>
                             @else
@@ -89,7 +96,7 @@
                     <div class="form-row-3">
                         <div class="form-group-item">
                             <label for="province_select">Tỉnh / Thành phố <span class="req">*</span></label>
-                            <select id="province_select" class="form-select" required>
+                            <select id="province_select" name="to_province_id" class="form-select" required>
                                 <option value="">-- Đang tải Tỉnh/Thành... --</option>
                             </select>
                         </div>
@@ -111,12 +118,12 @@
 
                     <div class="form-group-item" style="margin-top: 16px;">
                         <label for="address">Địa chỉ chi tiết (Số nhà, tên đường, ngõ ngách) <span class="req">*</span></label>
-                        <textarea id="address" name="address" rows="2" required placeholder="Ví dụ: Số 18, Ngõ 45 Đường Láng">{{ old('address') }}</textarea>
+                        <textarea id="address" name="address" rows="2" required placeholder="Ví dụ: Số 18, Ngõ 45 Đường Láng">{{ $checkoutInput('address') }}</textarea>
                     </div>
 
                     <div class="form-group-item" style="margin-top: 14px;">
                         <label for="note">Ghi chú đơn hàng (Tùy chọn)</label>
-                        <input type="text" id="note" name="note" value="{{ old('note') }}" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi đến...">
+                        <input type="text" id="note" name="note" maxlength="500" value="{{ is_string(old('note')) ? old('note') : '' }}" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi đến...">
                     </div>
                 </div>
 
@@ -132,42 +139,42 @@
 
                     <div style="background: #fff8fb; border: 1.5px solid #fbcfe8; border-radius: 14px; padding: 16px; margin-bottom: 16px;">
                         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; color: #be185d; font-size: 15px;">
-                            <input type="checkbox" id="giftWrapToggle" name="enable_gift_service" value="1" style="width: 18px; height: 18px; accent-color: #be185d;">
+                            <input type="checkbox" id="giftWrapToggle" name="enable_gift_service" value="1" @checked($giftRequested) style="width: 18px; height: 18px; accent-color: #be185d;">
                             <span>Yêu cầu Gói Quà Cao Cấp & Thiệp Chúc Mừng</span>
                         </label>
                         <p style="margin: 4px 0 0 28px; font-size: 13px; color: #715865;">Đóng hộp cứng cao cấp kèm nơ lụa, xịt hương thơm tinh tế trước khi đóng gói.</p>
                     </div>
 
-                    <div id="giftOptionsBox" style="display: none; animation: fadeInGift 0.3s ease;">
+                    <div id="giftOptionsBox" style="display: {{ $giftRequested ? 'block' : 'none' }}; animation: fadeInGift 0.3s ease;">
                         <div class="form-row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
                             <div class="form-group-item">
                                 <label for="gift_wrap">Mẫu giấy & hộp quà:</label>
-                                <select id="gift_wrap" name="gift_wrap" class="form-select">
-                                    <option value="Nhung đỏ rượu vang (Wine Velvet)">Nhung đỏ rượu vang quý phái</option>
-                                    <option value="Giấy Kraft Paris cổ điển (Vintage Kraft)">Giấy Kraft Paris vintage mộc mạc</option>
-                                    <option value="Lụa hồng phấn kiêu kỳ (Blush Pink)">Lụa hồng phấn ngọt ngào</option>
-                                    <option value="Đen huyền bí sang trọng (Midnight Black)">Đen huyền bí sang trọng</option>
+                                <select id="gift_wrap" name="gift_wrap" class="form-select" @disabled(!$giftRequested)>
+                                    <option value="Nhung đỏ rượu vang (Wine Velvet)" @selected(old('gift_wrap') === 'Nhung đỏ rượu vang (Wine Velvet)')>Nhung đỏ rượu vang quý phái</option>
+                                    <option value="Giấy Kraft Paris cổ điển (Vintage Kraft)" @selected(old('gift_wrap') === 'Giấy Kraft Paris cổ điển (Vintage Kraft)')>Giấy Kraft Paris vintage mộc mạc</option>
+                                    <option value="Lụa hồng phấn kiêu kỳ (Blush Pink)" @selected(old('gift_wrap') === 'Lụa hồng phấn kiêu kỳ (Blush Pink)')>Lụa hồng phấn ngọt ngào</option>
+                                    <option value="Đen huyền bí sang trọng (Midnight Black)" @selected(old('gift_wrap') === 'Đen huyền bí sang trọng (Midnight Black)')>Đen huyền bí sang trọng</option>
                                 </select>
                             </div>
                             <div class="form-group-item">
                                 <label for="gift_card">Mẫu thiệp chúc mừng:</label>
-                                <select id="gift_card" name="gift_card" class="form-select">
-                                    <option value="Sinh nhật (Happy Birthday)">Sinh nhật (Happy Birthday)</option>
-                                    <option value="Kỷ niệm (Happy Anniversary)">Kỷ niệm (Happy Anniversary)</option>
-                                    <option value="Tình yêu (With Love)">Tình yêu ngọt ngào (With Love)</option>
-                                    <option value="Tri ân & Cảm ơn (Thank You)">Tri ân & Cảm ơn (Thank You)</option>
+                                <select id="gift_card" name="gift_card" class="form-select" @disabled(!$giftRequested)>
+                                    <option value="Sinh nhật (Happy Birthday)" @selected(old('gift_card') === 'Sinh nhật (Happy Birthday)')>Sinh nhật (Happy Birthday)</option>
+                                    <option value="Kỷ niệm (Happy Anniversary)" @selected(old('gift_card') === 'Kỷ niệm (Happy Anniversary)')>Kỷ niệm (Happy Anniversary)</option>
+                                    <option value="Tình yêu (With Love)" @selected(old('gift_card') === 'Tình yêu (With Love)')>Tình yêu ngọt ngào (With Love)</option>
+                                    <option value="Tri ân & Cảm ơn (Thank You)" @selected(old('gift_card') === 'Tri ân & Cảm ơn (Thank You)')>Tri ân & Cảm ơn (Thank You)</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group-item" style="margin-bottom: 14px;">
                             <label for="gift_message">Lời nhắn chúc mừng (in lên thiệp):</label>
-                            <textarea id="gift_message" name="gift_message" rows="2" placeholder="Ví dụ: Chúc em sinh nhật vui vẻ, luôn rạng rỡ và ngát hương thơm mỗi ngày nhé!"></textarea>
+                            <textarea id="gift_message" name="gift_message" rows="2" maxlength="1000" @disabled(!$giftRequested) placeholder="Ví dụ: Chúc em sinh nhật vui vẻ, luôn rạng rỡ và ngát hương thơm mỗi ngày nhé!">{{ $checkoutInput('gift_message') }}</textarea>
                         </div>
 
                         <div class="form-group-item">
                             <label for="gift_delivery_date">Ngày giao mong muốn (để nhận đúng ngày đặc biệt):</label>
-                            <input type="date" id="gift_delivery_date" name="gift_delivery_date" min="{{ date('Y-m-d') }}">
+                            <input type="date" id="gift_delivery_date" name="gift_delivery_date" value="{{ $checkoutInput('gift_delivery_date') }}" min="{{ date('Y-m-d') }}" @disabled(!$giftRequested)>
                         </div>
                     </div>
                 </div>
@@ -183,8 +190,8 @@
 
                     <div class="payment-method-box">
                         {{-- 1. Thanh toán COD --}}
-                        <div class="payment-option selected" id="label_cod" onclick="choosePayment('cod')">
-                            <input type="radio" name="_payment_choice" value="cod" id="radio_cod" checked>
+                        <label class="payment-option {{ $paymentChoice === 'cod' ? 'selected' : '' }}" id="label_cod">
+                            <input type="radio" name="_payment_choice" value="cod" id="radio_cod" onchange="choosePayment(this.value)" @checked($paymentChoice === 'cod')>
                             <div class="payment-option-body">
                                 <div class="opt-title">
                                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -195,11 +202,11 @@
                                 </div>
                                 <p>Nhận hàng, kiểm tra tem seal nước hoa chính hãng trước khi thanh toán cho shipper GHN.</p>
                             </div>
-                        </div>
+                        </label>
 
                         {{-- 2. Thanh toán MoMo (Theo đúng tài liệu Lab) --}}
-                        <div class="payment-option" id="label_momo" onclick="choosePayment('momo')">
-                            <input type="radio" name="_payment_choice" value="momo" id="radio_momo">
+                        <label class="payment-option {{ $paymentChoice === 'momo' ? 'selected' : '' }}" id="label_momo">
+                            <input type="radio" name="_payment_choice" value="momo" id="radio_momo" onchange="choosePayment(this.value)" @checked($paymentChoice === 'momo')>
                             <div class="payment-option-body">
                                 <div class="opt-title">
                                     <div style="display: flex; align-items: center; gap: 8px;">
@@ -216,12 +223,12 @@
                                     <span style="font-size: 0.76rem; background: #fefce8; color: #854d0e; border: 1px solid #fef08a; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'card', 'size' => '1em']) Thẻ Quốc Tế (Visa/Master)</span>
                                 </div>
                             </div>
-                        </div>
+                        </label>
 
 
 
                         {{-- Hidden input duy nhất gửi phương thức thanh toán lên server (cod hoặc momo theo lab) --}}
-                        <input type="hidden" name="payment_method" id="selected_payment_method" value="cod">
+                        <input type="hidden" name="payment_method" id="selected_payment_method" value="{{ $paymentChoice }}">
                     </div>
                 </div>
             </div>
@@ -239,13 +246,15 @@
                                         @if($item['product']?->image_src)
                                             <img src="{{ $item['product']->image_src }}" alt="{{ $item['product']->name }}">
                                         @else
-                                            <div class="thumb-placeholder">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</div>
+                                            <div class="thumb-placeholder">@include('partials.brand-mark', ['size' => '1em'])</div>
                                         @endif
                                         <span class="item-qty-badge">{{ $item['quantity'] }}</span>
                                     </div>
                                     <div class="item-details">
                                         <h4 class="item-title">{{ $item['title'] }}</h4>
                                         <span class="item-meta">{{ $item['volume_label'] }} · {{ $item['weight'] ?? 200 }}g</span>
+                                        @if(!empty($item['sample_names']))<p class="item-meta">Mẫu 5ml: {{ implode(' · ', $item['sample_names']) }}</p>@endif
+                                        @if($item['is_gift_bundle'])<p class="item-meta">Hộp quà & thiệp đã gồm trong giá combo.</p>@endif
                                         <div class="item-price">{{ number_format($item['price'], 0, ',', '.') }}₫</div>
                                     </div>
                                     <div class="item-subtotal">
@@ -266,9 +275,9 @@
                             <strong style="color: #db2777; font-weight: 700;">{{ isset($totalWeight) ? $totalWeight : 200 }} g</strong>
                         </div>
                         <div class="ht-checkout-promos">
-                            <label>Mã ưu đãi<input name="coupon_code" value="{{ old('coupon_code') }}" placeholder="Nhập mã nếu có" maxlength="30"></label>
+                            <label>Mã ưu đãi<input name="coupon_code" value="{{ $checkoutInput('coupon_code') }}" placeholder="Nhập mã nếu có" maxlength="30"></label>
                             @if($availableCoupons->isNotEmpty())<small>Mã hiện có: @foreach($availableCoupons as $coupon)<strong>{{ $coupon->code }}</strong>{{ !$loop->last ? ', ' : '' }}@endforeach</small>@endif
-                            <label>Điểm thành viên muốn dùng<input name="points_used" type="number" min="0" max="{{ min($loyaltyBalance, floor($totalPrice * .2 / 1000)) }}" value="{{ old('points_used', 0) }}"></label>
+                            <label>Điểm thành viên muốn dùng<input name="points_used" type="number" min="0" max="{{ min($loyaltyBalance, floor($totalPrice * .2 / 1000)) }}" value="{{ $checkoutInput('points_used', 0) }}"></label>
                             <small>Bạn có {{ $loyaltyBalance }} điểm · 1 điểm giảm 1.000₫ · tối đa 20% tiền hàng. Ưu đãi được xác nhận khi đặt hàng.</small>
                             @error('coupon_code')<span class="text-danger">{{ $message }}</span>@enderror
                             @error('points_used')<span class="text-danger">{{ $message }}</span>@enderror
@@ -276,14 +285,16 @@
                         <div class="cost-row"><span>Ưu đãi dự tính</span><strong id="discount_preview">0 VNĐ</strong></div>
                         <div class="cost-row shipping-row">
                             <span>Cước vận chuyển GHN</span>
-                            <strong id="shipping_fee_text" class="fee-waiting">-- Chọn địa chỉ --</strong>
+                            <strong id="shipping_fee_text" class="fee-waiting" aria-live="polite">-- Chọn địa chỉ --</strong>
                         </div>
+                        <button type="button" id="shipping_retry" class="shipping-retry" hidden>Thử kết nối giao hàng lại ↻</button>
                         <div class="cost-row total-highlight">
                             <span>Tổng thanh toán</span>
                             <strong id="final_total_text" class="final-price">{{ number_format($totalPrice, 0, ',', '.') }} VNĐ</strong>
                         </div>
                     </div>
 
+                    <p class="store-privacy-note">Thông tin người nhận được dùng để xử lý và giao đơn hàng. <a href="{{ route('store.privacy') }}" target="_blank" rel="noopener">Chính sách riêng tư ↗</a></p>
                     <button type="submit" class="btn-confirm-checkout" id="btnSubmitPayment">
                         <span>XÁC NHẬN ĐẶT HÀNG</span>
                         <span class="btn-icon">→</span>
@@ -753,6 +764,14 @@
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(219, 39, 119, 0.38);
 }
+.btn-confirm-checkout:disabled {
+    opacity: .55;
+    cursor: wait;
+    transform: none;
+    box-shadow: none;
+}
+.shipping-retry { color: #784a60; background: transparent; border: 0; text-decoration: underline; cursor: pointer; text-align: left; padding: 6px 0; }
+.shipping-retry[hidden] { display: none; }
 .safe-checkout-badge {
     margin-top: 14px;
     text-align: center;
@@ -779,9 +798,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const giftWrapToggle = document.getElementById('giftWrapToggle');
     const giftOptionsBox = document.getElementById('giftOptionsBox');
     if (giftWrapToggle && giftOptionsBox) {
-        giftWrapToggle.addEventListener('change', function () {
-            giftOptionsBox.style.display = this.checked ? 'block' : 'none';
-        });
+        const syncGiftOptions = () => {
+            giftOptionsBox.style.display = giftWrapToggle.checked ? 'block' : 'none';
+            giftOptionsBox.querySelectorAll('input, select, textarea').forEach(field => {
+                field.disabled = !giftWrapToggle.checked;
+            });
+        };
+        giftWrapToggle.addEventListener('change', syncGiftOptions);
+        syncGiftOptions();
     }
 });
 
@@ -827,6 +851,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const pointsInput = document.querySelector('[name="points_used"]');
     const discountPreview = document.getElementById('discount_preview');
     let currentShippingFee = 0;
+    let shippingReady = false;
+    const submitButton = document.getElementById('btnSubmitPayment');
+    const shippingRetry = document.getElementById('shipping_retry');
     function renderTotal() {
         const coupon = coupons.find(item => item.code === (couponInput?.value || '').trim().toUpperCase());
         const couponDiscount = coupon ? Math.min(subtotal, coupon.type === 'percent' ? Math.floor(subtotal * coupon.value / 100) : coupon.value) : 0;
@@ -841,138 +868,155 @@ document.addEventListener("DOMContentLoaded", function () {
     couponInput?.addEventListener('input', renderTotal);
     pointsInput?.addEventListener('input', renderTotal);
     function resetShippingFee(message = '-- Chờ chọn Phường/Xã --') {
+        shippingReady = false;
+        submitButton.disabled = true;
         currentShippingFee = 0;
         shippingFeeText.textContent = message;
         renderTotal();
     }
     function applyShippingFee(fee) {
+        shippingReady = true;
+        submitButton.disabled = false;
         currentShippingFee = fee;
         shippingFeeText.textContent = '+ ' + new Intl.NumberFormat('vi-VN').format(fee) + ' VNĐ';
         renderTotal();
     }
-    renderTotal();
+    resetShippingFee();
 
-    // 1. Tải danh sách Tỉnh/Thành phố từ GHN
-    fetch("{{ route('locations.provinces') }}")
-        .then(res => res.json())
-        .then(res => {
-            if (res.data) {
-                let options = '<option value="">-- Chọn Tỉnh/Thành phố --</option>';
-                res.data.forEach(p => {
-                    options += `<option value="${p.ProvinceID}">${p.ProvinceName}</option>`;
-                });
-                provinceSelect.innerHTML = options;
-            } else {
-                provinceSelect.innerHTML = '<option value="">-- Không tải được tỉnh/thành --</option>';
-            }
-        })
-        .catch(err => {
-            console.error("Lỗi load tỉnh thành:", err);
-            provinceSelect.innerHTML = '<option value="">-- Lỗi kết nối GHN --</option>';
+    // Each dependent request owns a version so an older response cannot replace a new address.
+    const versions = { province: 0, district: 0, ward: 0, fee: 0 };
+    const requests = {};
+    const restoreAddress = {{ Illuminate\Support\Js::from(['province' => (string) $checkoutInput('to_province_id'), 'district' => (string) $checkoutInput('to_district_id'), 'ward' => (string) $checkoutInput('to_ward_code')]) }};
+    let retryShipping = null;
+
+    function invalidate(...names) {
+        names.forEach(name => {
+            versions[name] += 1;
+            requests[name]?.abort();
         });
-
-    // 2. Khi chọn Tỉnh -> Tải Quận/Huyện
-    provinceSelect.addEventListener('change', function () {
-        districtSelect.innerHTML = '<option value="">-- Đang tải Quận/Huyện... --</option>';
-        districtSelect.disabled = true;
-        wardSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện trước --</option>';
-        wardSelect.disabled = true;
-        resetShippingFee('Chờ chọn Phường/Xã');
-
-        if (!this.value) {
-            districtSelect.innerHTML = '<option value="">-- Chọn Tỉnh/Thành trước --</option>';
-            return;
+        shippingRetry.hidden = true;
+    }
+    function optionsFor(select, placeholder, data = [], valueKey = '', labelKey = '') {
+        select.replaceChildren(new Option(placeholder, ''));
+        data.forEach(item => select.add(new Option(String(item[labelKey]), String(item[valueKey]))));
+        select.disabled = data.length === 0;
+    }
+    function offerRetry(callback, message) {
+        retryShipping = callback;
+        shippingRetry.hidden = false;
+        resetShippingFee(message);
+    }
+    async function requestJSON(name, url, options = {}) {
+        const controller = new AbortController();
+        requests[name] = controller;
+        const timeout = setTimeout(() => controller.abort(), 15000);
+        try {
+            const response = await fetch(url, { ...options, signal: controller.signal, headers: { Accept: 'application/json', ...options.headers } });
+            if (!response.ok) throw new Error('Shipping request failed');
+            return await response.json();
+        } finally {
+            clearTimeout(timeout);
         }
-
-        fetch(districtsUrl.replace('__PROVINCE__', this.value))
-            .then(res => res.json())
-            .then(res => {
-                if (res.data) {
-                    let options = '<option value="">-- Chọn Quận/Huyện --</option>';
-                    res.data.forEach(d => {
-                        options += `<option value="${d.DistrictID}">${d.DistrictName}</option>`;
-                    });
-                    districtSelect.innerHTML = options;
-                    districtSelect.disabled = false;
-                } else {
-                    districtSelect.innerHTML = '<option value="">-- Không tải được quận/huyện --</option>';
-                }
-            })
-            .catch(err => {
-                console.error("Lỗi load quận huyện:", err);
-                districtSelect.innerHTML = '<option value="">-- Lỗi kết nối GHN --</option>';
-            });
-    });
-
-    // 3. Khi chọn Quận/Huyện -> Tải Phường/Xã
-    districtSelect.addEventListener('change', function () {
-        wardSelect.innerHTML = '<option value="">-- Đang tải Phường/Xã... --</option>';
-        wardSelect.disabled = true;
-        resetShippingFee('Chờ chọn Phường/Xã');
-
-        if (!this.value) {
-            wardSelect.innerHTML = '<option value="">-- Chọn Quận/Huyện trước --</option>';
-            return;
-        }
-
-        fetch(wardsUrl.replace('__DISTRICT__', this.value))
-            .then(res => res.json())
-            .then(res => {
-                if (res.data) {
-                    let options = '<option value="">-- Chọn Phường/Xã --</option>';
-                    res.data.forEach(w => {
-                        options += `<option value="${w.WardCode}">${w.WardName}</option>`;
-                    });
-                    wardSelect.innerHTML = options;
-                    wardSelect.disabled = false;
-                } else {
-                    wardSelect.innerHTML = '<option value="">-- Không tải được phường/xã --</option>';
-                }
-            })
-            .catch(err => {
-                console.error("Lỗi load phường xã:", err);
-                wardSelect.innerHTML = '<option value="">-- Lỗi kết nối GHN --</option>';
-            });
-    });
-
-    // 4. Khi chọn Phường/Xã -> Tính cước vận chuyển GHN theo đúng khối lượng giỏ hàng
-    wardSelect.addEventListener('change', function () {
-        if (!this.value || !districtSelect.value) {
-            resetShippingFee('Chờ chọn Phường/Xã');
-            return;
-        }
-
-        shippingFeeText.innerHTML = `<span style="color: #db2777; font-weight: 600;"><span style="display:inline-block; animation: spin 1s linear infinite;">@include('partials.icon', ['name' => 'hourglass', 'size' => '1em'])</span> Đang kết nối GHN tính phí...</span>`;
-
-        fetch("{{ route('locations.fee') }}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-                to_district_id: parseInt(districtSelect.value),
-                to_ward_code: String(this.value),
-                selection: 1,
-                selected_items: {{ Illuminate\Support\Js::from($selectedKeys) }}
-            })
-        })
-        .then(res => res.json())
-        .then(res => {
-            if (res.code === 200 && res.data) {
-                const fee = parseInt(res.data.total) || 0;
-                applyShippingFee(fee);
-            } else {
-                shippingFeeText.innerHTML = `<span style="color: #ea580c; font-size: 0.85rem;">${res.message || 'Chưa hỗ trợ tuyến'}</span>`;
-                resetShippingFee('Chưa hỗ trợ tuyến');
+    }
+    async function loadProvinces(restore = {}) {
+        invalidate('province', 'district', 'ward', 'fee');
+        const version = versions.province;
+        resetShippingFee('Đang tải khu vực giao hàng…');
+        optionsFor(provinceSelect, '-- Đang tải Tỉnh/Thành... --');
+        optionsFor(districtSelect, '-- Chọn Tỉnh/Thành trước --');
+        optionsFor(wardSelect, '-- Chọn Quận/Huyện trước --');
+        try {
+            const response = await requestJSON('province', "{{ route('locations.provinces') }}");
+            if (version !== versions.province) return;
+            if (!Array.isArray(response.data) || !response.data.length) throw new Error('No provinces');
+            optionsFor(provinceSelect, '-- Chọn Tỉnh/Thành phố --', response.data, 'ProvinceID', 'ProvinceName');
+            resetShippingFee();
+            if (restore.province) {
+                provinceSelect.value = restore.province;
+                if (provinceSelect.value) await loadDistricts(restore);
             }
-        })
-        .catch(err => {
-            console.error("Lỗi tính phí:", err);
-            shippingFeeText.innerHTML = '<span style="color: #dc2626; font-size: 0.85rem;">Lỗi kết nối GHN</span>';
-            resetShippingFee('Lỗi kết nối GHN');
-        });
-    });
+        } catch {
+            if (version !== versions.province) return;
+            optionsFor(provinceSelect, '-- Chưa tải được tỉnh/thành --');
+            offerRetry(() => loadProvinces(restore), 'Chưa tải được khu vực. Vui lòng thử lại.');
+        }
+    }
+    async function loadDistricts(restore = {}) {
+        invalidate('district', 'ward', 'fee');
+        const version = versions.district;
+        const province = provinceSelect.value;
+        resetShippingFee();
+        optionsFor(districtSelect, province ? '-- Đang tải Quận/Huyện... --' : '-- Chọn Tỉnh/Thành trước --');
+        optionsFor(wardSelect, '-- Chọn Quận/Huyện trước --');
+        if (!province) return;
+        try {
+            const response = await requestJSON('district', districtsUrl.replace('__PROVINCE__', encodeURIComponent(province)));
+            if (version !== versions.district || province !== provinceSelect.value) return;
+            if (!Array.isArray(response.data) || !response.data.length) throw new Error('No districts');
+            optionsFor(districtSelect, '-- Chọn Quận/Huyện --', response.data, 'DistrictID', 'DistrictName');
+            if (restore.district) {
+                districtSelect.value = restore.district;
+                if (districtSelect.value) await loadWards(restore);
+            }
+        } catch {
+            if (version !== versions.district) return;
+            optionsFor(districtSelect, '-- Chưa tải được quận/huyện --');
+            offerRetry(() => loadDistricts(restore), 'Chưa tải được quận/huyện. Vui lòng thử lại.');
+        }
+    }
+    async function loadWards(restore = {}) {
+        invalidate('ward', 'fee');
+        const version = versions.ward;
+        const district = districtSelect.value;
+        resetShippingFee();
+        optionsFor(wardSelect, district ? '-- Đang tải Phường/Xã... --' : '-- Chọn Quận/Huyện trước --');
+        if (!district) return;
+        try {
+            const response = await requestJSON('ward', wardsUrl.replace('__DISTRICT__', encodeURIComponent(district)));
+            if (version !== versions.ward || district !== districtSelect.value) return;
+            if (!Array.isArray(response.data) || !response.data.length) throw new Error('No wards');
+            optionsFor(wardSelect, '-- Chọn Phường/Xã --', response.data, 'WardCode', 'WardName');
+            if (restore.ward) {
+                wardSelect.value = restore.ward;
+                if (wardSelect.value) await loadFee();
+            }
+        } catch {
+            if (version !== versions.ward) return;
+            optionsFor(wardSelect, '-- Chưa tải được phường/xã --');
+            offerRetry(() => loadWards(restore), 'Chưa tải được phường/xã. Vui lòng thử lại.');
+        }
+    }
+    async function loadFee() {
+        invalidate('fee');
+        const version = versions.fee;
+        const district = districtSelect.value;
+        const ward = wardSelect.value;
+        resetShippingFee(ward && district ? 'Đang tính phí giao hàng…' : 'Chờ chọn Phường/Xã');
+        if (!ward || !district) return;
+        try {
+            const response = await requestJSON('fee', "{{ route('locations.fee') }}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                body: JSON.stringify({
+                    to_district_id: Number(district), to_ward_code: ward, selection: 1,
+                    selected_items: {{ Illuminate\Support\Js::from($selectedKeys) }}
+                })
+            });
+            if (version !== versions.fee || district !== districtSelect.value || ward !== wardSelect.value) return;
+            const fee = Number(response.data?.total);
+            if (Number(response.code) !== 200 || response.data?.total == null || !Number.isFinite(fee) || fee < 0) throw new Error('Invalid shipping quote');
+            applyShippingFee(Math.round(fee));
+        } catch {
+            if (version !== versions.fee) return;
+            offerRetry(loadFee, 'Chưa lấy được phí giao hàng. Vui lòng thử lại.');
+        }
+    }
+    shippingRetry.addEventListener('click', () => retryShipping?.());
+    provinceSelect.addEventListener('change', () => loadDistricts());
+    districtSelect.addEventListener('change', () => loadWards());
+    wardSelect.addEventListener('change', loadFee);
+    loadProvinces(restoreAddress);
+
 
     // Ràng buộc số điện thoại chỉ đúng 10 chữ số (bắt đầu bằng số 0)
     const phoneInput = document.getElementById('phone');
@@ -1002,6 +1046,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 else if (!districtSelect.value) districtSelect.focus();
                 else wardSelect.focus();
                 return false;
+            }
+            if (!shippingReady) {
+                e.preventDefault();
+                shippingFeeText.textContent = 'Vui lòng đợi phí giao hàng hoặc bấm thử lại trước khi đặt hàng.';
+                shippingFeeText.scrollIntoView({ block: 'nearest' });
             }
         });
     }

@@ -41,11 +41,16 @@ class StoreExperienceTest extends TestCase
             ->assertOk()->assertSee($perfume->name);
         $this->get(route('store.compare', ['ids' => (string) $perfume->id]))
             ->assertOk()->assertSee($perfume->name);
-        $this->get(route('home', ['note' => 'hoa hồng']))
+        $response = $this->get(route('home', ['note' => 'hoa hồng']))
             ->assertOk()
             ->assertSee($perfume->name)
             ->assertSee('<meta property="og:site_name" content="Soopi">', false)
-            ->assertSee('Soopi<span>PERFUME STUDIO</span>', false);
+            ->assertSee('images/brand/soopi-petal-logo.webp', false);
+
+        preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $response->getContent(), $structuredData);
+        $store = json_decode($structuredData[1] ?? '', true, 512, JSON_THROW_ON_ERROR);
+        $this->assertSame('https://schema.org', $store['@context']);
+        $this->assertSame(asset('images/brand/soopi-petal-logo.png'), $store['logo']);
     }
 
     public function test_customer_can_save_review_and_request_stock_alert(): void

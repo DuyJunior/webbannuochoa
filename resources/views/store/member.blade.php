@@ -16,7 +16,7 @@
         <div class="ht-vip-card" style="background: {{ $tier['gradient'] }}; color: {{ $tier['text_color'] }}">
             <div class="card-chip-row">
                 <span class="card-chip"></span>
-                <span class="card-logo">SOOPI PERFUME</span>
+                <span class="member-card-brand">@include('partials.brand-logo', ['class' => 'member-brand-logo'])</span>
             </div>
             <div class="card-middle-row">
                 <span class="card-tier-badge">@include('partials.icon', ['name' => $tier['badge'], 'size' => '1em']) {{ $tier['name'] }}</span>
@@ -177,11 +177,6 @@
     background: linear-gradient(135deg, #d4af37, #fef08a);
     border-radius: 6px;
     display: inline-block;
-}
-.card-logo {
-    font: 700 12px 'Playfair Display', Georgia, serif;
-    letter-spacing: 2px;
-    opacity: 0.9;
 }
 .card-middle-row {
     display: flex;

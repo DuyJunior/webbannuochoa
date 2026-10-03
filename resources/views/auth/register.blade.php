@@ -8,7 +8,7 @@
     <div class="luxury-auth-card" style="max-width: 500px;">
         <div class="luxury-auth-header">
             <div class="luxury-auth-icon-wrap">
-                @include('partials.icon', ['name' => 'flower', 'size' => 27])
+                @include('partials.brand-mark', ['size' => 32])
             </div>
             <h1 class="luxury-auth-title">Đăng ký tài khoản</h1>
             <p class="luxury-auth-subtitle">Trở thành thành viên Soopi để tận hưởng đặc quyền mua sắm</p>
@@ -43,7 +43,7 @@
                            class="luxury-form-input"
                            placeholder="Nhập họ và tên của bạn"
                            required
-                           value="{{ old('name') }}"
+                           value="{{ is_string(old('name')) ? old('name') : '' }}"
                            autofocus>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                            class="luxury-form-input"
                            placeholder="example@gmail.com"
                            required
-                           value="{{ old('email') }}">
+                           value="{{ is_string(old('email')) ? old('email') : '' }}">
                 </div>
                 <span class="luxury-form-hint">Email này sẽ nhận liên kết xác thực tài khoản.</span>
             </div>
@@ -95,6 +95,7 @@
                 </div>
             </div>
 
+            <p class="store-privacy-note">Thông tin tài khoản được sử dụng để phục vụ mua sắm và hỗ trợ bạn. <a href="{{ route('store.privacy') }}">Đọc chính sách riêng tư</a>.</p>
             <button type="submit" class="luxury-auth-btn">
                 <span>Đăng ký ngay</span>
                 <span>→</span>

@@ -5,6 +5,7 @@
 
 @section('content')
 <div class="admin-orders-container">
+    @include('admin.partials.print-brand', ['printTitle' => 'Danh sách đơn hàng', 'printSubtitle' => number_format($orders->total()).' đơn phù hợp · Trang '.$orders->currentPage().' / '.$orders->lastPage()])
     {{-- 1. BỘ LỌC TABS THEO QUY CHUẨN LAB 8 (PDF Trang 1, 6) --}}
     <div class="order-tabs-wrapper mb-3">
         <div class="nav-tabs-scroll" aria-label="Lọc theo trạng thái đơn hàng">
@@ -209,8 +210,8 @@
                                     <div class="order-items-snippet">
                                         @foreach($order->items->take(2) as $item)
                                             <div class="order-product-line">
-                                                <span>{{ $item->product_name ?? $item->perfume?->name ?? 'Sản phẩm' }}</span>
-                                                <span class="order-secondary">× {{ $item->quantity }} @if($item->volume_ml) · {{ $item->volume_ml }} ml @endif</span>
+                                                <span>{{ $item->display_name }}</span>
+                                                <span class="order-secondary">× {{ $item->quantity }} · {{ $item->volume_label }}</span>
                                             </div>
                                         @endforeach
                                         @if($order->items->count() > 2)

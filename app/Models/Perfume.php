@@ -92,23 +92,14 @@ class Perfume extends Model
         return $this->hasMany(Video::class, 'perfume_id');
     }
 
+    public function shopPhotos(): HasMany
+    {
+        return $this->hasMany(ProductPhoto::class, 'perfume_id')->orderBy('id');
+    }
+
     public function getEmbedVideoUrlAttribute(): ?string
     {
-        if (! $this->video_url) {
-            return null;
-        }
-        $url = trim((string) $this->video_url);
-        if (preg_match('/(?:youtube\.com\/shorts\/|youtu\.be\/shorts\/)([a-zA-Z0-9_-]+)/i', $url, $m)) {
-            return 'https://www.youtube.com/embed/'.$m[1].'?autoplay=1&rel=0';
-        }
-        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/i', $url, $m)) {
-            return 'https://www.youtube.com/embed/'.$m[1].'?autoplay=1&rel=0';
-        }
-        if (preg_match('/tiktok\.com\/@[^\/]+\/video\/(\d+)/i', $url, $m)) {
-            return 'https://www.tiktok.com/player/v1/'.$m[1];
-        }
-
-        return $url;
+        return \App\Support\VideoUrl::embed($this->video_url);
     }
 
     public function getImageSrcAttribute(): ?string

@@ -102,7 +102,7 @@
                         <div class="item-details">
                             <span class="item-brand">{{ $product->brand }}</span>
                             <h2 class="item-title">
-                                <a href="{{ route('perfumes.show', $product) }}">{{ $item['is_discovery_box'] ? $item['custom_title'] : $product->name }}</a>
+                                <a href="{{ route('perfumes.show', $product) }}">{{ ($item['is_discovery_box'] || $item['is_gift_bundle']) ? $item['custom_title'] : $product->name }}</a>
                             </h2>
                             
                             {{-- Dung tích --}}
@@ -113,13 +113,16 @@
                             @if($item['is_discovery_box'])
                                 <p class="item-sample-summary">{{ $item['engrave_text'] }}</p>
                             @endif
+                            @if($item['is_gift_bundle'])
+                                <p class="item-sample-summary"><strong>Hai mẫu 5ml:</strong> {{ implode(' · ', $item['sample_names']) }}</p>
+                            @endif
 
                             {{-- Dịch vụ quà tặng & khắc tên --}}
                             @if(!empty($item['has_gift']) || !empty($item['has_engrave']))
                                 <div class="item-addons-group">
                                     @if(!empty($item['has_gift']))
                                         <span class="addon-badge gift-badge">
-                                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ $item['is_discovery_box'] ? 'Giá trọn hộp mẫu thử' : 'Gói quà Luxury & Thiệp (+50.000₫)' }}
+                                            @include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ $item['is_gift_bundle'] ? 'Hộp quà & thiệp đã gồm trong giá combo' : ($item['is_discovery_box'] ? 'Giá trọn hộp mẫu thử' : 'Gói quà Luxury & Thiệp (+50.000₫)') }}
                                         </span>
                                     @endif
                                     @if(!empty($item['has_engrave']) && !empty($item['engrave_text']))
@@ -141,7 +144,7 @@
                                 @csrf @method('PATCH')
                                 <div class="custom-qty-picker" data-quantity-picker>
                                     <button type="button" data-quantity-minus class="qty-btn minus" aria-label="Giảm số lượng">−</button>
-                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ max(1, $item['max_quantity']) }}" class="qty-input" aria-label="Số lượng {{ $item['is_discovery_box'] ? $item['custom_title'] : $product->name }}">
+                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ max(1, $item['max_quantity']) }}" class="qty-input" aria-label="Số lượng {{ ($item['is_discovery_box'] || $item['is_gift_bundle']) ? $item['custom_title'] : $product->name }}">
                                     <button type="button" data-quantity-plus class="qty-btn plus" aria-label="Tăng số lượng">+</button>
                                 </div>
                                 <button class="btn-qty-update" type="submit" title="Cập nhật số lượng">Cập nhật</button>

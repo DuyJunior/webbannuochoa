@@ -14,7 +14,7 @@
         <article class="qv-product" data-qv-product hidden>
             <figure class="qv-picture">
                 <img data-qv-image alt="" width="640" height="480" decoding="async" hidden>
-                <span class="qv-image-fallback" data-qv-image-fallback>@include('partials.icon', ['name' => 'flower', 'size' => 80])</span>
+                <span class="qv-image-fallback" data-qv-image-fallback>@include('partials.brand-mark', ['size' => 80])</span>
                 <figcaption data-qv-image-caption hidden>Phối cảnh bộ sưu tập Soopi</figcaption>
             </figure>
             <div class="qv-information">

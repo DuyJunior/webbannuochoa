@@ -1,0 +1,10 @@
+form[data-wishlist][aria-busy="true"] button{cursor:progress;opacity:.55}
+form[data-wishlist] button{transition:color .18s ease,background-color .18s ease,opacity .18s ease}
+.wishlist-notice{position:fixed;z-index:12000;left:24px;bottom:24px;display:flex;align-items:center;gap:14px;max-width:min(430px,calc(100vw - 108px));padding:15px 18px;background:#fffaf7;border:1px solid #dcc9d1;border-radius:12px;box-shadow:0 8px 32px #39212d20;color:#452a3a;font:400 13px/1.6 'Be Vietnam Pro',sans-serif}
+.wishlist-notice[hidden],[data-wishlist-list][hidden],[data-wishlist-empty][hidden]{display:none!important}
+.wishlist-notice>span{flex:1;min-width:0}
+.wishlist-notice a{color:inherit;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.wishlist-notice button{flex-shrink:0;width:32px;height:32px;border:0;background:transparent;color:inherit;font:24px/1 sans-serif;cursor:pointer}
+.wishlist-notice :is(a,button):focus-visible{outline:2px solid #85566e;outline-offset:3px}
+@media(max-width:600px){.wishlist-notice{left:12px;bottom:max(16px,env(safe-area-inset-bottom));gap:8px;padding:12px;flex-wrap:wrap;font-size:12px}.wishlist-notice>span{flex-basis:calc(100% - 40px)}.wishlist-notice a:not([hidden]){order:3}}
+@media(prefers-reduced-motion:reduce){form[data-wishlist] button{transition:none}}

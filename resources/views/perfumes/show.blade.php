@@ -70,7 +70,7 @@
 
         <div class="luxury-product-grid">
             {{-- Visual Gallery --}}
-            <div class="luxury-gallery-column">
+            <div class="luxury-gallery-column {{ $perfume->shopPhotos->isNotEmpty() ? 'has-shop-photos' : '' }}">
                 <div class="luxury-main-visual">
                     @if ($editorialImage || $perfume->image_src)
                         <img id="mainProductImage" src="{{ $editorialImage ? asset($editorialImage) : $perfume->image_src }}" alt="{{ $perfume->name }}" fetchpriority="high">
@@ -100,6 +100,8 @@
                 <nav class="interior-product-chapters" aria-label="Khám phá sản phẩm"><a href="#scent-story-title">01 / Câu chuyện</a><a href="#danh-gia">02 / Cảm nhận</a><a href="{{ route('store.finder') }}">03 / Chọn hương ↗</a></nav>
                 {{-- Live Viewers & Social Proof --}}
                 <p class="ht-product-advice">Một mùi hương riêng, một dấu ấn khó quên.</p>
+
+                @include('partials.shop-product-photos')
 
                 {{-- Highlights Box --}}
                 <div class="luxury-guarantees-grid">
@@ -144,7 +146,7 @@
                     <span class="tag-pill">{{ ['nam' => 'Dành cho Nam', 'nu' => 'Dành cho Nữ', 'unisex' => 'Unisex - Mọi giới tính'][$perfume->gender] }}</span>
                     @if($perfume->concentration)<span class="tag-pill">{{ $perfume->concentration }}</span>@endif
                     @php
-                        $directVid = $perfume->videos()->where('is_active', true)->first();
+                        $directVid = $perfume->videos()->where('is_active', true)->whereIn('placement', ['product', 'all'])->orderBy('sort_order')->first();
                         $showVidUrl = $directVid ? $directVid->embed_url : $perfume->embed_video_url;
                     @endphp
                     @if($showVidUrl)
@@ -321,7 +323,7 @@
                 </div>
                 <div class="ht-product-utilities">
                     @auth
-                    <form method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}">@csrf<button type="submit" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) {{ $isFavorite ? 'Đã yêu thích' : 'Lưu yêu thích' }}</button></form>
+                    <form method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}" data-wishlist="{{ $perfume->id }}" data-wishlist-saved="{{ $isFavorite ? 'true' : 'false' }}" data-wishlist-name="{{ $perfume->name }}" data-wishlist-login="{{ route('login') }}">@csrf<button type="submit" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}" aria-label="{{ $isFavorite ? 'Bỏ yêu thích' : 'Yêu thích' }} {{ $perfume->name }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <span data-wishlist-label>{{ $isFavorite ? 'Đã yêu thích' : 'Lưu yêu thích' }}</span></button></form>
                     <button type="button" id="openWardrobeModalBtn" class="ht-utility-btn">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) {{ $inWardrobe ? ' Đã trong Tủ hương' : '+ Tủ nước hoa' }}</button>
                     @if($perfume->stock <= 0)
                     <form method="POST" action="{{ route('store.stock-alert', $perfume) }}">@csrf<button type="submit">Báo khi có hàng</button></form>
@@ -437,52 +439,7 @@
         </section>
     </section>
 
-    {{-- ── COMBO TIẾT KIỆM GỢI Ý ── --}}
-    <section class="store-container ht-bundle-section">
-        <div class="ht-bundle-card">
-            <div class="bundle-badge">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) COMBO TIẾT KIỆM ĐẶC QUYỀN</div>
-            <div class="bundle-content">
-                <div class="bundle-items-visual">
-                    <div class="bundle-item">
-                        <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}">
-                        <span>Chai Fullsize {{ $perfume->volume_ml }}ml</span>
-                    </div>
-                    <span class="bundle-plus">+</span>
-                    <div class="bundle-item">
-                        <div class="vial-thumb">@include('partials.icon', ['name' => 'vial', 'size' => '1em'])@include('partials.icon', ['name' => 'vial', 'size' => '1em'])</div>
-                        <span>02 Sample Chiết 5ml</span>
-                    </div>
-                    <span class="bundle-plus">+</span>
-                    <div class="bundle-item">
-                        <div class="box-thumb">@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</div>
-                        <span>Hộp Quà Lụa & Thiệp</span>
-                    </div>
-                </div>
-                <div class="bundle-info">
-                    <h3>Combo Trọn Vẹn: {{ $perfume->name }} + 2 Sample + Hộp Quà</h3>
-                    <p>Bộ quà tặng lý tưởng nhất: Vừa sở hữu chai nước hoa yêu thích, vừa khám phá thêm 2 mùi hương mới lạ, đóng gói sẵn trong hộp quà nhung sang trọng.</p>
-                    <div class="bundle-pricing">
-                        @php
-                            $comboOriginal = ($perfume->sale_price ?? $perfume->price) + 200000 + 50000;
-                            $comboPrice = round((($perfume->sale_price ?? $perfume->price) + 90000) / 1000) * 1000;
-                        @endphp
-                        <span class="bundle-price">{{ number_format($comboPrice, 0, ',', '.') }}₫</span>
-                        <del class="bundle-old">{{ number_format($comboOriginal, 0, ',', '.') }}₫</del>
-                        <span class="bundle-save">Tiết kiệm {{ number_format($comboOriginal - $comboPrice, 0, ',', '.') }}₫</span>
-                    </div>
-                    <form action="{{ route('cart.add', $perfume) }}" method="POST">
-                        @csrf
-                        <input type="hidden" name="quantity" value="1">
-                        <input type="hidden" name="addon_gift" value="1">
-                        <input type="hidden" name="engrave_text" value="Combo Trọn Vẹn + 2 Sample">
-                        <button type="submit" class="ht-button ht-button-primary">
-                            Mua Ngay Trọn Bộ Combo
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
+    @include('partials.gift-bundle')
 
     {{-- ── RELATED PRODUCTS ── --}}
     @if($related->isNotEmpty())

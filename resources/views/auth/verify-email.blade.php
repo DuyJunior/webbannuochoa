@@ -6,8 +6,8 @@
 <section class="luxury-auth-section">
     <div class="luxury-auth-card" style="max-width: 480px; text-align: center;">
         <div class="luxury-auth-header">
-            <div class="luxury-auth-icon-wrap" style="width: 64px; height: 64px; font-size: 30px;">
-                @include('partials.icon', ['name' => 'mail', 'size' => 27])
+            <div class="luxury-auth-icon-wrap">
+                @include('partials.brand-mark', ['size' => 32])
             </div>
             <h1 class="luxury-auth-title">Xác thực Email</h1>
             <p class="luxury-auth-subtitle" style="margin-top: 8px;">
@@ -19,13 +19,6 @@
             <div class="luxury-auth-alert alert-success" role="alert" style="text-align: left;">
                 <span>@include('partials.icon', ['name' => 'check', 'size' => '1em'])</span>
                 <div>{{ session('message') }}</div>
-            </div>
-        @endif
-
-        @if (session('success'))
-            <div class="luxury-auth-alert alert-success" role="alert" style="text-align: left;">
-                <span>@include('partials.icon', ['name' => 'check', 'size' => '1em'])</span>
-                <div>{{ session('success') }}</div>
             </div>
         @endif
 

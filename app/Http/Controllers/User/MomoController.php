@@ -28,7 +28,7 @@ class MomoController extends Controller
         }
         $method = $request->query('method', 'momo');
         $requestType = match ($method) {
-            'captureWallet', 'qr' => 'captureWallet',
+            'momo', 'captureWallet', 'qr' => 'captureWallet',
             'payWithCC', 'atm_international', 'visa', 'mastercard' => 'payWithCC',
             default => 'payWithATM', // Mặc định: Thẻ ATM Nội Địa (Napas MOMOWL) theo đúng bảng test Lab 06
         };
@@ -49,7 +49,7 @@ class MomoController extends Controller
         }
         $method = $request->query('method', 'momo');
         $requestType = match ($method) {
-            'captureWallet', 'qr' => 'captureWallet',
+            'momo', 'captureWallet', 'qr' => 'captureWallet',
             'payWithCC', 'atm_international', 'visa', 'mastercard' => 'payWithCC',
             default => 'payWithATM',
         };
@@ -72,7 +72,7 @@ class MomoController extends Controller
 
         // Tạo transaction và lấy URL MoMo
         $transaction = $this->newTransaction($order);
-        $result = $momo->createPayment($order, $transaction);
+        $result = $momo->createPayment($order, $transaction, 'captureWallet');
         $momoUrl = $result['payUrl'] ?? null;
 
         return view('user.payment.momo-qr', compact('order', 'momoUrl'));
@@ -135,6 +135,10 @@ class MomoController extends Controller
     private function newTransaction(Order $order): PaymentTransaction
     {
         abort_if($order->is_demo || in_array($order->status, ['cancelled', 'completed', 'paid', 'paid_momo', 'cod_paid'], true)
+            || $order->status === 'cod_ordered' || $order->ghn_order_code
+            || ! in_array($order->shipping_status, [null, 'pending', 'not_shipped'], true)
+            || ($order->payment_expires_at && $order->payment_expires_at->isPast())
+            || $order->paymentTransactions()->where('gateway', 'cod')->exists()
             || $order->paymentTransactions()->whereIn('status', ['paid', 'refund_pending', 'refunded'])->exists(), 409, 'Đơn hàng không thể thanh toán lại.');
         $existing = PaymentTransaction::where('order_id', $order->id)
             ->where('gateway', 'momo')
@@ -215,6 +219,7 @@ class MomoController extends Controller
 
             $order->update(['status' => 'paid', 'shipping_status' => 'processing']);
             $momo->markPaid($transaction, $payload);
+            app(\App\Services\OrderEmailService::class)->paid($order);
 
             return ['create', $order->id];
         });

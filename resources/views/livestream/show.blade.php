@@ -34,7 +34,7 @@
                             <video id="live-viewer-video" autoplay playsinline hidden></video>
                             <audio id="live-viewer-audio" autoplay></audio>
                             <div class="ht-live-native-overlay">
-                                <span class="ht-live-flower" aria-hidden="true">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
+                                <span class="ht-live-flower" aria-hidden="true">@include('partials.brand-mark', ['size' => '1em', 'light' => true])</span>
                                 <strong>Đang phát trực tiếp</strong>
                                 <button id="live-viewer-join" class="ht-live-button" type="button">Xem livestream</button>
                                 <span id="live-viewer-message" role="status">Nhấn để bắt đầu xem và nghe.</span>
@@ -42,7 +42,7 @@
                         </div>
                     @else
                         <div class="ht-live-wait">
-                            <span class="ht-live-flower" aria-hidden="true">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
+                            <span class="ht-live-flower" aria-hidden="true">@include('partials.brand-mark', ['size' => '1em'])</span>
                             <strong>{{ $livestream->status === 'live' ? 'Buổi phát đang tạm gián đoạn' : ($livestream->isOverdue() ? 'Đã đến giờ phát' : 'Hẹn bạn ở buổi phát sắp tới') }}</strong>
                             <span>{{ $livestream->status === 'live' ? 'Nhân viên đang kết nối lại. Vui lòng tải lại trang sau ít phút.' : ($livestream->isOverdue() ? 'Nhân viên đang chuẩn bị lên sóng. Trang này sẽ tự cập nhật khi buổi phát bắt đầu.' : 'Nhân viên sẽ bắt đầu buổi phát vào giờ hẹn. Trang này sẽ tự cập nhật khi lên sóng.') }}</span>
                         </div>
@@ -78,7 +78,7 @@
                     <a class="ht-live-button" href="{{ route('store.quiz') }}">Chọn hương của bạn →</a>
                     <a class="ht-live-text-link" href="{{ route('home') }}#san-pham">Xem bộ sưu tập</a>
                 </div>
-                <span class="ht-live-empty-footnote">✿ Một chút hương, một chút thương.</span>
+                <span class="ht-live-empty-footnote">@include('partials.brand-mark', ['size' => 18]) Một chút hương, một chút thương.</span>
             </div>
             <div class="ht-live-empty-visual">
                 <img src="{{ asset('images/bloom/flower-open.webp') }}" alt="Chai nước hoa giữa những cánh lụa hồng của Soopi" loading="lazy">

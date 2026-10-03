@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Quản trị') · Soopi</title>
+    @include('partials.brand-favicon')
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,12 +21,8 @@
 
     {{-- Sidebar --}}
     <aside class="admin-sidebar" id="admin-sidebar" aria-label="Menu quản trị">
-        <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('admin.livestreams.index') }}" class="sidebar-brand">
-            <div class="brand-icon">@include('partials.icon', ['name' => 'flower', 'size' => 24])</div>
-            <div class="brand-text">
-                <strong>Soopi</strong>
-                <span>MANAGEMENT STUDIO</span>
-            </div>
+        <a href="{{ Auth::user()->role === 'admin' ? route('admin.dashboard') : route('admin.livestreams.index') }}" class="sidebar-brand" aria-label="Soopi · Trang quản trị">
+            @include('partials.brand-logo', ['class' => 'studio-sidebar-logo', 'light' => true])
         </a>
 
         <button type="button" class="studio-sidebar-close" aria-label="Đóng menu quản trị">@include('partials.icon', ['name' => 'close'])</button>

@@ -31,24 +31,25 @@
     {{-- Structured Data: Local Business --}}
     <script type="application/ld+json">
     {!! json_encode([
-        '@context' => 'https://schema.org',
+        '@'.'context' => 'https://schema.org',
         '@type' => 'Store',
         'name' => 'Soopi',
         'description' => 'Cửa hàng nước hoa chính hãng, đa dạng thương hiệu quốc tế.',
         'url' => config('app.url'),
         'image' => asset('images/perfume-hero.jpg'),
+        'logo' => asset('images/brand/soopi-petal-logo.png'),
         'priceRange' => '₫₫',
         'currenciesAccepted' => 'VND',
         'paymentAccepted' => 'Cash, Credit Card, MoMo',
         'areaServed' => 'VN',
         'sameAs' => [
-            'https://facebook.com/hathu.perfume',
-            'https://instagram.com/hathu.perfume',
+            config('storefront.facebook_url'),
+            config('storefront.instagram_url'),
         ],
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
     </script>
 
-    <link rel="icon" href="{{ asset('images/ha-thu-mark.svg') }}" type="image/svg+xml">
+    @include('partials.brand-favicon')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap&subset=vietnamese">

@@ -35,7 +35,7 @@
             @empty<p>Chưa có sản phẩm phù hợp. Hãy thử lựa chọn khác nhé.</p>@endforelse
         </div>
     @else
-        <aside class="interior-finder-note"><span aria-hidden="true">✳</span><div><h2>Chưa biết bắt đầu từ đâu?</h2><p>Để cảm xúc dẫn lối qua bốn câu hỏi nhỏ.</p></div><a class="ht-text-link" href="{{ route('store.quiz') }}">Làm trắc nghiệm mùi hương ↗</a></aside>
+        <aside class="interior-finder-note">@include('partials.brand-mark', ['size' => 44, 'class' => 'interior-finder-brand-mark'])<div><h2>Chưa biết bắt đầu từ đâu?</h2><p>Để cảm xúc dẫn lối qua bốn câu hỏi nhỏ.</p></div><a class="ht-text-link" href="{{ route('store.quiz') }}">Làm trắc nghiệm mùi hương ↗</a></aside>
     @endif
 </section>
 @endsection

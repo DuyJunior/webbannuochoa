@@ -19,7 +19,7 @@
             {{-- 1. Phần Vòng Quay (Hiển thị ban đầu) --}}
             <div id="spinMainSection" class="spin-main-section">
                 <div class="spin-card-header">
-                    <span class="spin-eyebrow">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) SOOPI PERFUME</span>
+                    <span class="spin-eyebrow">@include('partials.brand-mark', ['size' => 22]) SOOPI PERFUME</span>
                     <h2>Vòng Quay <em>Hương Thơm</em></h2>
                     <p>Quay là trúng voucher giảm giá & quà tặng sample!</p>
                 </div>

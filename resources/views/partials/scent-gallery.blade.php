@@ -9,7 +9,7 @@
                 <h2 id="scent-heading">Hương thơm.<br><em>Một dấu ấn riêng.</em></h2>
             @endif
         </div>
-        <div class="scent-heading-note">@include('partials.icon', ['name' => 'flower', 'size' => 60])<p>Những mùi hương được chọn để trở thành một phần của bạn.</p><span>COLLECTION 01</span></div>
+        <div class="scent-heading-note">@include('partials.brand-mark', ['size' => 64])<p>Những mùi hương được chọn để trở thành một phần của bạn.</p><span>COLLECTION 01</span></div>
     </header>
     <div class="scent-toolbar">
         <nav class="scent-categories" aria-label="Chọn bộ sưu tập">

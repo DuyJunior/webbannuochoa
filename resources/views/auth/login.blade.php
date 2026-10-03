@@ -8,7 +8,7 @@
     <div class="luxury-auth-card">
         <div class="luxury-auth-header">
             <div class="luxury-auth-icon-wrap">
-                @include('partials.icon', ['name' => 'flower', 'size' => 27])
+                @include('partials.brand-mark', ['size' => 32])
             </div>
             <h1 class="luxury-auth-title">Đăng nhập</h1>
             <p class="luxury-auth-subtitle">Chào mừng bạn quay trở lại với Soopi</p>
@@ -54,7 +54,7 @@
                            class="luxury-form-input"
                            placeholder="example@gmail.com"
                            required
-                           value="{{ old('email') }}"
+                           value="{{ is_string(old('email')) ? old('email') : '' }}"
                            autofocus>
                 </div>
             </div>
@@ -81,6 +81,7 @@
         </form>
 
         <div class="luxury-auth-footer">
+            <p><a href="{{ route('password.request') }}">Quên mật khẩu?</a></p>
             Chưa có tài khoản? <a href="{{ route('register') }}">Đăng ký tài khoản mới</a>
         </div>
     </div>

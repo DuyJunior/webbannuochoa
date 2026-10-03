@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Perfume;
 use App\Models\Video;
+use App\Rules\SafeVideoUrl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -63,15 +65,10 @@ class VideoController extends Controller
         $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
         $data['views_count'] = (int) ($data['views_count'] ?? 1000);
 
-        $video = Video::create($data);
-
-        // Đồng bộ video_url sang sản phẩm nếu có chọn sản phẩm và sản phẩm chưa có video
-        if ($video->perfume_id) {
-            $perfume = Perfume::find($video->perfume_id);
-            if ($perfume && empty($perfume->video_url)) {
-                $perfume->update(['video_url' => $video->video_url]);
-            }
-        }
+        DB::transaction(function () use ($data) {
+            $video = Video::create($data);
+            $this->syncProductVideo($video);
+        });
 
         return redirect()->route('admin.videos.index')
             ->with('success', 'Đã thêm video trải nghiệm / review mới thành công.');
@@ -91,15 +88,11 @@ class VideoController extends Controller
         $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
         $data['views_count'] = (int) ($data['views_count'] ?? 0);
 
-        $video->update($data);
-
-        // Đồng bộ video_url sang sản phẩm nếu có chọn sản phẩm
-        if ($video->perfume_id) {
-            $perfume = Perfume::find($video->perfume_id);
-            if ($perfume) {
-                $perfume->update(['video_url' => $video->video_url]);
-            }
-        }
+        DB::transaction(function () use ($video, $data) {
+            $this->clearCopiedProductVideo($video);
+            $video->update($data);
+            $this->syncProductVideo($video);
+        });
 
         return redirect()->route('admin.videos.index')
             ->with('success', 'Đã cập nhật thông tin video thành công.');
@@ -107,14 +100,21 @@ class VideoController extends Controller
 
     public function destroy(Video $video): RedirectResponse
     {
-        $video->delete();
+        DB::transaction(function () use ($video) {
+            $this->clearCopiedProductVideo($video);
+            $video->delete();
+        });
         return redirect()->route('admin.videos.index')
             ->with('success', 'Đã xóa video khỏi hệ thống.');
     }
 
     public function toggle(Video $video): RedirectResponse
     {
-        $video->update(['is_active' => ! $video->is_active]);
+        DB::transaction(function () use ($video) {
+            $this->clearCopiedProductVideo($video);
+            $video->update(['is_active' => ! $video->is_active]);
+            $this->syncProductVideo($video);
+        });
         $statusText = $video->is_active ? 'Hiển thị' : 'Tạm ẩn';
         return back()->with('success', "Đã chuyển trạng thái video sang: {$statusText}.");
     }
@@ -123,22 +123,15 @@ class VideoController extends Controller
     {
         return $request->validate([
             'title'          => ['required', 'string', 'max:255'],
-            'video_url'      => ['bail', 'required', 'string', 'max:2048', function ($attribute, $value, $fail) {
-                // Keep existing local video paths while rejecting executable URL schemes.
-                $remote = filter_var($value, FILTER_VALIDATE_URL) && in_array(strtolower((string) parse_url($value, PHP_URL_SCHEME)), ['http', 'https'], true);
-                $local = preg_match('~^/?(?:videos|storage|images)/[a-zA-Z0-9/._-]+\.(?:mp4|webm|ogg)$~i', $value) && !str_contains($value, '..');
-                if (!$remote && !$local) {
-                    $fail('Nhập liên kết HTTP/HTTPS hợp lệ hoặc đường dẫn video trong thư mục videos, storage, images.');
-                }
-            }],
+            'video_url'      => ['bail', 'required', 'string', 'max:2048', new SafeVideoUrl],
             'perfume_id'     => ['nullable', 'exists:perfumes,id'],
             'thumbnail_url'  => ['nullable', 'string', 'max:2048'],
             'thumbnail_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'duration'       => ['nullable', 'string', 'max:20'],
-            'views_count'    => ['nullable', 'integer', 'min:0'],
+            'views_count'    => ['nullable', 'integer', 'min:0', 'max:4294967295'],
             'description'    => ['nullable', 'string', 'max:2000'],
             'placement'      => ['required', 'in:home,product,all'],
-            'sort_order'     => ['nullable', 'integer'],
+            'sort_order'     => ['nullable', 'integer', 'between:-2147483648,2147483647'],
             'is_active'      => ['nullable', 'boolean'],
         ], [
             'title.required'     => 'Vui lòng nhập tiêu đề cho video.',
@@ -147,6 +140,23 @@ class VideoController extends Controller
             'thumbnail_file.image' => 'Ảnh bìa tải lên phải là định dạng hình ảnh.',
             'thumbnail_file.max' => 'Ảnh bìa không được vượt quá 5MB.',
         ]);
+    }
+
+    private function clearCopiedProductVideo(Video $video): void
+    {
+        if ($video->perfume_id) {
+            // Only remove a copied URL; preserve an independently configured product video.
+            Perfume::whereKey($video->perfume_id)->where('video_url', $video->video_url)->update(['video_url' => null]);
+        }
+    }
+
+    private function syncProductVideo(Video $video): void
+    {
+        if ($video->perfume_id && $video->is_active && in_array($video->placement, ['product', 'all'], true)) {
+            Perfume::whereKey($video->perfume_id)
+                ->where(fn ($query) => $query->whereNull('video_url')->orWhere('video_url', ''))
+                ->update(['video_url' => $video->video_url]);
+        }
     }
 
     private function handleThumbnailUpload(Request $request, array $data): array

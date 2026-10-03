@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Services\DiscoveryBoxService;
 use App\Services\LoyaltyService;
 use App\Services\ScentFinder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -151,6 +152,7 @@ class StoreExperienceController extends Controller
     {
         $user = $request->user();
         $wardrobeItems = ScentWardrobe::where('user_id', $user->id)
+            ->whereHas('perfume', fn ($query) => $query->where('is_active', true))
             ->with('perfume')
             ->latest()
             ->get();
@@ -200,6 +202,7 @@ class StoreExperienceController extends Controller
     public function shareWardrobe(User $user): View
     {
         $wardrobeItems = ScentWardrobe::where('user_id', $user->id)
+            ->whereHas('perfume', fn ($query) => $query->where('is_active', true))
             ->with('perfume')
             ->latest()
             ->get();
@@ -343,16 +346,25 @@ class StoreExperienceController extends Controller
         return view('store.wishlist', compact('perfumes', 'alerts'));
     }
 
-    public function toggleWishlist(Request $request, Perfume $perfume): RedirectResponse
+    public function toggleWishlist(Request $request, Perfume $perfume): RedirectResponse|JsonResponse
     {
         abort_unless($perfume->is_active, 404);
+        $data = $request->validate(['saved' => ['sometimes', 'required', 'boolean']]);
         $key = ['user_id' => $request->user()->id, 'perfume_id' => $perfume->id];
-        if (DB::table('wishlists')->where($key)->exists()) {
+        $saved = array_key_exists('saved', $data)
+            ? (bool) $data['saved']
+            : ! DB::table('wishlists')->where($key)->exists();
+
+        if ($saved) {
+            DB::table('wishlists')->insertOrIgnore($key + ['created_at' => now(), 'updated_at' => now()]);
+            $message = 'Đã lưu mùi hương yêu thích.';
+        } else {
             DB::table('wishlists')->where($key)->delete();
             $message = 'Đã bỏ sản phẩm khỏi danh sách yêu thích.';
-        } else {
-            DB::table('wishlists')->insert($key + ['created_at' => now(), 'updated_at' => now()]);
-            $message = 'Đã lưu mùi hương yêu thích.';
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json(['perfume_id' => $perfume->id, 'saved' => $saved, 'message' => $message]);
         }
 
         return back()->with('success', $message);

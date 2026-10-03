@@ -82,7 +82,9 @@ class PerfumeController extends Controller
     public function show(Perfume $perfume): View
     {
         abort_unless($perfume->is_active || auth()->user()?->role === 'admin', 404);
-        $perfume->load('category');
+        $perfume->load(['category', 'shopPhotos']);
+        $bundleSamples = app(\App\Services\GiftBundleService::class)->availableSamples($perfume, session('cart', []));
+        $bundleMainAvailable = \App\Services\CartStockService::remaining($perfume, (int) $perfume->volume_ml, session('cart', []));
         $reviews = $perfume->reviews()->with('user:id,name')->latest()->paginate(5);
         $averageRating = round((float) $perfume->reviews()->avg('rating'), 1);
         $isFavorite = auth()->check() && DB::table('wishlists')
@@ -125,7 +127,7 @@ class PerfumeController extends Controller
         $inWardrobe = auth()->check() && ScentWardrobe::where('user_id', auth()->id())
             ->where('perfume_id', $perfume->id)->exists();
 
-        return view('perfumes.show', compact('perfume', 'reviews', 'averageRating', 'isFavorite', 'related', 'recentlyViewed', 'inWardrobe'));
+        return view('perfumes.show', compact('perfume', 'reviews', 'averageRating', 'isFavorite', 'related', 'recentlyViewed', 'inWardrobe', 'bundleSamples', 'bundleMainAvailable'));
     }
 
     public function edit(Perfume $perfume): View

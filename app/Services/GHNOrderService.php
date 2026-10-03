@@ -21,17 +21,19 @@ class GHNOrderService
 
         foreach ($order->items as $item) {
             $product = $item->product ?? $item->perfume;
-            $isDiscovery = count($item->stock_components ?? []) > 1;
-            $itemWeight = $isDiscovery ? 50 * count($item->stock_components)
+            $isDiscovery = $item->is_discovery_box;
+            $itemWeight = $item->is_gift_bundle
+                ? (int) collect($item->stock_components)->sum('weight_grams')
+                : ($isDiscovery ? 50 * count($item->stock_components)
                 : (($product && method_exists($product, 'getWeightForVolume'))
                     ? $product->getWeightForVolume($item->volume_ml)
-                    : (int) ($product?->weight ?? 200));
+                    : (int) ($product?->weight ?? 200)));
             if ($itemWeight <= 0) {
                 $itemWeight = 200;
             }
             $weight += $itemWeight * (int) $item->quantity;
             $items[] = [
-                'name' => $isDiscovery ? 'Hộp thử mùi · '.count($item->stock_components).' mẫu 5ml' : ($item->product_name ?? $product->name ?? 'Sản phẩm'),
+                'name' => $isDiscovery ? 'Hộp thử mùi · '.count($item->stock_components).' mẫu 5ml' : $item->display_name,
                 'quantity' => (int) $item->quantity,
                 'price' => (int) $item->price,
                 'weight' => $itemWeight,
@@ -44,7 +46,8 @@ class GHNOrderService
             // 1: Người gửi trả cước (Shop trả phí ship).
             // Khi đã thanh toán Online/MoMo: payment_type_id = 1 và cod_amount = 0 => Shipper KHÔNG thu bất kỳ tiền nào của người nhận (Tổng thu = 0đ)
             'payment_type_id' => 1,
-            'note' => 'Đơn hàng #'.$order->id.($isPaid ? ' (ĐÃ THANH TOÁN ONLINE MOMO - KHÔNG THU TIỀN KHÁCH)' : ' (Thu tiền COD khi nhận hàng)'),
+            'note' => 'Đơn hàng #'.$order->id.($isPaid ? ' (ĐÃ THANH TOÁN ONLINE MOMO - KHÔNG THU TIỀN KHÁCH)' : ' (Thu tiền COD khi nhận hàng)')
+                .($order->note ? "\nYêu cầu của khách: ".$order->note : ''),
             'required_note' => 'KHONGCHOXEMHANG',
             'to_name' => $order->name ?? $order->customer_name,
             'to_phone' => $order->phone,

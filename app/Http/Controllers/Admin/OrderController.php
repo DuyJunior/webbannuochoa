@@ -165,7 +165,7 @@ class OrderController extends Controller
 
     public function show($id): View
     {
-        $order = Order::with(['user', 'items.perfume', 'paymentTransactions' => function ($query) {
+        $order = Order::with(['user', 'items.perfume', 'emails', 'paymentTransactions' => function ($query) {
             $query->latest();
         }])->findOrFail($id);
 
@@ -234,8 +234,10 @@ class OrderController extends Controller
                     DB::table('payment_transactions')
                         ->where('order_id', $order->id)
                         ->where('status', 'pending')->where('gateway', 'cod')
-                        ->update(['status' => 'paid', 'updated_at' => now()]);
+                        ->update(['status' => 'paid', 'paid_at' => now(), 'updated_at' => now()]);
+                    app(\App\Services\OrderEmailService::class)->paid($order);
                 }
+                app(\App\Services\OrderEmailService::class)->shipping($order);
             });
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
@@ -320,8 +322,10 @@ class OrderController extends Controller
                         DB::table('payment_transactions')
                             ->where('order_id', $order->id)
                             ->where('status', 'pending')->where('gateway', 'cod')
-                            ->update(['status' => 'paid', 'updated_at' => now()]);
+                            ->update(['status' => 'paid', 'paid_at' => now(), 'updated_at' => now()]);
+                        app(\App\Services\OrderEmailService::class)->paid($order);
                     }
+                    app(\App\Services\OrderEmailService::class)->shipping($order);
                 });
 
             } catch (ValidationException $e) {
@@ -342,6 +346,9 @@ class OrderController extends Controller
 
     private function guardTransition(Order $order, ?string $status, ?string $shipping): void
     {
+        if ($status === 'completed' && $shipping !== 'delivered') {
+            throw ValidationException::withMessages(['shipping_status' => 'Đơn hoàn thành phải có trạng thái giao thành công. Không ghi nhận đã thu COD cho đơn đang giao hoặc hoàn hàng.']);
+        }
         $ranks = ['pending' => 0, 'not_shipped' => 0, 'processing' => 1, 'ready_to_pick' => 2,
             'picking' => 3, 'picked' => 4, 'storing' => 5, 'transporting' => 5, 'sorting' => 5, 'delivering' => 6, 'delivered' => 7,
             'return' => 8, 'returning' => 8, 'return_transporting' => 8, 'return_sorting' => 8, 'returned' => 9];

@@ -5,6 +5,9 @@
 
 @section('content')
 <div class="store-container ht-wardrobe-page">
+    @if($errors->any())
+        <div class="public-flash alert-danger" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
+    @endif
     <header class="ht-wardrobe-header">
         <div class="header-left">
             <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) BỘ SƯU TẬP CÁ NHÂN</span>
@@ -33,8 +36,8 @@
     @if($wardrobeItems->isEmpty())
     <div class="ht-wardrobe-empty">
         <div class="empty-icon">@include('partials.icon', ['name' => 'mirror', 'size' => '1em'])</div>
-        <h3>Tủ nước hoa của bạn hiện chưa có chai nào</h3>
-        <p>Hãy khám phá cửa hàng hoặc làm bài trắc nghiệm để chọn và lưu những mùi hương ưng ý nhất vào từng dịp nhé!</p>
+        <h3>Hiện chưa có mùi hương để hiển thị</h3>
+        <p>Mùi hương đã ngừng bán được tạm ẩn khỏi tủ. Bạn có thể khám phá cửa hàng hoặc làm trắc nghiệm để lưu thêm những lựa chọn mới.</p>
         <div class="empty-actions">
             <a href="{{ route('store.quiz') }}" class="ht-button ht-button-secondary">Làm Trắc Nghiệm Mùi Hương</a>
             <a href="{{ route('home') }}" class="ht-button ht-button-primary">Khám Phá Cửa Hàng</a>
@@ -55,7 +58,7 @@
                 <h3 class="card-name">
                     <a href="{{ route('perfumes.show', $item->perfume) }}">{{ $item->perfume->name }}</a>
                 </h3>
-                <p class="card-specs">Dung tích: {{ $item->perfume->volume_ml }}ml · {{ ucfirst($item->perfume->gender) }}</p>
+                <p class="card-specs">Dung tích: {{ $item->perfume->volume_ml }}ml · {{ match($item->perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
                 
                 @if($item->notes)
                 <div class="card-user-note">
@@ -89,6 +92,7 @@
         </article>
         @endforeach
     </div>
+    <p id="wardrobe-filter-empty" class="public-flash" role="status" hidden>Bạn chưa lưu mùi hương nào cho dịp này.</p>
     @endif
 </div>
 
@@ -294,32 +298,36 @@ document.addEventListener('DOMContentLoaded', function () {
     // Tabs filtering
     const tabs = document.querySelectorAll('.w-tab');
     const cards = document.querySelectorAll('.ht-wardrobe-card');
+    const emptyFilter = document.getElementById('wardrobe-filter-empty');
 
     tabs.forEach(tab => {
         tab.addEventListener('click', function () {
             tabs.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
             const target = this.dataset.target;
+            let visibleCount = 0;
             cards.forEach(card => {
                 if (target === 'all' || card.dataset.occasion === target) {
                     card.style.display = 'flex';
+                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
+            if (emptyFilter) emptyFilter.hidden = visibleCount > 0;
         });
     });
 
     // Share Wardrobe
     const shareBtn = document.getElementById('shareWardrobeBtn');
     if (shareBtn) {
-        shareBtn.addEventListener('click', function () {
-            const shareUrl = "{{ route('store.wardrobe.share', Auth::user()) }}";
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(shareUrl);
-                alert(' Đã sao chép link Tủ nước hoa của bạn!\n' + shareUrl + '\nBạn có thể gửi link này cho bạn bè.');
-            } else {
-                prompt('Copy link Tủ nước hoa của bạn để gửi cho bạn bè:', shareUrl);
+        shareBtn.addEventListener('click', async function () {
+            const shareUrl = @json(route('store.wardrobe.share', Auth::user()));
+            try {
+                await navigator.clipboard.writeText(shareUrl);
+                alert('Đã sao chép liên kết tủ nước hoa của bạn!\n' + shareUrl + '\nBạn có thể gửi liên kết này cho bạn bè.');
+            } catch {
+                prompt('Sao chép liên kết tủ nước hoa để gửi cho bạn bè:', shareUrl);
             }
         });
     }

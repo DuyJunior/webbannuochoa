@@ -49,6 +49,42 @@ class OrderItem extends Model
         return $this->belongsTo(Livestream::class);
     }
 
+    public function getIsGiftBundleAttribute(): bool
+    {
+        return collect($this->stock_components ?? [])->contains('role', 'main');
+    }
+
+    public function getIsDiscoveryBoxAttribute(): bool
+    {
+        $components = collect($this->stock_components ?? []);
+
+        return ! $this->is_gift_bundle && $components->count() > 1
+            && $components->every(fn ($component) => (int) ($component['volume_ml'] ?? 0) === 5);
+    }
+
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->is_discovery_box
+            ? 'Hộp thử mùi · '.count($this->stock_components).' mẫu'
+            : ($this->product_name ?: $this->perfume?->name ?: 'Sản phẩm');
+    }
+
+    public function getVolumeLabelAttribute(): string
+    {
+        if ($this->is_gift_bundle) {
+            return $this->volume_ml.'ml + 2 × 5ml';
+        }
+
+        return $this->is_discovery_box ? count($this->stock_components).' × 5ml' : ($this->volume_ml ?: 100).'ml';
+    }
+
+    public function getSampleNamesAttribute(): array
+    {
+        return collect($this->stock_components ?? [])
+            ->filter(fn ($component) => $this->is_discovery_box || ($component['role'] ?? null) === 'sample')
+            ->pluck('product_name')->filter()->values()->all();
+    }
+
     /**
      * Alias for product to support both $item->product and $item->perfume
      */

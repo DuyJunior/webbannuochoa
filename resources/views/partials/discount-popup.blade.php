@@ -8,13 +8,13 @@
     <div class="ht-popup-card">
         <button class="ht-popup-close" id="ht-popup-close" aria-label="Đóng">&times;</button>
         <div class="ht-popup-visual">
-            <span class="ht-popup-icon">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
+            <span class="ht-popup-icon">@include('partials.brand-mark', ['size' => 40])</span>
             <div class="ht-popup-petals" aria-hidden="true">
                 <span></span><span></span><span></span><span></span><span></span>
             </div>
         </div>
         <span class="ht-popup-eyebrow">CHÀO MỪNG BẠN ĐẾN VỚI</span>
-        <h2 id="ht-popup-title" class="ht-popup-brand">Soopi<br><em>Perfume Studio</em></h2>
+        <h2 id="ht-popup-title" class="ht-popup-brand">@include('partials.brand-logo', ['class' => 'popup-logo'])</h2>
         <p class="ht-popup-sub">Ưu đãi <strong>{{ number_format($welcomeCoupon->value, 0, ',', '.') }}{{ $welcomeCoupon->type === 'percent' ? '%' : '₫' }}</strong> cho đơn hàng đủ điều kiện với mã:</p>
         <div class="ht-popup-code-wrap">
             <span class="ht-popup-code" id="ht-popup-code">{{ $welcomeCoupon->code }}</span>
@@ -124,12 +124,12 @@
     margin-bottom: 8px;
 }
 .ht-popup-brand {
-    font: 400 clamp(26px,6vw,34px) Georgia, serif;
-    color: #3b2c34;
-    margin: 0 0 14px;
-    line-height: 1.15;
+    width: 230px;
+    max-width: 100%;
+    margin: 12px auto 20px;
+    line-height: 1;
 }
-.ht-popup-brand em { color: #c27090; }
+.ht-popup-brand .popup-logo { width: 100%; }
 .ht-popup-sub {
     color: #6b5660;
     font-size: 15.5px;

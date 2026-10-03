@@ -2,15 +2,19 @@
 @section('title', 'Tài khoản của tôi · Soopi')
 @section('content')
 <section class="store-container account-settings">
-    <header><p>SOOPI PERFUME · TÀI KHOẢN</p><h1>Thông tin của tôi</h1><p>Cập nhật tên hiển thị và quản lý mật khẩu đăng nhập.</p></header>
-    @if(session('success'))<p role="status" class="account-notice">{{ session('success') }}</p>@endif
+    <header>
+        @include('partials.brand-logo', ['class' => 'account-brand-logo'])
+        <p class="interior-kicker">TÀI KHOẢN</p>
+        <h1>Thông tin của tôi</h1>
+        <p>Cập nhật tên hiển thị và quản lý mật khẩu đăng nhập.</p>
+    </header>
     @if($errors->any())<div role="alert" class="account-notice"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>@endif
     <div class="account-grid">
         <form method="POST" action="{{ route('account.update') }}">
             @csrf @method('PATCH')
             <h2>Hồ sơ cá nhân</h2>
             <label for="account-name">Tên hiển thị</label>
-            <input id="account-name" name="name" value="{{ old('name', $user->name) }}" maxlength="100" autocomplete="name" required>
+            <input id="account-name" name="name" value="{{ is_string(old('name')) ? old('name') : $user->name }}" maxlength="100" autocomplete="name" required>
             <label for="account-email">Email đăng nhập</label>
             <input id="account-email" type="email" value="{{ $user->email }}" readonly aria-describedby="email-note">
             <small id="email-note">Email chỉ đọc để giữ nguyên trạng thái xác minh tài khoản.</small>

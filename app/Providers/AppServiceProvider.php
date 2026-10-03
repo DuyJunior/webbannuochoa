@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Models\Perfume;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Http\Middleware\TrustProxies;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
@@ -28,6 +30,18 @@ class AppServiceProvider extends ServiceProvider
         // Read after configuration is loaded, including when config:cache is enabled.
         TrustProxies::at(config('deployment.trusted_proxies', []));
         Paginator::useBootstrapFour();
+
+        // Keep Laravel's notification and signed URL; customize only the email presentation.
+        VerifyEmail::toMailUsing(function ($notifiable, string $url): MailMessage {
+            return (new MailMessage)
+                ->subject('Soopi · Xác thực email của bạn')
+                ->action('Xác thực email', $url)
+                ->view(['html' => 'emails.auth.verify-email', 'text' => 'emails.auth.verify-email-text'], [
+                    'customerName' => $notifiable->name,
+                    'verificationUrl' => $url,
+                    'expiresMinutes' => (int) config('auth.verification.expire', 60),
+                ]);
+        });
 
         View::composer(['layouts.store', 'home'], function ($view) {
             try {

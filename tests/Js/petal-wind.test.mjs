@@ -7,14 +7,17 @@ import {
     bottleProtection,
 } from '../../resources/js/petal-wind-model.js';
 
-test('attached petals follow the same path at 30 and 60 fps', () => {
-    const slow = createPetalWindModel(), fast = createPetalWindModel();
-    pushPetalWind(slow); pushPetalWind(fast);
+test('attached petals follow the same path at 30, 60 and 120 fps', () => {
+    const slow = createPetalWindModel(), fast = createPetalWindModel(), highRefresh = createPetalWindModel();
+    pushPetalWind(slow); pushPetalWind(fast); pushPetalWind(highRefresh);
     for (let frame = 0; frame < 300; frame++) advancePetalWind(slow, 1 / 30);
     for (let frame = 0; frame < 600; frame++) advancePetalWind(fast, 1 / 60);
+    for (let frame = 0; frame < 1200; frame++) advancePetalWind(highRefresh, 1 / 120);
     assert.deepEqual(slow.petals, fast.petals);
+    assert.deepEqual(fast.petals, highRefresh.petals);
     assert.equal(slow.time, fast.time);
     assert.equal(slow.gust, fast.gust);
+    assert.equal(slow.gustEnvelope, highRefresh.gustEnvelope);
 });
 
 test('the natural breeze bends attached petals without pointer input', () => {
@@ -42,16 +45,65 @@ test('repeated gusts saturate safely, decay and retain stable long-running motio
             gustChangedBend = true;
         }
         for (const petal of model.petals) {
-            for (const key of ['x', 'y', 'vx', 'vy']) {
+            for (const key of ['x', 'y', 'vx', 'vy', 'curl', 'vcurl']) {
                 assert.ok(Number.isFinite(petal[key]) && Math.abs(petal[key]) < 1,
                     `${key} must remain a small finite deformation`);
             }
             assert.ok(Math.abs(petal.x) <= .045 && Math.abs(petal.y) <= .03,
                 'bending must stay within the safe image deformation envelope');
+            assert.ok(Math.abs(petal.curl) <= .02, 'tip twist must stay inside the shader envelope');
         }
     }
     assert.ok(gustChangedBend, 'a gust must actually change the petal motion');
     assert.ok(Math.abs(model.gust) < peak * .001, 'the impulse must dissipate');
+    assert.ok(Math.abs(model.gustEnvelope) < peak * .001, 'the visible force must also settle');
+});
+
+test('petals share a traveling breeze without moving as one rigid shape', () => {
+    const model = createPetalWindModel();
+    const paths = model.petals.map(() => []);
+    for (let frame = 0; frame < 2400; frame++) {
+        advancePetalWind(model, 1 / 60);
+        if (frame > 360 && frame % 12 === 0) {
+            model.petals.forEach((petal, index) => paths[index].push(petal.x));
+        }
+    }
+    const correlation = (a, b) => {
+        const meanA = a.reduce((sum, value) => sum + value, 0) / a.length;
+        const meanB = b.reduce((sum, value) => sum + value, 0) / b.length;
+        let covariance = 0, varianceA = 0, varianceB = 0;
+        a.forEach((value, index) => {
+            covariance += (value - meanA) * (b[index] - meanB);
+            varianceA += (value - meanA) ** 2;
+            varianceB += (b[index] - meanB) ** 2;
+        });
+        return covariance / Math.sqrt(varianceA * varianceB);
+    };
+    for (let index = 1; index < paths.length; index++) {
+        assert.ok(correlation(paths[0], paths[index]) > .7, 'nearby petals should respond to the same air movement');
+    }
+    // Petals 0 and 7 have equal flexibility, so this difference reflects lag and shape response.
+    assert.ok(paths[0].some((x, index) => Math.abs(x - paths[7][index]) > .001));
+    assert.ok(model.petals.some(petal => Math.abs(petal.curl) > .0001), 'the breeze should also flex the tips');
+});
+
+test('a gust builds smoothly before settling instead of snapping attached tips', () => {
+    const calm = createPetalWindModel();
+    for (let frame = 0; frame < 180; frame++) advancePetalWind(calm, 1 / 60);
+    const gusty = structuredClone(calm);
+    pushPetalWind(gusty, 2);
+    advancePetalWind(gusty, 1 / 60);
+    advancePetalWind(calm, 1 / 60);
+    const attack = gusty.gustEnvelope;
+    assert.ok(attack > 0 && attack < gusty.gust * .1);
+    gusty.petals.forEach((petal, index) => {
+        assert.ok(Math.abs(petal.x - calm.petals[index].x) < .00001);
+        assert.ok(Math.abs(petal.curl - calm.petals[index].curl) < .00001);
+    });
+    for (let frame = 0; frame < 40; frame++) advancePetalWind(gusty, 1 / 60);
+    assert.ok(gusty.gustEnvelope > attack * 2, 'visible force should rise after the first frame');
+    for (let frame = 0; frame < 900; frame++) advancePetalWind(gusty, 1 / 60);
+    assert.ok(Math.abs(gusty.gustEnvelope) < .001);
 });
 
 test('wind input handles signed bursts and ignores invalid values', () => {

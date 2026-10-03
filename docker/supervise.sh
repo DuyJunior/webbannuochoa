@@ -17,7 +17,7 @@ shutdown() {
     fi
     stopping=true
     trap '' TERM INT
-    printf '%s\n' 'Stopping web, AI worker and scheduler...'
+    printf '%s\n' 'Stopping web, queue worker and scheduler...'
 
     # Nginx/FPM finish current HTTP requests. Laravel finishes the active job.
     [[ -z "$nginx_pid" ]] || kill -QUIT "$nginx_pid" 2>/dev/null || true
@@ -59,17 +59,17 @@ nginx_pid=$!
 children+=("$nginx_pid")
 names["$nginx_pid"]='nginx'
 
-setsid gosu www-data php artisan queue:work database --queue=ai-chat --sleep=2 --tries=10 --timeout=40 --memory=96 --no-interaction &
+setsid gosu www-data php artisan queue:work database --queue=default,ai-chat --sleep=2 --tries=10 --timeout=40 --memory=96 --no-interaction &
 worker_pid=$!
 children+=("$worker_pid")
-names["$worker_pid"]='ai-chat worker'
+names["$worker_pid"]='email and ai-chat worker'
 
 setsid gosu www-data php artisan schedule:work --no-interaction &
 scheduler_pid=$!
 children+=("$scheduler_pid")
 names["$scheduler_pid"]='scheduler'
 
-printf '%s\n' 'Web, AI database queue worker and scheduler started.'
+printf '%s\n' 'Web, email/AI database queue worker and scheduler started.'
 
 # Any exit, including exit 0, is unexpected until Render signals shutdown.
 # Fail the container so a healthy HTTP process cannot mask a dead worker.

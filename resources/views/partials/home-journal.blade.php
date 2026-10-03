@@ -71,5 +71,5 @@
         </div>
     </div>
 
-    <div class="journal-signature" aria-hidden="true"><span></span>@include('partials.icon', ['name' => 'flower', 'size' => 30])<span></span></div>
+    <div class="journal-signature" aria-hidden="true"><span></span>@include('partials.brand-mark', ['size' => 30])<span></span></div>
 </section>

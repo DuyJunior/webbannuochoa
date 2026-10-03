@@ -4,6 +4,12 @@
 @section('page_title', 'Mã ưu đãi')
 
 @section('content')
+@php
+    $inputValue = function ($field, $default = '') {
+        $value = old($field, $default);
+        return is_scalar($value) || $value === null ? $value : $default;
+    };
+@endphp
 <div class="admin-coupons-page">
     <details class="admin-card" id="coupon-create" @if($errors->any()) open @endif>
         <summary class="font-weight-bold">Tạo mã ưu đãi mới <span class="text-muted small ml-2">Thiết lập mức giảm và điều kiện sử dụng</span></summary>
@@ -12,7 +18,7 @@
             <div class="row">
                 <div class="col-md-4 form-group">
                     <label for="coupon-code" class="font-weight-bold small">Mã ưu đãi <span class="text-danger">*</span></label>
-                    <input id="coupon-code" class="form-control @error('code') is-invalid @enderror" name="code" maxlength="30" pattern="[A-Za-z0-9_-]+" value="{{ old('code') }}" placeholder="VD: SOOPI50K" required autocapitalize="characters" spellcheck="false" @error('code') aria-invalid="true" aria-describedby="coupon-code-error" @enderror>
+                    <input id="coupon-code" class="form-control @error('code') is-invalid @enderror" name="code" maxlength="30" pattern="[A-Za-z0-9_-]+" value="{{ $inputValue('code') }}" placeholder="VD: SOOPI50K" required autocapitalize="characters" spellcheck="false" @error('code') aria-invalid="true" aria-describedby="coupon-code-error" @enderror>
                     @error('code')<div id="coupon-code-error" class="invalid-feedback">{{ $message }}</div>@enderror
                     <small class="form-text text-muted">Chữ, số, dấu gạch ngang hoặc gạch dưới; tối đa 30 ký tự.</small>
                 </div>
@@ -23,7 +29,7 @@
                 </div>
                 <div class="col-md-4 form-group">
                     <label for="coupon-value" class="font-weight-bold small">Giá trị giảm <span class="text-danger">*</span></label>
-                    <input id="coupon-value" class="form-control @error('value') is-invalid @enderror" name="value" type="number" min="1" step="1" value="{{ old('value') }}" placeholder="VD: 50000 hoặc 15" required aria-describedby="coupon-value-hint @error('value') coupon-value-error @enderror" @error('value') aria-invalid="true" @enderror>
+                    <input id="coupon-value" class="form-control @error('value') is-invalid @enderror" name="value" type="number" min="1" max="4294967295" step="1" value="{{ $inputValue('value') }}" placeholder="VD: 50000 hoặc 15" required aria-describedby="coupon-value-hint @error('value') coupon-value-error @enderror" @error('value') aria-invalid="true" @enderror>
                     @error('value')<div id="coupon-value-error" class="invalid-feedback">{{ $message }}</div>@enderror
                     <small id="coupon-value-hint" class="form-text text-muted">Mức giảm phần trăm tối đa là 100%.</small>
                 </div>
@@ -35,7 +41,7 @@
                 ] as [$field, $label, $type, $default, $hint])
                     <div class="col-md-4 form-group">
                         <label for="coupon-{{ $field }}" class="font-weight-bold small">{{ $label }} @if($field === 'minimum_order')<span class="text-danger">*</span>@endif</label>
-                        <input id="coupon-{{ $field }}" class="form-control @error($field) is-invalid @enderror" name="{{ $field }}" type="{{ $type }}" value="{{ old($field, $default) }}" @if($type === 'number') min="{{ $field === 'minimum_order' ? 0 : 1 }}" step="1" @endif @required($field === 'minimum_order') aria-describedby="coupon-{{ $field }}-hint @error($field) coupon-{{ $field }}-error @enderror" @error($field) aria-invalid="true" @enderror>
+                        <input id="coupon-{{ $field }}" class="form-control @error($field) is-invalid @enderror" name="{{ $field }}" type="{{ $type }}" value="{{ $inputValue($field, $default) }}" @if($type === 'number') min="{{ $field === 'minimum_order' ? 0 : 1 }}" max="4294967295" step="1" @endif @required($field === 'minimum_order') aria-describedby="coupon-{{ $field }}-hint @error($field) coupon-{{ $field }}-error @enderror" @error($field) aria-invalid="true" @enderror>
                         @error($field)<div id="coupon-{{ $field }}-error" class="invalid-feedback">{{ $message }}</div>@enderror
                         <small id="coupon-{{ $field }}-hint" class="form-text text-muted">{{ $hint }}</small>
                     </div>

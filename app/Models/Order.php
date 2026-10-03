@@ -19,6 +19,7 @@ class Order extends Model
         'customer_name',
         'name',
         'address',
+        'note',
         'phone',
         'total_price',
         'coupon_code',
@@ -110,5 +111,10 @@ class Order extends Model
     public function paymentTransactions(): HasMany
     {
         return $this->hasMany(PaymentTransaction::class);
+    }
+
+    public function emails(): HasMany
+    {
+        return $this->hasMany(OrderEmail::class)->orderBy('id');
     }
 }

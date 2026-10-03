@@ -70,29 +70,7 @@ class Video extends Model
      */
     public function getEmbedUrlAttribute(): string
     {
-        $url = trim((string) $this->video_url);
-
-        // YouTube Shorts: https://www.youtube.com/shorts/VIDEO_ID
-        if (preg_match('/(?:youtube\.com\/shorts\/|youtu\.be\/shorts\/)([a-zA-Z0-9_-]+)/i', $url, $m)) {
-            return 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1&rel=0';
-        }
-
-        // YouTube watch: https://www.youtube.com/watch?v=VIDEO_ID
-        if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/i', $url, $m)) {
-            return 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1&rel=0';
-        }
-
-        // TikTok: https://www.tiktok.com/@username/video/7123456789012345678
-        if (preg_match('/tiktok\.com\/@[^\/]+\/video\/(\d+)/i', $url, $m)) {
-            return 'https://www.tiktok.com/player/v1/' . $m[1];
-        }
-
-        // Đã là link embed sẵn
-        if (Str::contains($url, ['youtube.com/embed/', 'tiktok.com/embed/', 'tiktok.com/player/'])) {
-            return Str::contains($url, '?') ? $url . '&autoplay=1' : $url . '?autoplay=1';
-        }
-
-        return $url;
+        return \App\Support\VideoUrl::embed($this->video_url) ?? '';
     }
 
     public function getIsYoutubeAttribute(): bool

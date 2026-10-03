@@ -39,6 +39,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
+            $table->dropIndex(['ghn_order_code']);
             $table->dropColumn([
                 'name',
                 'shipping_status',

@@ -42,7 +42,7 @@ class HomeJournalTest extends TestCase
         Video::create(['title' => 'Video đã ẩn', 'video_url' => '/storage/hidden.mp4', 'placement' => 'home', 'is_active' => false]);
         Video::create(['title' => 'Chỉ trang sản phẩm', 'video_url' => '/storage/product.mp4', 'placement' => 'product', 'is_active' => true]);
         Video::create(['title' => 'Không có nguồn', 'video_url' => '', 'placement' => 'home', 'is_active' => true]);
-        $this->get('/')->assertOk()->assertSee('Video đang hiển thị')->assertSee('data-embed="/storage/review.mp4"', false)
+        $this->get('/')->assertOk()->assertSee('Video đang hiển thị')->assertSee('data-embed="'.asset('storage/review.mp4').'"', false)
             ->assertSee('data-perfume-price="1.200.000₫"', false)->assertSee('0:37')
             ->assertDontSee('Video đã ẩn')->assertDontSee('Chỉ trang sản phẩm')->assertDontSee('Không có nguồn')
             ->assertViewHas('homeVideos', fn ($items) => $items->modelKeys() === [$video->id]);

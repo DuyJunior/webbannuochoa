@@ -98,10 +98,10 @@ Chuỗi trên chỉ mô tả cách điền; tự chọn password riêng, mạnh.
 
 ## 5. AI, scheduler và tích hợp ngoài
 
-Worker luôn dùng đúng kết nối và queue mà `config/ai_chat.php` chỉ định:
+Worker dùng kết nối database, xử lý queue `default` cho email và `ai-chat` cho tư vấn AI:
 
 ```text
-php artisan queue:work database --queue=ai-chat --sleep=2 --tries=10 --timeout=40 --memory=96 --no-interaction
+php artisan queue:work database --queue=default,ai-chat --sleep=2 --tries=10 --timeout=40 --memory=96 --no-interaction
 php artisan schedule:work --no-interaction
 ```
 
@@ -114,7 +114,7 @@ AI tắt mặc định. Để bật sau khi tự xác minh Groq organization đa
 - **GHN:** `GHN_BASE_URL`, `GHN_TOKEN`, `GHN_SHOP_ID`, `GHN_FROM_DISTRICT_ID`, `GHN_VERIFY_SSL=true`. Dùng đúng endpoint/tài khoản sandbox được cấp cho bạn khi làm lab. Không gửi đơn vận chuyển thật để thử.
 - **MoMo:** `MOMO_ENDPOINT` mặc định là test endpoint, nhưng vẫn cần `MOMO_PARTNER_CODE`, `MOMO_ACCESS_KEY`, `MOMO_SECRET_KEY` hợp lệ. URL quay lại là `https://<domain>/payment/momo/callback`; IPN là `https://<domain>/payment/momo/ipn`. Đăng ký URL HTTPS đúng với provider; không coi redirect trình duyệt là bằng chứng thanh toán thành công.
 - **GHN callback:** endpoint `POST /ghn/webhook` chỉ nhận khi header `X-Webhook-Token` khớp `GHN_WEBHOOK_TOKEN`. Đây là **token riêng của ứng dụng cho relay tin cậy**, không phải cơ chế chữ ký gốc của GHN. Chỉ bật qua relay đã xác minh thông điệp upstream và gắn header này; không đưa token vào URL. Không giả định GHN gửi trực tiếp header tùy chỉnh.
-- **Email:** `MAIL_MAILER=log` không gửi mail. Cấu hình SMTP thực tế được phép sử dụng nếu cần OTP/reset password. Luồng xem OTP local không mở ở production.
+- **Email:** `MAIL_MAILER=log` không gửi mail. Cấu hình SMTP thực tế cho xác minh tài khoản và thông báo đơn hàng; đặt `APP_URL` đúng URL HTTPS để liên kết theo dõi hoạt động. Lịch `orders:dispatch-emails` khôi phục thư chờ mỗi phút. Kiểm tra trạng thái trong chi tiết đơn của Admin; luồng xem OTP local không mở ở production.
 - **Livestream:** camera/micro cần `LIVEKIT_URL` dạng `wss://` và `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` của dịch vụ đã cấu hình. Chưa có LiveKit thì không coi chức năng phát trực tiếp đã kiểm chứng.
 
 Không bật tích hợp khi chưa có sandbox phù hợp hoặc chưa xác nhận chi phí. Các credential để trống không ngăn container web khởi động nhưng chức năng tương ứng chưa sẵn sàng.
@@ -131,7 +131,7 @@ Bản chuẩn bị này chưa đổi upload sang object storage. Chỉ dùng ả
 
 ## 7. Kiểm tra sau khi bạn tự deploy
 
-1. **Startup:** xem log có `Production environment validated`, `Aiven CA certificate validated`, `Verified TLS MySQL connection established`, migration hoàn tất và `Web, AI database queue worker and scheduler started`. Không chia sẻ ảnh log có secret.
+1. **Startup:** xem log có `Production environment validated`, `Aiven CA certificate validated`, `Verified TLS MySQL connection established`, migration hoàn tất và `Web, email/AI database queue worker and scheduler started`. Không chia sẻ ảnh log có secret.
 2. **Health và asset:** mở HTTPS `/up` thấy HTTP 200; mở trang chủ, trang sản phẩm, các file `/build/assets/...` không lỗi 404. `/up` kiểm tra ứng dụng khởi động, không thay thế kiểm thử toàn bộ DB/queue/API.
 3. **HTTPS/session:** đăng nhập `/admin/login` bằng admin vừa tạo, chuyển trang và refresh không bị mất đăng nhập; không có 419/redirect loop/mixed content. Cookie phiên có Secure và URL do ứng dụng sinh dùng HTTPS.
 4. **Database:** sửa một dữ liệu thử nghiệm có thể hoàn tác trong admin, redeploy và xác nhận bản ghi còn. Không dùng upload mới làm bài kiểm tra persistence vì đã có giới hạn ở trên.

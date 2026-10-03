@@ -43,15 +43,18 @@ class OrderController extends Controller
         $products = Perfume::whereKey(array_column($quote['items'], 'perfume_id'))->get()->keyBy('id');
         $cartItems = collect($quote['items'])->map(function ($item) use ($products) {
             $product = $products[$item['perfume_id']];
-            $weight = $item['stock_components'] ? 50 * count($item['stock_components']) : $product->getWeightForVolume($item['volume_ml']);
+            $weight = $item['weight'];
+            $isBundle = $item['is_gift_bundle'];
+            $isDiscovery = ! $isBundle && count($item['stock_components'] ?? []) > 1;
 
             return [
                 'product' => $product, 'quantity' => $item['quantity'],
                 'price' => $item['price'], 'total' => $item['price'] * $item['quantity'],
                 'volume_ml' => $item['volume_ml'], 'weight' => $weight,
                 'total_weight' => $weight * $item['quantity'],
-                'title' => $item['stock_components'] ? 'Hộp thử mùi · '.count($item['stock_components']).' mẫu' : $product->name,
-                'volume_label' => $item['stock_components'] ? count($item['stock_components']).' × 5ml' : $item['volume_ml'].'ml',
+                'title' => $isBundle ? $item['product_name'] : ($isDiscovery ? 'Hộp thử mùi · '.count($item['stock_components']).' mẫu' : $product->name),
+                'volume_label' => $isBundle ? $item['volume_ml'].'ml + 2 × 5ml' : ($isDiscovery ? count($item['stock_components']).' × 5ml' : $item['volume_ml'].'ml'),
+                'sample_names' => $item['sample_names'] ?? [], 'is_gift_bundle' => $isBundle,
             ];
         });
         $totalPrice = $quote['total'];
@@ -80,7 +83,7 @@ class OrderController extends Controller
             $request->merge(['payment_method' => 'cod']);
         }
 
-        if ($request->has('phone')) {
+        if (is_string($request->input('phone'))) {
             $cleanPhone = preg_replace('/[^0-9]/', '', (string) $request->phone);
             if (str_starts_with($cleanPhone, '84') && strlen($cleanPhone) === 11) {
                 $cleanPhone = '0'.substr($cleanPhone, 2);
@@ -90,7 +93,7 @@ class OrderController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:100',
-            'phone' => ['required', 'regex:/^0\d{9}$/'],
+            'phone' => ['bail', 'required', 'string', 'regex:/^0\d{9}$/'],
             'address' => 'required|string|max:255',
             'to_district_id' => 'required|integer',
             'to_ward_code' => 'required|string',
@@ -98,6 +101,11 @@ class OrderController extends Controller
             'note' => 'nullable|string|max:500',
             'coupon_code' => 'nullable|string|max:30',
             'points_used' => 'nullable|integer|min:0',
+            'enable_gift_service' => 'nullable|boolean',
+            'gift_wrap' => 'exclude_unless:enable_gift_service,1|nullable|string|max:100',
+            'gift_card' => 'exclude_unless:enable_gift_service,1|nullable|string|max:100',
+            'gift_message' => 'exclude_unless:enable_gift_service,1|nullable|string|max:1000',
+            'gift_delivery_date' => 'exclude_unless:enable_gift_service,1|nullable|date_format:Y-m-d|after_or_equal:today',
         ], [
             'name.required' => 'Vui lòng nhập họ tên người nhận.',
             'phone.required' => 'Vui lòng nhập số điện thoại người nhận.',
@@ -164,6 +172,7 @@ class OrderController extends Controller
                 'name' => $request->name,
                 'customer_name' => $request->name,
                 'address' => $request->address,
+                'note' => $request->input('note'),
                 'phone' => $request->phone,
                 'total_price' => $finalTotal,
                 'coupon_code' => $coupon?->code,
@@ -174,16 +183,17 @@ class OrderController extends Controller
                 'to_ward_code' => (string) $request->to_ward_code,
                 'ghn_total_fee' => $shippingFee,
                 'shipping_status' => 'pending',
-                'gift_wrap' => $request->input('gift_wrap'),
-                'gift_card' => $request->input('gift_card'),
-                'gift_message' => $request->input('gift_message'),
-                'gift_delivery_date' => $request->input('gift_delivery_date'),
+                'gift_wrap' => $request->boolean('enable_gift_service') ? $request->input('gift_wrap') : null,
+                'gift_card' => $request->boolean('enable_gift_service') ? $request->input('gift_card') : null,
+                'gift_message' => $request->boolean('enable_gift_service') ? $request->input('gift_message') : null,
+                'gift_delivery_date' => $request->boolean('enable_gift_service') ? $request->input('gift_delivery_date') : null,
             ]);
 
             foreach ($orderItemsData as $item) {
                 OrderItem::create([
                     'order_id' => $order->id,
                     'perfume_id' => $item['perfume_id'],
+                    'product_name' => $item['product_name'] ?? null,
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
@@ -201,6 +211,7 @@ class OrderController extends Controller
                 'gateway' => $request->payment_method === 'cod' ? 'cod' : 'momo',
                 'amount' => $order->total_price, 'status' => 'pending',
             ]);
+            app(\App\Services\OrderEmailService::class)->placed($order);
 
             return $order;
         });

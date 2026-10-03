@@ -1,0 +1,1 @@
+<img src="{{ rtrim(config('app.url'), '/') }}/images/brand/soopi-petal-logo.png" width="200" height="73" alt="SOOPI · Perfume Studio" style="display:block;width:200px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none;color:#392632;font:18px Georgia,'Times New Roman',serif">

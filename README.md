@@ -60,18 +60,40 @@ AI_CHAT_DAILY_LIMIT=50
 
 Chỉ đặt GROQ_FREE_PLAN_CONFIRMED=true sau khi tự kiểm tra tài khoản đang ở Free plan. Cờ này không thay đổi gói tài khoản tại Groq.
 AI cần Internet, khóa hợp lệ và quota còn khả dụng. 50 lần thử/ngày là giới hạn bổ sung của ứng dụng, không phải cam kết quota từ Groq.
-Script start-local chạy web, worker ai-chat và lịch dọn đơn hết hạn. Nếu chạy thủ công phải mở ba tiến trình:
+Script start-local chạy web, worker email/ai-chat và lịch dọn đơn hết hạn, khôi phục thư chờ. Nếu chạy thủ công phải mở ba tiến trình:
 
 ```powershell
 php artisan serve --host=127.0.0.1 --port=8002
 # Terminal khác:
-php artisan queue:work database --queue=ai-chat --sleep=1 --timeout=40 --tries=10
+php artisan queue:work database --queue=default,ai-chat --sleep=1 --timeout=40 --tries=10
 # Terminal thứ ba:
 php artisan schedule:work
 ```
 
 Khởi động lại worker sau khi sửa cấu hình/mã AI. Không có khóa hoặc API lỗi vẫn lưu tin nhắn để nhân viên hỗ trợ.
 Thẻ sản phẩm trong chat chỉ hiển thị sản phẩm đang bán có tên đầy đủ được AI nhắc đến; ảnh, giá và link lấy từ DB.
+
+## Email trạng thái đơn hàng
+
+Đơn thực có thư xác nhận đã đặt, đã thanh toán, đã bàn giao vận chuyển và đã giao. `ready_to_pick`/`picking` chưa tạo thư đã gửi hàng. Mỗi mốc chỉ có một bản ghi trong `order_emails`; bản ghi được lưu cùng transaction đơn hàng, đưa vào queue database sau commit và tự khôi phục mỗi phút nếu queue/SMTP lỗi. Thư chưa gửi sẽ được bỏ qua nếu đơn đã hủy/hoàn hoặc mốc không còn đúng. Đơn mô phỏng không gửi thư.
+
+Chạy `php artisan migrate --force`, `php artisan config:clear` và khởi động lại worker/lịch sau cập nhật. Dùng `php artisan orders:dispatch-emails --check` để kiểm tra bảng và chế độ gửi mà không gửi email. Container kiểm tra schema trước khi mở web; không bỏ qua migration của bản phát hành này.
+
+Email chỉ gửi đến địa chỉ đã xác thực của tài khoản đặt đơn. Thiết lập `MAIL_MAILER=smtp` và các biến SMTP của nhà cung cấp trong môi trường riêng; không đưa mật khẩu lên Git. Đặt `APP_URL` đúng URL HTTPS của cửa hàng để nút theo dõi mở trang yêu cầu đăng nhập và kiểm tra quyền sở hữu. `ORDER_EMAILS_MAILER` có thể chọn mailer riêng; `ORDER_EMAILS_ENABLED=false` tạm dừng gửi nhưng vẫn giữ thư chờ. Chế độ `log`, `array`, hoặc failover có nhánh `log` chỉ giữ thư chờ, không báo đã gửi. Sửa cấu hình xong cần xóa/tạo lại config cache và khởi động lại worker. Lỗi gửi thử lại với thời gian chờ tăng dần, tối đa 60 phút; cột trạng thái thư trong chi tiết đơn quản trị giúp theo dõi.
+
+Không gửi thư thật trong kiểm thử: các bài `OrderEmailTest` dùng Mail/Queue giả và SQLite bộ nhớ. SMTP không bảo đảm exactly-once khi máy chủ đã nhận thư nhưng kết nối đứt trước xác nhận; hệ thống dùng Message-ID ổn định để hỗ trợ nhận diện lần thử lại.
+
+## Thông tin cửa hàng và ảnh thực tế
+
+Trang `/lien-he` và `/chinh-sach-bao-mat` dùng chung thông tin liên hệ trong `config/storefront.php`. Facebook, Instagram và Zalo là các kênh đã được chủ shop xác nhận. Bổ sung `STORE_ADDRESS`, `STORE_SUPPORT_HOURS`, `STORE_CONTACT_EMAIL` trong môi trường riêng khi có thông tin chính xác; trường trống được ẩn. Sau khi cập nhật cấu hình, xóa/tạo lại config cache.
+
+Trong **Admin → Sản phẩm → Thêm/Sửa → Ảnh thực tế sản phẩm**, tải ảnh cửa hàng chụp (tối đa 6 ảnh/sản phẩm, mỗi ảnh 5 MB, tổng một lần 18 MB). Chạy migration và `php artisan storage:link` trước khi sử dụng. Ảnh nằm trên public disk, cần được lưu bền vững và sao lưu cùng dữ liệu; không thay thế ảnh phối cảnh. Trang sản phẩm chỉ hiện thư viện khi đã có ảnh tải lên. Ảnh cũ không bị gỡ nếu lưu thất bại; ảnh đã chọn xóa chỉ được gỡ sau khi lưu thành công.
+
+## Quên mật khẩu và combo quà tặng
+
+Trang đăng nhập khách hàng và Admin có liên kết **Quên mật khẩu** (`/quen-mat-khau`). Liên kết khôi phục dùng một lần, hết hạn sau 60 phút; mỗi tài khoản được yêu cầu lại sau 60 giây. Thư được mã hóa trong queue `database/default`, vì vậy cần worker đang chạy như hướng dẫn ở trên. Đặt `APP_URL` đúng địa chỉ cửa hàng và cấu hình mailer gửi thật; `log`, `array` hoặc failover có nhánh log không gửi liên kết để tránh lộ token. Không tự đăng nhập sau khi đổi mật khẩu; các phiên database và remember token cũ bị thu hồi. Kiểm thử dùng email giả, không xác nhận khả năng gửi đến hộp thư thật.
+
+Combo trên trang sản phẩm gồm chai dung tích gốc, **hai mẫu 5ml khác mùi, khác chai chính**, hộp quà và thiệp. Giá bằng giá chai hiện tại cộng **90.000đ**, được định nghĩa trong `GiftBundleService::EXTRA_PRICE`; không cộng tiếp phí gói quà 50.000đ của sản phẩm lẻ. Khách chọn rõ hai mẫu còn hàng; giỏ, checkout, đơn hàng, email và Admin hiển thị thành phần đã chọn. Hệ thống giữ/hoàn kho cả ba thành phần qua cơ chế tồn kho hiện có, dùng chung ngăn kho với mẫu lẻ và Discovery Box. Combo cũ trong giỏ dùng lời khắc thay cho mẫu bị yêu cầu xóa/chọn lại; lịch sử đơn cũ được giữ nguyên.
 
 ## Kiểm thử
 
@@ -95,7 +117,7 @@ Kiểm thử mới gồm phân quyền, tổng tồn kho theo biến thể, Disc
 - Menu Tài khoản → Thông tin & đổi mật khẩu. Đổi mật khẩu cần mật khẩu hiện tại; tên cập nhật không thay đổi email/quyền. Với session database, các phiên khác bị xóa.
 
 Trước cập nhật máy khác: chạy `php scripts/backup-sqlite.php`, sau đó `php artisan migrate --force` và khởi động lại worker/lịch chạy. Không chạy `migrate:fresh` trên dữ liệu cần giữ.
-Phạm vi còn lại: quy trình khách yêu cầu đổi trả/hoàn tiền thực, email quên mật khẩu, sổ nhiều địa chỉ, giỏ đồng bộ nhiều thiết bị, CI và kiểm thử tải. Các mục này chưa được tuyên bố đã hoàn thành.
+Phạm vi còn lại: quy trình khách yêu cầu đổi trả/hoàn tiền thực, sổ nhiều địa chỉ, giỏ đồng bộ nhiều thiết bị, CI và kiểm thử tải. Các mục này chưa được tuyên bố đã hoàn thành.
 
 ## Tài liệu
 

@@ -6,18 +6,18 @@
 @section('content')
 <div class="store-container ht-wardrobe-share-page">
     <header class="ht-wardrobe-share-hero">
-        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) TỦ NƯỚC HOA CHIA SẺ</span>
+        <span class="ht-badge-pill">@include('partials.brand-mark', ['size' => 22, 'class' => 'interior-inline-brand-mark']) TỦ NƯỚC HOA CHIA SẺ</span>
         <h1 class="ht-share-title">Ghé Thăm Tủ Nước Hoa Của <em>{{ $user->name }}</em></h1>
         <p class="ht-share-sub">Dưới đây là những nốt hương yêu thích được {{ $user->name }} tuyển chọn và phân loại cẩn thận theo từng khoảnh khắc cuộc sống.</p>
         <div class="share-hero-actions">
-            <a href="{{ route('store.quiz') }}" class="ht-button ht-button-outline">Tạo Tủ Nước Hoa Của Riêng Bạn</a>
+            <a href="{{ route('store.wardrobe') }}" class="ht-button ht-button-outline">Tạo Tủ Nước Hoa Của Riêng Bạn</a>
             <a href="{{ route('home') }}" class="ht-button ht-button-primary">Khám Phá Cửa Hàng Soopi</a>
         </div>
     </header>
 
     @if($wardrobeItems->isEmpty())
     <div class="ht-share-empty">
-        <p>{{ $user->name }} hiện đang chuẩn bị cập nhật những chai nước hoa mới vào tủ của mình.</p>
+        <p>Tủ của {{ $user->name }} hiện chưa có mùi hương đang mở bán để hiển thị.</p>
     </div>
     @else
     <div class="ht-share-grid">
@@ -30,7 +30,7 @@
             <div class="card-info">
                 <span class="brand">{{ $item->perfume->brand }}</span>
                 <h3 class="name"><a href="{{ route('perfumes.show', $item->perfume) }}">{{ $item->perfume->name }}</a></h3>
-                <p class="specs">{{ $item->perfume->category->name ?? 'Nước hoa' }} · {{ ucfirst($item->perfume->gender) }}</p>
+                <p class="specs">{{ $item->perfume->category->name ?? 'Nước hoa' }} · {{ match($item->perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
                 
                 @if($item->notes)
                 <div class="user-quote">“{{ $item->notes }}”</div>

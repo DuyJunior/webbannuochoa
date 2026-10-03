@@ -50,6 +50,7 @@ fi
 # public/ remains root-owned; create the link before starting unprivileged workers.
 php artisan storage:link --no-interaction
 gosu www-data php artisan config:cache --no-interaction
+gosu www-data php artisan orders:dispatch-emails --check --no-interaction
 gosu www-data php artisan view:cache --no-interaction
 
 # Intentionally do not route:cache: this application still contains closure routes.

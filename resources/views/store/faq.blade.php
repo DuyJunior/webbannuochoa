@@ -1,9 +1,9 @@
 @extends('layouts.store')
 
 @section('title', 'Câu hỏi thường gặp · Soopi')
+@section('meta_description', 'Giải đáp thắc mắc về nước hoa, đổi trả, giao hàng và thanh toán tại Soopi.')
 
 @push('styles')
-<meta name="description" content="Giải đáp mọi thắc mắc về nước hoa chính hãng, đổi trả, giao hàng và thanh toán tại Soopi.">
 <style>
 /* ── FAQ PAGE ── */
 .ht-faq-page {
@@ -228,7 +228,7 @@
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Nếu bạn đến trực tiếp studio, nhân viên sẽ hỗ trợ bạn thử mùi trên giấy thử hoặc da tay trước khi quyết định. Ngoài ra, bạn có thể đặt mua <strong>mẫu thử 2ml</strong> (nếu có) với giá rất ưu đãi để trải nghiệm trong 3–7 ngày tại nhà.
+                Bạn có thể chọn <a href="{{ route('store.discovery-box') }}">hộp thử mùi gồm 3 hoặc 5 mẫu, mỗi mẫu 5 ml</a> để trải nghiệm tại nhà trước khi chọn chai lớn. Nếu cần tư vấn trước khi mua, hãy <a href="{{ route('store.contact') }}">liên hệ Soopi</a>.
             </div></div>
         </div>
     </div>
@@ -258,7 +258,7 @@
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Phí vận chuyển được tính tự động dựa theo khoảng cách và trọng lượng đơn hàng qua hệ thống GHN. Đơn hàng từ <strong>500.000₫ trở lên</strong> được miễn phí giao hàng toàn quốc.
+                Phí vận chuyển được tính qua GHN dựa trên địa chỉ nhận hàng và trọng lượng đơn hàng. Bạn sẽ thấy phí giao hàng và tổng tiền tại bước thanh toán trước khi xác nhận đặt hàng.
             </div></div>
         </div>
 
@@ -268,7 +268,7 @@
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Bạn có thể tra cứu đơn hàng tại trang <a href="{{ route('orders.tracking') }}">Theo dõi đơn hàng</a> hoặc đăng nhập vào tài khoản để xem lịch sử và trạng thái chi tiết. Hệ thống cũng gửi email thông báo mỗi khi trạng thái đơn thay đổi.
+                Đăng nhập để tra cứu tại trang <a href="{{ route('orders.tracking') }}">Theo dõi đơn hàng</a> hoặc xem <a href="{{ route('orders.index') }}">lịch sử mua hàng</a>. Email đơn hàng được gửi theo các mốc đặt hàng, ghi nhận thanh toán, giao cho đơn vị vận chuyển và giao thành công; bạn vẫn nên xem trạng thái mới nhất trên website.
             </div></div>
         </div>
 
@@ -278,7 +278,7 @@
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                Mỗi đơn hàng được đóng gói <strong>3 lớp chống vỡ</strong>: hộp giấy riêng cho chai, lớp xốp bảo vệ và thùng carton cứng bên ngoài. Đơn mua làm quà tặng có thể yêu cầu thêm gói ruy băng miễn phí trong ghi chú đơn hàng.
+                Bạn có thể chọn <strong>gói quà với phụ phí 50.000₫</strong> tại trang sản phẩm. Combo Trọn Vẹn đã bao gồm hộp quà theo mô tả của combo. Với yêu cầu đóng gói cụ thể, hãy <a href="{{ route('store.contact') }}">liên hệ Soopi</a> trước khi đặt hàng.
             </div></div>
         </div>
     </div>
@@ -296,7 +296,7 @@
                 Chúng tôi hỗ trợ đầy đủ các hình thức:
                 <ul>
                     <li>@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <strong>MoMo</strong> – thanh toán QR nhanh chóng</li>
-                    <li>@include('partials.icon', ['name' => 'bank', 'size' => '1em']) <strong>Chuyển khoản ATM / Internet Banking</strong></li>
+                    <li>@include('partials.icon', ['name' => 'bank', 'size' => '1em']) <strong>Thẻ ATM nội địa hoặc thẻ quốc tế qua cổng MoMo</strong></li>
                     <li>@include('partials.icon', ['name' => 'cash', 'size' => '1em']) <strong>COD</strong> – thanh toán khi nhận hàng</li>
                 </ul>
             </div></div>
@@ -405,11 +405,11 @@
                 <svg width="18" height="18" viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="white" fill-opacity=".25"/><text x="5" y="28" font-size="22" font-family="Arial" font-weight="bold" fill="white">Z</text></svg>
                 Zalo
             </a>
-            <a class="ht-faq-social-link facebook" href="https://facebook.com/hathu.perfume" target="_blank" rel="noopener">
+            <a class="ht-faq-social-link facebook" href="{{ config('storefront.facebook_url') }}" target="_blank" rel="noopener">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 Facebook
             </a>
-            <a class="ht-faq-social-link instagram" href="https://instagram.com/hathu.perfume" target="_blank" rel="noopener">
+            <a class="ht-faq-social-link instagram" href="{{ config('storefront.instagram_url') }}" target="_blank" rel="noopener">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                 Instagram
             </a>

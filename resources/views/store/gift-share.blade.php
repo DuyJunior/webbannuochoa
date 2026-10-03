@@ -5,6 +5,9 @@
 
 @section('content')
 <div class="store-container ht-gift-page">
+    @if($errors->any())
+        <div class="public-flash alert-danger" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
+    @endif
     <div class="ht-gift-envelope-card">
         <div class="envelope-top-bar">
             <span>@include('partials.icon', ['name' => 'mail', 'size' => '1em']) BẠN VỪA NHẬN ĐƯỢC MỘT MÓN QUÀ MÙI HƯƠNG</span>
@@ -12,7 +15,7 @@
 
         <div class="ht-gift-letter">
             <div class="letter-stamp">
-                <span>SOOPI<br>PERFUME</span>
+                @include('partials.brand-logo', ['class' => 'gift-stamp-logo'])
             </div>
             <div class="letter-header">
                 <span class="to-label">Gửi người thương mến,</span>
@@ -36,7 +39,7 @@
                 <p class="gift-prod-desc">Đây là thiệp gợi ý mùi hương, chưa phải đơn hàng đã thanh toán.</p>
                 <span class="gift-prod-brand">{{ $perfume->brand }}</span>
                 <h3 class="gift-prod-title">{{ $perfume->name }}</h3>
-                <p class="gift-prod-meta">{{ $perfume->category->name ?? 'Nước hoa' }} · Chai {{ $perfume->volume_ml }}ml · {{ ucfirst($perfume->gender) }}</p>
+                <p class="gift-prod-meta">{{ $perfume->category->name ?? 'Nước hoa' }} · Chai {{ $perfume->volume_ml }}ml · {{ match($perfume->gender) { 'nu' => 'Nữ', 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
                 <p class="gift-prod-desc">{{ Str::limit(strip_tags($perfume->description), 140) }}</p>
 
                 <div class="gift-prod-action">

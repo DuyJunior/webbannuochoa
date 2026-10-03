@@ -16,7 +16,7 @@
     </header>
     @if($storyImage)<figure class="interior-article-cover"><img class="ht-article-image" src="{{ asset($storyImage) }}" alt="Minh họa: {{ $article->title }}" width="1200" height="800" fetchpriority="high"><figcaption>SOOPI — THE ART OF SCENT</figcaption></figure>@endif
     <div class="interior-reading-layout" id="noi-dung-bai-viet">
-        <aside class="interior-reading-note"><span class="interior-kicker">MỘT GÓC ĐỌC CHẬM</span>@include('partials.icon', ['name' => 'flower', 'size' => 48])<p>Hiểu một mùi hương.<br>Yêu một khoảnh khắc.</p><a href="{{ route('store.journal') }}">← Tất cả câu chuyện</a></aside>
+        <aside class="interior-reading-note"><span class="interior-kicker">MỘT GÓC ĐỌC CHẬM</span>@include('partials.brand-mark', ['size' => 48])<p>Hiểu một mùi hương.<br>Yêu một khoảnh khắc.</p><a href="{{ route('store.journal') }}">← Tất cả câu chuyện</a></aside>
         <div class="ht-article-body">@foreach($paragraphs as $paragraph)<p>{!! nl2br(e($paragraph)) !!}</p>@endforeach</div>
     </div>
     <div class="ht-article-next interior-story-ending"><div><span class="interior-kicker">CÂU CHUYỆN TIẾP THEO LÀ CỦA BẠN</span><h2>Một mùi hương.<br><em>Một dấu ấn riêng.</em></h2><p>Khám phá lựa chọn dành cho khoảnh khắc của bạn.</p></div><div><a class="ht-button" href="{{ route('store.finder') }}">Tìm mùi hương của bạn ↗</a><a class="ht-text-link" href="{{ route('store.journal') }}">Đọc thêm câu chuyện →</a></div></div>

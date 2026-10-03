@@ -258,8 +258,18 @@ document.addEventListener('DOMContentLoaded', function () {
     let closeTimer = null;
     let previousOverflow = '';
 
+    function safeMediaUrl(value) {
+        if (typeof value !== 'string' || !value.trim()) return null;
+        try {
+            const url = new URL(value, window.location.origin + '/');
+            return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
+        } catch { return null; }
+    }
+
     window.openBoutiqueVideoModal = function (data) {
         if (!data) return;
+        const embedUrl = safeMediaUrl(data.embed || data.url);
+        if (!embedUrl) return;
         clearTimeout(closeTimer);
         if (!modal.classList.contains('is-active')) {
             returnFocus = document.activeElement;
@@ -271,7 +281,6 @@ document.addEventListener('DOMContentLoaded', function () {
         viewsEl.textContent = (data.views || '0') + ' lượt xem';
 
         // Xử lý player (YouTube vs Direct Video)
-        const embedUrl = data.embed || data.url || '';
         if (/\.(mp4|webm|ogg)(?:[?#]|$)/i.test(embedUrl)) {
             iframe.style.display = 'none';
             iframe.removeAttribute('src');
@@ -293,14 +302,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Xử lý gắn sản phẩm
-        if (data.perfumeName && data.perfumeUrl) {
+        const productUrl = safeMediaUrl(data.perfumeUrl);
+        if (data.perfumeName && productUrl) {
             perfumeWrap.style.display = 'flex';
             perfumeName.textContent = data.perfumeName;
             perfumeBrand.textContent = data.perfumeBrand || 'NƯỚC HOA CHÍNH HÃNG';
             perfumePrice.textContent = data.perfumePrice || '';
-            perfumeLink.href = data.perfumeUrl;
-            if (data.perfumeImg) {
-                perfumeImg.src = data.perfumeImg;
+            perfumeLink.href = productUrl;
+            const productImage = safeMediaUrl(data.perfumeImg);
+            if (productImage) {
+                perfumeImg.src = productImage;
                 perfumeImg.style.display = 'block';
             } else {
                 perfumeImg.style.display = 'none';
@@ -313,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function () {
         requestAnimationFrame(() => {
             modal.classList.add('is-active');
             modal.setAttribute('aria-hidden', 'false');
-            closeBtn.focus();
+            closeBtn.focus({ preventScroll: true });
         });
         document.body.style.overflow = 'hidden';
     };
@@ -326,7 +337,7 @@ document.addEventListener('DOMContentLoaded', function () {
         html5Video.removeAttribute('src');
         html5Video.load();
         document.body.style.overflow = previousOverflow;
-        returnFocus?.focus();
+        returnFocus?.focus({ preventScroll: true });
         closeTimer = setTimeout(() => {
             modal.style.display = 'none';
         }, 260);

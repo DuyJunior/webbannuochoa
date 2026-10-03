@@ -47,22 +47,23 @@ class ChatController extends Controller
                 ->get();
         }
 
-        // 3. Mặc định: Tìm tất cả ID của người dùng có tương tác với admin
-        $userIds = Message::where('receiver_id', $adminId)
-            ->orWhere('sender_id', $adminId)
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($msg) use ($adminId) {
-                return $msg->sender_id == $adminId ? $msg->receiver_id : $msg->sender_id;
+        // Conversations are shared by the support team, including replies from AI.
+        $adminIds = User::where('role', 'admin')->pluck('id')->all();
+        $userIds = Message::where(function ($query) use ($adminIds) {
+                $query->whereIn('receiver_id', $adminIds)->orWhereIn('sender_id', $adminIds);
             })
+            ->orderByDesc('id')
+            ->get(['sender_id', 'receiver_id'])
+            ->map(fn ($message) => in_array($message->sender_id, $adminIds)
+                ? $message->receiver_id : $message->sender_id)
             ->unique()
             ->toArray();
 
         // Lấy thông tin chi tiết các User đó
         return User::whereIn('id', $userIds)
-            ->where('id', '!=', $adminId)
+            ->whereNotIn('id', $adminIds)
             ->select('id', 'name', 'email')
-            ->get();
+            ->get()->sortBy(fn ($user) => array_search($user->id, $userIds))->values();
     }
 
     /**

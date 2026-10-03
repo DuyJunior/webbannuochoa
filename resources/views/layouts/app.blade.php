@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'MyShop')</title>
+    <title>@yield('title', 'Soopi · Perfume Studio')</title>
+    @include('partials.brand-favicon')
     <!-- Bao gồm Bootstrap CSS hoặc các file CSS khác -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +14,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">MyShop</a>
+        <a class="navbar-brand" href="{{ route('home') }}" aria-label="Soopi — Trang chủ" style="width:190px">@include('partials.brand-logo')</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Đặt lại mật khẩu · Soopi</title></head>
+<body style="margin:0;padding:0;background:#f4efec;color:#392632;font-family:Arial,Helvetica,sans-serif">
+<table role="presentation" style="width:100%;border-collapse:collapse"><tr><td align="center" style="padding:24px 12px">
+<table role="presentation" style="width:100%;max-width:600px;border-collapse:collapse;background:#fffdfb;border:1px solid #e4d9de">
+    <tr><td style="padding:28px 24px;border-bottom:1px solid #e4d9de">@include('emails.partials.brand')</td></tr>
+    <tr><td style="padding:30px 24px 20px"><p style="font-size:10px;letter-spacing:1.5px;color:#896b7a;margin:0 0 18px">TÀI KHOẢN CỦA BẠN</p><h1 style="font:normal 32px/1.25 Georgia,'Times New Roman',serif;margin:0 0 22px">Trở lại với Soopi.</h1><p style="font-size:14px;line-height:1.8">Chào {{ $customerName }},</p><p style="font-size:14px;line-height:1.8;color:#755e6b">Soopi nhận được yêu cầu đặt lại mật khẩu tài khoản của bạn. Chọn nút bên dưới để tạo mật khẩu mới.</p></td></tr>
+    <tr><td style="padding:0 24px 24px"><table role="presentation" style="width:100%;background:#392632;border-collapse:collapse"><tr><td align="center" style="padding:17px"><a href="{{ $resetUrl }}" style="display:block;color:#fff9f5;font-size:14px;text-decoration:none">Đặt lại mật khẩu →</a></td></tr></table><p style="font-size:12px;line-height:1.8;color:#755e6b;margin:16px 0 0">Liên kết chỉ dùng một lần, có hiệu lực {{ $expiresMinutes }} phút kể từ lúc yêu cầu. Nếu bạn không yêu cầu thay đổi, hãy bỏ qua email này; mật khẩu hiện tại vẫn được giữ nguyên.</p></td></tr>
+    <tr><td style="padding:0 24px 28px"><p style="font-size:12px;line-height:1.8;color:#755e6b;margin:0 0 8px">Nếu nút không mở được, sao chép liên kết sau vào trình duyệt. Không chia sẻ liên kết này với người khác.</p><p style="font-size:11px;line-height:1.7;word-break:break-all;overflow-wrap:anywhere;margin:0"><a href="{{ $resetUrl }}" style="color:#805b71">{{ $resetUrl }}</a></p></td></tr>
+    <tr><td style="padding:22px 24px;background:#f6eff2;border-top:1px solid #e4d9de"><p style="font:italic 22px Georgia,'Times New Roman',serif;margin:0 0 10px;color:#805b71">Một chút hương. Một chút thương.</p><p style="font-size:12px;line-height:1.8;color:#755e6b;margin:0">Đây là email bảo mật tài khoản. Soopi không yêu cầu bạn gửi mật khẩu qua tin nhắn.</p></td></tr>
+</table></td></tr></table>
+</body></html>

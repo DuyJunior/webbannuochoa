@@ -160,11 +160,12 @@
                                                     @if($prod && $prod->image_src)
                                                         <img src="{{ $prod->image_src }}" alt="{{ $prod->name }}">
                                                     @else
-                                                        <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
+                                                        <span>@include('partials.brand-mark', ['size' => '1em'])</span>
                                                     @endif
                                                 </div>
                                                 <div class="item-info-mini">
-                                                    <strong>{{ $item->product_name ?? $prod->name ?? 'Nước hoa' }}</strong>
+                                                    <strong>{{ $item->display_name }}</strong>
+                                                    @include('partials.order-item-samples')
                                                     <small>x{{ $item->quantity }} · {{ number_format($item->price, 0, ',', '.') }}₫</small>
                                                 </div>
                                             </div>

@@ -1,6 +1,10 @@
 @php
     $editing = isset($product);
-    $value = fn ($field, $default = '') => old($field, $editing ? ($product->{$field} ?? $default) : $default);
+    $currentProduct = $product ?? null;
+    $value = function ($field, $default = '') use ($currentProduct) {
+        $value = old($field, $currentProduct->{$field} ?? $default);
+        return is_scalar($value) || $value === null ? $value : $default;
+    };
     $previewUrl = $value('image_url');
     $previewUrl = $previewUrl ? (\Illuminate\Support\Str::startsWith($previewUrl, ['http://', 'https://']) ? $previewUrl : asset(ltrim($previewUrl, '/'))) : null;
 @endphp
@@ -107,6 +111,7 @@
                     @error('video_url')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
             </section>
+            @include('admin.products._shop-photos')
             <section class="admin-card studio-form-section" aria-labelledby="product-visibility">
                 <span class="studio-form-kicker">XUẤT BẢN</span><h3 id="product-visibility">Hiển thị trên cửa hàng</h3>
                 <input type="hidden" name="is_active" value="0">

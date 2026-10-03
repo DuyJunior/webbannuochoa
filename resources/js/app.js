@@ -1,4 +1,7 @@
 import './bootstrap';
+import '../css/store-information.css';
+import '../css/gift-bundle.css';
+import './gift-bundle.js';
 import './store-header.js';
 import './store-navigation.js';
 import './store-motion.js';
@@ -6,6 +9,7 @@ import './store-interiors.js';
 import './product-quick-view.js';
 import './scent-experience.js';
 import './atelier-typewriter.js';
+import './wishlist.js';
 
 document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-quantity-minus], [data-quantity-plus]');

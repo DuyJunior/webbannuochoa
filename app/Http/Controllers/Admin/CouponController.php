@@ -29,13 +29,15 @@ class CouponController extends Controller
 
     public function store(Request $request)
     {
-        $request->merge(['code' => Str::upper(trim((string) $request->input('code')))]);
+        if (is_string($request->input('code'))) {
+            $request->merge(['code' => Str::upper(trim($request->input('code')))]);
+        }
         $data = $request->validate([
             'code' => 'required|string|alpha_dash|max:30|unique:coupons,code',
             'type' => 'required|in:fixed,percent',
-            'value' => 'required|integer|min:1',
-            'minimum_order' => 'required|integer|min:0',
-            'usage_limit' => 'nullable|integer|min:1',
+            'value' => 'required|integer|min:1|max:4294967295',
+            'minimum_order' => 'required|integer|min:0|max:4294967295',
+            'usage_limit' => 'nullable|integer|min:1|max:4294967295',
             'starts_at' => 'nullable|date',
             'expires_at' => ['nullable', 'date', ...($request->filled('starts_at') ? ['after:starts_at'] : [])],
         ]);

@@ -110,13 +110,13 @@
                                     @if($prod && $prod->image_src)
                                         <img src="{{ $prod->image_src }}" alt="{{ $prod->name }}">
                                     @else
-                                        <span>@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</span>
+                                        <span>@include('partials.brand-mark', ['size' => '1em'])</span>
                                     @endif
                                 </div>
                                 <div class="detail-item-info">
-                                    <h4>{{ $item->product_name ?? $prod->name ?? 'Nước hoa cao cấp' }}</h4>
+                                    <h4>{{ $item->display_name }}</h4>
                                     <div class="detail-item-meta">
-                                        <span>Dung tích: {{ $item->volume_ml ?? 100 }}ml</span>
+                                        <span>Dung tích: {{ $item->volume_label }}</span>
                                         @if($item->addon_gift)
                                             <span class="badge-gift">@include('partials.icon', ['name' => 'gift', 'size' => '1em']) Hộp quà & Nơ</span>
                                         @endif
@@ -124,6 +124,7 @@
                                             <span class="badge-engrave">@include('partials.icon', ['name' => 'pen', 'size' => '1em']) Khắc tên: "{{ $item->engrave_text }}"</span>
                                         @endif
                                     </div>
+                                    @include('partials.order-item-samples')
                                     <div class="detail-item-unitprice">
                                         Đơn giá: {{ number_format($item->price, 0, ',', '.') }}₫ × {{ $item->quantity }}
                                     </div>
@@ -154,6 +155,12 @@
                             <span class="info-label">Địa chỉ giao:</span>
                             <span class="info-value">{{ $order->address }}</span>
                         </div>
+                        @if($order->note)
+                            <div class="info-row">
+                                <span class="info-label">Ghi chú đơn hàng:</span>
+                                <span class="info-value" style="white-space:pre-line;overflow-wrap:anywhere">{{ $order->note }}</span>
+                            </div>
+                        @endif
                         <div class="info-row">
                             <span class="info-label">Hình thức:</span>
                             <span class="info-value">
@@ -583,6 +590,28 @@
     }
     .tracking-timeline {
         padding: 10px 0 0;
+    }
+}
+@media (max-width: 600px) {
+    .detail-item-row {
+        display: grid;
+        grid-template-columns: 56px minmax(0, 1fr);
+        align-items: start;
+        gap: 12px;
+    }
+    .detail-item-thumb {
+        width: 56px;
+        height: 56px;
+    }
+    .detail-item-info {
+        overflow-wrap: anywhere;
+    }
+    .detail-item-total {
+        grid-column: 1 / -1;
+        padding-top: 10px;
+        border-top: 1px solid #f3e8ee;
+        text-align: right;
+        white-space: nowrap;
     }
 }
 </style>

@@ -1,5 +1,5 @@
 import { CanvasTexture, Mesh, PlaneGeometry, ShaderMaterial, Texture, Vector2, Vector4, SRGBColorSpace } from 'three';
-import { createPetalWindModel, advancePetalWind, pushPetalWind } from './petal-wind-model.js';
+import { createPetalWindModel, advancePetalWind, pushPetalWind, PETAL_SWAY_SPEED } from './petal-wind-model.js';
 import { createPetalMask, paletteFor, PETAL_COLOR_GLSL } from './petal-palette.js';
 
 // Source-space regions follow the individual petals of cinema-rose, with roots
@@ -28,6 +28,7 @@ export function createPetalWind(scene, host) {
         uRegions: { value: REGIONS.map(p => new Vector4(...p.slice(0, 4))) },
         uRoots: { value: REGIONS.map(p => new Vector2(p[4], p[5])) },
         uBends: { value: REGIONS.map(() => new Vector2()) },
+        uCurls: { value: new Float32Array(REGIONS.length) },
     };
     const material = new ShaderMaterial({
         uniforms, depthTest: false, depthWrite: false, toneMapped: false,
@@ -46,6 +47,7 @@ export function createPetalWind(scene, host) {
             uniform vec2 uCover, uOffset;
             uniform vec4 uRegions[8];
             uniform vec2 uRoots[8], uBends[8];
+            uniform float uCurls[8];
             varying vec2 vUv;
             ${PETAL_COLOR_GLSL}
 
@@ -58,16 +60,23 @@ export function createPetalWind(scene, host) {
                 for (int i = 0; i < 8; i++) {
                     vec2 local = (q - uRegions[i].xy) / uRegions[i].zw;
                     float weight = 1.0 - smoothstep(.25, 1.1, length(local));
-                    float flex = pow(clamp(length(q - uRoots[i]) / .34, 0.0, 1.0), 1.4);
-                    // Fine, phase-delayed edge flutter rides on the spring bend.
-                    float flutter = sin(uTime * 2.15 - local.y * 3.0 + float(i) * 1.73);
-                    vec2 motion = uBends[i] + vec2(flutter * .0009, flutter * .0006);
-                    bend += motion * weight * flex;
+                    vec2 stem = q - uRoots[i];
+                    float flex = smoothstep(.04, .42, length(stem));
+                    // The root stays anchored while the tip rolls around it.
+                    // An irregular ripple follows that roll, rather than sliding a whole patch.
+                    vec2 tangent = vec2(-stem.y, stem.x);
+                    float flutter = sin(uTime * 1.1 - local.y * 2.4 + float(i) * 1.73)
+                        * sin(uTime * .29 + float(i));
+                    vec2 motion = uBends[i] * flex + tangent * uCurls[i] * flex * flex;
+                    motion += tangent * flutter * .0018 * flex * flex;
+                    bend += motion * weight;
                     totalWeight += weight;
                 }
                 bend /= max(1.0, totalWeight);
                 float edge = smoothstep(0.0, .035, min(min(q.x, 1.0 - q.x), min(q.y, 1.0 - q.y)));
-                vec2 source = q - bend * movable * edge;
+                // Do not ripple the bokeh/background along with the flower.
+                float silhouette = texture2D(uPetalMask, vec2(q.x, 1.0 - q.y)).a;
+                vec2 source = q - bend * movable * edge * silhouette;
                 gl_FragColor = texture2D(uPhoto, vec2(source.x, 1.0 - source.y));
                 float mask = texture2D(uPetalMask, vec2(source.x, 1.0 - source.y)).a;
                 gl_FragColor.rgb = petalColor(gl_FragColor.rgb, uPalette, mask);
@@ -97,7 +106,7 @@ export function createPetalWind(scene, host) {
     async function load() {
         if (disposed || !image.complete || !image.naturalWidth) return;
         const source = image.currentSrc || image.src;
-        if (loadedSource === source) { resize(); return; }
+        if (loadedSource === source) { mesh.visible = true; resize(); return; }
         if (pendingSource === source) return;
         pendingSource = source;
         const version = ++loadVersion;
@@ -109,7 +118,7 @@ export function createPetalWind(scene, host) {
                 imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none',
             });
         } catch {
-            if (version === loadVersion) pendingSource = '';
+            if (version === loadVersion) { pendingSource = ''; mesh.visible = false; }
             return; // Keep the original HTML photograph if decoding is unavailable.
         }
         if (disposed || version !== loadVersion || source !== (image.currentSrc || image.src)) {
@@ -138,8 +147,11 @@ export function createPetalWind(scene, host) {
         update(elapsed) {
             uniforms.uPalette.value.lerp(paletteTarget, 1 - Math.exp(-Math.min(elapsed, .1) * 6));
             advancePetalWind(model, elapsed);
-            uniforms.uTime.value = model.time;
-            model.petals.forEach((petal, i) => uniforms.uBends.value[i].set(petal.x, petal.y));
+            uniforms.uTime.value = model.time * PETAL_SWAY_SPEED;
+            model.petals.forEach((petal, i) => {
+                uniforms.uBends.value[i].set(petal.x, petal.y);
+                uniforms.uCurls.value[i] = petal.curl;
+            });
         },
         gust(strength = 1) { pushPetalWind(model, strength); },
         setMood(mood, immediate = false) {

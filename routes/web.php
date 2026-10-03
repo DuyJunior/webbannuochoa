@@ -53,6 +53,8 @@ Route::get('/so-sanh', [StoreExperienceController::class, 'compare'])->name('sto
 Route::get('/cam-nang', [JournalController::class, 'index'])->name('store.journal');
 Route::get('/cam-nang/{article:slug}', [JournalController::class, 'show'])->name('store.article');
 Route::get('/cau-hoi-thuong-gap', [StoreExperienceController::class, 'faq'])->name('store.faq');
+Route::view('/lien-he', 'store.contact')->name('store.contact');
+Route::view('/chinh-sach-bao-mat', 'store.privacy')->name('store.privacy');
 
 Route::get('/quiz', [StoreExperienceController::class, 'quiz'])->name('store.quiz');
 Route::get('/trac-nghiem-mui-huong', [StoreExperienceController::class, 'quiz'])->name('store.quiz.alias');
@@ -95,6 +97,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/tai-khoan/mat-khau', [AccountController::class, 'password'])->middleware('throttle:5,1')->name('account.password');
     Route::get('/gio-hang', [CartController::class, 'index'])->name('cart.index');
     Route::post('/gio-hang/hop-thu-mui', [CartController::class, 'addDiscoveryBox'])->name('cart.add-discovery-box');
+    Route::post('/gio-hang/combo/{perfume}', [CartController::class, 'addGiftBundle'])->name('cart.add-gift-bundle');
     Route::post('/gio-hang/{perfume}', [CartController::class, 'add'])->name('cart.add');
     Route::patch('/gio-hang/{itemKey}', [CartController::class, 'update'])->name('cart.update');
     Route::delete('/gio-hang/{itemKey}', [CartController::class, 'remove'])->name('cart.remove');
@@ -157,6 +160,13 @@ Route::post('/register', [AuthController::class, 'register'])->middleware('throt
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/quen-mat-khau', [\App\Http\Controllers\PasswordResetController::class, 'requestForm'])->name('password.request');
+    Route::post('/quen-mat-khau', [\App\Http\Controllers\PasswordResetController::class, 'sendLink'])->middleware('throttle:5,1,password-email')->name('password.email');
+    Route::get('/dat-lai-mat-khau/{token}', [\App\Http\Controllers\PasswordResetController::class, 'resetForm'])->middleware('throttle:30,1,password-form')->name('password.reset');
+    Route::post('/dat-lai-mat-khau', [\App\Http\Controllers\PasswordResetController::class, 'reset'])->middleware('throttle:10,1,password-reset')->name('password.update');
+});
 
 // ============================================================
 // XÁC THỰC EMAIL (Lab 03)

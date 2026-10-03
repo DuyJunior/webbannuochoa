@@ -3,20 +3,22 @@ import {
     Float32BufferAttribute, Group, Mesh, MeshPhysicalMaterial,
     OrthographicCamera, Scene, SRGBColorSpace, WebGLRenderer,
 } from 'three';
-import { createPetalWorld, advancePetals, movePetalPointer, releasePetalPointer, gustPetals } from './petal-physics.js';
+import { createPetalWorld, resizePetalWorld, advancePetals, movePetalPointer, releasePetalPointer, gustPetals } from './petal-physics.js';
 import { createCinemaMist } from './cinema-mist.js';
 import { createPetalWind } from './petal-wind.js';
 
 // A curved, ribbed silk surface, not a video or a rotating flat image.
-function petalGeometry() {
+function petalGeometry(soft = false) {
     const positions = [], indices = [], rows = 32, columns = 48;
     for (let row = 0; row <= rows; row++) {
         const v = row / rows;
-        const width = Math.pow(Math.sin(Math.PI * v), .7) * .67 + .015;
+        const width = Math.pow(Math.sin(Math.PI * v), soft ? .52 : .7) * (soft ? .76 : .67) + .015;
         for (let column = 0; column <= columns; column++) {
             const u = column / columns * 2 - 1;
-            positions.push(u * width, (v - .5) * 1.9,
-                .48 * u * u + .32 * Math.sin(v * Math.PI * 1.5) + .023 * Math.cos(u * 28) * Math.sin(v * Math.PI));
+            positions.push(u * width * (soft ? 1 + .09 * u * Math.sin(v * Math.PI) : 1),
+                (v - .5) * 1.9 + (soft ? .08 * Math.sin(u * 3.4 + .5) * v * v : 0),
+                (soft ? .24 : .48) * u * u + .32 * Math.sin(v * Math.PI * 1.5)
+                + (soft ? .0045 : .023) * Math.cos(u * (soft ? 16 + v * 12 : 28)) * Math.sin(v * Math.PI));
             if (row < rows && column < columns) {
                 const a = row * (columns + 1) + column, b = a + columns + 1;
                 indices.push(a, b, a + 1, b, b + 1, a + 1);
@@ -37,7 +39,8 @@ export function createPetalScene(host) {
     const renderer = new WebGLRenderer({ canvas, context, alpha: true, antialias: true });
     renderer.outputColorSpace = SRGBColorSpace;
     renderer.setClearColor(0xffffff, 0);
-    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, matchMedia('(pointer: coarse)').matches ? 1 : 1.5));
+    const coarse = matchMedia('(pointer: coarse)').matches;
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, coarse ? 1 : 1.25));
     const hero = host.dataset.petalScene === 'hero';
     const scene = new Scene(), camera = new OrthographicCamera(-3, 3, 3, -3, .1, 30);
     camera.position.z = 10;
@@ -48,23 +51,42 @@ export function createPetalScene(host) {
     const cinematic = hero && !!host.closest('.cinema-hero');
     const mist = cinematic ? createCinemaMist(scene, matchMedia('(pointer: coarse)').matches) : null;
     const wind = cinematic ? createPetalWind(scene, host) : null;
-    const geometry = petalGeometry();
+    const geometry = petalGeometry(cinematic);
     const material = new MeshPhysicalMaterial({ color: 0xe8becb, metalness: .03, roughness: .5,
         clearcoat: .25, clearcoatRoughness: .45, sheen: .9, sheenColor: new Color(0xfff1ee),
         side: DoubleSide, transparent: true, depthWrite: false });
-    const coarse = matchMedia('(pointer: coarse)').matches;
-    const world = createPetalWorld(hero ? (cinematic ? 0 : (coarse ? 8 : 12)) : 3,
-        { header: !hero, sourceRadius: cinematic ? 2 : 1.3 });
+    if (cinematic) {
+        material.color.setHex(0xd9ad9d);
+        material.metalness = 0; material.roughness = .8; material.clearcoat = .02; material.sheen = .55;
+    }
+    const world = createPetalWorld(hero ? (cinematic ? (coarse ? 3 : 5) : (coarse ? 8 : 12)) : 3,
+        { header: !hero, sourceRadius: cinematic ? 2 : 1.3, falling: cinematic });
+    const petalTime = { value: 0 };
     const petals = [];
     for (let i = 0; i < world.petals.length; i++) {
         const mesh = new Mesh(geometry, material.clone());
-        const scale = hero ? (cinematic ? .1 + (i % 4) * .025 : .16 + (i % 4) * .038) : .4 + i * .1;
+        const scale = hero ? (cinematic ? .14 + (i % 4) * .024 : .16 + (i % 4) * .038) : .4 + i * .1;
         mesh.scale.setScalar(scale);
         mesh.material.opacity = 0;
+        if (cinematic) {
+            mesh.material.onBeforeCompile = shader => {
+                shader.uniforms.uPetalTime = petalTime;
+                shader.uniforms.uPetalPhase = { value: i * 1.73 };
+                shader.vertexShader = 'uniform float uPetalTime;\nuniform float uPetalPhase;\n' + shader.vertexShader;
+                shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', `
+                    #include <begin_vertex>
+                    float tip = smoothstep(-.85, .95, position.y);
+                    transformed.z += sin(uPetalTime * .95 + uPetalPhase + position.y * 1.8) * .055 * tip;
+                    transformed.x += sin(uPetalTime * .47 + uPetalPhase) * .024 * tip * tip;
+                `);
+            };
+        }
+        mesh.renderOrder = 2;
         group.add(mesh); petals.push(mesh);
     }
     host.append(canvas);
-    let active = false, lost = false, destroyed = false, last = 0, lastPointer = 0, lastPointerX = 0;
+    const frameInterval = 1000 / (coarse ? 30 : 60);
+    let active = false, lost = false, destroyed = false, last = 0, nextFrame = 0, lastPointer = 0, lastPointerX = 0;
     function resize() {
         if (destroyed) return;
         const width = host.clientWidth, height = host.clientHeight;
@@ -72,23 +94,25 @@ export function createPetalScene(host) {
         const halfHeight = hero ? 3 : 1.65, ratio = width / height;
         camera.left = -halfHeight * ratio; camera.right = halfHeight * ratio;
         camera.top = halfHeight; camera.bottom = -halfHeight; camera.updateProjectionMatrix();
-        world.halfWidth = halfHeight * ratio; world.halfHeight = halfHeight;
+        resizePetalWorld(world, halfHeight * ratio, halfHeight);
         renderer.setSize(width, height, false);
         mist?.resize(world.halfWidth, renderer.getPixelRatio());
         wind?.resize();
         if (!active && !lost) renderer.render(scene, camera);
     }
     function tick(now) {
-        if (now - last < 1000 / 30) return;
+        if (now + .25 < nextFrame) return;
+        nextFrame = now + frameInterval - (Math.max(0, now - nextFrame) % frameInterval);
         const elapsed = (now - last) / 1000;
         advancePetals(world, elapsed); wind?.update(elapsed); last = now;
+        petalTime.value = world.time;
         mist?.update(world.time);
         petals.forEach((mesh, i) => {
             const p = world.petals[i];
             mesh.position.set(p.x, p.y, p.z);
             mesh.rotation.set(p.rx, p.ry, p.rz);
             const focusFade = cinematic ? Math.min(1, Math.max(Math.abs(p.x) / 1.15, Math.abs(p.y) / 2.3) ** 2) : 1;
-            mesh.material.opacity = p.opacity * focusFade * (cinematic ? .58 : .88);
+            mesh.material.opacity = p.opacity * focusFade * (cinematic ? .84 : .88);
         });
         renderer.render(scene, camera);
     }
@@ -109,12 +133,12 @@ export function createPetalScene(host) {
     const gust = event => {
         if (!active || !hero || event.target.closest('a, button, input') || (event.button !== 0 && event.pointerType !== 'touch')) return;
         const { x, y } = coordinates(event); gustPetals(world, x, y);
-        wind?.gust(1.1);
+        wind?.gust(.55);
     };
     surface.addEventListener('pointermove', pointer, { passive: true });
     surface.addEventListener('pointerleave', reset);
     surface.addEventListener('pointerdown', gust, { passive: true });
-    const replayGust = () => { if (active) { gustPetals(world, 0, -.8); wind?.gust(1.5); } };
+    const replayGust = () => { if (active) { gustPetals(world, 0, -.8); wind?.gust(.8); } };
     surface.addEventListener('cinema:gust', replayGust);
     const keyGust = event => {
         if (active && cinematic && event.target === surface && ['ArrowLeft', 'ArrowRight'].includes(event.key)) {
@@ -124,7 +148,7 @@ export function createPetalScene(host) {
     surface.addEventListener('keydown', keyGust);
     const resizer = new ResizeObserver(resize); resizer.observe(host);
     const mood = new MutationObserver(() => {
-        const colors = { rose: 0xe8becb, velvet: 0x854258, sage: 0xbac5ad };
+        const colors = { rose: cinematic ? 0xd9ad9d : 0xe8becb, velvet: 0x854258, sage: 0xbac5ad };
         const selected = document.querySelector('[data-bloom]')?.dataset.mood;
         material.color.setHex(colors[selected] || colors.rose);
         petals.forEach(mesh => mesh.material.color.copy(material.color));
@@ -143,7 +167,7 @@ export function createPetalScene(host) {
     canvas.addEventListener('webglcontextrestored', contextRestored);
     resize();
     return {
-        setActive(value) { active = value; last = performance.now(); if (!value) reset(); refresh(); },
+        setActive(value) { active = value; last = nextFrame = performance.now(); if (!value) reset(); refresh(); },
         dispose() {
             destroyed = true; renderer.setAnimationLoop(null); resizer.disconnect(); mood.disconnect();
             surface.removeEventListener('pointermove', pointer); surface.removeEventListener('pointerleave', reset);

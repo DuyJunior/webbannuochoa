@@ -46,6 +46,10 @@ class ShippingUpdateService
             }
             // A carrier return is not proof that the goods passed inspection: no automatic restock/refund.
             $order->update($updates);
+            if ($status === 'delivered') {
+                app(OrderEmailService::class)->paid($order);
+            }
+            app(OrderEmailService::class)->shipping($order);
         });
     }
 }

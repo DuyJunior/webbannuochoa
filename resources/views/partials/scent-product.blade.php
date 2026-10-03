@@ -9,11 +9,11 @@
         @if($picture)
             <img src="{{ $picture }}" alt="{{ $perfume->name }}{{ $artwork ? ' — phối cảnh bộ sưu tập Soopi' : '' }}" width="{{ $featured ? 960 : 640 }}" height="{{ $featured ? 1200 : 640 }}" loading="lazy" decoding="async">
         @else
-            <span class="scent-placeholder">@include('partials.icon', ['name' => 'flower', 'size' => 72])<span>{{ $perfume->brand }}</span></span>
+            <span class="scent-placeholder">@include('partials.brand-mark', ['size' => 72])<span>{{ $perfume->brand }}</span></span>
         @endif
     </a>
     @auth
-        <form class="scent-heart" method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}">
+        <form class="scent-heart" method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}" data-wishlist="{{ $perfume->id }}" data-wishlist-saved="{{ $saved ? 'true' : 'false' }}" data-wishlist-name="{{ $perfume->name }}" data-wishlist-login="{{ route('login') }}">
             @csrf
             <button type="submit" aria-pressed="{{ $saved ? 'true' : 'false' }}" aria-label="{{ $saved ? 'Bỏ yêu thích' : 'Yêu thích' }} {{ $perfume->name }}">@include('partials.icon', ['name' => 'heart', 'size' => 21])</button>
         </form>

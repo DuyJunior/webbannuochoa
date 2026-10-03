@@ -19,7 +19,7 @@
         <div class="chat-window-header">
             <div class="chat-header-left">
                 <div class="chat-avatar-frame">
-                    <span class="chat-avatar-text">HT</span>
+                    @include('partials.brand-mark', ['size' => 34, 'light' => true])
                     <span class="avatar-status-pip"></span>
                 </div>
                 <div class="chat-header-meta">
@@ -48,7 +48,7 @@
         {{-- Vùng hiển thị tin nhắn --}}
         <div id="chat-messages" class="chat-messages-scroll" tabindex="0">
             <div class="chat-welcome-card">
-                <div class="welcome-flower">@include('partials.icon', ['name' => 'flower', 'size' => '1em'])</div>
+                <div class="welcome-flower">@include('partials.brand-mark', ['size' => 46])</div>
                 <div class="welcome-heading">Chào mừng bạn đến với Soopi!</div>
                 <div class="welcome-text">Hãy nhắn nhu cầu chọn mùi hương hoặc câu hỏi về đơn hàng. Bạn có thể chọn gặp nhân viên bất cứ lúc nào.</div>
                 <div class="quick-chips-group">

@@ -5,7 +5,7 @@
     </header>
     <form class="sampling-layout" action="{{ route('store.discovery-box') }}" method="GET" data-sample-form>
         <aside class="sample-workbench" id="sample-workbench" aria-label="Hộp thử mùi của bạn">
-            <div class="sample-box-signature"><span>SOOPI / LE COFFRET</span>@include('partials.icon', ['name'=>'flower','size'=>30])</div>
+            <div class="sample-box-signature"><span>SOOPI / LE COFFRET</span>@include('partials.brand-mark', ['size' => 34, 'light' => true])</div>
             <div class="sample-package">
                 <h3>Một chiếc hộp.<br><em>Nhiều rung động.</em></h3>
                 <fieldset class="sample-size-options"><legend>Chọn số mẫu trong hộp</legend>
@@ -38,7 +38,7 @@
                     <article class="sample-card" data-sample-card>
                         <label class="sample-pick" @unless($sampleAvailable) data-unavailable @endunless>
                             <input type="checkbox" name="samples[]" value="{{ $sample->id }}" data-sample-name="{{ $sample->name }}" data-sample-img="{{ $sample->image_src }}" data-sample-unavailable-reason="{{ $unavailableReason }}" aria-label="Chọn mẫu 5 ml {{ $sample->name }}" @disabled(!$sampleAvailable)>
-                            <span class="sample-photo">@if($sample->image_src)<img src="{{ $sample->image_src }}" alt="" width="260" height="300" loading="lazy" decoding="async">@else<span class="sample-photo-fallback">@include('partials.icon', ['name'=>'flower','size'=>56])</span>@endif<span class="sample-choice-mark" aria-hidden="true">+</span><span class="sample-volume">5 ml</span></span>
+                            <span class="sample-photo">@if($sample->image_src)<img src="{{ $sample->image_src }}" alt="" width="260" height="300" loading="lazy" decoding="async">@else<span class="sample-photo-fallback">@include('partials.brand-mark', ['size' => 56])</span>@endif<span class="sample-choice-mark" aria-hidden="true">+</span><span class="sample-volume">5 ml</span></span>
                             <span class="sample-brand">{{ $sample->brand }}</span><strong title="{{ $sample->name }}">{{ $sample->name }}</strong>
                             <span class="sample-select-label"><span data-sample-action>{{ $sampleAvailable ? 'Thêm vào hộp' : $unavailableReason }}</span><span data-sample-order aria-hidden="true">{{ $sampleAvailable ? '+' : '—' }}</span></span>
                         </label>

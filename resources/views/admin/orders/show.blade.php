@@ -49,18 +49,18 @@
                                         <div>
                                             @if($item->perfume)
                                                 <a href="{{ route('admin.products.show', $item->perfume_id) }}" class="font-weight-bold text-dark text-decoration-none">
-                                                    {{ $item->product_name ?? $item->perfume->name }}
+                                                    {{ $item->display_name }}
                                                 </a>
                                                 <div class="text-muted small mt-1">
                                                     <span>Thương hiệu: <strong>{{ $item->perfume->brand }}</strong></span>
                                                     <span class="mx-1">|</span>
-                                                    <span>Dung tích: <strong class="text-primary">{{ $item->volume_ml ? $item->volume_ml.'ml' : ($item->perfume->volume_ml.'ml') }}</strong></span>
+                                                    <span>Dung tích: <strong class="text-primary">{{ $item->volume_label }}</strong></span>
                                                 </div>
                                                 @if($item->addon_gift || $item->engrave_text)
                                                     <div class="mt-1 d-flex flex-wrap gap-1" style="font-size: 0.82rem;">
                                                         @if($item->addon_gift)
                                                             <span class="badge badge-warning text-dark mr-1">
-                                                                @include('partials.icon', ['name' => 'gift', 'size' => '1em']) Gói quà Luxury & Thiệp (+50k)
+                                                                @include('partials.icon', ['name' => 'gift', 'size' => '1em']) {{ ($item->is_gift_bundle || $item->is_discovery_box) ? 'Gói quà đã gồm trong giá bộ' : 'Gói quà Luxury & Thiệp (+50k)' }}
                                                             </span>
                                                         @endif
                                                         @if($item->engrave_text)
@@ -74,6 +74,7 @@
                                                 <strong>{{ $item->product_name ?: 'Sản phẩm #'.$item->perfume_id }}</strong>
                                                 <div class="text-muted small">Sản phẩm không còn trong danh mục @if($item->volume_ml) · {{ $item->volume_ml }} ml @endif</div>
                                             @endif
+                                            @include('partials.order-item-samples')
                                         </div>
                                     </div>
                                 </td>
@@ -150,6 +151,10 @@
                         <div class="text-dark font-weight-500" style="line-height: 1.5;">
                             {{ $order->address }}
                         </div>
+                        @if($order->note)
+                            <div class="text-muted font-weight-bold mt-3 mb-1">Ghi chú đơn hàng:</div>
+                            <div class="text-dark" style="white-space:pre-line;overflow-wrap:anywhere">{{ $order->note }}</div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -308,6 +313,7 @@
         </div>
     </div>
 </div>
+@include('admin.orders._emails')
 <details class="admin-card mb-4">
     <summary class="font-weight-bold">Lịch sử xử lý & chứng từ kho</summary>
     @include('partials.order-timeline')

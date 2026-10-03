@@ -6,7 +6,7 @@
 @section('content')
 <div class="store-container ht-quiz-page">
     <header class="ht-quiz-hero">
-        <span class="ht-badge-pill">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) TRẮC NGHIỆM CHỌN HƯƠNG</span>
+        <span class="ht-badge-pill">@include('partials.brand-mark', ['size' => 22, 'class' => 'interior-inline-brand-mark']) TRẮC NGHIỆM CHỌN HƯƠNG</span>
         <h1 class="ht-quiz-title">Lắng nghe bạn.<br><em>Chọn một dấu hương.</em></h1>
         <p class="ht-quiz-subtitle">Bốn câu hỏi về phong cách, thời tiết, dịp dùng và nốt hương bạn yêu thích. Cùng Soopi tìm những lựa chọn để bạn khám phá.</p>
     </header>
@@ -246,13 +246,16 @@
             @forelse($recommendations as $index => $perfume)
             @php($quizNotes = \App\Services\FragranceEditorialService::forPerfume($perfume))
             <article class="ht-quiz-item-card {{ $index === 0 ? 'top-match' : '' }}">
-                @if($index === 0)
-                <div class="top-match-badge">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) GỢI Ý ĐỂ BẠN THỬ ĐẦU TIÊN</div>
-                @endif
+                <div @class(['quiz-card-heading', 'top-match-badge' => $index === 0])>
+                    @if($index === 0)
+                        @include('partials.brand-mark', ['size' => 18, 'light' => true]) NÊN THỬ ĐẦU TIÊN
+                    @else
+                        GỢI Ý {{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}
+                    @endif
+                </div>
                 <div class="item-card-inner">
                     <div class="item-card-img">
                         <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" loading="lazy">
-                        <span class="match-score-badge">Gợi ý {{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
                     </div>
                     <div class="item-card-content">
                         <span class="item-brand">{{ $perfume->brand }}</span>

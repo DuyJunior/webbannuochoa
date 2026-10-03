@@ -5,6 +5,9 @@
 
 @section('content')
 <div class="store-container ht-compare-page">
+    @if($errors->any())
+        <div class="public-flash alert-danger" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
+    @endif
     <header class="ht-compare-header">
         <span class="ht-badge-pill">@include('partials.icon', ['name' => 'scale', 'size' => '1em']) BẢNG ĐỐI CHIẾU MÙI HƯƠNG</span>
         <h1 class="ht-compare-title">Đặt cạnh nhau.<br><em>Tìm điều khác biệt.</em></h1>
