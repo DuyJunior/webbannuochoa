@@ -276,7 +276,9 @@ class PurchaseReliabilityTest extends TestCase
         $this->assertFalse($order->is_demo);
         $this->assertSame('sepay', $payment->gateway);
         $this->get(route('user.orders.sepay.pay', $order))->assertOk()
-            ->assertSee('template=compact')->assertSee('96247TEST')->assertDontSee('Chạy mô phỏng');
+            ->assertSee('data-qr-layout="compact"', false)->assertSee('images/payments/vietqr-mark.png')
+            ->assertSee('images/payments/napas247-mark.png')->assertSee('images/payments/bidv-mark.png')
+            ->assertSee('96247TEST')->assertDontSee('template=compact')->assertDontSee('Chạy mô phỏng');
         $this->post(route('user.orders.confirm.payment', $order), ['_token' => 'production-checkout-test', 'scenario' => 'success'])
             ->assertNotFound();
         $this->assertSame('pending', $payment->fresh()->status);

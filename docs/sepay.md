@@ -32,7 +32,7 @@ Production cần `APP_URL=https://soopi.site`, `DEMO_MODE=false`, database queue
 
 Chữ ký là `sha256=` + HMAC-SHA256 của `timestamp.rawBody`, dùng `X-SePay-Timestamp` và `X-SePay-Signature`; chấp nhận lệch thời gian tối đa 300 giây. Đồng hồ máy chủ phải đồng bộ. Retry phải có chữ ký/timestamp mới do SePay tạo. Không thử bằng cách đăng JSON không ký.
 
-QR dùng `https://vietqr.app/img` với VA, ngân hàng, số tiền và nội dung chính xác. Website không thu số thẻ hoặc OTP. Khi nhận webhook hợp lệ, backend kiểm tra ngân hàng, tài khoản gốc, VA, mã thanh toán, số tiền bằng toàn bộ tổng đơn, hạn thanh toán và trạng thái kho/đơn.
+QR dùng `https://vietqr.app/img` với VA, ngân hàng, số tiền và nội dung chính xác. Bố cục compact được dựng trên website bằng logo VietQR ở trên và NAPAS 247/ngân hàng ở dưới. Ảnh mã QR dùng mẫu gốc có logo V; không dùng khung compact từ nhà cung cấp vì khung đó tự chèn logo SePay cho VA BIDV dạng 96247. Các logo phục vụ từ repo, không cắt/xử lý lại phần mã QR và không đổi VA hoặc nội dung chuyển khoản. Website không thu số thẻ hoặc OTP. Khi nhận webhook hợp lệ, backend kiểm tra ngân hàng, tài khoản gốc, VA, mã thanh toán, số tiền bằng toàn bộ tổng đơn, hạn thanh toán và trạng thái kho/đơn.
 
 ## Chạy và kiểm tra
 

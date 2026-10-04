@@ -201,7 +201,7 @@ class SePayPaymentTest extends TestCase
         $this->actingAs($user)->get(route('user.orders.sepay.pay', $order))->assertOk()->assertSee('96247TEST')->assertDontSee('NEWVA')
             ->assertDontSee(config('sepay.webhook_secret'))->assertHeader('Cache-Control', 'no-store, private');
         parse_str(parse_url(app(SePayService::class)->qrUrl($payment), PHP_URL_QUERY), $query);
-        $this->assertSame(['acc' => '96247TEST', 'bank' => 'BIDV', 'amount' => '120000', 'des' => $payment->gateway_order_id, 'template' => 'compact'], $query);
+        $this->assertSame(['acc' => '96247TEST', 'bank' => 'BIDV', 'amount' => '120000', 'des' => $payment->gateway_order_id], $query);
         $this->sendSePay($payload)->assertOk();
         $this->assertSame('paid', $payment->fresh()->status);
     }

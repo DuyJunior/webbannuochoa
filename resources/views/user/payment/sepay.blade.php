@@ -13,7 +13,7 @@
     </div>
     <div class="sepay-layout">
         <div class="sepay-card sepay-qr-card">
-            <img data-payment-qr src="{{ $qrUrl }}" alt="{{ __('Mã QR chuyển khoản ngân hàng') }}" width="320" height="360" referrerpolicy="no-referrer">
+            @include('user.payment._compact-qr')
             <p class="sepay-status" data-payment-status role="status" aria-live="polite">{{ __('Đang chờ xác nhận thanh toán từ ngân hàng…') }}</p>
             <p>{{ __('Thời gian còn lại:') }} <strong data-payment-countdown>—</strong></p>
             <p class="sepay-hint">{{ __('Nếu đã chuyển tiền, vui lòng chờ xác nhận và không chuyển lại.') }}</p>
@@ -35,7 +35,7 @@
     </div>
 </section>
 <style>
-.sepay-page{padding-top:40px;padding-bottom:64px;max-width:1000px}.sepay-heading{text-align:center;margin-bottom:28px}.sepay-heading h1{font-size:clamp(26px,4vw,38px);margin:10px 0}.sepay-eyebrow{font-size:12px;letter-spacing:.16em;color:#846a46;font-weight:700}.sepay-layout{display:grid;grid-template-columns:1.1fr 1fr;gap:24px}.sepay-card{padding:28px;border:1px solid #e8e2d9;border-radius:20px;background:#fff}.sepay-card h2{font-size:21px;margin:0 0 24px}.sepay-qr-card{text-align:center}.sepay-qr-card img{display:block;margin:auto;max-width:100%;height:auto;border-radius:10px}.sepay-qr-card img[hidden]{display:none}.sepay-status{font-weight:600;margin-top:22px;color:#655236}.sepay-hint{font-size:14px;line-height:1.7;color:#6b6258}.sepay-details{margin:0}.sepay-details>div{padding:14px 0;border-bottom:1px solid #eee8df}.sepay-details dt{font-size:13px;color:#736c63;margin-bottom:5px}.sepay-details dd{margin:0;overflow-wrap:anywhere;font-weight:600}.sepay-details .sepay-amount{font-size:26px;color:#7d5930}.sepay-back{display:inline-block;margin-top:14px;color:#6c4b2b;font-weight:600}@media(max-width:680px){.sepay-layout{grid-template-columns:1fr}.sepay-card{padding:22px}.sepay-page{padding-top:28px}}
+.sepay-page{padding-top:40px;padding-bottom:64px;max-width:1000px}.sepay-heading{text-align:center;margin-bottom:28px}.sepay-heading h1{font-size:clamp(26px,4vw,38px);margin:10px 0}.sepay-eyebrow{font-size:12px;letter-spacing:.16em;color:#846a46;font-weight:700}.sepay-layout{display:grid;grid-template-columns:1.1fr 1fr;gap:24px}.sepay-card{padding:28px;border:1px solid #e8e2d9;border-radius:20px;background:#fff}.sepay-card h2{font-size:21px;margin:0 0 24px}.sepay-qr-card{text-align:center}.sepay-status{font-weight:600;margin-top:22px;color:#655236}.sepay-hint{font-size:14px;line-height:1.7;color:#6b6258}.sepay-details{margin:0}.sepay-details>div{padding:14px 0;border-bottom:1px solid #eee8df}.sepay-details dt{font-size:13px;color:#736c63;margin-bottom:5px}.sepay-details dd{margin:0;overflow-wrap:anywhere;font-weight:600}.sepay-details .sepay-amount{font-size:26px;color:#7d5930}.sepay-back{display:inline-block;margin-top:14px;color:#6c4b2b;font-weight:600}@media(max-width:680px){.sepay-layout{grid-template-columns:1fr}.sepay-card{padding:22px}.sepay-page{padding-top:28px}}
 </style>
 <script>
 (() => {

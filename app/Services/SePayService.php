@@ -63,7 +63,9 @@ class SePayService
         return 'https://vietqr.app/img?'.http_build_query([
             'acc' => $receiver['sub_account'] ?: $receiver['account_number'],
             'bank' => $receiver['bank'], 'amount' => (int) $payment->amount,
-            'des' => $payment->gateway_order_id, 'template' => 'compact',
+            // Build the compact frame locally: the provider's compact image adds
+            // SePay branding for some BIDV VAs instead of the requested VietQR logo.
+            'des' => $payment->gateway_order_id,
         ], '', '&', PHP_QUERY_RFC3986);
     }
 
