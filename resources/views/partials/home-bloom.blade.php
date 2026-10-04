@@ -6,7 +6,7 @@
     <div class="store-container bloom-layout">
         <div class="bloom-copy">
             <span class="bloom-kicker">{{ __('SOOPI / L’INSTANT PRÉCIEUX') }}</span>
-            <h1 id="bloom-title">{{ __('Một mùi hương.') }}<br><em>{{ __('Muôn lớp') }}<br> {{ __('cảm xúc.') }}</em></h1>
+            <h1 id="bloom-title" data-typewriter>{{ __('Một mùi hương.') }}<br><em>{{ __('Muôn lớp') }}<br> {{ __('cảm xúc.') }}</em></h1>
             <p>{{ __('Một khoảnh khắc chạm vào giác quan.') }}<br>{{ __('Một dấu hương ở lại cùng bạn.') }}</p>
             <div class="bloom-actions">
                 <a class="bloom-button" href="#san-pham">{{ __('Mở bộ sưu tập') }} @include('partials.icon', ['name' => 'external', 'size' => 18])</a>

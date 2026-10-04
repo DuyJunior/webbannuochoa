@@ -1,6 +1,6 @@
 @php
     $baseVolume = (int) ($product->volume_ml ?: 100);
-    $volumes = collect(array_merge([5], $product->saleVolumes()))->unique()->sort()->values();
+    $volumes = collect([$baseVolume, 5, 10, 50])->merge($product->variants->pluck('volume_ml'))->unique()->sort()->values();
     $isDiscounted = $product->sale_price !== null && $product->sale_price < $product->price;
 @endphp
 <tr class="catalog-row">
@@ -32,16 +32,18 @@
         <dl class="catalog-stock" aria-label="{{ __('Tồn kho theo dung tích') }}">
             @foreach($volumes as $volume)
                 @php
-                    $stock = $product->getStockForVolume($volume);
+                    $variant = $product->variants->firstWhere('volume_ml', $volume);
+                    $stock = $variant ? $variant->stock : $product->getStockForVolume($volume);
                     $stockState = $stock <= 0 ? 'empty' : ($stock <= 5 ? 'low' : 'available');
                     $stockLabel = $stock <= 0 ? __('Hết hàng') : ($stock <= 5 ? __('Sắp hết') : __('Còn hàng'));
                 @endphp
                 <div class="catalog-stock-item {{ $volume === $baseVolume ? 'is-original' : '' }}" data-stock-state="{{ $stockState }}" title="{{ $volume }} ml{{ $volume === $baseVolume ? ' · Chai gốc' : '' }}: {{ $stock }} {{ __('chai') }} · {{ $stockLabel }}">
-                    <dt>{{ $volume }}<small>ml</small>@if($volume === $baseVolume)<span class="catalog-original-mark" aria-label="{{ __('Chai gốc') }}">•</span>@endif</dt>
+                    <dt>{{ $volume }}<small>ml</small>@if($volume === $baseVolume)<span class="catalog-original-mark" aria-label="{{ __('Chai gốc') }}">•</span>@endif @if($variant && !$variant->is_active)<small>{{ __('Đã ẩn') }}</small>@endif</dt>
                     <dd>{{ $stock }}<span class="sr-only"> chai · {{ $stockLabel }}</span></dd>
                 </div>
             @endforeach
         </dl>
+        <a href="{{ route('admin.products.edit', $product) }}#product-stock" class="d-inline-block small mt-2">{{ __('Sửa giá & tồn kho') }}</a>
     </td>
     <td class="catalog-status-cell">
         <span class="catalog-field-label">{{ __('Hiển thị') }}</span>

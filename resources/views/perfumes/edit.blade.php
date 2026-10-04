@@ -15,6 +15,7 @@
             @endif
         </div>
 
+        <p><a class="btn btn-secondary" href="{{ route('admin.products.edit', $perfume->id) }}#product-stock">{{ __('Quản lý tất cả dung tích và tồn kho') }}</a></p>
         <form method="POST" action="{{ route('perfumes.update', $perfume) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')

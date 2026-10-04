@@ -1,4 +1,6 @@
-@php($editing = isset($perfume))
+@php
+    $editing = isset($perfume);
+@endphp
 
 @if ($errors->any())
     <div class="alert alert-danger" role="alert">
@@ -83,10 +85,22 @@
                 @error('sale_price')<small class="field-error">{{ $message }}</small>@enderror
             </label>
             <label class="field">
-                <span>{{ __('Tồn kho Fullbox (100ml)') }} <b>*</b></span>
+                <span>{{ __('Tồn kho chai gốc') }} <b>*</b></span>
                 <input type="number" name="stock" value="{{ old('stock', $perfume->stock ?? 0) }}" min="0" required>
                 @error('stock')<small class="field-error">{{ $message }}</small>@enderror
             </label>
+            @foreach([10, 50] as $size)
+                @php
+                    $priceField = 'price_'.$size.'ml';
+                    $sizePrice = old($priceField, $perfume?->{$priceField} ?? '');
+                @endphp
+                <label class="field">
+                    <span>{{ __('Giá bán :volume ml (₫)', ['volume' => $size]) }}</span>
+                    <input type="number" name="{{ $priceField }}" value="{{ is_scalar($sizePrice) ? $sizePrice : '' }}" min="0" max="999999999999" step="1" placeholder="{{ __('Tự động') }}">
+                    <small>{{ __('Để trống để tính theo giá chai gốc.') }}</small>
+                    @error($priceField)<small class="field-error">{{ $message }}</small>@enderror
+                </label>
+            @endforeach
             <label class="field">
                 <span>{{ __('Tồn kho Chiết (10ml)') }}</span>
                 <input type="number" name="stock_10ml" value="{{ old('stock_10ml', $perfume->stock_10ml ?? '') }}" min="0" placeholder="{{ __('Chưa nhập kho: 0') }}">

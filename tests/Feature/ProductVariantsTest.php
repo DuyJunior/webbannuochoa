@@ -95,6 +95,155 @@ class ProductVariantsTest extends TestCase
         $this->assertNotEquals($source->id, $new->id);
     }
 
+    public function test_admin_can_save_without_additional_sizes_and_add_one_later(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $source = $this->product();
+        $payload = $this->payload($source, []);
+        unset($payload['variants']);
+
+        $this->post(route('admin.products.store'), $payload)
+            ->assertRedirect(route('admin.products.index'))->assertSessionHasNoErrors();
+        $product = Perfume::latest('id')->firstOrFail();
+        $this->assertNotEquals($source->id, $product->id);
+        $this->assertCount(0, $product->variants);
+        $this->assertEquals(100, $product->volume_ml);
+
+        $this->put(route('admin.products.update', $product), $this->payload($product, [$this->variant()]))
+            ->assertRedirect(route('admin.products.show', $product))->assertSessionHasNoErrors();
+        $this->assertSame(200, $product->variants()->sole()->volume_ml);
+        $this->assertEquals(100, $product->fresh()->volume_ml);
+    }
+
+    public function test_untouched_new_rows_do_not_prevent_creating_a_product(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $source = $this->product();
+
+        $this->post(route('admin.products.store'), $this->payload($source, [
+            ['volume_ml' => '', 'price' => '', 'stock' => '0', 'weight' => '200', 'is_active' => '1'],
+            ['id' => '', 'volume_ml' => '', 'price' => '', 'stock' => '', 'weight' => '', 'is_active' => '0'],
+        ]))->assertRedirect(route('admin.products.index'))->assertSessionHasNoErrors();
+
+        $this->assertSame(2, Product::count());
+        $this->assertDatabaseCount('perfume_variants', 0);
+    }
+
+    public function test_untouched_new_rows_do_not_prevent_updating_existing_sizes(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $product = $this->product();
+        $saved = $product->variants()->create($this->variant());
+        $untouched = $this->variant(['volume_ml' => '', 'price' => '', 'stock' => 0, 'weight' => 200]);
+
+        $this->put(route('admin.products.update', $product), $this->payload($product, [
+            2 => $untouched,
+            7 => $this->variant(['id' => $saved->id, 'price' => 0, 'stock' => 0, 'is_active' => 0]),
+        ]))->assertSessionHasNoErrors();
+        $this->assertSame(0, $saved->fresh()->price);
+        $this->assertSame(0, $saved->fresh()->stock);
+        $this->assertFalse($saved->fresh()->is_active);
+
+        $this->put(route('admin.products.update', $product), $this->payload($product, [$untouched]))
+            ->assertSessionHasNoErrors();
+        $this->assertSame($saved->id, $product->variants()->sole()->id);
+        $this->assertSame(0, $saved->fresh()->price);
+        $this->assertDatabaseCount('perfume_variants', 1);
+    }
+
+    public function test_started_or_malformed_rows_still_validate_at_their_original_indexes(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $product = $this->product();
+        $untouched = $this->variant(['volume_ml' => '', 'price' => '', 'stock' => '0', 'weight' => '200']);
+
+        foreach ([
+            [array_replace($untouched, ['volume_ml' => 200]), 'variants.7.price'],
+            [array_replace($untouched, ['price' => 0]), 'variants.7.volume_ml'],
+            [array_replace($untouched, ['stock' => 1]), 'variants.7.volume_ml'],
+            [array_replace($untouched, ['stock' => '00']), 'variants.7.volume_ml'],
+            [array_replace($untouched, ['weight' => 400]), 'variants.7.volume_ml'],
+            [array_replace($untouched, ['weight' => '0200']), 'variants.7.volume_ml'],
+            [array_replace($untouched, ['volume_ml' => []]), 'variants.7.volume_ml'],
+            [array_replace($untouched, ['id' => []]), 'variants.7.id'],
+            [array_replace($untouched, ['is_active' => 'invalid']), 'variants.7.is_active'],
+            [array_replace($untouched, ['unexpected' => 'value']), 'variants.7'],
+            ['invalid', 'variants.7'],
+        ] as [$row, $error]) {
+            $this->putJson(route('admin.products.update', $product), array_replace(
+                $this->payload($product, [2 => $untouched, 7 => $row]), ['name' => 'Should not save']
+            ))->assertUnprocessable()->assertJsonValidationErrors($error);
+            $this->assertSame('Dior Sauvage', $product->fresh()->name);
+            $this->assertDatabaseCount('perfume_variants', 0);
+        }
+    }
+
+    public function test_saved_rows_cannot_be_discarded_as_empty_new_rows(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $product = $this->product();
+        $saved = $product->variants()->create($this->variant());
+
+        $this->putJson(route('admin.products.update', $product), $this->payload($product, [
+            $this->variant(['id' => $saved->id, 'volume_ml' => '', 'price' => '', 'stock' => 0, 'weight' => 200]),
+        ]))->assertUnprocessable()->assertJsonValidationErrors(['variants.0.volume_ml', 'variants.0.price']);
+
+        $this->assertSame(200, $saved->fresh()->volume_ml);
+        $this->assertSame(5200000, $saved->fresh()->price);
+    }
+
+    public function test_any_saved_size_has_one_editable_stock_field_in_the_inventory_section(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => 'admin']));
+        $product = $this->product();
+        $rows = [];
+        foreach ([7, 125, 375] as $index => $volume) {
+            $variant = $product->variants()->create($this->variant([
+                'volume_ml' => $volume, 'stock' => $index + 1, 'is_active' => $volume !== 375,
+            ]));
+            $rows[] = [...$variant->only(['volume_ml', 'price', 'stock', 'weight', 'is_active']), 'id' => $variant->id];
+        }
+
+        $response = $this->get(route('admin.products.edit', $product))->assertOk();
+        $html = $response->getContent();
+        $document = new \DOMDocument;
+        $previous = libxml_use_internal_errors(true);
+        $document->loadHTML('<?xml encoding="UTF-8">'.$html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+        $xpath = new \DOMXPath($document);
+        foreach ($rows as $index => $row) {
+            $name = "variants[$index][stock]";
+            $this->assertSame(1, $xpath->query('//input[@name="'.$name.'"]')->length);
+            $input = $xpath->query('//section[@aria-labelledby="product-stock"]//input[@name="'.$name.'"]')->item(0);
+            $this->assertNotNull($input);
+            $this->assertSame((string) $row['stock'], $input->getAttribute('value'));
+            $response->assertSee('Kho '.$row['volume_ml'].' ml');
+            $rows[$index]['stock'] += 8;
+        }
+
+        $this->put(route('admin.products.update', $product), $this->payload($product, $rows))
+            ->assertSessionHasNoErrors();
+        foreach ($rows as $row) {
+            $this->assertDatabaseHas('perfume_variants', ['id' => $row['id'], 'stock' => $row['stock'], 'volume_ml' => $row['volume_ml']]);
+        }
+        $this->assertSame(16, $product->fresh()->stock);
+        $this->assertSame(9, $product->fresh()->getStockForVolume(7));
+        $this->assertFalse($product->variants()->where('volume_ml', 375)->sole()->is_active);
+        $this->get(route('admin.products.index'))->assertOk()->assertSee('375<small>ml</small>', false)->assertSee('Sửa giá & tồn kho');
+        $this->get(route('admin.products.show', $product))->assertOk()->assertSee('Kho 375 ml')->assertSee('Sửa giá & tồn kho');
+        $this->get(route('perfumes.edit', $product))->assertOk()->assertSee(route('admin.products.edit', $product).'#product-stock', false);
+
+        if (getenv('SOOPI_EXPORT_VARIANT_STOCK') === '1') {
+            $this->withVite();
+            $directory = storage_path('app/variant-stock-review');
+            File::ensureDirectoryExists($directory);
+            foreach (['edit', 'index', 'show'] as $view) {
+                File::put($directory.'/'.$view.'.html', $this->get(route('admin.products.'.$view, $view === 'index' ? [] : [$product]))->assertOk()->getContent());
+            }
+        }
+    }
+
     public function test_invalid_variants_are_rejected_atomically_and_saved_identity_is_protected(): void
     {
         $this->actingAs(User::factory()->create(['role' => 'admin']));

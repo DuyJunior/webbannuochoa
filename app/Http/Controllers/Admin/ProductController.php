@@ -69,14 +69,14 @@ class ProductController extends Controller
 
     public function show(Product $product): View
     {
-        $product->load('category');
+        $product->load(['category', 'variants']);
 
         return view('admin.products.show', compact('product'));
     }
 
     public function edit(Product $product): View
     {
-        $product->load('shopPhotos');
+        $product->load(['shopPhotos', 'variants']);
         $categories = Category::orderBy('name')->get();
         $brands = $this->getAvailableBrands();
 
@@ -120,6 +120,12 @@ class ProductController extends Controller
 
     private function validatedData(Request $request): array
     {
+        $variants = $request->input('variants');
+        if (is_array($variants)) {
+            // An unused extra row must not prevent saving the main bottle.
+            $request->merge(['variants' => array_filter($variants, fn ($variant) => ! $this->isEmptyNewVariant($variant))]);
+        }
+
         $brand = $request->input('brand');
         $name = $request->input('name');
         if (($brand === null || (is_string($brand) && in_array(trim($brand), ['', '__other__'], true))) && is_string($name)) {
@@ -138,6 +144,8 @@ class ProductController extends Controller
             'weight' => ['nullable', 'integer', 'min:1', 'max:50000'],
             'price' => ['required', 'numeric', 'min:0', 'max:999999999999'],
             'sale_price' => ['nullable', 'numeric', 'min:0', 'lte:price'],
+            'price_10ml' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:999999999999'],
+            'price_50ml' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:999999999999'],
             'stock' => ['required', 'integer', 'min:0', 'max:999999999'],
             'stock_5ml' => ['nullable', 'integer', 'min:0', 'max:999999999'],
             'stock_10ml' => ['nullable', 'integer', 'min:0', 'max:999999999'],
@@ -211,6 +219,7 @@ class ProductController extends Controller
             'variants.*.weight.min' => __('Khối lượng phải từ 1 gram trở lên.'),
         ], [
             'variants' => 'dung tích bổ sung', 'variants.*.volume_ml' => 'dung tích',
+            'price_10ml' => __('giá bán 10 ml'), 'price_50ml' => __('giá bán 50 ml'),
             'variants.*.price' => 'giá bán', 'variants.*.stock' => 'tồn kho',
             'variants.*.weight' => 'khối lượng', 'variants.*.is_active' => 'trạng thái mở bán',
         ]);
@@ -229,6 +238,22 @@ class ProductController extends Controller
         unset($validated['shop_photos'], $validated['remove_shop_photos']);
 
         return $validated;
+    }
+
+    private function isEmptyNewVariant(mixed $variant): bool
+    {
+        if (! is_array($variant) || array_diff(array_keys($variant), ['id', 'volume_ml', 'price', 'stock', 'weight', 'is_active'])) {
+            return false;
+        }
+
+        $isBlank = static fn ($value) => $value === null || (is_string($value) && trim($value) === '');
+
+        return $isBlank($variant['id'] ?? null)
+            && $isBlank($variant['volume_ml'] ?? null)
+            && $isBlank($variant['price'] ?? null)
+            && ($isBlank($variant['stock'] ?? null) || in_array($variant['stock'], [0, '0'], true))
+            && ($isBlank($variant['weight'] ?? null) || in_array($variant['weight'], [200, '200'], true))
+            && (! array_key_exists('is_active', $variant) || in_array($variant['is_active'], [true, false, 1, 0, '1', '0'], true));
     }
 
     private function saveWithPhotos(Request $request, Product $product, array $data): void

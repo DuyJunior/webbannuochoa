@@ -1,6 +1,8 @@
 @php
     $editing = isset($product);
     $currentProduct = $product ?? null;
+    $variantRows = old('variants', $currentProduct?->variants->toArray() ?? []);
+    $variantRows = is_array($variantRows) ? $variantRows : [];
     $value = function ($field, $default = '') use ($currentProduct) {
         $value = old($field, $currentProduct->{$field} ?? $default);
         return is_scalar($value) || $value === null ? $value : $default;
@@ -58,11 +60,9 @@
                 @include('partials.english-content-fields', ['englishRecord' => $product ?? new \App\Models\Product, 'englishFields' => ['name_en' => ['label' => 'Tên tiếng Anh'], 'description_en' => ['label' => 'Mô tả tiếng Anh', 'rows' => 4, 'max' => 5000]]])
             </section>
             <section class="admin-card studio-form-section" aria-labelledby="product-pricing">
-                <span class="studio-form-kicker">{{ __('02 / GIÁ & QUY CÁCH') }}</span><h3 id="product-pricing">{{ __('Giá bán và dung tích') }}</h3>
+                <span class="studio-form-kicker">{{ __('02 / QUY CÁCH') }}</span><h3 id="product-pricing">{{ __('Dung tích chai gốc & vận chuyển') }}</h3>
                 <div class="row">
                     @foreach([
-                        ['price', __('Giá niêm yết (₫)'), '', 0, 999999999999, true],
-                        ['sale_price', __('Giá khuyến mãi (₫)'), '', 0, 999999999999, false],
                         ['volume_ml', __('Dung tích chai gốc (ml)'), 100, 1, 5000, true],
                         ['weight', __('Khối lượng tính phí (gram)'), 200, 1, 50000, true],
                     ] as [$field, $label, $default, $min, $max, $required])
@@ -70,7 +70,6 @@
                         <label for="{{ $field }}">{{ __($label) }} @if($required)<span class="text-danger">*</span>@endif</label>
                         <input type="number" id="{{ $field }}" name="{{ $field }}" class="form-control @error($field) is-invalid @enderror" value="{{ $value($field, $default) }}" min="{{ $min }}" max="{{ $max }}" step="1" @required($required)>
                         @error($field)<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        @if($field === 'sale_price')<small class="studio-field-help">{{ __('Để trống nếu không ưu đãi. Không vượt giá niêm yết.') }}</small>@endif
                         @if($field === 'volume_ml')<div class="d-flex flex-wrap mt-2">@foreach([10, 30, 50, 75, 100, 125, 200] as $volume)<button type="button" class="btn btn-sm btn-outline-secondary mr-1 mb-1" data-product-preset="volume_ml" data-value="{{ $volume }}" aria-pressed="false">{{ $volume }}ml</button>@endforeach</div>@endif
                         @if($field === 'weight')<small class="studio-field-help">{{ __('Khối lượng dùng để tính phí vận chuyển.') }}</small><div class="d-flex flex-wrap mt-2">@foreach([100, 200, 350, 500] as $weight)<button type="button" class="btn btn-sm btn-outline-secondary mr-1 mb-1" data-product-preset="weight" data-value="{{ $weight }}" aria-pressed="false">{{ $weight }}g</button>@endforeach</div>@endif
                     </div>
@@ -78,18 +77,7 @@
                 </div>
                 <p class="studio-field-help mb-0"><i class="fa-solid fa-circle-info mr-1" aria-hidden="true"></i> {{ __('Muốn bán thêm 200 ml và giữ chai hiện tại?') }} <a href="#product-variants">{{ __('Thêm dung tích bổ sung bên dưới') }}</a>{{ __('. Không cần đổi dung tích chai gốc.') }}</p>
             </section>
-            <section class="admin-card studio-form-section" aria-labelledby="product-stock">
-                <span class="studio-form-kicker">{{ __('03 / TỒN KHO') }}</span><h3 id="product-stock">{{ __('Số lượng từng dung tích') }}</h3><p class="studio-field-help">{{ __('Nhập số chai thực tế của từng dung tích. Hệ thống không tự quy đổi từ chai lớn.') }}</p>
-                <div class="row">
-                    @foreach(['stock' => __('Kho chai gốc ').$value('volume_ml', 100).' ml', 'stock_5ml' => __('Kho mẫu thử 5ml'), 'stock_10ml' => __('Kho chiết 10ml'), 'stock_50ml' => 'Kho chai 50ml'] as $field => $label)
-                    <div class="col-sm-6 col-xl-3 form-group mb-3">
-                        <label for="{{ $field }}">{{ __($label) }} @if($field === 'stock')<span class="text-danger">*</span>@endif</label>
-                        <input type="number" id="{{ $field }}" name="{{ $field }}" class="form-control @error($field) is-invalid @enderror" value="{{ $value($field, $field === 'stock' ? 10 : 0) }}" min="0" max="999999999" step="1" @required($field === 'stock')>
-                        @error($field)<div class="invalid-feedback">{{ $message }}</div>@enderror
-                    </div>
-                    @endforeach
-                </div>
-            </section>
+            @include('admin.products._inventory')
             @include('admin.products._variants')
         </div>
         <aside class="studio-form-aside">

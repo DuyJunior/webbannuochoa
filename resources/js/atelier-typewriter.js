@@ -1,7 +1,7 @@
 import '../css/atelier-typewriter.css';
 
 const phrases = [...document.querySelectorAll('[data-typewriter]')].filter(element =>
-    element.textContent.trim() && !element.children.length
+    element.textContent.trim() && [...element.querySelectorAll('*')].every(child => ['BR', 'EM', 'STRONG', 'SPAN'].includes(child.tagName))
     && !element.closest('a, button, label, input, select, textarea, [contenteditable="true"]'));
 
 if (phrases.length && typeof window.IntersectionObserver === 'function' && typeof Intl.Segmenter === 'function') {
@@ -14,19 +14,26 @@ if (phrases.length && typeof window.IntersectionObserver === 'function' && typeo
         const segmenter = new Intl.Segmenter('vi', { granularity: 'grapheme' });
         let suspended = false;
         const states = phrases.map(element => {
-            const text = element.textContent;
             const measure = document.createElement('span');
             measure.className = 'atelier-typewriter-measure';
-            measure.textContent = text;
+            measure.textContent = element.innerText;
             const visual = document.createElement('span');
             visual.className = 'atelier-typewriter-visual';
             visual.setAttribute('aria-hidden', 'true');
-            const characters = [...segmenter.segment(text)].map(({ segment }) => {
-                const character = document.createElement('span');
-                character.className = 'atelier-typewriter-character';
-                character.textContent = segment;
-                visual.append(character);
-                return character;
+            // Preserve emphasis and responsive line breaks while revealing one grapheme at a time.
+            visual.append(...[...element.childNodes].map(node => node.cloneNode(true)));
+            const walker = document.createTreeWalker(visual, NodeFilter.SHOW_TEXT);
+            const textNodes = [];
+            while (walker.nextNode()) textNodes.push(walker.currentNode);
+            const characters = textNodes.flatMap(node => {
+                const letters = [...segmenter.segment(node.textContent)].map(({ segment }) => {
+                    const character = document.createElement('span');
+                    character.className = 'atelier-typewriter-character';
+                    character.textContent = segment;
+                    return character;
+                });
+                node.replaceWith(...letters);
+                return letters;
             });
             const cursor = document.createElement('span');
             cursor.className = 'atelier-typewriter-cursor';

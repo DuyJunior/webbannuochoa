@@ -39,7 +39,7 @@ class PerfumeController extends Controller
         }
 
         $perfumes = Perfume::query()
-            ->with('category')
+            ->with(['category', 'variants'])
             ->when($request->filled('search'), function ($query) use ($request) {
                 $keyword = trim((string) $request->input('search'));
                 $query->where(function ($query) use ($keyword) {
@@ -183,6 +183,8 @@ class PerfumeController extends Controller
             'weight' => ['nullable', 'integer', 'min:1', 'max:50000'],
             'price' => ['required', 'numeric', 'min:0', 'max:999999999999'],
             'sale_price' => ['nullable', 'numeric', 'min:0', 'lte:price'],
+            'price_10ml' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:999999999999'],
+            'price_50ml' => ['sometimes', 'nullable', 'integer', 'min:0', 'max:999999999999'],
             'stock' => ['required', 'integer', 'min:0', 'max:999999999'],
             'stock_5ml' => ['nullable', 'integer', 'min:0', 'max:999999999'],
             'stock_10ml' => ['nullable', 'integer', 'min:0', 'max:999999999'],

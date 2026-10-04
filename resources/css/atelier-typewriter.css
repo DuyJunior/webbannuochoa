@@ -5,6 +5,10 @@
     max-width: 100%;
     vertical-align: baseline;
 }
+.bloom-copy h1[data-typewriter] {
+    display: block;
+    max-width: none;
+}
 .atelier-typewriter-ready .atelier-typewriter-measure {
     /* Read once in full; a separate text node must not determine the visual line breaks. */
     position: absolute;

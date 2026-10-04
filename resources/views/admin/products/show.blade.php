@@ -19,7 +19,15 @@
             @foreach([[__('Chai gốc ').$product->volume_ml.'ml', $product->stock], [__('Mẫu thử 5ml'), $product->stock_5ml], [__('Chiết 10ml'), $product->stock_10ml], ['Chai 50ml', $product->stock_50ml]] as [$label, $stock])
             <div class="col-6 col-lg-3 mb-3"><div class="border rounded p-3"><span class="text-muted small d-block mb-2">{{ __($label) }}</span><strong class="h3 {{ $stock > 5 ? 'text-success' : 'text-danger' }}">{{ number_format($stock) }}</strong><small class="text-muted"> {{ __('chai') }}</small><div class="small mt-2">{{ $stock === 0 ? __('Hết hàng') : ($stock <= 5 ? __('Sắp hết hàng') : __('Còn hàng')) }}</div></div></div>
             @endforeach
-        </div><p class="studio-field-help mb-0">{{ __('Từng dung tích có số lượng riêng, không quy đổi tự động từ chai gốc.') }}</p></section>
+            @foreach($product->variants as $variant)
+            <div class="col-6 col-lg-3 mb-3"><div class="border rounded p-3"><span class="text-muted small d-block mb-2">{{ __('Kho :volume ml', ['volume' => $variant->volume_ml]) }}</span><strong class="h3 {{ $variant->stock > 5 ? 'text-success' : 'text-danger' }}">{{ number_format($variant->stock) }}</strong><small class="text-muted"> {{ __('chai') }}</small><div class="small mt-2">{{ $variant->stock === 0 ? __('Hết hàng') : ($variant->stock <= 5 ? __('Sắp hết hàng') : __('Còn hàng')) }}</div>@if(!$variant->is_active)<small class="text-muted">{{ __('Đã ẩn trên cửa hàng') }}</small>@endif</div></div>
+            @endforeach
+        </div><p class="studio-field-help">{{ __('Từng dung tích có số lượng riêng, không quy đổi tự động từ chai gốc.') }}</p><a href="{{ route('admin.products.edit', $product) }}#product-stock" class="btn btn-primary">{{ __('Sửa giá & tồn kho') }}</a></section>
+        <section class="admin-card studio-form-section"><h3>{{ __('Giá bán từng dung tích') }}</h3><dl class="studio-detail-grid">
+            @foreach($product->saleVolumes() as $volume)
+                <div><dt>{{ $volume }} ml</dt><dd>{{ number_format(app(\App\Services\CartQuoteService::class)->unitPrice($product, $volume), 0, ',', '.') }}₫</dd></div>
+            @endforeach
+        </dl></section>
         @if($product->variants->isNotEmpty())
         <section class="admin-card studio-form-section"><h3>{{ __('Dung tích bổ sung') }}</h3><div class="table-responsive"><table class="table mb-0"><thead><tr><th>{{ __('Dung tích') }}</th><th>{{ __('Giá bán') }}</th><th>{{ __('Tồn kho') }}</th><th>{{ __('Hiển thị') }}</th></tr></thead><tbody>
         @foreach($product->variants as $variant)<tr><th>{{ $variant->volume_ml }} ml</th><td>{{ number_format($variant->price, 0, ',', '.') }}₫</td><td>{{ $variant->stock }} {{ __('chai') }}</td><td><span class="{{ $variant->is_active ? 'badge-active' : 'badge-inactive' }}">{{ $variant->is_active ? __('Đang bán') : __('Đã ẩn') }}</span></td></tr>@endforeach

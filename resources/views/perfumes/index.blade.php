@@ -62,7 +62,11 @@
                                     <div style="font-size: 11.5px; line-height: 1.4;">
                                         <div>10ml: <strong>{{ $perfume->stock_10ml }}</strong></div>
                                         <div>50ml: <strong>{{ $perfume->stock_50ml }}</strong></div>
-                                        <div>100ml: <strong>{{ $perfume->stock }}</strong></div>
+                                        <div>{{ $perfume->volume_ml }}ml: <strong>{{ $perfume->stock }}</strong></div>
+                                        @foreach($perfume->variants as $variant)
+                                        <div>{{ $variant->volume_ml }}ml: <strong>{{ $variant->stock }}</strong> @if(!$variant->is_active){{ __('Đã ẩn') }}@endif</div>
+                                        @endforeach
+                                        <a href="{{ route('admin.products.edit', $perfume->id) }}#product-stock">{{ __('Sửa giá & tồn kho') }}</a>
                                     </div>
                                 </td>
                                 <td><span class="badge {{ $perfume->is_active ? 'badge-active' : 'badge-muted' }}">{{ $perfume->is_active ? __('Đang hiển thị') : __('Đang ẩn') }}</span></td>

@@ -21,7 +21,7 @@ class Product extends Model
     protected $fillable = [
         'category_id', 'name', 'slug', 'brand', 'gender', 'concentration',
         'volume_ml', 'weight', 'price', 'sale_price', 'stock', 'stock_5ml', 'stock_10ml', 'stock_50ml', 'image_url', 'video_url',
-        'description', 'name_en', 'description_en', 'is_active',
+        'description', 'name_en', 'description_en', 'is_active', 'price_10ml', 'price_50ml',
     ];
 
     protected function casts(): array
@@ -29,6 +29,8 @@ class Product extends Model
         return [
             'price' => 'decimal:0',
             'sale_price' => 'decimal:0',
+            'price_10ml' => 'integer',
+            'price_50ml' => 'integer',
             'stock' => 'integer',
             'stock_5ml' => 'integer',
             'stock_10ml' => 'integer',

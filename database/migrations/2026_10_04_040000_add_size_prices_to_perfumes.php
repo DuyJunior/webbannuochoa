@@ -1,0 +1,21 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('perfumes', function (Blueprint $table) {
+            $table->unsignedBigInteger('price_10ml')->nullable();
+            $table->unsignedBigInteger('price_50ml')->nullable();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('perfumes', fn (Blueprint $table) => $table->dropColumn(['price_10ml', 'price_50ml']));
+    }
+};
