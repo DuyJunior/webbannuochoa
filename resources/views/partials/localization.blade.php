@@ -9,6 +9,8 @@
 .language-apply{font:inherit;color:inherit;background:transparent;border:1px solid #c8b8c1;border-radius:5px;padding:7px;cursor:pointer}
 html.has-language-js .language-apply{display:none}
 .language-mobile{display:none}.language-footer{margin-top:20px}.language-login{margin-bottom:24px}
+.ht-footer .language-switcher,.ht-footer .language-switcher label{color:#f7edf2}
+.ht-footer .language-switcher select{color:#f7edf2!important}
 @media(max-width:1250px){.sn-bar{column-gap:14px}}
 @media(min-width:901px) and (max-width:1400px){.soopi-header .sn-bar{grid-template-columns:minmax(120px,1fr) auto auto}}
 @media(max-width:900px){.sn-tools .language-desktop{display:none}.language-mobile{display:inline-flex;margin:8px 20px 18px}}
