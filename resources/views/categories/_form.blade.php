@@ -21,6 +21,7 @@
             @error('name')<small class="field-error">{{ $message }}</small>@enderror
         </label>
     </div>
+@include('partials.english-content-fields', ['englishRecord' => $category ?? new \App\Models\Category, 'englishFields' => ['name_en' => ['label' => 'Tên tiếng Anh']]])
 </section>
 
 <div class="form-actions category-form-actions">

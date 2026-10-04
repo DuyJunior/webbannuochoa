@@ -1,7 +1,7 @@
 @extends('layouts.store')
 
-@section('title', __('Mùi Hương Hôm Nay (Scent of the Day) · ') . $perfume->name . ' | Soopi')
-@section('meta_description', __('Khám phá mùi hương được Soopi tuyển chọn cho ngày hôm nay: ') . $perfume->name)
+@section('title', __('Mùi Hương Hôm Nay (Scent of the Day) · ') . $perfume->localized_name . ' | Soopi')
+@section('meta_description', __('Khám phá mùi hương được Soopi tuyển chọn cho ngày hôm nay: ') . $perfume->localized_name)
 
 @section('content')
 <div class="store-container ht-sotd-page">
@@ -15,7 +15,7 @@
     <div class="ht-sotd-hero-card">
         <div class="sotd-image-col">
             <div class="sotd-img-frame">
-                <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" class="sotd-main-img">
+                <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->localized_name }}" class="sotd-main-img">
                 <span class="sotd-daily-ribbon">@include('partials.icon', ['name' => 'star', 'size' => '1em']) {{ __('MÙI HƯƠNG HÔM NAY') }}</span>
             </div>
             @if($todayCode)
@@ -38,12 +38,12 @@
             </div>
 
             <span class="sotd-brand">{{ $perfume->brand }}</span>
-            <h1 class="sotd-title">{{ $perfume->name }}</h1>
-            <p class="sotd-meta">{{ __($perfume->category->name ?? __('Nước hoa cao cấp')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $perfume->gender } }} · {{ __('Chai') }} {{ $perfume->volume_ml }}ml</p>
+            <h1 class="sotd-title">{{ $perfume->localized_name }}</h1>
+            <p class="sotd-meta">{{ __($perfume->category->localized_name ?? __('Nước hoa cao cấp')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $perfume->gender } }} · {{ __('Chai') }} {{ $perfume->volume_ml }}ml</p>
 
             <div class="sotd-story">
                 <h3>{{ __('Vì sao đây là mùi hương lý tưởng cho hôm nay?') }}</h3>
-                <p>{{ $dailyEditorial['verified'] ? $dailyEditorial['story'] : ($perfume->description ?: $dailyEditorial['story']) }}</p>
+                <p>{{ $dailyEditorial['verified'] ? $dailyEditorial['story'] : ($perfume->localized_description ?: $dailyEditorial['story']) }}</p>
             </div>
 
             @if($dailyEditorial['verified'])

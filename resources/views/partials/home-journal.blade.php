@@ -46,7 +46,7 @@
                 @foreach($homeVideos as $vid)
                     <a class="journal-video js-open-video" href="{{ $vid->embed_url }}"
                        data-title="{{ $vid->localized_title }}" data-embed="{{ $vid->embed_url }}" data-desc="{{ $vid->localized_description }}" data-views="{{ $vid->formatted_views }}"
-                       data-perfume-name="{{ $vid->perfume?->name }}" data-perfume-brand="{{ $vid->perfume?->brand }}"
+                       data-perfume-name="{{ $vid->perfume?->localized_name }}" data-perfume-brand="{{ $vid->perfume?->brand }}"
                        data-perfume-price="{{ $vid->perfume ? number_format($vid->perfume->sale_price ?? $vid->perfume->price, 0, ',', '.').'₫' : '' }}"
                        data-perfume-url="{{ $vid->perfume ? route('perfumes.show', $vid->perfume) : '' }}" data-perfume-img="{{ $vid->perfume?->image_src }}">
                         <div class="journal-video-thumb"><img src="{{ $vid->thumbnail_src }}" alt="" width="360" height="450" loading="lazy" decoding="async"><span class="journal-video-number" aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span><span class="journal-play" aria-hidden="true">@include('partials.icon', ['name' => 'play', 'size' => 22])</span>@if($vid->duration)<span class="journal-duration">{{ $vid->duration }}</span>@endif<span class="journal-watch" aria-hidden="true">{{ __('Xem video') }} <span>↗</span></span></div>

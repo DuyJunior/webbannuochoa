@@ -156,6 +156,8 @@ class ProductController extends Controller
             'remove_shop_photos.*' => ['required', 'integer', 'distinct', 'min:1'],
             'video_url' => ['bail', 'nullable', 'string', 'max:2048', new SafeVideoUrl],
             'description' => ['nullable', 'string', 'max:5000'],
+            'name_en' => ['nullable', 'string', 'max:255'],
+            'description_en' => ['nullable', 'string', 'max:5000'],
             'is_active' => ['nullable', 'boolean'],
             'variants' => ['sometimes', 'array', 'max:20'],
             'variants.*' => ['required', 'array:id,volume_ml,price,stock,weight,is_active'],

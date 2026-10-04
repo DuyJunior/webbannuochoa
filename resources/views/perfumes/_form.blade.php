@@ -125,6 +125,7 @@
                 <textarea name="description" rows="6" maxlength="5000" placeholder="{{ __('Mô tả hương đầu, hương giữa, hương cuối và phong cách...') }}">{{ old('description', $perfume->description ?? '') }}</textarea>
                 @error('description')<small class="field-error">{{ $message }}</small>@enderror
             </label>
+            <div class="field-wide">@include('partials.english-content-fields', ['englishRecord' => $perfume ?? new \App\Models\Perfume, 'englishFields' => ['name_en' => ['label' => 'Tên tiếng Anh'], 'description_en' => ['label' => 'Mô tả tiếng Anh', 'rows' => 4, 'max' => 5000]]])</div>
             <label class="checkbox-field field-wide">
                 <input type="hidden" name="is_active" value="0">
                 <input type="checkbox" name="is_active" value="1" @checked((bool) old('is_active', $perfume->is_active ?? true))>

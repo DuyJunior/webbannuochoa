@@ -51,6 +51,11 @@
                 <small class="text-muted mt-1 d-block">{{ __('Nhập đường dẫn tương đối trong thư mục public của dự án.') }}</small>
             </div>
 
+            @include('partials.english-content-fields', ['englishRecord' => $article, 'englishFields' => [
+                'title_en' => ['label' => 'Tiêu đề tiếng Anh', 'max' => 200],
+                'excerpt_en' => ['label' => 'Tóm tắt tiếng Anh', 'rows' => 3, 'max' => 500],
+                'body_en' => ['label' => 'Nội dung bài viết tiếng Anh', 'rows' => 12],
+            ]])
             <div class="form-group mb-4">
                 <div class="custom-control custom-checkbox">
                     <input type="hidden" name="is_published" value="0">

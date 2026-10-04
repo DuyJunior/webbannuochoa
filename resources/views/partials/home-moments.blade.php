@@ -15,10 +15,10 @@
             @php($pick = $perfumes->firstWhere('slug', $moment['slug']))
             <article class="moment-scene moment-{{ $moment['key'] }}" id="moment-{{ $moment['key'] }}" data-moment-panel="{{ $moment['key'] }}" aria-label="{{ $moment['label'] }}">
                 <div class="moment-copy"><span class="atelier-kicker">{{ $moment['time'] }} / {{ $moment['label'] }}</span><h3>@foreach(explode('\n', $moment['title']) as $line){{ $line }}@unless($loop->last)<br>@endunless @endforeach</h3><p>{{ $moment['copy'] }}</p>
-                    @if($pick)<a class="atelier-button" href="{{ route('perfumes.show', $pick) }}">{{ __('Khám phá mùi hương này') }} <span aria-hidden="true">↗</span></a><div class="moment-product"><span>{{ $pick->brand }}</span><strong>{{ $pick->name }}</strong><span>{{ number_format($pick->sale_price ?? $pick->price, 0, ',', '.') }}₫</span></div>@endif
+                    @if($pick)<a class="atelier-button" href="{{ route('perfumes.show', $pick) }}">{{ __('Khám phá mùi hương này') }} <span aria-hidden="true">↗</span></a><div class="moment-product"><span>{{ $pick->brand }}</span><strong>{{ $pick->localized_name }}</strong><span>{{ number_format($pick->sale_price ?? $pick->price, 0, ',', '.') }}₫</span></div>@endif
                     <a class="atelier-link" href="{{ route('store.finder', ['occasion'=>$moment['occasion'], 'style'=>$moment['style']]) }}">{{ __('Tìm hương cho khoảnh khắc này ↗') }}</a>
                 </div>
-                <div class="moment-image"><img src="{{ asset($moment['image']) }}" alt="{{ $pick?->name ?? 'Cảm hứng hương thơm cho '.$moment['label'] }}" width="960" height="960" loading="lazy" decoding="async"><span class="moment-image-caption">SOOPI / {{ $moment['time'] }}</span></div>
+                <div class="moment-image"><img src="{{ asset($moment['image']) }}" alt="{{ $pick?->localized_name ?? 'Cảm hứng hương thơm cho '.$moment['label'] }}" width="960" height="960" loading="lazy" decoding="async"><span class="moment-image-caption">SOOPI / {{ $moment['time'] }}</span></div>
             </article>
         @endforeach
     </div>

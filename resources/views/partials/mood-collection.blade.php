@@ -14,9 +14,9 @@
                         </a>
                         <div class="mood-pick-copy">
                             <span class="mood-pick-brand">{{ $item->brand }}</span>
-                            <h4><a href="{{ route('perfumes.show', $item) }}">{{ $item->name }}</a></h4>
+                            <h4><a href="{{ route('perfumes.show', $item) }}">{{ $item->localized_name }}</a></h4>
                             <p>{{ $pick['reason'] }}</p>
-                            <a class="mood-pick-buy" href="{{ route('perfumes.show', $item) }}" data-quick-view="{{ route('perfumes.quick-view', $item) }}" data-product-name="{{ $item->name }}" aria-haspopup="dialog" aria-controls="product-quick-view" aria-label="Xem nhanh {{ $item->name }}">
+                            <a class="mood-pick-buy" href="{{ route('perfumes.show', $item) }}" data-quick-view="{{ route('perfumes.quick-view', $item) }}" data-product-name="{{ $item->localized_name }}" aria-haspopup="dialog" aria-controls="product-quick-view" aria-label="{{ __('Xem nhanh :name', ['name' => $item->localized_name]) }}">
                                 <span>{{ number_format($pick['price'], 0, ',', '.') }}₫ <small>/ {{ $pick['volume'] }} ml</small></span><span aria-hidden="true">↗</span>
                             </a>
                         </div>

@@ -1,13 +1,13 @@
 @php
     use Illuminate\Support\Str;
     $fragranceEditorial = \App\Services\FragranceEditorialService::forPerfume($perfume);
-    $productStory = $fragranceEditorial['verified'] ? $fragranceEditorial['story'] : __('Khám phá ').$perfume->name.__(' của ').$perfume->brand.__(' cùng Soopi. Liên hệ để được tư vấn chi tiết về mùi hương.');
+    $productStory = $fragranceEditorial['verified'] ? $fragranceEditorial['story'] : __('Khám phá ').$perfume->localized_name.__(' của ').$perfume->brand.__(' cùng Soopi. Liên hệ để được tư vấn chi tiết về mùi hương.');
 @endphp
 @extends('layouts.store')
 
-@section('title', $perfume->name.' · '.$perfume->brand.' · Soopi')
+@section('title', $perfume->localized_name.' · '.$perfume->brand.' · Soopi')
 @section('meta_description', Str::limit($productStory, 155))
-@section('meta_keywords', $perfume->name.', '.$perfume->brand.__(', nước hoa chính hãng, ').$perfume->concentration.', Soopi')
+@section('meta_keywords', $perfume->localized_name.', '.$perfume->brand.__(', nước hoa chính hãng, ').$perfume->concentration.', Soopi')
 @if($perfume->image_src)
     @section('og_image', $perfume->image_src)
 @endif
@@ -17,7 +17,7 @@
     $productSchema = array_filter([
         '@context' => 'https://schema.org',
         '@type' => 'Product',
-        'name' => $perfume->name,
+        'name' => $perfume->localized_name,
         'description' => Str::limit($productStory, 300),
         'brand' => [
             '@type' => 'Brand',
@@ -57,9 +57,9 @@
         <nav class="luxury-breadcrumb" aria-label="Breadcrumb">
             <a href="{{ route('home') }}">{{ __('Trang chủ') }}</a>
             <span>/</span>
-            <a href="{{ route('home') }}#san-pham">{{ __($perfume->category?->name ?? __('Nước hoa')) }}</a>
+            <a href="{{ route('home') }}#san-pham">{{ __($perfume->category?->localized_name ?? __('Nước hoa')) }}</a>
             <span>/</span>
-            <span class="current">{{ $perfume->name }}</span>
+            <span class="current">{{ $perfume->localized_name }}</span>
         </nav>
 
         @if (isset($errors) && $errors->any())
@@ -73,7 +73,7 @@
             <div class="luxury-gallery-column {{ $perfume->shopPhotos->isNotEmpty() ? 'has-shop-photos' : '' }}">
                 <div class="luxury-main-visual">
                     @if ($editorialImage || $perfume->image_src)
-                        <img id="mainProductImage" src="{{ $editorialImage ? asset($editorialImage) : $perfume->image_src }}" alt="{{ $perfume->name }}" fetchpriority="high">
+                        <img id="mainProductImage" src="{{ $editorialImage ? asset($editorialImage) : $perfume->image_src }}" alt="{{ $perfume->localized_name }}" fetchpriority="high">
                     @else
                         <div class="luxury-bottle-placeholder">
                             <span>{{ mb_substr($perfume->brand, 0, 1) }}</span>
@@ -139,10 +139,10 @@
             {{-- Product Information & Purchase Form --}}
             <div class="luxury-info-column">
                 <div class="luxury-brand-kicker">{{ $perfume->brand }}</div>
-                <h1 class="luxury-product-title">{{ $perfume->name }}</h1>
+                <h1 class="luxury-product-title">{{ $perfume->localized_name }}</h1>
 
                 <div class="luxury-category-tags">
-                    <span class="tag-pill">{{ __($perfume->category?->name ?? __('Nước hoa')) }}</span>
+                    <span class="tag-pill">{{ __($perfume->category?->localized_name ?? __('Nước hoa')) }}</span>
                     <span class="tag-pill">{{ ['nam' => __('Dành cho Nam'), 'nu' => __('Dành cho Nữ'), 'unisex' => __('Unisex - Mọi giới tính')][$perfume->gender] }}</span>
                     @if($perfume->concentration)<span class="tag-pill">{{ $perfume->concentration }}</span>@endif
                     @php
@@ -151,11 +151,11 @@
                     @endphp
                     @if($showVidUrl)
                     <button type="button" class="tag-pill tag-pill-video js-open-video"
-                        data-title="{{ $directVid ? $directVid->localized_title : __('Review & Cận Cảnh :name', ['name' => $perfume->name]) }}"
+                        data-title="{{ $directVid ? $directVid->localized_title : __('Review & Cận Cảnh :name', ['name' => $perfume->localized_name]) }}"
                         data-embed="{{ $showVidUrl }}"
                         data-desc="{{ $directVid ? $directVid->localized_description : __('Khám phá sản phẩm cùng Soopi.') }}"
                         data-views="{{ $directVid ? $directVid->formatted_views : '' }}"
-                        data-perfume-name="{{ $perfume->name }}"
+                        data-perfume-name="{{ $perfume->localized_name }}"
                         data-perfume-brand="{{ $perfume->brand }}"
                         data-perfume-price="{{ number_format($perfume->price) }}đ"
                         data-perfume-url="{{ route('perfumes.show', $perfume) }}"
@@ -207,7 +207,7 @@
                         <div class="volume-options-grid">
                             @if($volume100 !== 10)
                             {{-- Option 10ml Chiết --}}
-                            <label class="volume-card-option" data-volume="10" data-stock="{{ $stock10ml }}" data-desc="Chiết Travel Spray" data-price="{{ $price10ml }}" data-oldprice="{{ $price10ml }}">
+                            <label class="volume-card-option" data-volume="10" data-stock="{{ $stock10ml }}" data-desc="{{ __('Chiết Travel Spray') }}" data-price="{{ $price10ml }}" data-oldprice="{{ $price10ml }}">
                                 <input type="radio" name="volume_ml" value="10">
                                 <div class="volume-card-badge">{{ __('Dùng thử') }}</div>
                                 <div class="volume-card-size">10ml</div>
@@ -225,7 +225,7 @@
                             @endif
                             @if($volume100 !== 50)
                             {{-- Option 50ml --}}
-                            <label class="volume-card-option" data-volume="50" data-stock="{{ $stock50ml }}" data-desc="Chai Vừa Phải" data-price="{{ $price50ml }}" data-oldprice="{{ $price50ml }}">
+                            <label class="volume-card-option" data-volume="50" data-stock="{{ $stock50ml }}" data-desc="{{ __('Chai Vừa Phải') }}" data-price="{{ $price50ml }}" data-oldprice="{{ $price50ml }}">
                                 <input type="radio" name="volume_ml" value="50">
                                 <div class="volume-card-badge">{{ __('Phổ biến') }}</div>
                                 <div class="volume-card-size">50ml</div>
@@ -242,7 +242,7 @@
 
                             {{-- Option Fullsize (Default) --}}
                             @endif
-                            <label class="volume-card-option active" data-volume="{{ $volume100 }}" data-stock="{{ $stockFull }}" data-desc="Fullbox Nguyên Seal" data-price="{{ $priceFull }}" data-oldprice="{{ $originalFullPrice }}">
+                            <label class="volume-card-option active" data-volume="{{ $volume100 }}" data-stock="{{ $stockFull }}" data-desc="{{ __('Fullbox Nguyên Seal') }}" data-price="{{ $priceFull }}" data-oldprice="{{ $originalFullPrice }}">
                                 <input type="radio" name="volume_ml" value="{{ $volume100 }}" checked>
                                 <div class="volume-card-badge best-seller">{{ __('Nguyên hộp') }}</div>
                                 <div class="volume-card-size">{{ $volume100 }}ml</div>
@@ -257,7 +257,7 @@
                                 </div>
                             </label>
                             @foreach($perfume->variants->where('is_active', true) as $variant)
-                            <label class="volume-card-option" data-volume="{{ $variant->volume_ml }}" data-stock="{{ $variant->stock }}" data-desc="Chai {{ $variant->volume_ml }} ml" data-price="{{ $variant->price }}" data-oldprice="{{ $variant->price }}">
+                            <label class="volume-card-option" data-volume="{{ $variant->volume_ml }}" data-stock="{{ $variant->stock }}" data-desc="{{ __('Chai :volume ml', ['volume' => $variant->volume_ml]) }}" data-price="{{ $variant->price }}" data-oldprice="{{ $variant->price }}">
                                 <input type="radio" name="volume_ml" value="{{ $variant->volume_ml }}">
                                 <div class="volume-card-badge">{{ __('Thêm lựa chọn') }}</div>
                                 <div class="volume-card-size">{{ $variant->volume_ml }}ml</div>
@@ -332,7 +332,7 @@
                 </div>
                 <div class="ht-product-utilities">
                     @auth
-                    <form method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}" data-wishlist="{{ $perfume->id }}" data-wishlist-saved="{{ $isFavorite ? 'true' : 'false' }}" data-wishlist-name="{{ $perfume->name }}" data-wishlist-login="{{ route('login') }}">@csrf<button type="submit" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}" aria-label="{{ $isFavorite ? 'Bỏ yêu thích' : 'Yêu thích' }} {{ $perfume->name }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <span data-wishlist-label>{{ $isFavorite ? __('Đã yêu thích') : __('Lưu yêu thích') }}</span></button></form>
+                    <form method="POST" action="{{ route('store.wishlist.toggle', $perfume) }}" data-wishlist="{{ $perfume->id }}" data-wishlist-saved="{{ $isFavorite ? 'true' : 'false' }}" data-wishlist-name="{{ $perfume->localized_name }}" data-wishlist-login="{{ route('login') }}">@csrf<button type="submit" aria-pressed="{{ $isFavorite ? 'true' : 'false' }}" aria-label="{{ $isFavorite ? 'Bỏ yêu thích' : 'Yêu thích' }} {{ $perfume->localized_name }}">@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <span data-wishlist-label>{{ $isFavorite ? __('Đã yêu thích') : __('Lưu yêu thích') }}</span></button></form>
                     <button type="button" id="openWardrobeModalBtn" class="ht-utility-btn">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) {{ $inWardrobe ? __(' Đã trong Tủ hương') : __('+ Tủ nước hoa') }}</button>
                     @if($perfume->availableStock() <= 0)
                     <form method="POST" action="{{ route('store.stock-alert', $perfume) }}">@csrf<button type="submit">{{ __('Báo khi có hàng') }}</button></form>
@@ -401,7 +401,7 @@
                      data-embed="{{ $pvid->embed_url }}"
                      data-desc="{{ $pvid->localized_description }}"
                      data-views="{{ $pvid->formatted_views }}"
-                     data-perfume-name="{{ $pvid->perfume ? $pvid->perfume->name : $perfume->name }}"
+                     data-perfume-name="{{ $pvid->perfume ? $pvid->perfume->localized_name : $perfume->localized_name }}"
                      data-perfume-brand="{{ $pvid->perfume ? $pvid->perfume->brand : $perfume->brand }}"
                      data-perfume-price="{{ number_format(($pvid->perfume ?: $perfume)->price) . 'đ' }}"
                      data-perfume-url="{{ route('perfumes.show', $pvid->perfume ?: $perfume) }}"
@@ -429,7 +429,7 @@
             <div class="ht-review-grid">
                 <div>
                     @forelse($reviews as $review)
-                    <article class="ht-review-card"><div><strong>{{ $review->user?->name ?? __('Khách hàng') }}</strong><span role="img" aria-label="{{ $review->rating }} trên 5 sao">@for($star = 1; $star <= 5; $star++)@include('partials.icon', ['name' => $star <= $review->rating ? 'star-filled' : 'star', 'size' => '1em'])@endfor</span></div><p>{{ $review->body }}</p>@if($review->image_path)<img src="{{ asset($review->image_path) }}" alt="{{ __('Ảnh do khách hàng chia sẻ') }}" loading="lazy">@endif<small>{{ $review->created_at->format('d/m/Y') }}</small></article>
+                    <article class="ht-review-card"><div><strong>{{ $review->user?->name ?? __('Khách hàng') }}</strong><span role="img" aria-label="{{ __(':rating trên 5 sao', ['rating' => $review->rating]) }}">@for($star = 1; $star <= 5; $star++)@include('partials.icon', ['name' => $star <= $review->rating ? 'star-filled' : 'star', 'size' => '1em'])@endfor</span></div><p>{{ $review->body }}</p>@if($review->image_path)<img src="{{ asset($review->image_path) }}" alt="{{ __('Ảnh do khách hàng chia sẻ') }}" loading="lazy">@endif<small>{{ $review->created_at->format('d/m/Y') }}</small></article>
                     @empty<p>{{ __('Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ cảm nhận.') }}</p>@endforelse
                     {{ $reviews->links() }}
                 </div>
@@ -464,7 +464,7 @@
             <a href="{{ route('perfumes.show', $rel) }}" class="ht-related-card">
                 <div class="ht-related-img">
                     @if($rel->image_src)
-                        <img src="{{ $rel->image_src }}" alt="{{ $rel->name }}" loading="lazy">
+                        <img src="{{ $rel->image_src }}" alt="{{ $rel->localized_name }}" loading="lazy">
                     @else
                         <span class="ht-related-placeholder">{{ mb_substr($rel->brand, 0, 1) }}</span>
                     @endif
@@ -474,7 +474,7 @@
                 </div>
                 <div class="ht-related-info">
                     <span class="ht-related-brand">{{ $rel->brand }}</span>
-                    <strong class="ht-related-name">{{ $rel->name }}</strong>
+                    <strong class="ht-related-name">{{ $rel->localized_name }}</strong>
                     <div class="ht-related-price">
                         <span class="ht-related-current">{{ number_format((float)($rel->sale_price ?? $rel->price), 0, ',', '.') }}₫</span>
                         @if($rel->sale_price !== null)
@@ -501,11 +501,11 @@
             @foreach($recentlyViewed as $recent)
             <a href="{{ route('perfumes.show', $recent) }}" class="ht-related-card">
                 <div class="ht-related-img">
-                    <img src="{{ $recent->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $recent->name }}" loading="lazy">
+                    <img src="{{ $recent->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $recent->localized_name }}" loading="lazy">
                 </div>
                 <div class="ht-related-info">
                     <span class="ht-related-brand">{{ $recent->brand }}</span>
-                    <strong class="ht-related-name">{{ $recent->name }}</strong>
+                    <strong class="ht-related-name">{{ $recent->localized_name }}</strong>
                     <div class="ht-related-price">
                         <span class="ht-related-current">{{ number_format((float)($recent->sale_price ?? $recent->price), 0, ',', '.') }}₫</span>
                     </div>
@@ -522,7 +522,7 @@
             <button type="button" class="ht-popup-close-x" aria-label="{{ __('Đóng tủ hương') }}" onclick="document.getElementById('htWardrobeModal').hidden=true">@include('partials.icon', ['name' => 'close', 'size' => '1em'])</button>
             <div class="modal-icon">@include('partials.icon', ['name' => 'gem', 'size' => '1em'])</div>
             <h3>{{ __('Lưu Vào Tủ Nước Hoa Cá Nhân') }}</h3>
-            <p>{{ __('Chọn dịp bạn cảm thấy phù hợp nhất để dùng mùi hương') }} <strong>{{ $perfume->name }}</strong>:</p>
+            <p>{{ __('Chọn dịp bạn cảm thấy phù hợp nhất để dùng mùi hương') }} <strong>{{ $perfume->localized_name }}</strong>:</p>
             @auth
             <form action="{{ route('store.wardrobe.add') }}" method="POST">
                 @csrf
@@ -557,7 +557,7 @@
             <p>{{ __('Tạo link thiệp điện tử kèm lời nhắn gửi trao để gửi qua Zalo, Messenger hoặc SMS:') }}</p>
             <div class="gift-form-fields">
                 <label>{{ __('Tên của bạn (Người gửi):') }}</label>
-                <input type="text" id="giftFromInput" value="{{ Auth::user()->name ?? 'Người bạn thân' }}" class="form-input">
+                <input type="text" id="giftFromInput" value="{{ Auth::user()->name ?? __('Người bạn thân') }}" class="form-input">
                 <label>{{ __('Tên người nhận:') }}</label>
                 <input type="text" id="giftToInput" placeholder="VD: Mai Lan" class="form-input">
                 <label>{{ __('Lời chúc / Nhắn nhủ:') }}</label>

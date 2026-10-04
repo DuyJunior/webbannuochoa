@@ -79,14 +79,14 @@
                 $available = $sampleAvailability[$perfume->id] ?? 0;
                 $editorial = \App\Services\FragranceEditorialService::forPerfume($perfume);
             @endphp
-            <div class="picker-card" data-gender="{{ $perfume->gender }}" data-id="{{ $perfume->id }}" data-name="{{ $perfume->name }}" data-brand="{{ $perfume->brand }}" data-img="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" data-available="{{ $available }}">
+            <div class="picker-card" data-gender="{{ $perfume->gender }}" data-id="{{ $perfume->id }}" data-name="{{ $perfume->localized_name }}" data-brand="{{ $perfume->brand }}" data-img="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" data-available="{{ $available }}">
                 <div class="card-thumb">
-                    <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" loading="lazy">
+                    <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->localized_name }}" loading="lazy">
                 </div>
                 <div class="card-details">
                     <span class="card-brand">{{ $perfume->brand }}</span>
-                    <h3 class="card-name">{{ $perfume->name }}</h3>
-                    <p class="card-family">{{ __($perfume->category->name ?? __('Nước hoa')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
+                    <h3 class="card-name">{{ $perfume->localized_name }}</h3>
+                    <p class="card-family">{{ __($perfume->category->localized_name ?? __('Nước hoa')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
                     <p class="card-note">@include('partials.icon', ['name' => 'flower', 'size' => '1em']) {{ $editorial['verified'] ? implode(' · ', array_slice($editorial['key_notes'], 0, 3)) : __('Nốt hương đang được đối chiếu.') }}</p>
                 </div>
                 <button type="button" class="ht-button ht-button-light select-sample-btn" data-id="{{ $perfume->id }}" aria-pressed="false" @disabled($available < 1)>

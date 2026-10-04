@@ -44,7 +44,7 @@ class ProductQuickViewController extends Controller
 
         return response()->json([
             'id' => $perfume->id,
-            'name' => $perfume->name,
+            'name' => $perfume->localized_name,
             'brand' => $perfume->brand,
             'concentration' => $perfume->concentration,
             'description' => $editorial['verified'] ? Str::limit($editorial['story'], 180) : '',

@@ -254,13 +254,13 @@
                 </div>
                 <div class="item-card-inner">
                     <div class="item-card-img">
-                        <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" loading="lazy">
+                        <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->localized_name }}" loading="lazy">
                     </div>
                     <div class="item-card-content">
                         <span class="item-brand">{{ $perfume->brand }}</span>
-                        <h3 class="item-title"><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->name }}</a></h3>
-                        <p class="item-category">{{ __($perfume->category->name ?? __('Nước hoa cao cấp')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
-                        <p class="item-desc">{{ Str::limit(strip_tags($perfume->description), 110) }}</p>
+                        <h3 class="item-title"><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->localized_name }}</a></h3>
+                        <p class="item-category">{{ __($perfume->category->localized_name ?? __('Nước hoa cao cấp')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
+                        <p class="item-desc">{{ Str::limit(strip_tags($perfume->localized_description), 110) }}</p>
 
                         <div class="item-notes-preview">
                             <span class="note-pill">{{ $quizNotes['verified'] ? Str::limit(implode(' · ', $quizNotes['key_notes']), 100) : __('Cùng Soopi tìm hiểu thêm về nốt hương') }}</span>
@@ -275,7 +275,7 @@
                             </div>
                             <div class="item-buttons">
                                 <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light">{{ __('Chi Tiết') }}</a>
-                                <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-primary" data-quick-view="{{ route('perfumes.quick-view', $perfume) }}" data-product-name="{{ $perfume->name }}" aria-haspopup="dialog" aria-controls="product-quick-view">{{ __('Chọn dung tích') }}</a>
+                                <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-primary" data-quick-view="{{ route('perfumes.quick-view', $perfume) }}" data-product-name="{{ $perfume->localized_name }}" aria-haspopup="dialog" aria-controls="product-quick-view">{{ __('Chọn dung tích') }}</a>
                             </div>
                         </div>
                     </div>

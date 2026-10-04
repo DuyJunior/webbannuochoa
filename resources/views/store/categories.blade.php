@@ -14,7 +14,7 @@
         @forelse($categories as $category)
             <a class="interior-category-link" href="{{ route('home', ['category' => $category->id]) }}#san-pham">
                 <span class="interior-category-number" aria-hidden="true">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                <div><h2>{{ __($category->name) }}</h2><p>{{ $category->perfumes_count }} {{ __('mùi hương đang có') }}</p></div>
+                <div><h2>{{ __($category->localized_name) }}</h2><p>{{ $category->perfumes_count }} {{ __('mùi hương đang có') }}</p></div>
                 <span class="interior-category-arrow" aria-hidden="true">↗</span>
             </a>
         @empty

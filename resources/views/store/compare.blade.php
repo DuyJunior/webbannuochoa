@@ -27,7 +27,7 @@
             @if($samplePairs->count() >= 2)
             <div class="preset-links">
                 <a href="{{ route('store.compare', ['ids' => $samplePairs->take(2)->pluck('id')->join(',')]) }}" class="ht-button ht-button-outline">
-                    {{ __('So sánh:') }} {{ $samplePairs[0]->name }} vs {{ $samplePairs[1]->name }}
+                    {{ __('So sánh:') }} {{ $samplePairs[0]->localized_name }} vs {{ $samplePairs[1]->localized_name }}
                 </a>
                 @if($samplePairs->count() >= 3)
                 <a href="{{ route('store.compare', ['ids' => $samplePairs->take(3)->pluck('id')->join(',')]) }}" class="ht-button ht-button-outline">
@@ -49,11 +49,11 @@
             <div class="compare-col-card">
                 <div class="col-card-top">
                     <div class="col-img-frame">
-                        <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}">
+                        <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->localized_name }}">
                     </div>
                     <span class="col-brand">{{ $perfume->brand }}</span>
-                    <h2 class="col-name"><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->name }}</a></h2>
-                    <p class="col-meta">{{ __($perfume->category->name ?? __('Nước hoa')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $perfume->gender } }} · {{ $perfume->volume_ml }}ml</p>
+                    <h2 class="col-name"><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->localized_name }}</a></h2>
+                    <p class="col-meta">{{ __($perfume->category->localized_name ?? __('Nước hoa')) }} · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $perfume->gender } }} · {{ $perfume->volume_ml }}ml</p>
                     
                     <div class="col-price-box">
                         <span class="price-val">{{ number_format($perfume->sale_price ?? $perfume->price, 0, ',', '.') }}₫</span>

@@ -93,7 +93,7 @@
 
                         <a class="item-img-link" href="{{ route('perfumes.show', $product) }}">
                             @if ($product->image_src)
-                                <img src="{{ $product->image_src }}" alt="{{ $product->name }}">
+                                <img src="{{ $product->image_src }}" alt="{{ $product->localized_name }}">
                             @else
                                 <div class="item-placeholder-img">{{ mb_substr($product->brand, 0, 1) }}</div>
                             @endif
@@ -102,7 +102,7 @@
                         <div class="item-details">
                             <span class="item-brand">{{ $product->brand }}</span>
                             <h2 class="item-title">
-                                <a href="{{ route('perfumes.show', $product) }}">{{ ($item['is_discovery_box'] || $item['is_gift_bundle']) ? $item['custom_title'] : $product->name }}</a>
+                                <a href="{{ route('perfumes.show', $product) }}">{{ ($item['is_discovery_box'] || $item['is_gift_bundle']) ? $item['custom_title'] : $product->localized_name }}</a>
                             </h2>
                             
                             {{-- Dung tích --}}
@@ -144,7 +144,7 @@
                                 @csrf @method('PATCH')
                                 <div class="custom-qty-picker" data-quantity-picker>
                                     <button type="button" data-quantity-minus class="qty-btn minus" aria-label="{{ __('Giảm số lượng') }}">−</button>
-                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ max(1, $item['max_quantity']) }}" class="qty-input" aria-label="Số lượng {{ ($item['is_discovery_box'] || $item['is_gift_bundle']) ? $item['custom_title'] : $product->name }}">
+                                    <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ max(1, $item['max_quantity']) }}" class="qty-input" aria-label="Số lượng {{ ($item['is_discovery_box'] || $item['is_gift_bundle']) ? $item['custom_title'] : $product->localized_name }}">
                                     <button type="button" data-quantity-plus class="qty-btn plus" aria-label="{{ __('Tăng số lượng') }}">+</button>
                                 </div>
                                 <button class="btn-qty-update" type="submit" title="{{ __('Cập nhật số lượng') }}">{{ __('Cập nhật') }}</button>

@@ -25,12 +25,12 @@
         <article class="ht-share-card">
             <div class="card-tag">@include('partials.icon', ['name' => $item->occasion_icon, 'size' => '1em']) {{ __($item->occasion_label) }}</div>
             <div class="card-img">
-                <img src="{{ $item->perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $item->perfume->name }}" loading="lazy">
+                <img src="{{ $item->perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $item->perfume->localized_name }}" loading="lazy">
             </div>
             <div class="card-info">
                 <span class="brand">{{ $item->perfume->brand }}</span>
-                <h3 class="name"><a href="{{ route('perfumes.show', $item->perfume) }}">{{ $item->perfume->name }}</a></h3>
-                <p class="specs">{{ $item->perfume->category->name ?? __('Nước hoa') }} · {{ match($item->perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
+                <h3 class="name"><a href="{{ route('perfumes.show', $item->perfume) }}">{{ $item->perfume->localized_name }}</a></h3>
+                <p class="specs">{{ $item->perfume->category->localized_name ?? __('Nước hoa') }} · {{ match($item->perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
                 
                 @if($item->notes)
                 <div class="user-quote">“{{ $item->notes }}”</div>

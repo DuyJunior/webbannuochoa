@@ -46,12 +46,12 @@
                     @endphp
                     <article class="sample-card" data-sample-card>
                         <label class="sample-pick" @unless($sampleAvailable) data-unavailable @endunless>
-                            <input type="checkbox" name="samples[]" value="{{ $sample->id }}" data-sample-name="{{ $sample->name }}" data-sample-img="{{ $sample->image_src }}" data-sample-unavailable-reason="{{ $unavailableReason }}" aria-label="Chọn mẫu 5 ml {{ $sample->name }}" @disabled(!$sampleAvailable)>
+                            <input type="checkbox" name="samples[]" value="{{ $sample->id }}" data-sample-name="{{ $sample->localized_name }}" data-sample-img="{{ $sample->image_src }}" data-sample-unavailable-reason="{{ $unavailableReason }}" aria-label="{{ __('Chọn mẫu 5 ml :name', ['name' => $sample->localized_name]) }}" @disabled(!$sampleAvailable)>
                             <span class="sample-photo">@if($sample->image_src)<img src="{{ $sample->image_src }}" alt="" width="260" height="300" loading="lazy" decoding="async">@else<span class="sample-photo-fallback">@include('partials.brand-mark', ['size' => 56])</span>@endif<span class="sample-choice-mark" aria-hidden="true">+</span><span class="sample-volume">5 ml</span></span>
-                            <span class="sample-brand">{{ $sample->brand }}</span><strong title="{{ $sample->name }}">{{ $sample->name }}</strong>
+                            <span class="sample-brand">{{ $sample->brand }}</span><strong title="{{ $sample->localized_name }}">{{ $sample->localized_name }}</strong>
                             <span class="sample-select-label"><span data-sample-action>{{ $sampleAvailable ? __('Thêm vào hộp') : $unavailableReason }}</span><span data-sample-order aria-hidden="true">{{ $sampleAvailable ? '+' : '—' }}</span></span>
                         </label>
-                        <a class="sample-detail" href="{{ route('perfumes.show', $sample) }}" data-quick-view="{{ route('perfumes.quick-view', $sample) }}" data-product-name="{{ $sample->name }}" aria-haspopup="dialog" aria-controls="product-quick-view" aria-label="Xem nhanh {{ $sample->name }}">{{ __('Khám phá mùi hương') }} <span aria-hidden="true">↗</span></a>
+                        <a class="sample-detail" href="{{ route('perfumes.show', $sample) }}" data-quick-view="{{ route('perfumes.quick-view', $sample) }}" data-product-name="{{ $sample->localized_name }}" aria-haspopup="dialog" aria-controls="product-quick-view" aria-label="{{ __('Xem nhanh :name', ['name' => $sample->localized_name]) }}">{{ __('Khám phá mùi hương') }} <span aria-hidden="true">↗</span></a>
                     </article>
                 @empty
                     <p class="sampling-empty">{{ __('Bộ mẫu đang được bổ sung.') }} <a href="{{ config('storefront.zalo_url') }}" target="_blank" rel="noopener">{{ __('Nhắn Soopi để được tư vấn ↗') }}</a></p>

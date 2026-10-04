@@ -33,14 +33,14 @@
 
         <div class="ht-gift-product-box">
             <div class="gift-prod-img">
-                <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" loading="lazy">
+                <img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->localized_name }}" loading="lazy">
             </div>
             <div class="gift-prod-info">
                 <p class="gift-prod-desc">{{ __('Đây là thiệp gợi ý mùi hương, chưa phải đơn hàng đã thanh toán.') }}</p>
                 <span class="gift-prod-brand">{{ $perfume->brand }}</span>
-                <h3 class="gift-prod-title">{{ $perfume->name }}</h3>
-                <p class="gift-prod-meta">{{ __($perfume->category->name ?? __('Nước hoa')) }} · {{ __('Chai') }} {{ $perfume->volume_ml }}ml · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
-                <p class="gift-prod-desc">{{ Str::limit(strip_tags($perfume->description), 140) }}</p>
+                <h3 class="gift-prod-title">{{ $perfume->localized_name }}</h3>
+                <p class="gift-prod-meta">{{ __($perfume->category->localized_name ?? __('Nước hoa')) }} · {{ __('Chai') }} {{ $perfume->volume_ml }}ml · {{ match($perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $perfume->gender } }}</p>
+                <p class="gift-prod-desc">{{ Str::limit(strip_tags($perfume->localized_description), 140) }}</p>
 
                 <div class="gift-prod-action">
                     <form action="{{ route('cart.add', $perfume) }}" method="POST">

@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
+    use Concerns\HasLocalizedContent;
     use Concerns\HasPerfumeVariants;
     use HasFactory;
     use SoftDeletes;
@@ -20,7 +21,7 @@ class Product extends Model
     protected $fillable = [
         'category_id', 'name', 'slug', 'brand', 'gender', 'concentration',
         'volume_ml', 'weight', 'price', 'sale_price', 'stock', 'stock_5ml', 'stock_10ml', 'stock_50ml', 'image_url', 'video_url',
-        'description', 'is_active',
+        'description', 'name_en', 'description_en', 'is_active',
     ];
 
     protected function casts(): array

@@ -9,9 +9,9 @@
         <div class="gift-bundle-story">
             <span class="gift-bundle-kicker">SOOPI / LE COFFRET</span>
             <h2 id="gift-bundle-title">{{ __('Một mùi hương quen.') }}<br><em>{{ __('Hai khám phá mới.') }}</em></h2>
-            <p>Chai {{ $perfume->name }} {{ __('cùng hai mẫu thử bạn chọn, gói trong hộp quà và thiệp.') }}</p>
+            <p>Chai {{ $perfume->localized_name }} {{ __('cùng hai mẫu thử bạn chọn, gói trong hộp quà và thiệp.') }}</p>
             <div class="gift-bundle-composition" aria-label="{{ __('Thành phần combo') }}">
-                <figure><img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->name }}" width="180" height="180" loading="lazy"><figcaption>Chai {{ $perfume->volume_ml }}ml</figcaption></figure>
+                <figure><img src="{{ $perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $perfume->localized_name }}" width="180" height="180" loading="lazy"><figcaption>Chai {{ $perfume->volume_ml }}ml</figcaption></figure>
                 <span aria-hidden="true">+</span>
                 <div><span class="gift-bundle-vials" aria-hidden="true">@include('partials.icon', ['name' => 'vial', 'size' => 35]) @include('partials.icon', ['name' => 'vial', 'size' => 35])</span><small>{{ __('2 mẫu × 5ml') }}</small></div>
                 <span aria-hidden="true">+</span>
@@ -30,7 +30,7 @@
                 <label class="gift-bundle-choice" for="bundle-sample-{{ $slot }}"><span>{{ __('MẪU') }} {{ $slot + 1 }} · 5ML</span>
                     <select id="bundle-sample-{{ $slot }}" name="sample_ids[]" required aria-describedby="gift-bundle-hint" @disabled(! $bundleAvailable)>
                         <option value="">{{ __('Chọn mùi hương thứ') }} {{ $slot + 1 }}</option>
-                        @foreach($bundleSamples as $sample)<option value="{{ $sample->id }}" @selected((string) ($selectedSamples[$slot] ?? '') === (string) $sample->id)>{{ $sample->name }}</option>@endforeach
+                        @foreach($bundleSamples as $sample)<option value="{{ $sample->id }}" @selected((string) ($selectedSamples[$slot] ?? '') === (string) $sample->id)>{{ $sample->localized_name }}</option>@endforeach
                     </select>
                 </label>
             @endforeach

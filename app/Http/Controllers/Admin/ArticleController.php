@@ -19,6 +19,8 @@ class ArticleController extends Controller
         $articles = Article::query()
             ->when($search !== '', fn ($query) => $query->where(fn ($query) => $query
                 ->where('title', 'like', "%{$search}%")
+                ->orWhere('title_en', 'like', "%{$search}%")
+                ->orWhere('excerpt_en', 'like', "%{$search}%")
                 ->orWhere('excerpt', 'like', "%{$search}%")))
             ->when(! empty($filters['status']), fn ($query) => $query->where('is_published', $filters['status'] === 'published'))
             ->latest()->paginate(20)->withQueryString();
@@ -38,7 +40,7 @@ class ArticleController extends Controller
         $data['is_published'] = $request->boolean('is_published');
         Article::create($data);
 
-        return redirect()->route('admin.articles.index')->with('success', 'Đã tạo bài viết.');
+        return redirect()->route('admin.articles.index')->with('success', __('Đã tạo bài viết.'));
     }
 
     public function edit(Article $article)
@@ -62,7 +64,7 @@ class ArticleController extends Controller
     {
         $article->delete();
 
-        return redirect()->route('admin.articles.index')->with('success', 'Đã xóa bài viết.');
+        return redirect()->route('admin.articles.index')->with('success', __('Đã xóa bài viết.'));
     }
 
     private function validated(Request $request): array
@@ -71,6 +73,9 @@ class ArticleController extends Controller
             'title' => 'required|string|max:200',
             'excerpt' => 'required|string|max:500',
             'body' => 'required|string|min:50',
+            'title_en' => 'nullable|string|max:200',
+            'excerpt_en' => 'nullable|string|max:500',
+            'body_en' => 'nullable|string|min:50',
             'image_url' => ['nullable', 'string', 'max:255', 'regex:/^images\/[a-zA-Z0-9\/._-]+$/'],
             'is_published' => 'nullable|boolean',
         ]);

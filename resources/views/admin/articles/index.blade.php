@@ -41,10 +41,10 @@
                     @forelse($articles as $article)
                         <tr>
                             <td>
-                                <strong style="color: #0f172a; font-size: 0.95rem;">{{ $article->title }}</strong>
+                                <strong style="color: #0f172a; font-size: 0.95rem;">{{ $article->localized_title }}</strong>
                             </td>
                             <td>
-                                <p class="text-muted small mb-0 text-truncate" style="max-width: 380px;">{{ $article->excerpt }}</p>
+                                <p class="text-muted small mb-0 text-truncate" style="max-width: 380px;">{{ $article->localized_excerpt }}</p>
                             </td>
                             <td class="text-center">
                                 @if($article->is_published)
@@ -60,10 +60,10 @@
                                 <a href="{{ route('admin.articles.edit', $article) }}" class="btn btn-outline-warning btn-sm mr-1" title="{{ __('Chỉnh sửa') }}">
                                     <i class="fa-solid fa-pen-to-square"></i> {{ __('Sửa') }}
                                 </a>
-                                <form class="d-inline" method="POST" action="{{ route('admin.articles.destroy', $article) }}" data-confirm="Xóa bài viết {{ $article->title }}? Nội dung đã xóa sẽ không thể khôi phục.">
+                                <form class="d-inline" method="POST" action="{{ route('admin.articles.destroy', $article) }}" data-confirm="Xóa bài viết {{ $article->localized_title }}? Nội dung đã xóa sẽ không thể khôi phục.">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-outline-danger btn-sm" type="submit" title="{{ __('Xóa') }}" aria-label="Xóa bài viết {{ $article->title }}">
+                                    <button class="btn btn-outline-danger btn-sm" type="submit" title="{{ __('Xóa') }}" aria-label="Xóa bài viết {{ $article->localized_title }}">
                                         <i class="fa-solid fa-trash-can"></i> {{ __('Xóa') }}
                                     </button>
                                 </form>

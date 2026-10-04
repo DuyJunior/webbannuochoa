@@ -55,6 +55,7 @@
                     <textarea id="description" name="description" class="form-control @error('description') is-invalid @enderror" rows="5" maxlength="5000" placeholder="{{ __('Mô tả các tầng hương, phong cách và thời điểm sử dụng…') }}">{{ $value('description') }}</textarea>
                     @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+                @include('partials.english-content-fields', ['englishRecord' => $product ?? new \App\Models\Product, 'englishFields' => ['name_en' => ['label' => 'Tên tiếng Anh'], 'description_en' => ['label' => 'Mô tả tiếng Anh', 'rows' => 4, 'max' => 5000]]])
             </section>
             <section class="admin-card studio-form-section" aria-labelledby="product-pricing">
                 <span class="studio-form-kicker">{{ __('02 / GIÁ & QUY CÁCH') }}</span><h3 id="product-pricing">{{ __('Giá bán và dung tích') }}</h3>

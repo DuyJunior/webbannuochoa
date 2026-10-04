@@ -48,12 +48,12 @@
                                 <td>
                                     <div class="product-cell">
                                         <div class="product-thumb">
-                                            @if ($perfume->image_src)<img src="{{ $perfume->image_src }}" alt="{{ $perfume->name }}">@else<span>{{ mb_substr($perfume->brand, 0, 1) }}</span>@endif
+                                            @if ($perfume->image_src)<img src="{{ $perfume->image_src }}" alt="{{ $perfume->localized_name }}">@else<span>{{ mb_substr($perfume->brand, 0, 1) }}</span>@endif
                                         </div>
-                                        <div><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->name }}</a><small>{{ $perfume->brand }} · {{ $perfume->volume_ml }}ml</small></div>
+                                        <div><a href="{{ route('perfumes.show', $perfume) }}">{{ $perfume->localized_name }}</a><small>{{ $perfume->brand }} · {{ $perfume->volume_ml }}ml</small></div>
                                     </div>
                                 </td>
-                                <td><strong class="table-primary">{{ __($perfume->category?->name ?? __('Chưa phân loại')) }}</strong><small class="table-secondary">{{ ['nam' => 'Nam', 'nu' => __('Nữ'), 'unisex' => 'Unisex'][$perfume->gender] }}</small></td>
+                                <td><strong class="table-primary">{{ __($perfume->category?->localized_name ?? __('Chưa phân loại')) }}</strong><small class="table-secondary">{{ ['nam' => __('Nam'), 'nu' => __('Nữ'), 'unisex' => 'Unisex'][$perfume->gender] }}</small></td>
                                 <td>
                                     <strong class="price">{{ number_format((float) ($perfume->sale_price ?? $perfume->price), 0, ',', '.') }}₫</strong>
                                     @if ($perfume->sale_price !== null)<del>{{ number_format((float) $perfume->price, 0, ',', '.') }}₫</del>@endif

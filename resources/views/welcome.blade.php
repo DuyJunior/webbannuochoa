@@ -10,10 +10,10 @@
                     <div class="card-body text-center d-flex flex-column justify-content-between">
                         <div>
                             @if($product->image_url)
-                                <img src="{{ asset($product->image_url) }}" alt="{{ $product->name }}" class="card-img-top mb-3" style="max-height: 150px; object-fit: contain;">
+                                <img src="{{ asset($product->image_url) }}" alt="{{ $product->localized_name }}" class="card-img-top mb-3" style="max-height: 150px; object-fit: contain;">
                             @endif
-                            <h5 class="card-title">{{ $product->name }}</h5>
-                            <p class="card-text">{{ Str::limit($product->description, 80) }}</p>
+                            <h5 class="card-title">{{ $product->localized_name }}</h5>
+                            <p class="card-text">{{ Str::limit($product->localized_description, 80) }}</p>
                         </div>
                         <div class="mt-3">
                             <p class="card-text mb-1">Quantity: {{ $product->quantity }}</p>

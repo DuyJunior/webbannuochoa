@@ -12,7 +12,7 @@
     $isFiltered = request()->anyFilled(['search', 'gender', 'category', 'sort', 'min_price', 'max_price', 'concentration', 'note', 'style', 'longevity']);
     $selectedCategory = request('category') ? $categories->firstWhere('id', (int) request('category')) : null;
     $collectionTitle = request()->filled('search') ? __('Mùi hương bạn đang tìm')
-        : ($selectedCategory?->name ?? match (request('gender')) {
+        : ($selectedCategory?->localized_name ?? match (request('gender')) {
             'nam' => __('Nước hoa dành cho chàng'),
             'nu' => __('Nước hoa dành cho nàng'),
             'unisex' => __('Hương thơm không giới hạn'),
@@ -66,11 +66,11 @@
         @foreach($recentPerfumes as $recent)
         <a href="{{ route('perfumes.show', $recent) }}" class="ht-related-card">
             <div class="ht-related-img">
-                <img src="{{ $recent->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $recent->name }}" loading="lazy">
+                <img src="{{ $recent->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $recent->localized_name }}" loading="lazy">
             </div>
             <div class="ht-related-info">
                 <span class="ht-related-brand">{{ $recent->brand }}</span>
-                <strong class="ht-related-name">{{ $recent->name }}</strong>
+                <strong class="ht-related-name">{{ $recent->localized_name }}</strong>
                 <div class="ht-related-price">
                     <span class="ht-related-current">{{ number_format((float)($recent->sale_price ?? $recent->price), 0, ',', '.') }}₫</span>
                 </div>

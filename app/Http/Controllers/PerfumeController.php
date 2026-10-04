@@ -190,6 +190,8 @@ class PerfumeController extends Controller
             'image_url' => ['nullable', 'string', 'max:2048', 'regex:/^(https?:\/\/|\/?images\/)/i'],
             'image_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'description' => ['nullable', 'string', 'max:5000'],
+            'name_en' => ['nullable', 'string', 'max:255'],
+            'description_en' => ['nullable', 'string', 'max:5000'],
             'is_active' => ['nullable', 'boolean'],
         ], [
             'name.required' => __('Vui lòng nhập tên nước hoa.'),

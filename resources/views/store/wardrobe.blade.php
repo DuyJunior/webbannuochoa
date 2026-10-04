@@ -51,14 +51,14 @@
                 @include('partials.icon', ['name' => $item->occasion_icon, 'size' => '1em']) {{ __($item->occasion_label) }}
             </div>
             <div class="card-img-wrap">
-                <img src="{{ $item->perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $item->perfume->name }}" loading="lazy">
+                <img src="{{ $item->perfume->image_src ?: asset('images/perfume-default.jpg') }}" alt="{{ $item->perfume->localized_name }}" loading="lazy">
             </div>
             <div class="card-body">
                 <span class="card-brand">{{ $item->perfume->brand }}</span>
                 <h3 class="card-name">
-                    <a href="{{ route('perfumes.show', $item->perfume) }}">{{ $item->perfume->name }}</a>
+                    <a href="{{ route('perfumes.show', $item->perfume) }}">{{ $item->perfume->localized_name }}</a>
                 </h3>
-                <p class="card-specs">{{ __('Dung tích:') }} {{ $item->perfume->volume_ml }}ml · {{ match($item->perfume->gender) { 'nu' => __('Nữ'), 'nam' => 'Nam', 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
+                <p class="card-specs">{{ __('Dung tích:') }} {{ $item->perfume->volume_ml }}ml · {{ match($item->perfume->gender) { 'nu' => __('Nữ'), 'nam' => __('Nam'), 'unisex' => 'Unisex', default => $item->perfume->gender } }}</p>
                 
                 @if($item->notes)
                 <div class="card-user-note">

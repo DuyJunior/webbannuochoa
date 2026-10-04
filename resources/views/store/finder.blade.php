@@ -27,9 +27,9 @@
         <div class="ht-feature-grid">
             @forelse($recommended as $perfume)
                 <a class="ht-feature-product" href="{{ route('perfumes.show', $perfume) }}">
-                    @if($perfume->image_src)<img src="{{ asset(config('scent-gallery.artwork.'.$perfume->slug, $perfume->image_src)) }}" alt="{{ $perfume->name }}" loading="lazy">@endif
-                    <span>{{ $perfume->brand }}</span><h3>{{ $perfume->name }}</h3>
-                    <p>{{ \Illuminate\Support\Str::limit($perfume->description, 100) }}</p>
+                    @if($perfume->image_src)<img src="{{ asset(config('scent-gallery.artwork.'.$perfume->slug, $perfume->image_src)) }}" alt="{{ $perfume->localized_name }}" loading="lazy">@endif
+                    <span>{{ $perfume->brand }}</span><h3>{{ $perfume->localized_name }}</h3>
+                    <p>{{ \Illuminate\Support\Str::limit($perfume->localized_description, 100) }}</p>
                     <strong>{{ number_format((float) ($perfume->sale_price ?? $perfume->price), 0, ',', '.') }}₫</strong>
                 </a>
             @empty<p>{{ __('Chưa có sản phẩm phù hợp. Hãy thử lựa chọn khác nhé.') }}</p>@endforelse

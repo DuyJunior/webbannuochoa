@@ -12,10 +12,10 @@
         @forelse($articles as $article)
         <article class="ht-feature-panel interior-journal-card">
             @php($storyImage = config('journal-art.'.$article->slug, $article->image_url))
-            @if($storyImage)<a href="{{ route('store.article', $article->slug) }}"><img src="{{ asset($storyImage) }}" alt="{{ $article->title }}" loading="lazy"></a>@endif
+            @if($storyImage)<a href="{{ route('store.article', $article->slug) }}"><img src="{{ asset($storyImage) }}" alt="{{ $article->localized_title }}" loading="lazy"></a>@endif
             <span>{{ $article->created_at->format('d/m/Y') }} · SOOPI JOURNAL</span>
-            <h2><a href="{{ route('store.article', $article->slug) }}">{{ $article->title }}</a></h2>
-            <p>{{ $article->excerpt }}</p>
+            <h2><a href="{{ route('store.article', $article->slug) }}">{{ $article->localized_title }}</a></h2>
+            <p>{{ $article->localized_excerpt }}</p>
             <a href="{{ route('store.article', $article->slug) }}">{{ __('Đọc câu chuyện ↗') }}</a>
         </article>
         @empty<div class="ht-feature-panel"><p>{{ __('Chưa có bài viết nào.') }}</p></div>@endforelse
