@@ -13,7 +13,7 @@ class GHNOrderService
         if ($order->is_demo) {
             return ['code' => 200, 'data' => ['order_code' => 'DEMO-'.$order->id]];
         }
-        // Tự động nhận diện nếu đơn hàng đã được thanh toán (MoMo / Online)
+        // Tự động nhận diện nếu đơn hàng đã được thanh toán (Online)
         $isPaid = $isPaid || $order->status === 'paid';
 
         $items = [];
@@ -44,9 +44,9 @@ class GHNOrderService
 
         return $this->ghn->createOrder([
             // 1: Người gửi trả cước (Shop trả phí ship).
-            // Khi đã thanh toán Online/MoMo: payment_type_id = 1 và cod_amount = 0 => Shipper KHÔNG thu bất kỳ tiền nào của người nhận (Tổng thu = 0đ)
+            // Khi đã thanh toán Online: payment_type_id = 1 và cod_amount = 0 => Shipper KHÔNG thu bất kỳ tiền nào của người nhận (Tổng thu = 0đ)
             'payment_type_id' => 1,
-            'note' => 'Đơn hàng #'.$order->id.($isPaid ? ' (ĐÃ THANH TOÁN ONLINE MOMO - KHÔNG THU TIỀN KHÁCH)' : ' (Thu tiền COD khi nhận hàng)')
+            'note' => 'Đơn hàng #'.$order->id.($isPaid ? ' (ĐÃ THANH TOÁN ONLINE - KHÔNG THU TIỀN KHÁCH)' : ' (Thu tiền COD khi nhận hàng)')
                 .($order->note ? "\nYêu cầu của khách: ".$order->note : ''),
             'required_note' => 'KHONGCHOXEMHANG',
             'to_name' => $order->name ?? $order->customer_name,

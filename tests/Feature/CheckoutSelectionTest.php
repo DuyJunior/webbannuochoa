@@ -50,7 +50,7 @@ class CheckoutSelectionTest extends TestCase
     private function address(array $extra = []): array
     {
         return array_replace(['name' => 'Khách', 'phone' => '0912345678', 'address' => 'Hà Nội',
-            'to_district_id' => 1493, 'to_ward_code' => 'DEMO', 'payment_method' => 'momo'], $extra);
+            'to_district_id' => 1493, 'to_ward_code' => 'DEMO', 'payment_method' => 'sepay'], $extra);
     }
 
     private function box(array $ids, int $quantity = 1): array

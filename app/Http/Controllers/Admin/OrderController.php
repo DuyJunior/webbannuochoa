@@ -31,7 +31,7 @@ class OrderController extends Controller
     {
         $paymentLabels = [
             'pending' => 'Chờ thanh toán',
-            'initiated' => 'Đang chờ MoMo',
+            'initiated' => 'Đang chờ thanh toán',
             'paid' => 'Đã thanh toán',
             'failed' => 'Thanh toán thất bại',
             'cancelled' => 'Đã hủy',
@@ -64,7 +64,7 @@ class OrderController extends Controller
             'status' => ['nullable', Rule::in(['pending', 'paid', 'paid_momo', 'cod_ordered', 'cod_paid', 'cancelled', 'confirmed', 'completed'])],
             'payment_status' => ['nullable', Rule::in(array_keys($paymentLabels))],
             'shipping_status' => ['nullable', Rule::in(array_keys($shippingLabels))],
-            'gateway' => ['nullable', Rule::in(['cod', 'momo', 'unknown'])],
+            'gateway' => ['nullable', Rule::in(['cod', 'sepay', 'momo', 'demo', 'unknown'])],
             'tab' => ['nullable', Rule::in(array_keys(self::TABS))],
             'date_from' => ['nullable', 'date_format:Y-m-d'],
             'date_to' => ['nullable', 'date_format:Y-m-d', ...($request->filled('date_from') ? ['after_or_equal:date_from'] : [])],
@@ -347,6 +347,15 @@ class OrderController extends Controller
 
     private function guardTransition(Order $order, ?string $status, ?string $shipping): void
     {
+        if (! $order->is_demo && $order->paymentTransactions()->where('gateway', 'sepay')->exists()
+            && ! $order->paymentTransactions()->where('gateway', 'sepay')->whereIn('status', ['paid', 'refund_pending', 'refunded'])->exists()
+            && (($status && $status !== $order->status && ! in_array($status, ['pending', 'cancelled'], true))
+                || ($shipping && $shipping !== $order->shipping_status && ! in_array($shipping, ['pending', 'not_shipped', 'cancelled'], true)))) {
+            throw ValidationException::withMessages(['status' => __('Đơn SePay cần xác nhận thanh toán trước khi xử lý giao hàng.')]);
+        }
+        if (($status === 'cancelled' || $shipping === 'cancelled') && app(\App\Services\SePayService::class)->shipmentNeedsReview($order)) {
+            throw ValidationException::withMessages(['status' => __('Vận đơn đang cần xác minh với GHN. Vui lòng liên hệ cửa hàng trước khi hủy.')]);
+        }
         if ($status === 'completed' && $shipping !== 'delivered') {
             throw ValidationException::withMessages(['shipping_status' => __('Đơn hoàn thành phải có trạng thái giao thành công. Không ghi nhận đã thu COD cho đơn đang giao hoặc hoàn hàng.')]);
         }

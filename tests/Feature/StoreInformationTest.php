@@ -18,7 +18,7 @@ class StoreInformationTest extends TestCase
             ->assertDontSee('hathu.perfume')->assertDontSee('info-shop-details', false)
             ->assertDontSee('mailto:', false)->assertSee(route('store.privacy'), false);
         $this->get(route('store.privacy'))->assertOk()->assertSee('Chính sách riêng tư')
-            ->assertSee('GHN')->assertSee('MoMo')->assertSee('Groq')->assertSee('cookie')
+            ->assertSee('GHN')->assertSee('SePay')->assertSee('Groq')->assertSee('cookie')
             ->assertSee('03/10/2026')->assertSee(route('store.contact'), false);
     }
 

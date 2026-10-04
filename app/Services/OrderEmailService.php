@@ -233,7 +233,7 @@ class OrderEmailService
             'items' => $items, 'subtotal' => array_sum(array_column($items, 'line_total')),
             'shipping_fee' => (int) $order->ghn_total_fee, 'discount_amount' => (int) $order->discount_amount,
             'points_discount' => (int) $order->points_used * 1000, 'total' => (int) $order->total_price, 'currency' => 'VND',
-            'payment_method' => match ($payment?->gateway) { 'cod' => 'COD', 'momo' => 'MoMo', default => 'Chưa xác định' },
+            'payment_method' => match ($payment?->gateway) { 'cod' => 'COD', 'sepay' => 'SePay', 'momo' => 'MoMo', default => 'Chưa xác định' },
             'payment_status' => $payment?->status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán',
             'shipping_address' => $order->address, 'tracking_code' => $order->ghn_order_code, 'note' => $order->note,
             'tracking_url' => rtrim((string) config('app.url'), '/').route('orders.show', $order, false), 'is_demo' => false,

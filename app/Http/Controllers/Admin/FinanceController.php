@@ -31,7 +31,7 @@ class FinanceController extends Controller
         $source = DB::table('orders')->leftJoin('payment_transactions as payment', function ($join) use ($paymentId) {
             $join->on('payment.order_id', '=', 'orders.id')->where('payment.id', '=', $paymentId);
         })->select('orders.*', 'payment.id as payment_id', 'payment.paid_at as payment_paid_at')
-            ->selectRaw("CASE WHEN payment.id IS NOT NULL THEN CASE WHEN payment.gateway IN ('cod', 'momo', 'demo') THEN payment.gateway ELSE 'unknown' END
+            ->selectRaw("CASE WHEN payment.id IS NOT NULL THEN CASE WHEN payment.gateway IN ('cod', 'sepay', 'momo', 'demo') THEN payment.gateway ELSE 'unknown' END
                 WHEN orders.status IN ('cod_ordered', 'cod_paid') THEN 'cod'
                 WHEN orders.status IN ('paid', 'paid_momo') THEN 'momo' ELSE 'unknown' END as gateway")
             ->selectRaw("COALESCE(payment.status, CASE WHEN orders.status IN ('paid', 'paid_momo', 'cod_paid', 'completed') THEN 'paid'
@@ -149,6 +149,28 @@ class FinanceController extends Controller
         return view('admin.finance.transactions', $data);
     }
 
+    public function sepayReceipts(Request $request): View
+    {
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:64'],
+            'result' => ['nullable', Rule::in(['paid', 'unmatched', 'amount_mismatch', 'duplicate_payment', 'late_payment', 'demo_order', 'order_not_payable'])],
+        ]);
+        $query = DB::table('sepay_webhook_receipts as receipt')
+            ->leftJoin('payment_transactions as payment', 'payment.id', '=', 'receipt.payment_transaction_id')
+            ->leftJoin('orders', 'orders.id', '=', 'payment.order_id')
+            ->select('receipt.*', 'payment.order_id', 'payment.amount as expected_amount', 'payment.status as payment_status', 'orders.ghn_order_code', 'orders.status as order_status');
+        if (! empty($filters['result'])) {
+            $query->where('receipt.result', $filters['result']);
+        }
+        if (! empty($filters['search'])) {
+            $search = trim($filters['search']);
+            $query->where(fn ($q) => $q->where('receipt.provider_id', $search)->orWhere('receipt.payment_code', $search));
+        }
+        $receipts = $query->orderByDesc('receipt.id')->paginate(25)->withQueryString();
+
+        return view('admin.finance.sepay', compact('receipts', 'filters'));
+    }
+
     public function export(Request $request): StreamedResponse
     {
         $filters = $this->parseFilters($request);
@@ -188,7 +210,7 @@ class FinanceController extends Controller
             $payment = $order->paymentTransactions()->orderByRaw(self::PAYMENT_PRIORITY)->orderByDesc('id')->lockForUpdate()->first();
             $currentStatus = $payment?->status ?? FinancePaymentPolicy::status($order);
             $gateway = $payment?->gateway ?? FinancePaymentPolicy::gateway($order);
-            if ($gateway !== 'cod') {
+            if ($gateway !== 'cod' && ! ($gateway === 'sepay' && in_array($input['payment_status'], ['refund_pending', 'refunded'], true))) {
                 throw ValidationException::withMessages(['payment_status' => __('Chỉ được đối soát thủ công giao dịch COD. Giao dịch trực tuyến cần xác nhận từ cổng thanh toán.')]);
             }
             $reference = isset($input['manual_refund_reference']) ? trim($input['manual_refund_reference']) : null;
@@ -229,7 +251,7 @@ class FinanceController extends Controller
                 $payment = new PaymentTransaction(['order_id' => $order->id, 'gateway' => 'cod', 'amount' => $order->total_price]);
             }
             $payment->status = $newStatus;
-            $payment->message = 'Finance COD: '.$currentStatus.' -> '.$newStatus.'; admin #'.$request->user()->id
+            $payment->message = 'Finance '.strtoupper($gateway).': '.$currentStatus.' -> '.$newStatus.'; admin #'.$request->user()->id
                 .($newStatus === 'refunded' ? '; manual refund recorded (no transfer)' : '');
             if ($newStatus === 'paid' && ! $payment->paid_at) {
                 $payment->paid_at = now();
@@ -255,7 +277,7 @@ class FinanceController extends Controller
         }, 3);
 
         return back()->with('success', $changed
-            ? ($input['payment_status'] === 'refunded' ? __('Đã ghi nhận hoàn tiền thủ công. Hệ thống không chuyển tiền.') : __('Đã cập nhật và lưu lịch sử đối soát COD.'))
+            ? ($input['payment_status'] === 'refunded' ? __('Đã ghi nhận hoàn tiền thủ công. Hệ thống không chuyển tiền.') : __('Đã cập nhật và lưu lịch sử đối soát.'))
             : __('Trạng thái đã được ghi nhận; không có thay đổi mới.'));
     }
 }

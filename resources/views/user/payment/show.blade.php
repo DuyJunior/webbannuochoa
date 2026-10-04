@@ -164,13 +164,7 @@
                         <div class="info-row">
                             <span class="info-label">{{ __('Hình thức:') }}</span>
                             <span class="info-value">
-                                @if($order->status === 'paid')
-                                    <strong style="color:#059669;">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __('Ví MoMo (Đã thanh toán)') }}</strong>
-                                @elseif($order->status === 'cod_ordered')
-                                    <span>{{ __('Thanh toán khi nhận hàng (COD)') }}</span>
-                                @else
-                                    <strong style="color:#d97706;">{{ __('Chờ thanh toán (MoMo/COD)') }}</strong>
-                                @endif
+                                @include('user.payment._method', ['order' => $order])
                             </span>
                         </div>
                 </div>
@@ -231,11 +225,11 @@
                         </div>
                     </div>
 
-                    @if($order->status === 'pending')
+                    @if($order->status === 'pending' && $order->paymentTransactions->contains('gateway', 'sepay') && ($order->is_demo ? \App\Support\DemoMode::enabled() : app(\App\Services\SePayService::class)->ready()) && app(\App\Services\SePayService::class)->canPay($order))
                         <div style="margin-top: 18px;">
-                            <a href="{{ route('user.orders.momo.pay', $order->id) }}" style="display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #d82d8b 0%, #a50064 100%); color:#fff; font-weight:700; font-size:0.95rem; padding:12px 18px; border-radius:10px; text-decoration:none; box-shadow:0 4px 14px rgba(165,0,100,0.35);">
-                                <img src="{{ asset('images/payments/momo.svg') }}" alt="MoMo" style="height:20px; width:20px; border-radius:4px; object-fit:contain;">
-                                <span>{{ __('Thanh toán ngay qua MoMo') }}</span>
+                            <a href="{{ route('user.orders.sepay.pay', $order->id) }}" style="display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #987145 0%, #6c4b2b 100%); color:#fff; font-weight:700; font-size:0.95rem; padding:12px 18px; border-radius:10px; text-decoration:none; box-shadow:0 4px 14px rgba(165,0,100,0.35);">
+                                @include('partials.icon', ['name' => 'bank', 'size' => '1em'])
+                                <span>{{ __('Thanh toán qua SePay') }}</span>
                             </a>
                         </div>
                     @endif

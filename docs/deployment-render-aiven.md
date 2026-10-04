@@ -112,7 +112,7 @@ AI tắt mặc định. Để bật sau khi tự xác minh Groq organization đa
 `DEMO_MODE` chỉ có hiệu lực ở local/testing; deployment production không có mô phỏng thanh toán/giao hàng. Để kiểm thử checkout online, cần cấu hình sandbox/merchant của nhà cung cấp trước:
 
 - **GHN:** `GHN_BASE_URL`, `GHN_TOKEN`, `GHN_SHOP_ID`, `GHN_FROM_DISTRICT_ID`, `GHN_VERIFY_SSL=true`. Dùng đúng endpoint/tài khoản sandbox được cấp cho bạn khi làm lab. Không gửi đơn vận chuyển thật để thử.
-- **MoMo:** `MOMO_ENDPOINT` mặc định là test endpoint, nhưng vẫn cần `MOMO_PARTNER_CODE`, `MOMO_ACCESS_KEY`, `MOMO_SECRET_KEY` hợp lệ. URL quay lại là `https://<domain>/payment/momo/callback`; IPN là `https://<domain>/payment/momo/ipn`. Đăng ký URL HTTPS đúng với provider; không coi redirect trình duyệt là bằng chứng thanh toán thành công.
+- **SePay:** xem [cấu hình BIDV, HMAC và đối soát](sepay.md). Endpoint `https://<domain>/payment/sepay/webhook`; mặc định `SEPAY_ENABLED=false`. Cần migration mới và database queue cùng database với đơn hàng. Không bật webhook trước khi backend sẵn sàng.
 - **GHN callback:** endpoint `POST /ghn/webhook` chỉ nhận khi header `X-Webhook-Token` khớp `GHN_WEBHOOK_TOKEN`. Đây là **token riêng của ứng dụng cho relay tin cậy**, không phải cơ chế chữ ký gốc của GHN. Chỉ bật qua relay đã xác minh thông điệp upstream và gắn header này; không đưa token vào URL. Không giả định GHN gửi trực tiếp header tùy chỉnh.
 - **Email:** `MAIL_MAILER=log` không gửi mail. Cấu hình SMTP thực tế cho xác minh tài khoản và thông báo đơn hàng; đặt `APP_URL` đúng URL HTTPS để liên kết theo dõi hoạt động. Lịch `orders:dispatch-emails` khôi phục thư chờ mỗi phút. Kiểm tra trạng thái trong chi tiết đơn của Admin; luồng xem OTP local không mở ở production.
 - **Livestream:** camera/micro cần `LIVEKIT_URL` dạng `wss://` và `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET` của dịch vụ đã cấu hình. Chưa có LiveKit thì không coi chức năng phát trực tiếp đã kiểm chứng.
@@ -138,7 +138,7 @@ Bản chuẩn bị này chưa đổi upload sang object storage. Chỉ dùng ả
 5. **Phân quyền:** người dùng thường không vào được admin; các trang/thao tác mô phỏng local không mở ở production.
 6. **AI:** nếu đã bật bằng tài khoản Free hợp lệ, gửi một câu hỏi từ tài khoản khách và kiểm tra phản hồi tự động trong chat. Nếu không nhận phản hồi, xem log worker, khóa chống lặp, quota và cấu hình API; không đổi queue sang `sync`.
 7. **Đơn hàng:** chỉ khi sandbox đã cấu hình, tạo một đơn thử, kiểm tra trạng thái/payment transaction, callback hợp lệ và cập nhật tồn kho. Với một đơn online chưa trả tiền, không có shipment, đợi qua `payment_expires_at` khi service đang thức; xác nhận scheduler hủy đơn và hoàn tồn kho một lần. Kiểm tra đơn đã trả tiền không bị hủy.
-8. **Callback:** thử bằng sandbox/relay được phép; callback MoMo sai chữ ký và GHN thiếu/sai header phải bị từ chối. Callback có thể bị chậm vì Free ngủ; không tuyên bố đã nghiệm thu callback chỉ dựa vào `/up`.
+8. **Callback:** thử bằng sandbox/relay được phép; webhook SePay sai chữ ký và GHN thiếu/sai header phải bị từ chối. Callback có thể bị chậm vì Free ngủ; không tuyên bố đã nghiệm thu callback chỉ dựa vào `/up`.
 
 ## 8. Xử lý lỗi thường gặp và giới hạn kiểm chứng
 

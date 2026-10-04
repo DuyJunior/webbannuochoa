@@ -15,6 +15,7 @@ use Tests\TestCase;
 class LivestreamCommerceTest extends TestCase
 {
     use RefreshDatabase;
+    use \Tests\Concerns\SePayRequests;
 
     protected function setUp(): void
     {
@@ -123,6 +124,7 @@ class LivestreamCommerceTest extends TestCase
 
     public function test_registered_checkout_keeps_live_attribution_on_order_item(): void
     {
+        $this->configureSePay();
         $shipping = $this->createMock(GHNService::class);
         $shipping->method('packageParameters')->willReturn(['service_type_id' => 2, 'weight' => 200, 'length' => 15, 'width' => 15, 'height' => 10]);
         $shipping->method('calculateFee')->willReturn(['code' => 200, 'data' => ['total' => 20900]]);
@@ -136,7 +138,7 @@ class LivestreamCommerceTest extends TestCase
             'volume_ml' => 100, 'livestream_id' => $stream->id,
         ]]])->post(route('payment.process'), [
             'name' => 'Khách mua', 'phone' => '0912345678', 'address' => 'Hà Nội',
-            'to_district_id' => 1493, 'to_ward_code' => '1A0706', 'payment_method' => 'momo',
+            'to_district_id' => 1493, 'to_ward_code' => '1A0706', 'payment_method' => 'sepay',
         ])->assertRedirect();
 
         $this->assertDatabaseHas('order_items', [

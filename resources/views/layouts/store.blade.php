@@ -40,7 +40,7 @@
         'logo' => asset('images/brand/soopi-petal-logo.png'),
         'priceRange' => '₫₫',
         'currenciesAccepted' => 'VND',
-        'paymentAccepted' => 'Cash, Credit Card, MoMo',
+        'paymentAccepted' => app(\App\Services\SePayService::class)->ready() ? 'Cash, Bank Transfer (SePay)' : 'Cash',
         'areaServed' => 'VN',
         'sameAs' => [
             config('storefront.facebook_url'),

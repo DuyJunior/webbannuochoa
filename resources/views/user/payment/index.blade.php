@@ -8,7 +8,8 @@
     $checkoutKey = $checkoutInput('checkout_key');
     $checkoutKey = \Illuminate\Support\Str::isUuid($checkoutKey) ? $checkoutKey : (string) \Illuminate\Support\Str::uuid();
     $giftRequested = in_array(old('enable_gift_service'), [true, 1, '1'], true);
-    $paymentChoice = in_array($checkoutInput('payment_method'), ['momo', 'atm_domestic', 'atm_international'], true) ? 'momo' : 'cod';
+    $sepayAvailable = \App\Support\DemoMode::enabled() || app(\App\Services\SePayService::class)->ready();
+    $paymentChoice = $sepayAvailable && $checkoutInput('payment_method') === 'sepay' ? 'sepay' : 'cod';
 @endphp
 <div class="checkout-page-wrapper">
     <div class="store-container">
@@ -204,30 +205,22 @@
                             </div>
                         </label>
 
-                        {{-- 2. Thanh toán MoMo (Theo đúng tài liệu Lab) --}}
-                        <label class="payment-option {{ $paymentChoice === 'momo' ? 'selected' : '' }}" id="label_momo">
-                            <input type="radio" name="_payment_choice" value="momo" id="radio_momo" onchange="choosePayment(this.value)" @checked($paymentChoice === 'momo')>
+                        @if($sepayAvailable)
+                        <label class="payment-option {{ $paymentChoice === 'sepay' ? 'selected' : '' }}" id="label_sepay">
+                            <input type="radio" name="_payment_choice" value="sepay" id="radio_sepay" onchange="choosePayment(this.value)" @checked($paymentChoice === 'sepay')>
                             <div class="payment-option-body">
                                 <div class="opt-title">
-                                    <div style="display: flex; align-items: center; gap: 8px;">
-                                        <img src="{{ asset('images/payments/momo.svg') }}" alt="MoMo" style="height: 22px; width: 22px; object-fit: contain; border-radius: 4px;">
-                                        <strong>{{ __('Cổng thanh toán MoMo (Online)') }}</strong>
-                                    </div>
-                                    <span class="badge-popular" style="background: #a50064; color: #fff;">MoMo Sandbox</span>
+                                    <strong>@include('partials.icon', ['name' => 'bank', 'size' => '1em']) {{ __('Chuyển khoản ngân hàng (SePay)') }}</strong>
+                                    <span class="badge-popular">{{ \App\Support\DemoMode::enabled() ? __('Mô phỏng') : 'VietQR · '.config('sepay.bank') }}</span>
                                 </div>
-                                <p>{{ __('Chuyển hướng đến cổng thanh toán MoMo: Hỗ trợ quét mã QR MoMo, Thẻ ATM Nội Địa (Napas) & Thẻ Quốc Tế.') }}</p>
-
-                                <div class="momo-feature-tags" style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
-                                    <span style="font-size: 0.76rem; background: #fdf2f8; color: #db2777; border: 1px solid #fbcfe8; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'phone', 'size' => '1em']) {{ __('Ví MoMo QR') }}</span>
-                                    <span style="font-size: 0.76rem; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'bank', 'size' => '1em']) {{ __('Thẻ ATM Nội Địa (Napas)') }}</span>
-                                    <span style="font-size: 0.76rem; background: #fefce8; color: #854d0e; border: 1px solid #fef08a; padding: 4px 10px; border-radius: 6px; font-weight: 600;">@include('partials.icon', ['name' => 'card', 'size' => '1em']) {{ __('Thẻ Quốc Tế (Visa/Master)') }}</span>
-                                </div>
+                                <p>{{ __('Quét QR bằng ứng dụng ngân hàng. Đơn hàng tự động cập nhật khi nhận đủ tiền với đúng nội dung chuyển khoản.') }}</p>
                             </div>
                         </label>
+                        @else
+                            <p class="text-muted">{{ __('Thanh toán SePay đang tạm ngưng. Vui lòng chọn COD hoặc thử lại sau.') }}</p>
+                        @endif
 
-
-
-                        {{-- Hidden input duy nhất gửi phương thức thanh toán lên server (cod hoặc momo theo lab) --}}
+                        {{-- Hidden input duy nhất gửi phương thức thanh toán lên server (cod hoặc sepay) --}}
                         <input type="hidden" name="payment_method" id="selected_payment_method" value="{{ $paymentChoice }}">
                     </div>
                 </div>
@@ -811,22 +804,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function choosePayment(method) {
     const radioCod = document.getElementById('radio_cod');
-    const radioMomo = document.getElementById('radio_momo');
+    const radioSePay = document.getElementById('radio_sepay');
     const labelCod = document.getElementById('label_cod');
-    const labelMomo = document.getElementById('label_momo');
+    const labelSePay = document.getElementById('label_sepay');
     const selectedInput = document.getElementById('selected_payment_method');
 
-    if (method === 'momo') {
-        if (radioMomo) radioMomo.checked = true;
+    if (method === 'sepay') {
+        if (radioSePay) radioSePay.checked = true;
         if (radioCod) radioCod.checked = false;
-        if (labelMomo) labelMomo.classList.add('selected');
+        if (labelSePay) labelSePay.classList.add('selected');
         if (labelCod) labelCod.classList.remove('selected');
-        if (selectedInput) selectedInput.value = 'momo';
+        if (selectedInput) selectedInput.value = 'sepay';
     } else {
         if (radioCod) radioCod.checked = true;
-        if (radioMomo) radioMomo.checked = false;
+        if (radioSePay) radioSePay.checked = false;
         if (labelCod) labelCod.classList.add('selected');
-        if (labelMomo) labelMomo.classList.remove('selected');
+        if (labelSePay) labelSePay.classList.remove('selected');
         if (selectedInput) selectedInput.value = 'cod';
     }
 }

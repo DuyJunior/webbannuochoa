@@ -13,11 +13,13 @@ use Tests\TestCase;
 class CheckoutPromotionTest extends TestCase
 {
     use RefreshDatabase;
+    use \Tests\Concerns\SePayRequests;
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->withoutVite();
+        $this->configureSePay();
         $ghn = $this->createMock(GHNService::class);
         $ghn->method('packageParameters')->willReturn(['service_type_id' => 2, 'weight' => 200, 'length' => 15, 'width' => 15, 'height' => 10]);
         $ghn->method('calculateFee')->willReturn(['code' => 200, 'data' => ['total' => 20900]]);
@@ -38,7 +40,7 @@ class CheckoutPromotionTest extends TestCase
             'perfume_id' => $perfume->id, 'quantity' => 1, 'price' => 1200000,
         ]]])->post(route('payment.process'), [
             'name' => 'Khách', 'phone' => '0912345678', 'address' => 'Hà Nội',
-            'to_district_id' => 1493, 'to_ward_code' => '1A0706', 'payment_method' => 'momo',
+            'to_district_id' => 1493, 'to_ward_code' => '1A0706', 'payment_method' => 'sepay',
             'coupon_code' => 'hathu10', 'points_used' => 2,
         ])->assertRedirect();
 
@@ -57,7 +59,7 @@ class CheckoutPromotionTest extends TestCase
             'price' => 1200000, 'stock' => 5, 'is_active' => true]);
         $cart = [$perfume->id => ['perfume_id' => $perfume->id, 'quantity' => 1, 'price' => 1200000]];
         $details = ['name' => 'Khách', 'phone' => '0912345678', 'address' => 'Hà Nội',
-            'to_district_id' => 1493, 'to_ward_code' => '1A0706', 'payment_method' => 'momo'];
+            'to_district_id' => 1493, 'to_ward_code' => '1A0706', 'payment_method' => 'sepay'];
         $this->actingAs($user)->withSession(['cart' => $cart])
             ->post(route('payment.process'), $details + ['coupon_code' => 'KHONGTONTAI'])
             ->assertSessionHasErrors('coupon_code');

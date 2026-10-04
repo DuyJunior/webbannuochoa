@@ -52,6 +52,7 @@
                     <select id="order-gateway" name="gateway" class="form-control">
                         <option value="">{{ __('Tất cả phương thức') }}</option>
                         <option value="cod" @selected(request('gateway') === 'cod')>{{ __('Tiền mặt (COD)') }}</option>
+                        <option value="sepay" @selected(request('gateway') === 'sepay')>SePay</option>
                         <option value="momo" @selected(request('gateway') === 'momo')>{{ __('Ví MoMo') }}</option>
                         <option value="unknown" @selected(request('gateway') === 'unknown')>{{ __('Chưa xác định') }}</option>
                     </select>
@@ -222,7 +223,7 @@
                                 <td class="order-payment-cell" data-label="{{ __('Thanh toán') }}">
                                     <strong class="order-amount">{{ number_format($order->total_price, 0, ',', '.') }} {{ __('đ') }}</strong>
                                     <span class="badge {{ $paymentBadgeClass }} order-payment-badge">{{ __($paymentLabels[$order->payment_status] ?? strtoupper($order->status)) }}</span>
-                                    <span class="order-secondary">{{ ['cod' => __('Tiền mặt (COD)'), 'momo' => __('Ví MoMo'), 'demo' => __('Thanh toán mô phỏng')][$order->gateway] ?? __('Chưa xác định phương thức') }}</span>
+                                    <span class="order-secondary">{{ ['cod' => __('Tiền mặt (COD)'), 'sepay' => 'SePay', 'momo' => __('Ví MoMo'), 'demo' => __('Thanh toán mô phỏng')][$order->gateway] ?? __('Chưa xác định phương thức') }}</span>
                                     @if($order->gateway === 'cod' && in_array($order->payment_status, ['pending', 'failed']) && $order->status !== 'cancelled' && !in_array($order->shipping_status, ['cancelled', 'return', 'returning', 'returned', 'return_transporting', 'return_sorting']))
                                         <span class="order-secondary">{{ __('COD cần thu:') }} <span class="order-cod">{{ number_format($order->total_price, 0, ',', '.') }} {{ __('đ') }}</span></span>
                                     @endif

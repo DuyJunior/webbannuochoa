@@ -5,7 +5,7 @@
     <p style="color:#8b5b15;font-weight:bold">{{ __('DEMO LOCAL · KHÔNG THU TIỀN THẬT') }}</p>
     <h1>{{ __('Mô phỏng thanh toán đơn #') }}{{ $order->id }}</h1>
     <p>{{ __('Tổng tiền:') }} <strong>{{ number_format($order->total_price, 0, ',', '.') }}{{ __('đ') }}</strong></p>
-    <p>{{ __('Không nhập số thẻ, OTP hoặc thông tin ngân hàng. Không gọi MoMo hay tạo vận đơn thật.') }}</p>
+    <p>{{ __('Không nhập số thẻ, OTP hoặc thông tin ngân hàng. Không chuyển tiền hay tạo vận đơn thật.') }}</p>
     @if(session('error'))<p role="alert">{{ session('error') }}</p>@endif
     @foreach($errors->all() as $error)<p role="alert">{{ $error }}</p>@endforeach
     <form method="POST" action="{{ route('user.orders.confirm.payment', $order) }}" style="display:grid;gap:16px;margin:24px 0">

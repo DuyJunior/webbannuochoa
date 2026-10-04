@@ -125,7 +125,7 @@ class ProductReliabilityTest extends TestCase
         $product = $this->product();
         $user = User::factory()->create();
         $payload = ['checkout_key' => (string) Str::uuid(), 'name' => 'Demo buyer', 'phone' => '0912345678',
-            'address' => 'Demo address', 'to_district_id' => 1493, 'to_ward_code' => 'DEMO', 'payment_method' => 'momo'];
+            'address' => 'Demo address', 'to_district_id' => 1493, 'to_ward_code' => 'DEMO', 'payment_method' => 'sepay'];
         $this->actingAs($user)->withSession(['cart' => [$product->id => 1]])->post(route('payment.process'), $payload)->assertSessionHasNoErrors();
         $order = Order::firstOrFail();
         $this->withSession(['cart' => [$product->id => 2]])->post(route('payment.process'), $payload)->assertRedirect(route('orders.show', $order));

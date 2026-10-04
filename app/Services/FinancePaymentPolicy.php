@@ -16,7 +16,7 @@ class FinancePaymentPolicy
         'refunded' => 'Đã hoàn tiền',
     ];
 
-    public const GATEWAY_LABELS = ['cod' => 'COD', 'momo' => 'MoMo', 'demo' => 'Mô phỏng', 'unknown' => 'Chưa xác định'];
+    public const GATEWAY_LABELS = ['cod' => 'COD', 'sepay' => 'SePay', 'momo' => 'MoMo', 'demo' => 'Mô phỏng', 'unknown' => 'Chưa xác định'];
 
     private const TRANSITIONS = [
         'pending' => ['pending', 'paid', 'failed'],
@@ -48,6 +48,14 @@ class FinancePaymentPolicy
     /** The form and the write endpoint share this policy. No shipping/inventory changes here. */
     public static function allowedTransitions(Order $order, string $paymentStatus, string $gateway): array
     {
+        // SePay collection is webhook-only; admin may only record an external refund.
+        if ($gateway === 'sepay') {
+            return match ($paymentStatus) {
+                'paid' => ['paid', 'refund_pending'],
+                'refund_pending' => ['refund_pending', 'refunded'],
+                default => [],
+            };
+        }
         if ($gateway !== 'cod') {
             return [];
         }

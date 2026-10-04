@@ -9,7 +9,7 @@ Tài liệu mô tả mã nguồn hiện tại; không coi phần mô phỏng là
 - Cart: CartController lưu lựa chọn vào session; CartQuoteService tính giá từ cơ sở dữ liệu.
 - Order: hai controller khách hàng/quản trị quản lý đơn và kiểm tra quyền sở hữu. Order ghi OrderEvent khi tạo hoặc đổi trạng thái.
 - Inventory: OrderInventoryService là nơi dùng chung để trừ/hoàn kho theo từng dung tích; khóa dữ liệu trong transaction.
-- Payment: MomoController/MomoService xử lý cổng thật/sandbox với chữ ký. Thanh toán mô phỏng là nhánh riêng cho đơn is_demo.
+- Payment: SePayController/SePayService xử lý VietQR và webhook HMAC. Thanh toán mô phỏng là nhánh riêng cho đơn is_demo.
 - Shipping: GHNService lấy địa chỉ/phí; GHNOrderService tạo vận đơn. Đơn demo dùng địa chỉ mẫu, phí 30.000đ và mã DEMO-{id}, không tạo vận đơn thật.
 - Chat: ChatController lưu tin; ReplyToCustomerMessage chạy hàng đợi; AiChatService gọi Groq. Người dùng có thể chọn nhân viên.
 - Review: StoreExperienceController::review yêu cầu có đơn đã nhận của đúng khách và sản phẩm.
@@ -40,9 +40,9 @@ Interface trong bài là hợp đồng hàm cung cấp, không phải giao diệ
 | CartQuoteService::quote(cart) | Các dòng session | items, total, weight; tính lại giá và thành phần Discovery Box |
 | OrderInventoryService::reserve(order) | Đơn unreserved và các dòng đã lưu | Trừ đúng kho, chuyển reserved; không trừ lần hai |
 | OrderInventoryService::release(order) | Đơn reserved | Hoàn đúng kho, chuyển released; không hoàn lần hai |
-| UserOrderController::processPayment(request, ghn, shipping) | Địa chỉ, phương thức, coupon/điểm | Tạo đơn, kiểm tra kho; chuyển sang demo/MoMo/COD |
+| UserOrderController::processPayment(request, ghn, shipping) | Địa chỉ, phương thức, coupon/điểm | Tạo đơn, kiểm tra kho; chuyển sang demo/SePay/COD |
 | UserOrderController::confirmPayment(order, request, shipping) | scenario success/declined/insufficient/limit | Chỉ mô phỏng đơn demo local; không thu tiền |
-| MomoController::ipn(request, shipping, momo) | Payload có chữ ký của cổng | Xác nhận giao dịch hợp lệ; callback hủy không mở lại đơn |
+| SePayController::webhook(request, sepay) | Payload có chữ ký của cổng | Xác nhận giao dịch hợp lệ; callback hủy không mở lại đơn |
 | GHNService::calculateFee(params) | Địa chỉ, khối lượng | code và data.total; demo là phí cố định |
 | UserChatController::send(request, ai) | message tối đa 1.000 ký tự | Lưu Message, xếp job, trả JSON |
 | AiChatService::reply(message) | Tin nhắn và lịch sử liên quan | Chuỗi trả lời; lỗi mạng/quota được job xử lý, không mất tin khách |
@@ -58,7 +58,7 @@ Interface trong bài là hợp đồng hàm cung cấp, không phải giao diệ
 | CartQuote | Một quy tắc tính giá | quote(), unitPrice() | Perfume | Dùng chung giỏ hàng, thanh toán, AI |
 | Inventory | Trừ/hoàn kho | reserve(), release() | Order, OrderItem, Perfume | Gộp các dòng cùng biến thể trước khi kiểm tra |
 | Order | Vòng đời đơn | processPayment(), cancel(), update(), bulkUpdate() | User, CartQuote, Inventory, Payment, Shipping | Kiểm tra quyền, trạng thái và tính nhất quán |
-| Payment | Giao dịch thật/sandbox hoặc demo | start(), ipn(), confirmPayment() | Order, PaymentTransaction, MoMo | Demo và callback có xác thực là hai luồng khác nhau |
+| Payment | Chuyển khoản VietQR hoặc demo | show(), webhook(), confirmPayment() | Order, PaymentTransaction, SePay | Demo và callback có xác thực là hai luồng khác nhau |
 | Shipping | Địa chỉ, cước, vận đơn | calculateFee(), create(), cancelOrder() | Order, GHN | Demo không cần tài khoản GHN |
 | Chat | Tư vấn và chuyển nhân viên | send(), getMessages(), mode(), reply() | User, Message, Queue, Catalog, Groq | Hết quota vẫn lưu tin, cho phép nhân viên trả lời |
 | Review | Nhận xét sau mua | review() | User, Order, OrderItem, PerfumeReview | Chỉ khách đã nhận sản phẩm được đánh giá |
@@ -78,7 +78,7 @@ flowchart TB
         Quote["CartQuoteService"]
         Order["Order controllers"]
         Stock["OrderInventoryService"]
-        Pay["MomoController / MomoService"]
+        Pay["SePayController / SePayService"]
         Demo["DemoMode / confirmPayment"]
         Ship["GHNService / GHNOrderService"]
         Review["Review"]
@@ -90,7 +90,7 @@ flowchart TB
         DB[("Database")]
     end
     Groq["Groq API — cần Internet / có hạn mức"]
-    MoMo["MoMo sandbox / cổng đã cấu hình"]
+    SePay["SePay / BIDV đã cấu hình"]
     GHN["GHN API — không gọi khi demo"]
 
     Customer --> Auth
@@ -108,7 +108,7 @@ flowchart TB
     Stock -->|"Khóa và cập nhật đúng kho"| DB
     Order -->|"Đơn trực tuyến"| Pay
     Order -->|"is_demo=true"| Demo
-    Pay -->|"Payload ký / callback"| MoMo
+    SePay -->|"Webhook HMAC"| Pay
     Pay -->|"Thanh toán thành công"| Ship
     Order -->|"COD / phí vận chuyển"| Ship
     Ship -->|"API khi không phải demo"| GHN

@@ -15,6 +15,7 @@ use App\Services\GHNService;
 use App\Services\LoyaltyService;
 use App\Services\OrderEmailService;
 use App\Services\OrderInventoryService;
+use App\Services\SePayService;
 use App\Support\DemoMode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -98,7 +99,7 @@ class OrderController extends Controller
             'address' => 'required|string|max:255',
             'to_district_id' => 'required|integer',
             'to_ward_code' => 'required|string',
-            'payment_method' => 'nullable|in:cod,momo,atm_domestic,atm_international',
+            'payment_method' => 'nullable|in:cod,sepay',
             'note' => 'nullable|string|max:500',
             'coupon_code' => 'nullable|string|max:30',
             'points_used' => 'nullable|integer|min:0',
@@ -116,6 +117,10 @@ class OrderController extends Controller
             'to_ward_code.required' => __('Vui lòng chọn Phường/Xã giao hàng.'),
             'payment_method.in' => __('Phương thức thanh toán không hợp lệ.'),
         ]);
+
+        if ($request->payment_method === 'sepay' && ! DemoMode::enabled() && ! app(SePayService::class)->ready()) {
+            throw ValidationException::withMessages(['payment_method' => __('Thanh toán SePay đang tạm ngưng. Vui lòng chọn COD hoặc thử lại sau.')]);
+        }
 
         $cart = session('cart', []);
         if (empty($cart)) {
@@ -164,6 +169,9 @@ class OrderController extends Controller
                 throw ValidationException::withMessages(['points_used' => __('Số điểm sử dụng vượt quá mức hiện có hoặc giới hạn 20% tiền hàng.')]);
             }
             $finalTotal = max(0, $subtotal + $shippingFee - $discount - $points * 1000);
+            if ($request->payment_method === 'sepay' && $finalTotal < 1) {
+                throw ValidationException::withMessages(['payment_method' => __('Đơn hàng 0₫ vui lòng chọn COD để hoàn tất.')]);
+            }
             $order = Order::create([
                 'checkout_key' => $checkoutKey,
                 'payment_expires_at' => $request->payment_method === 'cod' ? null : now()->addMinutes(30),
@@ -207,11 +215,14 @@ class OrderController extends Controller
             }
 
             app(OrderInventoryService::class)->reserve($order);
-            PaymentTransaction::create([
+            $payment = PaymentTransaction::create([
                 'order_id' => $order->id,
-                'gateway' => $request->payment_method === 'cod' ? 'cod' : 'momo',
+                'gateway' => $request->payment_method === 'cod' ? 'cod' : 'sepay',
                 'amount' => $order->total_price, 'status' => 'pending',
             ]);
+            if ($payment->gateway === 'sepay' && ! $order->is_demo) {
+                app(SePayService::class)->prepare($payment);
+            }
             app(OrderEmailService::class)->placed($order);
 
             return $order;
@@ -229,11 +240,9 @@ class OrderController extends Controller
             session()->put('cart', $remainingCart);
         }
 
-        // 4. Phân luồng thanh toán theo đúng tài liệu Lab 06
-        if (in_array($request->payment_method, ['momo', 'atm_domestic', 'atm_international'], true)) {
-            return redirect()->route($order->is_demo ? 'user.orders.payment.pending' : 'user.orders.momo.start', [
+        if ($request->payment_method === 'sepay') {
+            return redirect()->route($order->is_demo ? 'user.orders.payment.pending' : 'user.orders.sepay.pay', [
                 'order' => $order,
-                'method' => $request->payment_method,
             ]);
         }
 
@@ -268,18 +277,7 @@ class OrderController extends Controller
 
         $order->load('items.product');
 
-        // Ưu tiên: query param ?method= (khi click từ lịch sử đơn hàng)
-        // Fallback: PaymentTransaction cuối cùng -> session
-        $allowedMethods = ['atm_domestic', 'atm_international'];
-        $queryMethod = request()->query('method');
-
-        if (in_array($queryMethod, $allowedMethods)) {
-            $payMethod = $queryMethod;
-        } else {
-            $lastTransaction = $order->paymentTransactions()->latest()->first();
-            $payMethod = $lastTransaction?->gateway
-                ?? session('atm_pay_method_'.$order->id, 'atm_domestic');
-        }
+        $payMethod = 'sepay';
 
         return view('user.payment.pending', compact('order', 'payMethod'));
     }
@@ -362,8 +360,15 @@ class OrderController extends Controller
             }
         }
 
-        DB::transaction(function () use ($order) {
+        $cancelledShippingCode = $order->ghn_order_code;
+        DB::transaction(function () use ($order, $cancelledShippingCode) {
             $order = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
+            if ($order->ghn_order_code !== $cancelledShippingCode) {
+                throw ValidationException::withMessages(['order' => __('Vận đơn vừa thay đổi. Vui lòng tải lại đơn hàng trước khi hủy.')]);
+            }
+            if (app(SePayService::class)->shipmentNeedsReview($order)) {
+                throw ValidationException::withMessages(['order' => __('Vận đơn đang cần xác minh với GHN. Vui lòng liên hệ cửa hàng trước khi hủy.')]);
+            }
             if (! in_array($order->shipping_status, ['pending', 'ready_to_pick'], true)) {
                 throw ValidationException::withMessages(['order' => __('Đơn hàng không còn ở trạng thái có thể hủy.')]);
             }

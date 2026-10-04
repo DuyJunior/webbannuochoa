@@ -58,7 +58,7 @@ Các trạng thái hiển thị: `pending` (chờ thanh toán), `initiated` (đa
 
 Ràng buộc bổ sung:
 
-- Chỉ COD được sửa tại Finance. MoMo và các gateway khác phải theo luồng xác nhận riêng; không có nút đánh dấu thanh toán thành công tùy ý.
+- Chỉ COD được ghi nhận thu tiền thủ công tại Finance. SePay xác nhận thu tiền qua webhook; admin có thể ghi nhận hoàn tiền đã thực hiện bên ngoài, kèm mã chứng từ. MoMo cũ giữ nguyên lịch sử. Xem [SePay và trang đối soát webhook](sepay.md).
 - Đơn đã hủy hoặc đang/đã trả hàng không được thu tiền hay mở lại chờ thu. Đơn đã thu vẫn có thể tiếp tục quy trình ghi nhận hoàn tiền hợp lệ.
 - `paid_at` được ghi ở lần thu đầu tiên và không bị thay khi gửi lặp. Giao dịch COD legacy chưa có bản ghi sẽ được tạo khi có thay đổi hợp lệ.
 - Chỉ khi thu tiền cho đơn `pending`, `confirmed`, `cod_ordered` mới đổi dấu trạng thái đơn thành `cod_paid`. Không kéo lùi đơn đã hoàn thành hoặc thay trạng thái vận chuyển.

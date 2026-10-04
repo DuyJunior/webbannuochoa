@@ -129,7 +129,7 @@ Migration chạy lúc boot khi RUN_MIGRATIONS=true; có thể tắt để chạy
 quy trình triển khai riêng. Rollback image không tự rollback schema. Healthcheck
 HTTP kiểm tra app boot; không thay thế monitoring database, disk và backup.
 
-Production không mô phỏng checkout: cần cấu hình GHN/MoMo trước khi nghiệm thu
+Production không mô phỏng checkout: cần cấu hình GHN/SePay trước khi nghiệm thu
 luồng mua hàng, SMTP để gửi mail, Groq/LiveKit nếu dùng AI/livestream. Không coi các
 tích hợp ngoài đã hoạt động chỉ vì container healthy.
 
@@ -149,3 +149,5 @@ tích hợp ngoài đã hoạt động chỉ vì container healthy.
 Các lỗi hạ tầng phát hiện và sửa khi chạy thực tế: quyền tạo symlink public/storage,
 FastCGI Debian làm mất cổng URL khi redirect; bộ test thiếu APP_KEY riêng và browser
 mocks cho livestream. Mã nghiệp vụ livestream không thay đổi.
+
+Cấu hình chuyển khoản BIDV, HMAC và kiểm tra `sepay:check`: xem [SePay](sepay.md).

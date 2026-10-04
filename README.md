@@ -132,8 +132,12 @@ Phạm vi còn lại: quy trình khách yêu cầu đổi trả/hoàn tiền th�
 ## Lab 09 / Lab 10 — cập nhật mã 28/09/2026
 
 - Admin có hai mục mới: **Thống kê tài chính** (`/admin/finance`) và **Giao dịch thanh toán** (`/admin/finance/transactions`). Lọc, phân trang, thống kê và CSV dùng cùng dữ liệu; báo cáo mặc định loại đơn demo và đơn có ngày tạo ở tương lai.
-- Đối soát COD có kiểm tra chuyển trạng thái, chống cập nhật form cũ và lưu lịch sử người thao tác. Ghi nhận hoàn tiền không chuyển tiền và không tự hoàn kho. Giao dịch MoMo không được sửa thủ công qua Finance.
+- Đối soát COD có kiểm tra chuyển trạng thái, chống cập nhật form cũ và lưu lịch sử người thao tác. Ghi nhận hoàn tiền không chuyển tiền và không tự hoàn kho. Thu tiền SePay chỉ xác nhận qua webhook; Finance chỉ ghi nhận hoàn tiền SePay đã thực hiện bên ngoài. Giao dịch MoMo cũ giữ nguyên lịch sử.
 - Máy đang có dữ liệu: sao lưu bằng `php scripts/backup-sqlite.php`, chạy `php artisan migrate --force`, sau đó `npm ci` và `npm run build`. Dừng Vite của đúng dự án trước `npm ci` nếu Windows báo file native đang bị khóa. Không chạy `migrate:fresh`.
 - Thư mục controller đã chuẩn hóa thành `app/Http/Controllers/Admin` để khớp namespace trên Linux. Dependency frontend có lock đa nền tảng, không còn khai báo trực tiếp package chỉ dành cho Windows.
 - Đã thêm Docker nhiều stage, Nginx/PHP-FPM, worker AI, scheduler, kiểm tra cấu hình production/TLS và ProductionSeeder chạy lại không ghi đè tài khoản/tồn kho. Cấu hình mẫu ở `docker/render.env.example`, không dùng `.env` local làm cấu hình production.
 - **Chưa đưa online.** Đã build/chạy Linux image và MySQL bằng Docker Desktop, bổ sung cấu hình VPS Compose; xem [kết quả kiểm tra Docker](docs/docker-vps.md). Render/Aiven và HTTPS trên VPS thật chưa được nghiệm thu.
+
+### Thanh toán SePay (BIDV)
+
+Checkout hỗ trợ COD và chuyển khoản SePay/VietQR. Xem [hướng dẫn cấu hình và vận hành](docs/sepay.md). Webhook được xác thực HMAC và mặc định tắt; không dùng SDK hay cài PHP/Composer trên máy host.

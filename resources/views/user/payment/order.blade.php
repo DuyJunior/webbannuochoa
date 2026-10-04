@@ -121,26 +121,14 @@
                                         $lastTx = $order->paymentTransactions?->first();
                                         $gw = $lastTx?->gateway;
                                     @endphp
-                                    @if($order->status === 'paid')
-                                        @if($gw === 'atm_domestic')
-                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __('Thẻ ATM Nội Địa (Đã thanh toán)') }}</span>
-                                        @elseif($gw === 'atm_international')
-                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __('Visa/Mastercard (Đã thanh toán)') }}</span>
-                                        @else
-                                            <span class="pay-badge pay-success">@include('partials.icon', ['name' => 'check', 'size' => '1em']) {{ __('Ví MoMo (Đã thanh toán)') }}</span>
-                                        @endif
-                                    @elseif($order->status === 'cod_ordered')
-                                        <span class="pay-badge pay-cod">@include('partials.icon', ['name' => 'cash', 'size' => '1em']) {{ __('Thanh toán khi nhận hàng (COD)') }}</span>
-                                    @elseif($order->status === 'pending')
-                                        <span class="pay-badge pay-pending">@include('partials.icon', ['name' => 'hourglass', 'size' => '1em']) {{ __('Chờ thanh toán') }}</span>
-                                    @endif
+                                    @include('user.payment._method', ['order' => $order])
                                 </div>
                             </div>
                             <div class="order-actions">
-                                @if($order->status === 'pending')
-                                    <a href="{{ route('user.orders.momo.pay', $order->id) }}" class="btn-pay-again">
-                                        <img src="{{ asset('images/payments/momo.svg') }}" alt="MoMo" style="height:17px; width:17px; border-radius:3px; object-fit:contain;">
-                                        <span>{{ __('Thanh toán lại qua MoMo') }}</span>
+                                @if($order->status === 'pending' && $order->paymentTransactions->contains('gateway', 'sepay') && ($order->is_demo ? \App\Support\DemoMode::enabled() : app(\App\Services\SePayService::class)->ready()) && app(\App\Services\SePayService::class)->canPay($order))
+                                    <a href="{{ route('user.orders.sepay.pay', $order->id) }}" class="btn-pay-again">
+                                        @include('partials.icon', ['name' => 'bank', 'size' => '1em'])
+                                        <span>{{ __('Thanh toán qua SePay') }}</span>
                                     </a>
                                 @endif
                                 <a href="{{ route('orders.show', $order->id) }}" class="btn-detail">{{ __('Xem chi tiết đơn →') }}</a>
@@ -613,7 +601,7 @@
     align-items: center; justify-content: center; flex-shrink: 0;
     font-size: 1.1rem;
 }
-.pay-ditem-icon.momo-bg { background: #fce7f3; }
+.pay-ditem-icon.online-bg { background: #fce7f3; }
 .pay-ditem-icon.domestic-bg { background: #dbeafe; }
 .pay-ditem-icon.intl-bg { background: #e0e7ff; }
 .pay-ditem-info { display: flex; flex-direction: column; gap: 1px; }

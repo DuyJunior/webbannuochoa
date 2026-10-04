@@ -8,7 +8,8 @@ use App\Models\User;
 use App\Mail\OrderStatusMail;
 use App\Services\GHNOrderService;
 use App\Services\GHNService;
-use App\Services\MomoService;
+use App\Services\SePayService;
+use Tests\Concerns\SePayRequests;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -18,6 +19,7 @@ use Tests\TestCase;
 class PurchaseReliabilityTest extends TestCase
 {
     use RefreshDatabase;
+    use SePayRequests;
 
     private int $feeRequests = 0;
 
@@ -53,7 +55,7 @@ class PurchaseReliabilityTest extends TestCase
     private function address(array $extra = []): array
     {
         return array_replace(['name' => 'Khách Soopi', 'phone' => '0912345678', 'address' => 'Hà Nội',
-            'to_district_id' => 1493, 'to_ward_code' => 'DEMO', 'payment_method' => 'momo'], $extra);
+            'to_district_id' => 1493, 'to_ward_code' => 'DEMO', 'payment_method' => 'sepay'], $extra);
     }
 
     private function order(array $extra = []): Order
@@ -153,7 +155,7 @@ class PurchaseReliabilityTest extends TestCase
 
     public function test_order_note_is_preserved_in_customer_admin_shipping_and_email_flows(): void
     {
-        config(['demo.enabled' => false]);
+        $this->configureSePay();
         $this->cart();
         $note = "Gọi trước khi giao & tới cổng sau.\n<script>alert('test')</script>";
         $this->post(route('payment.process'), $this->address(['note' => $note]))
@@ -205,38 +207,37 @@ class PurchaseReliabilityTest extends TestCase
         $this->get(route('admin.orders.show', $order))->assertOk()->assertDontSee('Ghi chú đơn hàng:');
     }
 
-    public function test_momo_wallet_and_card_choices_use_the_matching_gateway_request_type(): void
+    public function test_removed_momo_and_card_choices_are_rejected_at_checkout(): void
     {
-        foreach (['user.orders.momo.start', 'user.orders.momo.pay'] as $route) {
-            foreach (['momo' => 'captureWallet', 'qr' => 'captureWallet', 'atm_domestic' => 'payWithATM', 'atm_international' => 'payWithCC'] as $method => $type) {
-                $order = $this->order();
-                $gateway = $this->createMock(MomoService::class);
-                $gateway->expects($this->once())->method('createPayment')
-                    ->with($this->callback(fn ($value) => $value->is($order)), $this->anything(), $type)
-                    ->willReturn(['payUrl' => 'https://payment.example.test/checkout']);
-                $this->app->instance(MomoService::class, $gateway);
-                $this->get(route($route, ['order' => $order, 'method' => $method]))->assertRedirect('https://payment.example.test/checkout');
-            }
+        $this->cart();
+        foreach (['momo', 'atm_domestic', 'atm_international', 'qr'] as $method) {
+            $this->postJson(route('payment.process'), $this->address(['payment_method' => $method]))
+                ->assertUnprocessable()->assertJsonValidationErrors('payment_method');
         }
+        $this->assertDatabaseCount('orders', 0);
         Http::assertNothingSent();
     }
 
-    public function test_momo_qr_uses_wallet_instead_of_atm(): void
+    public function test_real_checkout_prepares_one_bank_qr_without_a_gateway_network_call(): void
     {
-        $order = $this->order();
-        $gateway = $this->createMock(MomoService::class);
-        $gateway->expects($this->once())->method('createPayment')->with($this->anything(), $this->anything(), 'captureWallet')
-            ->willReturn(['payUrl' => 'https://payment.example.test/wallet']);
-        $this->app->instance(MomoService::class, $gateway);
-        $this->get(route('user.orders.momo.qr', $order))->assertOk()->assertViewHas('momoUrl', 'https://payment.example.test/wallet');
+        $this->configureSePay();
+        $this->cart();
+        $this->post(route('payment.process'), $this->address())->assertSessionHasNoErrors()
+            ->assertRedirect(route('user.orders.sepay.pay', Order::sole()));
+        $order = Order::sole();
+        $payment = $order->paymentTransactions()->sole();
+        $this->assertSame('sepay', $payment->gateway);
+        $this->assertSame('pending', $payment->status);
+        $this->assertSame('reserved', $order->inventory_status);
+        $this->assertMatchesRegularExpression('/^DH[0-9]{8}$/', $payment->gateway_order_id);
+        $this->get(route('user.orders.sepay.pay', $order))->assertOk()->assertSee('96247TEST')
+            ->assertSee('vietqr.app/img')->assertSee($payment->gateway_order_id);
         Http::assertNothingSent();
     }
 
     public function test_cod_dispatched_expired_and_paid_orders_cannot_start_another_gateway_payment(): void
     {
-        $gateway = $this->createMock(MomoService::class);
-        $gateway->expects($this->never())->method('createPayment');
-        $this->app->instance(MomoService::class, $gateway);
+        $this->configureSePay();
         $orders = collect([
             $this->order(['status' => 'cod_ordered']),
             $this->order(['ghn_order_code' => 'GHN_EXISTING']),
@@ -244,18 +245,43 @@ class PurchaseReliabilityTest extends TestCase
             $this->order(['payment_expires_at' => now()->subMinute()]),
             $this->order(['status' => 'paid']),
         ]);
-        foreach (['cod' => 'pending', 'momo' => 'refund_pending'] as $gatewayName => $status) {
+        foreach (['cod' => 'pending', 'momo' => 'refund_pending'] as $gateway => $status) {
             $order = $this->order();
-            $order->paymentTransactions()->create(['gateway' => $gatewayName, 'status' => $status, 'amount' => 1000000]);
+            $order->paymentTransactions()->create(['gateway' => $gateway, 'status' => $status, 'amount' => 1000000]);
             $orders->push($order);
         }
         foreach ($orders as $order) {
+            $payment = $order->paymentTransactions()->create(['gateway' => 'sepay', 'amount' => 1000000, 'status' => 'pending']);
+            app(SePayService::class)->prepare($payment);
             $count = $order->paymentTransactions()->count();
-            foreach (['user.orders.momo.start', 'user.orders.momo.pay', 'user.orders.momo.qr'] as $route) {
+            foreach (['user.orders.sepay.pay', 'orders.sepay.pay'] as $route) {
                 $this->get(route($route, $order))->assertStatus(409);
             }
             $this->assertSame($count, $order->paymentTransactions()->count());
         }
+        Http::assertNothingSent();
+    }
+
+    public function test_production_checkout_never_simulates_and_uses_compact_bank_qr(): void
+    {
+        $this->configureSePay();
+        $this->app->instance('env', 'production');
+        config(['demo.enabled' => true]); // Even an accidentally carried-over flag cannot enable demo in production.
+        $this->cart();
+        $this->withSession(['_token' => 'production-checkout-test'])
+            ->post(route('payment.process'), $this->address(['_token' => 'production-checkout-test']))
+            ->assertSessionHasNoErrors()->assertRedirect();
+        $order = Order::sole();
+        $payment = $order->paymentTransactions()->sole();
+        $this->assertFalse($order->is_demo);
+        $this->assertSame('sepay', $payment->gateway);
+        $this->get(route('user.orders.sepay.pay', $order))->assertOk()
+            ->assertSee('template=compact')->assertSee('96247TEST')->assertDontSee('Chạy mô phỏng');
+        $this->post(route('user.orders.confirm.payment', $order), ['_token' => 'production-checkout-test', 'scenario' => 'success'])
+            ->assertNotFound();
+        $this->assertSame('pending', $payment->fresh()->status);
+        $this->sendSePay($this->sepayPayload($payment))->assertOk();
+        $this->assertSame('paid', $payment->fresh()->status);
         Http::assertNothingSent();
     }
 }

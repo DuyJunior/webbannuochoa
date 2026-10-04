@@ -23,7 +23,7 @@ class ReportController extends Controller
             'date_from' => 'nullable|date_format:Y-m-d',
             'date_to' => ['nullable', 'date_format:Y-m-d', ...($request->filled('date_from') ? ['after_or_equal:date_from'] : [])],
             'category_id' => 'nullable|integer|exists:categories,id',
-            'gateway' => 'nullable|in:cod,momo,demo',
+            'gateway' => 'nullable|in:cod,sepay,momo,demo',
             'preset' => 'nullable|in:today,yesterday,7days,30days,this_month,last_month,this_year',
             'mode' => 'nullable|in:real,demo',
         ], [
@@ -105,7 +105,7 @@ class ReportController extends Controller
             $query->where('orders.created_at', '<', Carbon::parse($filters['date_to'])->addDay()->startOfDay());
         }
 
-        // 2. Bộ lọc cổng thanh toán (gateway: cod | momo)
+        // 2. Bộ lọc cổng thanh toán (gateway: cod | sepay | momo (legacy))
         if (! empty($filters['gateway'])) {
             $g = $filters['gateway'];
             $gatewaySub = DB::table('payment_transactions')->select('gateway')
@@ -284,7 +284,7 @@ class ReportController extends Controller
             ->selectRaw('COALESCE(gateway, legacy_gateway) as method, SUM(total_price) as revenue')
             ->groupByRaw('COALESCE(gateway, legacy_gateway)')->pluck('revenue', 'method');
 
-        $gatewayLabels = ['momo' => 'MoMo', 'cod' => 'COD', 'demo' => 'Mô phỏng', 'unknown' => 'Chưa xác định'];
+        $gatewayLabels = ['sepay' => 'SePay', 'momo' => 'MoMo', 'cod' => 'COD', 'demo' => 'Mô phỏng', 'unknown' => 'Chưa xác định'];
         $paymentMethodLabels = $methodRevenue->keys()->map(fn ($gateway) => $gatewayLabels[$gateway] ?? 'Khác')->all();
         $paymentMethodRevenue = $methodRevenue->values()->map(fn ($value) => (float) $value)->all();
         $hasRevenue = $daily->isNotEmpty();

@@ -4,7 +4,7 @@
 @endphp
 <div class="admin-card">
     <div class="d-flex justify-content-between align-items-center flex-wrap mb-3" style="gap:10px">
-        <h3 class="finance-chart-title mb-0">{{ $canReconcile ? __('Giao dịch và đối soát COD') : __('Đơn hàng theo bộ lọc') }}</h3>
+        <h3 class="finance-chart-title mb-0">{{ $canReconcile ? __('Giao dịch và đối soát') : __('Đơn hàng theo bộ lọc') }}</h3>
         <span class="finance-muted">{{ $orders->firstItem() ?? 0 }}–{{ $orders->lastItem() ?? 0 }} / {{ number_format($orders->total()) }} {{ __('đơn') }}</span>
     </div>
     <div class="table-responsive">
@@ -32,7 +32,7 @@
                             @endphp
                             <td>
                                 @if(count($allowed))
-                                    <form method="POST" action="{{ route('admin.finance.update-status', $order->id) }}" class="finance-reconcile" data-confirm="Ghi nhận đối soát COD cho đơn #{{ $order->id }} với giá trị {{ number_format($order->total_price, 0, ',', '.') }} ₫? Hãy kiểm tra khoản thu hoặc chứng từ hoàn tiền. Thao tác ghi nhận trạng thái và lịch sử, không chuyển tiền.">
+                                    <form method="POST" action="{{ route('admin.finance.update-status', $order->id) }}" class="finance-reconcile" data-confirm="Ghi nhận đối soát cho đơn #{{ $order->id }} với giá trị {{ number_format($order->total_price, 0, ',', '.') }} ₫? Hãy kiểm tra khoản thu hoặc chứng từ hoàn tiền. Thao tác ghi nhận trạng thái và lịch sử, không chuyển tiền.">
                                         @csrf
                                         @method('PATCH')
                                         <input type="hidden" name="_finance_order" value="{{ $order->id }}">
@@ -40,7 +40,7 @@
                                         <input type="hidden" name="current_payment_id" value="{{ $order->payment_id ?? 0 }}">
                                         <input type="hidden" name="current_payment_status" value="{{ $order->payment_status }}">
                                         <input type="hidden" name="current_order_status" value="{{ $order->status }}">
-                                        <label for="finance-next-{{ $order->id }}" class="mt-0">{{ __('Chuyển trạng thái COD') }}</label>
+                                        <label for="finance-next-{{ $order->id }}" class="mt-0">{{ __('Chuyển trạng thái thanh toán') }}</label>
                                         <select id="finance-next-{{ $order->id }}" name="payment_status" class="form-control" required>
                                             <option value="">{{ __('Chọn trạng thái…') }}</option>
                                             @foreach($allowed as $status)<option value="{{ $status }}" @selected($hasOldInput && old('payment_status') === $status)>{{ __($paymentLabels[$status]) }}</option>@endforeach
@@ -53,7 +53,7 @@
                                         <button type="submit" class="btn btn-outline-pink">{{ __('Lưu đối soát') }}</button>
                                     </form>
                                 @else
-                                    <span class="finance-muted">{{ match($order->gateway) { 'cod' => __('Không có chuyển trạng thái hợp lệ.'), 'momo' => __('Trạng thái cập nhật từ cổng MoMo.'), 'demo' => __('Giao dịch mô phỏng, không thu tiền thật.'), default => __('Chưa xác định phương thức; cần kiểm tra đơn hàng.') } }}</span>
+                                    <span class="finance-muted">{{ match($order->gateway) { 'cod' => __('Không có chuyển trạng thái hợp lệ.'), 'sepay' => __('Trạng thái cập nhật từ webhook SePay.'), 'momo' => __('Trạng thái cập nhật từ cổng MoMo.'), 'demo' => __('Giao dịch mô phỏng, không thu tiền thật.'), default => __('Chưa xác định phương thức; cần kiểm tra đơn hàng.') } }}</span>
                                 @endif
                                 @if($events->isNotEmpty())
                                     <details class="finance-audit">

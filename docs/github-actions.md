@@ -64,4 +64,4 @@ ghi đè một file soopi.site có sẵn nếu không mang marker của dự án
 
 Khi DNS/TLS và .env đã sẵn sàng, bật DEPLOY_ENABLED rồi chạy workflow trên main
 với deploy=true. Kiểm tra `https://soopi.site/up`, trang chủ và `/admin/login`.
-AI/SMTP/MoMo/GHN/LiveKit cần credential riêng, không được tự bật bởi workflow.
+AI/SMTP/SePay/GHN/LiveKit cần credential riêng, không được tự bật bởi workflow.

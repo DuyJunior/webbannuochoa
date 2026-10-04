@@ -144,7 +144,7 @@ class CommerceUpgradeTest extends TestCase
         $this->customer();
         $product = $this->product();
         $this->withSession(['cart' => [$product->id => 1]])
-            ->post(route('payment.process'), $this->address() + ['payment_method' => 'momo'])
+            ->post(route('payment.process'), $this->address() + ['payment_method' => 'sepay'])
             ->assertSessionHasNoErrors();
         $order = Order::firstOrFail();
         $this->assertTrue($order->is_demo);

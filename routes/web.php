@@ -30,7 +30,7 @@ use App\Http\Controllers\ProductQuickViewController;
 use App\Http\Controllers\StoreExperienceController;
 use App\Http\Controllers\User\ChatController as UserChatController;
 use App\Http\Controllers\User\GHNController;
-use App\Http\Controllers\User\MomoController;
+use App\Http\Controllers\User\SePayController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
 use App\Support\DemoMode;
 use Illuminate\Http\Request;
@@ -75,14 +75,13 @@ Route::resource('perfumes', PerfumeController::class)->only(['index', 'show']);
 Route::resource('categories', CategoryController::class)->only(['index', 'show']);
 
 // ============================================================
-// 🚚 THIRD-PARTY WEBHOOKS & CALLBACKS (GHN, MOMO IPN)
+// THIRD-PARTY WEBHOOKS (GHN, SePay HMAC)
 // NOTE:
-// - Không dùng middleware 'auth' vì bên thứ 3 (GHN, MoMo) gọi sang tự động.
+// - Không dùng middleware 'auth' vì bên thứ 3 gọi sang tự động.
 // - Đã được bypass CSRF trong bootstrap/app.php.
 // ============================================================
 Route::post('/ghn/webhook', [GHNWebhookController::class, 'handle'])->name('ghn.webhook');
-Route::post('/payment/momo/ipn', [MomoController::class, 'ipn'])->name('payment.momo.ipn');
-Route::get('/payment/momo/callback', [MomoController::class, 'callback'])->name('user.payment.momo.callback');
+Route::post('/payment/sepay/webhook', [SePayController::class, 'webhook'])->name('payment.sepay.webhook');
 
 // ============================================================
 // GIỎ HÀNG & ĐẶT HÀNG - Yêu cầu đăng nhập (auth middleware)
@@ -116,8 +115,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders', [UserOrderController::class, 'orderHistory'])->name('orders.index');
     Route::get('/orders/{order}', [UserOrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/cancel', [UserOrderController::class, 'cancel'])->name('orders.cancel');
-    Route::get('/orders/{order}/pay/momo', [MomoController::class, 'payAgain'])->name('orders.momo.pay');
-    Route::get('/orders/{order}/start-momo', [MomoController::class, 'start'])->name('orders.momo.start');
+    Route::get('/orders/{order}/pay/sepay', [SePayController::class, 'show'])->name('orders.sepay.pay');
+    Route::get('/orders/{order}/payment-status', [SePayController::class, 'status'])->middleware('throttle:30,1')->name('orders.sepay.status');
 });
 
 // Nhóm route chuẩn theo tài liệu PDF (prefix 'user', name 'user.')
@@ -125,13 +124,12 @@ Route::middleware(['auth'])->prefix('user')->name('user.')->group(function () {
     // Payment
     Route::get('/payment', [UserOrderController::class, 'index'])->name('payment.index');
     Route::post('/payment/process', [UserOrderController::class, 'processPayment'])->block(90, 15)->name('payment.process');
-    Route::get('/orders/{order}/pay/momo', [MomoController::class, 'payAgain'])->name('orders.momo.pay');
-    Route::get('/orders/{order}/start-momo', [MomoController::class, 'start'])->name('orders.momo.start');
-    Route::get('/orders/{order}/momo-qr', [MomoController::class, 'showQr'])->name('orders.momo.qr');
+    Route::get('/orders/{order}/pay/sepay', [SePayController::class, 'show'])->name('orders.sepay.pay');
+    Route::get('/orders/{order}/payment-status', [SePayController::class, 'status'])->middleware('throttle:30,1')->name('orders.sepay.status');
     Route::get('/orders', [UserOrderController::class, 'orderHistory'])->name('orders.index');
-    // Trang hướng dẫn thanh toán ATM (nội địa / quốc tế)
+    // Thanh toán mô phỏng chỉ dành cho đơn demo local.
     Route::get('/orders/{order}/payment-pending', [UserOrderController::class, 'paymentPending'])->name('orders.payment.pending');
-    // Xác nhận thanh toán thành công (ATM / Visa / MoMo)
+    // Không thể dùng endpoint demo để xác nhận thanh toán thật.
     Route::post('/orders/{order}/confirm-payment', [UserOrderController::class, 'confirmPayment'])->name('orders.confirm.payment');
 
     // Lab 7: Livechat User (PDF Trang 7-8)
@@ -255,6 +253,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     // Lab 9: Finance and COD reconciliation.
     Route::get('/finance', [FinanceController::class, 'index'])->name('admin.finance.index');
     Route::get('/finance/transactions', [FinanceController::class, 'transactions'])->name('admin.finance.transactions');
+    Route::get('/finance/sepay', [FinanceController::class, 'sepayReceipts'])->name('admin.finance.sepay');
     Route::get('/finance/export', [FinanceController::class, 'export'])->name('admin.finance.export');
     Route::patch('/finance/{order}/status', [FinanceController::class, 'updateStatus'])->middleware('throttle:30,1')->name('admin.finance.update-status');
 

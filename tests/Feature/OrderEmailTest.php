@@ -11,7 +11,7 @@ use App\Models\Perfume;
 use App\Models\User;
 use App\Services\GHNOrderService;
 use App\Services\GHNService;
-use App\Services\MomoService;
+use Tests\Concerns\SePayRequests;
 use App\Services\OrderEmailService;
 use App\Services\ShippingUpdateService;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -28,6 +28,7 @@ use Tests\TestCase;
 class OrderEmailTest extends TestCase
 {
     use DatabaseMigrations;
+    use SePayRequests;
 
     private QueueManager $realQueue;
 
@@ -382,55 +383,38 @@ class OrderEmailTest extends TestCase
             OrderEmail::where('order_id', $order->id)->orderBy('type')->pluck('type')->all());
     }
 
-    public function test_repeated_momo_ipn_records_one_payment_email_without_dispatch_email(): void
+    public function test_repeated_sepay_webhook_records_one_payment_email_without_dispatch_email(): void
     {
-        $order = $this->order();
-        $payment = $this->payment($order, ['gateway' => 'momo', 'gateway_order_id' => 'email-momo-'.$order->id]);
-        $momo = Mockery::mock(MomoService::class)->makePartial();
-        $momo->shouldReceive('isValidSuccessfulResponse')->twice()->andReturnTrue();
-        $this->app->instance(MomoService::class, $momo);
-        $ghn = Mockery::mock(GHNOrderService::class);
-        $ghn->shouldReceive('create')->once()
-            ->with(Mockery::on(fn ($candidate) => $candidate->id === $order->id), true)
-            ->andReturn(['code' => 200, 'data' => ['order_code' => 'GHN-EMAIL-MOMO']]);
-        $this->app->instance(GHNOrderService::class, $ghn);
-        $payload = [
-            'orderId' => $payment->gateway_order_id, 'amount' => (int) $order->total_price,
-            'resultCode' => 0, 'transId' => 'email-momo-transaction',
-        ];
-
-        $this->postJson(route('payment.momo.ipn'), $payload)->assertOk();
-        $this->postJson(route('payment.momo.ipn'), $payload)->assertOk();
+        $this->configureSePay();
+        $order = $this->order(['inventory_status' => 'reserved', 'payment_expires_at' => now()->addMinutes(30)]);
+        $payment = $this->payment($order, ['gateway' => 'sepay']);
+        $payload = $this->sepayPayload($payment);
+        $this->sendSePay($payload)->assertOk();
+        $this->sendSePay($payload)->assertOk();
 
         $this->assertSame('paid', $payment->fresh()->status);
-        $this->assertSame('ready_to_pick', $order->fresh()->shipping_status);
+        $this->assertSame('pending', $order->fresh()->shipping_status);
         $this->assertSame(['paid'], OrderEmail::where('order_id', $order->id)->pluck('type')->all());
+        Queue::assertPushed(\App\Jobs\CreateSePayShipment::class, 1);
         Mail::assertNothingSent();
+        Http::assertNothingSent();
     }
 
-    public function test_late_momo_success_on_cancelled_order_does_not_email_transient_paid_state(): void
+    public function test_late_sepay_success_on_cancelled_order_does_not_email_transient_paid_state(): void
     {
+        $this->configureSePay();
         $order = $this->order(['status' => 'cancelled', 'shipping_status' => 'cancelled']);
-        $payment = $this->payment($order, ['gateway' => 'momo', 'gateway_order_id' => 'email-cancelled-'.$order->id]);
-        $momo = Mockery::mock(MomoService::class)->makePartial();
-        $momo->shouldReceive('isValidSuccessfulResponse')->twice()->andReturnTrue();
-        $this->app->instance(MomoService::class, $momo);
-        $ghn = Mockery::mock(GHNOrderService::class);
-        $ghn->shouldNotReceive('create');
-        $this->app->instance(GHNOrderService::class, $ghn);
-        $payload = [
-            'orderId' => $payment->gateway_order_id, 'amount' => (int) $order->total_price,
-            'resultCode' => 0, 'transId' => 'email-cancelled-transaction',
-        ];
-
-        $this->postJson(route('payment.momo.ipn'), $payload)->assertOk();
-        $this->postJson(route('payment.momo.ipn'), $payload)->assertOk();
+        $payment = $this->payment($order, ['gateway' => 'sepay']);
+        $payload = $this->sepayPayload($payment);
+        $this->sendSePay($payload)->assertOk();
+        $this->sendSePay($payload)->assertOk();
 
         $this->assertSame('refund_pending', $payment->fresh()->status);
         $this->assertSame('cancelled', $order->fresh()->status);
         $this->assertDatabaseCount('order_emails', 0);
         Queue::assertNothingPushed();
         Mail::assertNothingSent();
+        Http::assertNothingSent();
     }
 
     public function test_admin_single_and_bulk_completion_capture_query_builder_cod_payments(): void

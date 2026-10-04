@@ -295,8 +295,7 @@
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
                 {{ __('Chúng tôi hỗ trợ đầy đủ các hình thức:') }}
                 <ul>
-                    <li>@include('partials.icon', ['name' => 'heart', 'size' => '1em']) <strong>MoMo</strong> {{ __('– thanh toán QR nhanh chóng') }}</li>
-                    <li>@include('partials.icon', ['name' => 'bank', 'size' => '1em']) <strong>{{ __('Thẻ ATM nội địa hoặc thẻ quốc tế qua cổng MoMo') }}</strong></li>
+                    <li>@include('partials.icon', ['name' => 'bank', 'size' => '1em']) <strong>SePay · VietQR</strong> {{ __('– chuyển khoản ngân hàng khi phương thức này được bật tại checkout') }}</li>
                     <li>@include('partials.icon', ['name' => 'cash', 'size' => '1em']) <strong>COD</strong> {{ __('– thanh toán khi nhận hàng') }}</li>
                 </ul>
             </div></div>
@@ -314,11 +313,11 @@
 
         <div class="ht-faq-item">
             <button class="ht-faq-question" aria-expanded="false">
-                {{ __('Thanh toán MoMo có an toàn không?') }}
+                {{ __('Thanh toán SePay được xác nhận như thế nào?') }}
                 <span class="ht-faq-chevron"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
             </button>
             <div class="ht-faq-answer"><div class="ht-faq-answer-inner">
-                {{ __('Hoàn toàn an toàn. Giao dịch MoMo được xử lý trực tiếp qua cổng thanh toán chính thức của MoMo với mã hóa SSL. Soopi không lưu trữ thông tin thẻ hay tài khoản ví của bạn.') }}
+                {{ __('Bạn chuyển khoản trong ứng dụng ngân hàng, không nhập số thẻ hay OTP trên Soopi. Hệ thống kiểm tra thông báo SePay, tài khoản nhận, mã thanh toán và số tiền trước khi xác nhận đơn.') }}
             </div></div>
         </div>
     </div>
