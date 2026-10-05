@@ -110,7 +110,9 @@ class PurchaseReliabilityTest extends TestCase
         $gift = ['enable_gift_service' => '1', 'gift_wrap' => 'Lụa hồng phấn kiêu kỳ (Blush Pink)',
             'gift_card' => 'Tri ân & Cảm ơn (Thank You)', 'gift_message' => 'Chúc bạn một ngày dịu dàng.',
             'gift_delivery_date' => now()->addDays(3)->toDateString()];
-        $this->post(route('payment.process'), $this->address($gift))->assertRedirect()->assertSessionHasNoErrors();
+        $this->withSession(['gift_finder_message' => $gift['gift_message']])
+            ->post(route('payment.process'), $this->address($gift))->assertRedirect()->assertSessionHasNoErrors()
+            ->assertSessionMissing('gift_finder_message');
         $order = Order::sole();
         $this->assertDatabaseHas('orders', ['id' => $order->id] + array_diff_key($gift, ['enable_gift_service' => true]));
         $this->assertSame(1030000, (int) $order->total_price);

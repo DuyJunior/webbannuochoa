@@ -29,11 +29,12 @@
 <section class="store-container soopi-gifting" id="chon-qua" aria-labelledby="gifting-title">
     <div class="gifting-visual"><img src="{{ asset('images/bloom/gift-atelier.webp') }}" alt="{{ __('Chai nước hoa và hộp quà trắng với dải lụa hồng') }}" width="1440" height="1080" loading="lazy"><div class="gifting-card"><span>{{ __('GỬI MỘT CHÚT THƯƠNG') }}</span><p data-gift-note-preview>{{ __('Mong mỗi ngày của bạn đều có một điều dịu dàng.') }}</p><small>with love, Soopi</small></div></div>
     <div class="gifting-copy"><span class="atelier-kicker">SOOPI / THE ART OF GIVING</span><h2 id="gifting-title">{{ __('Có những điều,') }}<br><em>{{ __('hương thơm nói hộ.') }}</em></h2><p>{{ __('Chọn một món quà bắt đầu từ người bạn thương.') }}</p>
-        <form action="{{ route('store.finder') }}" method="GET" class="atelier-gift-form">
+        <form action="{{ route('store.gift-finder') }}" method="POST" class="atelier-gift-form">
+            @csrf
             <label><span>{{ __('01 / DÀNH CHO AI?') }}</span><select name="gender"><option value="">{{ __('Người tôi thương') }}</option><option value="nu">{{ __('Dành cho nàng') }}</option><option value="nam">{{ __('Dành cho chàng') }}</option><option value="unisex">{{ __('Yêu những điều khác biệt') }}</option></select></label>
             <label><span>{{ __('02 / KHOẢNH KHẮC NÀO?') }}</span><select name="occasion"><option value="hen-ho">{{ __('Một cuộc hẹn / kỷ niệm') }}</option><option value="hang-ngay">{{ __('Một món quà mỗi ngày') }}</option><option value="tiec">{{ __('Sinh nhật / dịp đặc biệt') }}</option></select></label>
             <label><span>{{ __('03 / NGÂN SÁCH') }}</span><select name="max_price"><option value="">{{ __('Không giới hạn') }}</option><option value="2000000">{{ __('Đến 2.000.000₫') }}</option><option value="4000000">{{ __('Đến 4.000.000₫') }}</option><option value="6000000">{{ __('Đến 6.000.000₫') }}</option></select></label>
-            <label class="gifting-note-label"><span>{{ __('MỘT LỜI NHẮN CỦA BẠN') }}</span><input type="text" maxlength="120" data-gift-note placeholder="{{ __('Viết một lời nhắn dịu dàng…') }}" aria-describedby="gift-note-hint"><small id="gift-note-hint">{{ __('Xem trước trên thiệp, chưa gửi kèm đơn hàng.') }}</small></label>
+            <label class="gifting-note-label"><span>{{ __('MỘT LỜI NHẮN CỦA BẠN') }}</span><input type="text" name="gift_message" maxlength="120" data-gift-note placeholder="{{ __('Viết một lời nhắn dịu dàng…') }}" aria-describedby="gift-note-hint"><small id="gift-note-hint">{{ __('Lời nhắn được giữ để điền sẵn khi thanh toán. Bạn xác nhận thiệp quà trước khi đặt hàng.') }}</small></label>
             <button class="atelier-button" type="submit">{{ __('Tìm món quà phù hợp') }} <span aria-hidden="true">↗</span></button>
         </form>
     </div>

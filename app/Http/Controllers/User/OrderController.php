@@ -234,6 +234,7 @@ class OrderController extends Controller
 
         // Preserve every line the customer did not select for this order.
         $remainingCart = array_diff_key(session('cart', []), $selectedCart);
+        $request->session()->forget('gift_finder_message');
         if ($remainingCart === []) {
             session()->forget('cart');
         } else {

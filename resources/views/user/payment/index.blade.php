@@ -130,6 +130,9 @@
 
                 {{-- Dịch Vụ Gói Quà Cao Cấp & Thiệp Chúc Mừng --}}
                 <div class="checkout-card" id="giftServiceCard">
+                    @if(session('gift_finder_message'))
+                        <p class="public-flash">{{ __('Đã giữ lời nhắn. Khi thanh toán, chọn dịch vụ thiệp quà để gửi kèm đơn hàng.') }}</p>
+                    @endif
                     <div class="card-section-header">
                         <div class="icon-circle">@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</div>
                         <div>
@@ -170,7 +173,7 @@
 
                         <div class="form-group-item" style="margin-bottom: 14px;">
                             <label for="gift_message">{{ __('Lời nhắn chúc mừng (in lên thiệp):') }}</label>
-                            <textarea id="gift_message" name="gift_message" rows="2" maxlength="1000" @disabled(!$giftRequested) placeholder="{{ __('Ví dụ: Chúc em sinh nhật vui vẻ, luôn rạng rỡ và ngát hương thơm mỗi ngày nhé!') }}">{{ $checkoutInput('gift_message') }}</textarea>
+                            <textarea id="gift_message" name="gift_message" rows="2" maxlength="1000" @disabled(!$giftRequested) placeholder="{{ __('Ví dụ: Chúc em sinh nhật vui vẻ, luôn rạng rỡ và ngát hương thơm mỗi ngày nhé!') }}">{{ $checkoutInput('gift_message', session('gift_finder_message', '')) }}</textarea>
                         </div>
 
                         <div class="form-group-item">

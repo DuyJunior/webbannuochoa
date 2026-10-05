@@ -22,6 +22,20 @@ use Illuminate\View\View;
 
 class StoreExperienceController extends Controller
 {
+    public function giftFinder(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'occasion' => 'nullable|in:hang-ngay,hen-ho,tiec',
+            'gender' => 'nullable|in:nam,nu,unisex',
+            'max_price' => 'nullable|integer|min:0|max:1000000000',
+            'gift_message' => 'nullable|string|max:120',
+        ]);
+        $request->session()->put('gift_finder_message', trim($data['gift_message'] ?? ''));
+        unset($data['gift_message']);
+
+        return redirect()->route('store.finder', ['gift' => 1, ...array_filter($data, fn ($value) => $value !== null && $value !== '')]);
+    }
+
     public function finder(Request $request): View
     {
         $data = $request->validate([
@@ -29,14 +43,18 @@ class StoreExperienceController extends Controller
             'occasion' => 'nullable|in:hang-ngay,hen-ho,tiec',
             'gender' => 'nullable|in:nam,nu,unisex',
             'max_price' => 'nullable|integer|min:0|max:1000000000',
+            'gift' => 'nullable|boolean',
         ]);
+        $giftMode = $request->boolean('gift');
         $recommended = count($data) ? ScentFinder::recommendations(
             Perfume::where('is_active', true)
+                ->when($giftMode, fn ($query) => $query->where('stock', '>', 0))
+                ->when($giftMode && $request->filled('gender'), fn ($query) => $query->whereIn('gender', array_unique([$data['gender'], 'unisex'])))
                 ->when($request->filled('max_price'), fn ($q) => $q->whereRaw('COALESCE(sale_price, price) <= ?', [(int) $data['max_price']]))->get(),
             $data['style'] ?? null, $data['occasion'] ?? null, $data['gender'] ?? null
         ) : collect();
 
-        return view('store.finder', compact('recommended'));
+        return view('store.finder', compact('recommended', 'giftMode'));
     }
 
     /**

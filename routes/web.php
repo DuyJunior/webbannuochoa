@@ -53,6 +53,7 @@ Route::post('/livestream/{livestream}/messages', [LivestreamInteractionControlle
 Route::post('/livestream/{livestream}/presence', [LivestreamInteractionController::class, 'presence'])->middleware('throttle:6,1')->name('livestream.presence');
 Route::post('/livestream/{livestream}/viewer-token', [LivekitRoomController::class, 'viewerToken'])->middleware('throttle:600,1')->name('livestream.viewer-token');
 Route::get('/chon-huong', [StoreExperienceController::class, 'finder'])->name('store.finder');
+Route::post('/chon-qua', [StoreExperienceController::class, 'giftFinder'])->name('store.gift-finder');
 Route::get('/so-sanh', [StoreExperienceController::class, 'compare'])->name('store.compare');
 Route::get('/cam-nang', [JournalController::class, 'index'])->name('store.journal');
 Route::get('/cam-nang/{article:slug}', [JournalController::class, 'show'])->name('store.article');

@@ -3213,5 +3213,19 @@
   "giá bán 50 ml": "50 ml selling price",
   "Tồn kho chai gốc": "Original bottle stock",
   "Sửa giá & tồn kho": "Edit prices & stock",
-  "Sau khi lưu, dung tích mới tự xuất hiện trong mục Giá bán & tồn kho phía trên. Bạn có thể tắt mở bán dung tích đã lưu để giữ lịch sử đơn hàng.": "After saving, new sizes automatically appear under Prices & stock above. You can hide saved sizes from sale to preserve order history."
+  "Sau khi lưu, dung tích mới tự xuất hiện trong mục Giá bán & tồn kho phía trên. Bạn có thể tắt mở bán dung tích đã lưu để giữ lịch sử đơn hàng.": "After saving, new sizes automatically appear under Prices & stock above. You can hide saved sizes from sale to preserve order history.",
+  "Lời nhắn được giữ để điền sẵn khi thanh toán. Bạn xác nhận thiệp quà trước khi đặt hàng.": "Your message is saved for checkout. Confirm the gift card before placing your order.",
+  "Gợi ý quà tặng · Soopi": "Gift suggestions · Soopi",
+  "Thay đổi lựa chọn quà tặng": "Adjust gift preferences",
+  "Những món quà dành cho bạn chọn": "Gifts for you to choose from",
+  "Quà tặng dành cho nàng": "Gifts for her",
+  "Quà tặng dành cho chàng": "Gifts for him",
+  "Quà tặng không giới hạn": "Gifts for everyone",
+  "Quà tặng cho người bạn thương": "Gifts for someone special",
+  "← Trở lại chọn quà": "← Back to gift selection",
+  "Tối đa :amount": "Up to :amount",
+  "Không giới hạn ngân sách": "No budget limit",
+  "Gợi ý bên dưới đã áp dụng lựa chọn của bạn.": "The suggestions below reflect your preferences.",
+  "Lời nhắn trên thiệp của bạn": "Your gift card message",
+  "Đã giữ lời nhắn. Khi thanh toán, chọn dịch vụ thiệp quà để gửi kèm đơn hàng.": "Your message is saved. At checkout, select the gift card service to include it with your order."
 }

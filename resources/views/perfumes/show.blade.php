@@ -68,6 +68,9 @@
             </div>
         @endif
 
+        @if(request()->boolean('gift') && session('gift_finder_message'))
+            <div class="public-flash" role="status"><strong>{{ __('Lời nhắn trên thiệp của bạn') }}</strong><p>{{ session('gift_finder_message') }}</p><small>{{ __('Đã giữ lời nhắn. Khi thanh toán, chọn dịch vụ thiệp quà để gửi kèm đơn hàng.') }}</small></div>
+        @endif
         <div class="luxury-product-grid">
             {{-- Visual Gallery --}}
             <div class="luxury-gallery-column {{ $perfume->shopPhotos->isNotEmpty() ? 'has-shop-photos' : '' }}">
