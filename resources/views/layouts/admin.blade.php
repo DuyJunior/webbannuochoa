@@ -70,19 +70,6 @@
 
         <main class="admin-content-area" id="admin-main" tabindex="-1">
             @include('partials.admin-workspace-heading')
-            @if(session('success'))
-                <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                    <i class="fa-solid fa-circle-check mr-2"></i> {{ session('success') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="{{ __('Đóng thông báo') }}"><span>&times;</span></button>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
-                    <i class="fa-solid fa-triangle-exclamation mr-2"></i> {{ session('error') }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="{{ __('Đóng thông báo') }}"><span>&times;</span></button>
-                </div>
-            @endif
 
             @if($errors->any())
                 <div class="alert alert-danger mb-4" role="alert" tabindex="-1" data-validation-summary>
@@ -104,7 +91,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     @yield('scripts')
 
-
-
+    @include('partials.toasts')
 </body>
 </html>

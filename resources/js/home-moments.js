@@ -29,6 +29,7 @@ if (form) {
     let selection = available.filter(input => input.checked).slice(0, capacity());
     let previouslyShown = new Set();
     function render(message = '') {
+        if (message) window.soopiToast?.(message, 'info');
         const limit = capacity();
         const samples = selection;
         tray.replaceChildren(); tray.dataset.size = String(limit);

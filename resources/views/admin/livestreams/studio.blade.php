@@ -79,7 +79,7 @@
                 </select>
                 <button class="live-admin-btn live-admin-btn--primary" type="submit">{{ __('+ Thêm vào live') }}</button>
             </form>
-            <p id="studio-product-message" class="live-studio-product-message" role="status"></p>
+            <p id="studio-product-message" data-toast-source="info" class="live-studio-product-message" role="status"></p>
         @endif
         <div id="studio-product-list">@include('admin.livestreams.products', ['products' => $livestream->products])</div>
     </section>

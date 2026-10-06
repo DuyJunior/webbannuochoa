@@ -14,10 +14,10 @@ if (share) {
         }
         const print = share.querySelector('[data-print-gift]');
         if (print) print.hidden = false;
-    }).catch(() => { status.textContent = share.dataset.qrError; });
+    }).catch(() => { status.dataset.toastSource = 'error'; status.textContent = share.dataset.qrError; });
     share.querySelector('[data-copy-gift]')?.addEventListener('click', async () => {
-        try { await navigator.clipboard.writeText(url); status.textContent = share.dataset.copied; }
-        catch { share.querySelector('[data-gift-url]').select(); status.textContent = share.dataset.copyError; }
+        try { await navigator.clipboard.writeText(url); status.dataset.toastSource = 'success'; status.textContent = share.dataset.copied; }
+        catch { share.querySelector('[data-gift-url]').select(); status.dataset.toastSource = 'error'; status.textContent = share.dataset.copyError; }
     });
     share.querySelector('[data-print-gift]')?.addEventListener('click', () => window.print());
 }
@@ -53,18 +53,18 @@ if (recorderPanel) {
             recorder.addEventListener('stop', () => {
                 release(); start.disabled = false; stop.hidden = true; save.disabled = false; fileInput.disabled = false;
                 if (stopped) return;
-                if (bytes > 10 * 1024 * 1024 || !bytes) { status.textContent = recorderPanel.dataset.large; return; }
+                if (bytes > 10 * 1024 * 1024 || !bytes) { status.textContent = recorderPanel.dataset.large; window.soopiToast?.(status.textContent, 'error'); return; }
                 const type = recorder.mimeType.split(';')[0];
                 const extension = type.includes('mp4') ? 'm4a' : type.includes('ogg') ? 'ogg' : 'webm';
                 const file = new File(chunks, `soopi-voice.${extension}`, { type });
                 const transfer = new DataTransfer(); transfer.items.add(file); fileInput.files = transfer.files;
-                displayFile(file); status.textContent = recorderPanel.dataset.ready;
+                displayFile(file); status.textContent = recorderPanel.dataset.ready; window.soopiToast?.(status.textContent, 'success');
             });
-            recorder.addEventListener('error', () => { release(); start.disabled = false; stop.hidden = true; save.disabled = false; fileInput.disabled = false; status.textContent = recorderPanel.dataset.denied; });
+            recorder.addEventListener('error', () => { release(); start.disabled = false; stop.hidden = true; save.disabled = false; fileInput.disabled = false; status.textContent = recorderPanel.dataset.denied; window.soopiToast?.(status.textContent, 'error'); });
             recorder.start(1000); stop.hidden = false; save.disabled = true; fileInput.disabled = true;
             status.textContent = recorderPanel.dataset.recording;
             timer = setTimeout(finish, 120000);
-        } catch { release(); start.disabled = false; status.textContent = recorderPanel.dataset.denied; }
+        } catch { release(); start.disabled = false; status.textContent = recorderPanel.dataset.denied; window.soopiToast?.(status.textContent, 'error'); }
     });
     stop.addEventListener('click', finish);
     fileInput.addEventListener('change', () => displayFile(fileInput.files[0]));

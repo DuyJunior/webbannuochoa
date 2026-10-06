@@ -21,10 +21,9 @@
             <span class="studio-eyebrow">SOOPI MANAGEMENT STUDIO</span>
             <h2>{{ __('Chào mừng trở lại.') }}</h2>
             <p>{{ __('Đăng nhập để chăm sóc cửa hàng của bạn.') }}</p>
-            @if($errors->any() || session('error'))
+            @if($errors->any())
                 <div class="studio-login-error" role="alert">
                     @foreach($errors->all() as $error)<div>{{ $error }}</div>@endforeach
-                    @if(session('error'))<div>{{ session('error') }}</div>@endif
                 </div>
             @endif
             <form method="POST" action="{{ route('admin.login.post') }}">
@@ -40,5 +39,6 @@
             <footer>{{ __('Dành cho quản trị viên và nhân viên được cấp quyền.') }}</footer>
         </section>
     </main>
+    @include('partials.toasts')
 </body>
 </html>

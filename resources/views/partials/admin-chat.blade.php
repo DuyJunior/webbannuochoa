@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <p id="admin-chat-error" class="studio-chat-error" role="alert" hidden></p>
+            <p id="admin-chat-error" data-toast-source="error" class="studio-chat-error" role="alert" hidden></p>
             {{-- Ô nhập tin nhắn --}}
             <div class="card-footer bg-white p-2">
                 <div class="input-group">

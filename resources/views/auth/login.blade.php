@@ -14,20 +14,6 @@
             <p class="luxury-auth-subtitle">{{ __('Chào mừng bạn quay trở lại với Soopi') }}</p>
         </div>
 
-        @if (session('success'))
-            <div class="luxury-auth-alert alert-success" role="alert">
-                <span>@include('partials.icon', ['name' => 'check', 'size' => '1em'])</span>
-                <div>{{ session('success') }}</div>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="luxury-auth-alert alert-danger" role="alert">
-                <span>@include('partials.icon', ['name' => 'close', 'size' => '1em'])</span>
-                <div>{{ session('error') }}</div>
-            </div>
-        @endif
-
         @if ($errors->any())
             <div class="luxury-auth-alert alert-danger" role="alert">
                 <span>@include('partials.icon', ['name' => 'warning', 'size' => '1em'])</span>

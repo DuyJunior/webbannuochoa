@@ -11,5 +11,6 @@
     <header class="gift-private-header"><a href="{{ route('home') }}" aria-label="Soopi">@include('partials.brand-logo')</a>@include('partials.language-switcher', ['languageClass' => 'gift-language'])</header>
     <main id="main-content" class="gx">@yield('gift-content')</main>
     <footer class="gift-private-footer">SOOPI / A SCENT. A MEMORY.</footer>
+    @include('partials.toasts')
 </body>
 </html>

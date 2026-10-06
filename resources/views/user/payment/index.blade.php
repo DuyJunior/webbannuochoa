@@ -611,8 +611,6 @@
 .bank-chip.jcb  { background: #003087; color: #fff; }
 .bank-chip.amex { background: #2e77bc; color: #fff; }
 
-
-
 /* Order Summary Sidebar */
 .order-summary-box {
     background: #ffffff;
@@ -1020,7 +1018,6 @@ document.addEventListener("DOMContentLoaded", function () {
         loadProvinces(event.detail);
     });
 
-
     // Ràng buộc số điện thoại chỉ đúng 10 chữ số (bắt đầu bằng số 0)
     const phoneInput = document.getElementById('phone');
     if (phoneInput) {
@@ -1036,7 +1033,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const val = phoneInput.value.trim();
                 if (!/^0[0-9]{9}$/.test(val)) {
                     e.preventDefault();
-                    alert((window.soopiT || (text => text))("Số điện thoại chỉ được gồm đúng 10 chữ số (bắt đầu bằng số 0)."));
+                    window.soopiToast((window.soopiT || (text => text))("Số điện thoại chỉ được gồm đúng 10 chữ số (bắt đầu bằng số 0)."), 'warning');
                     phoneInput.focus();
                     return false;
                 }
@@ -1044,7 +1041,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!provinceSelect.value || !districtSelect.value || !wardSelect.value) {
                 e.preventDefault();
-                alert((window.soopiT || (text => text))("Vui lòng chọn đầy đủ Tỉnh/Thành, Quận/Huyện và Phường/Xã để hệ thống GHN tính chính xác cước vận chuyển trước khi xác nhận đặt hàng."));
+                window.soopiToast((window.soopiT || (text => text))("Vui lòng chọn đầy đủ Tỉnh/Thành, Quận/Huyện và Phường/Xã để hệ thống GHN tính chính xác cước vận chuyển trước khi xác nhận đặt hàng."), 'warning');
                 if (!provinceSelect.value) provinceSelect.focus();
                 else if (!districtSelect.value) districtSelect.focus();
                 else wardSelect.focus();

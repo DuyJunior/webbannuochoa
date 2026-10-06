@@ -8,7 +8,7 @@
     </div>
     <button type="button" class="delivery-location__locate" data-locate>{{ __('Dùng vị trí hiện tại') }} <span aria-hidden="true">↗</span></button>
     <p class="delivery-location__privacy">{{ __('Khi bạn cho phép, tọa độ được gửi đến Photon để tìm địa chỉ; kết quả được lưu tạm 15 phút, không gắn với tài khoản.') }}</p>
-    <p class="delivery-location__status" role="status" aria-live="polite" data-location-status></p>
+    <p class="delivery-location__status" role="status" aria-live="polite" data-location-status data-toast-source="info"></p>
     <div class="delivery-location__suggestion" data-location-result hidden>
         <span class="delivery-location__eyebrow">{{ __('ĐỊA CHỈ GỢI Ý') }}</span>
         <p class="delivery-location__address" data-location-address></p>

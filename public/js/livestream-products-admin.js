@@ -23,12 +23,15 @@
         if (!select.value) return;
         const button = form.querySelector('button');
         button.disabled = true;
+        message.dataset.toastSource = 'info';
         message.textContent = (window.soopiT || (text => text))("Đang thêm sản phẩm...");
         try {
             await send(form.dataset.url, 'POST', { perfume_id: Number(select.value) });
             select.value = '';
+            message.dataset.toastSource = 'success';
             message.textContent = (window.soopiT || (text => text))("Đã cập nhật sản phẩm cho khách xem.");
         } catch (error) {
+            message.dataset.toastSource = 'error';
             message.textContent = error.message;
         } finally {
             button.disabled = false;
@@ -41,9 +44,11 @@
             pin.disabled = true;
             try {
                 await send(form.dataset.pinUrl, 'PATCH', { perfume_id: pin.dataset.pinId ? Number(pin.dataset.pinId) : null });
+                message.dataset.toastSource = 'success';
                 message.textContent = pin.dataset.pinId ? (window.soopiT || (text => text))("Đã ghim sản phẩm nổi bật cho khách.") : (window.soopiT || (text => text))("Đã bỏ ghim sản phẩm.");
             } catch (error) {
                 pin.disabled = false;
+                message.dataset.toastSource = 'error';
                 message.textContent = error.message;
             }
             return;
@@ -53,9 +58,11 @@
         button.disabled = true;
         try {
             await send(button.dataset.removeUrl, 'DELETE');
+            message.dataset.toastSource = 'success';
             message.textContent = (window.soopiT || (text => text))("Đã gỡ sản phẩm khỏi buổi live.");
         } catch (error) {
             button.disabled = false;
+            message.dataset.toastSource = 'error';
             message.textContent = error.message;
         }
     });

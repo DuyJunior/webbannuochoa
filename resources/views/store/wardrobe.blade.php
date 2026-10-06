@@ -325,9 +325,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const shareUrl = @json(route('store.wardrobe.share', Auth::user()));
             try {
                 await navigator.clipboard.writeText(shareUrl);
-                alert((window.soopiT || (text => text))("Đã sao chép liên kết tủ nước hoa của bạn!\n") + shareUrl + (window.soopiT || (text => text))("\nBạn có thể gửi liên kết này cho bạn bè."));
+                window.soopiToast((window.soopiT || (text => text))("Đã sao chép liên kết tủ nước hoa của bạn!\n") + shareUrl + (window.soopiT || (text => text))("\nBạn có thể gửi liên kết này cho bạn bè."), 'success');
             } catch {
-                prompt((window.soopiT || (text => text))("Sao chép liên kết tủ nước hoa để gửi cho bạn bè:"), shareUrl);
+                window.soopiToast((window.soopiT || (text => text))("Sao chép liên kết tủ nước hoa để gửi cho bạn bè:") + '\n' + shareUrl, 'info', { duration: 0 });
             }
         });
     }

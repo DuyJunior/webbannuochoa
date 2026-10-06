@@ -19,8 +19,6 @@
             <div class="otp-address">@include('partials.icon', ['name' => 'mail', 'size' => 16])<span>{{ auth()->user()->email }}</span></div>
             @if($errors->any())
                 <div class="otp-feedback otp-feedback-error" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
-            @elseif(session('message') || session('success'))
-                <div class="otp-feedback otp-feedback-success" role="status">{{ session('message') ?: session('success') }}</div>
             @endif
             <form method="POST" action="{{ route('verification.confirm') }}" class="otp-form" data-otp-submit data-busy-label="{{ __('Đang xác thực…') }}">
                 @csrf

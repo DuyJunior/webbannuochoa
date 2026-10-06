@@ -9,7 +9,7 @@
             <h1 class="luxury-auth-title">{{ __('Quên mật khẩu?') }}</h1>
             <p class="luxury-auth-subtitle">{{ __('Nhập email tài khoản để nhận liên kết đặt lại mật khẩu.') }}</p>
         </div>
-        @if(session('status'))<div class="luxury-auth-alert alert-success" role="status">{{ session('status') }}</div>@endif
+
         <form class="luxury-auth-form" method="POST" action="{{ route('password.email') }}">
             @csrf
             <div class="luxury-form-group">

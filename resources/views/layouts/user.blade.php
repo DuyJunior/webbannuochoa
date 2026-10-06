@@ -189,16 +189,6 @@
 </nav>
 
 <div class="container mt-4">
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
 
     @yield('content')
 </div>
@@ -209,5 +199,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 @include('partials.chat_popup')
+    @include('partials.toasts')
 </body>
 </html>

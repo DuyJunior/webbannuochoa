@@ -75,6 +75,7 @@ if (hero && buttons.length) {
             if (run !== version) return;
             hero.dataset.paletteState = 'error';
             status.textContent = (window.soopiT || (text => text))("Chưa đổi được màu hoa. Bạn thử lại nhé.");
+            window.soopiToast?.(status.textContent, 'error');
         }
     };
     buttons.forEach(button => button.addEventListener('click', () => choose(button.dataset.bloomMood)));

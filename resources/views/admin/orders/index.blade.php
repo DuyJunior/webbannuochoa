@@ -405,7 +405,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.confirmBulkAction = function () {
         const checkedBoxes = document.querySelectorAll(".order-checkbox:checked");
         if (checkedBoxes.length === 0) {
-            alert((window.soopiT || (text => text))("Vui lòng tích chọn ít nhất 1 đơn hàng để thao tác."));
+            window.soopiToast((window.soopiT || (text => text))("Vui lòng tích chọn ít nhất 1 đơn hàng để thao tác."), 'warning');
             return false;
         }
 
@@ -413,7 +413,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const orderStatus = document.getElementById("bulkOrderStatus").value;
 
         if (!shippingStatus && !orderStatus) {
-            alert((window.soopiT || (text => text))("Vui lòng chọn trạng thái mới cần cập nhật."));
+            window.soopiToast((window.soopiT || (text => text))("Vui lòng chọn trạng thái mới cần cập nhật."), 'warning');
             return false;
         }
 

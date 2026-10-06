@@ -80,6 +80,7 @@
             }
         } catch (error) {
             feedback.textContent = error.message;
+            window.soopiToast?.(feedback.textContent, 'error');
         } finally {
             polling = false;
         }
@@ -95,9 +96,11 @@
             await request(root.dataset.sendUrl, 'POST', { body });
             input.value = '';
             feedback.textContent = (window.soopiT || (text => text))("Đã gửi bình luận.");
+            window.soopiToast?.(feedback.textContent, 'success');
             await refresh();
         } catch (error) {
             feedback.textContent = error.message;
+            window.soopiToast?.(feedback.textContent, 'error');
         } finally {
             button.disabled = false;
         }
@@ -110,9 +113,11 @@
         try {
             await request(`${root.dataset.hideBase}/${button.dataset.hideId}`, 'DELETE');
             feedback.textContent = (window.soopiT || (text => text))("Đã ẩn bình luận.");
+            window.soopiToast?.(feedback.textContent, 'success');
             await refresh();
         } catch (error) {
             feedback.textContent = error.message;
+            window.soopiToast?.(feedback.textContent, 'error');
             button.disabled = false;
         }
     });

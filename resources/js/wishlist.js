@@ -3,38 +3,10 @@ import '../css/wishlist.css';
 // Delegation also covers collection cards replaced by the in-page filters.
 const pending = new Set();
 const confirmed = new Map();
-let notice;
-let noticeTimer;
-
-function notify(message, needsLogin = false, loginUrl = '') {
-    if (!notice) {
-        notice = document.createElement('aside');
-        notice.className = 'wishlist-notice';
-        notice.setAttribute('aria-label', (window.soopiT || (text => text))("Thông báo yêu thích"));
-        const text = document.createElement('span');
-        text.setAttribute('role', 'status');
-        text.setAttribute('aria-live', 'polite');
-        text.setAttribute('aria-atomic', 'true');
-        const login = document.createElement('a');
-        login.textContent = (window.soopiT || (text => text))("Đăng nhập");
-        login.hidden = true;
-        const close = document.createElement('button');
-        close.type = 'button';
-        close.setAttribute('aria-label', (window.soopiT || (text => text))("Đóng thông báo"));
-        close.textContent = (window.soopiT || (text => text))("×");
-        close.addEventListener('click', () => { notice.hidden = true; });
-        notice.append(text, login, close);
-        document.body.append(notice);
-    }
-    clearTimeout(noticeTimer);
-    notice.hidden = false;
-    notice.querySelector('[role="status"]').textContent = message;
-    const login = notice.querySelector('a');
-    login.hidden = !needsLogin;
-    if (needsLogin) login.href = loginUrl;
-    noticeTimer = setTimeout(() => {
-        if (!notice.contains(document.activeElement)) notice.hidden = true;
-    }, needsLogin ? 15000 : 6000);
+function notify(message, needsLogin = false, loginUrl = '', type = 'error') {
+    window.soopiToast(message, needsLogin ? 'warning' : type, {
+        action: needsLogin ? { href: loginUrl, label: (window.soopiT || (text => text))('Đăng nhập') } : undefined,
+    });
 }
 
 function formsFor(id) {
@@ -119,7 +91,7 @@ document.addEventListener('submit', async event => {
         const result = await response.json();
         if (String(result.perfume_id) !== id || typeof result.saved !== 'boolean') throw new Error('invalid-response');
         syncSaved(id, result.saved);
-        notify(result.saved ? (window.soopiT || (text => text))("Đã lưu mùi hương yêu thích.") : (window.soopiT || (text => text))("Đã bỏ mùi hương khỏi danh sách yêu thích."));
+        notify(result.saved ? (window.soopiT || (text => text))("Đã lưu mùi hương yêu thích.") : (window.soopiT || (text => text))("Đã bỏ mùi hương khỏi danh sách yêu thích."), false, '', 'success');
     } catch {
         notify((window.soopiT || (text => text))("Chưa lưu được thay đổi. Bạn bấm lại để thử nhé."));
     } finally {

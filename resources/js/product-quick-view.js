@@ -158,6 +158,7 @@ if (dialog && typeof dialog.showModal === 'function') {
                 ? (window.soopiT || (text => text))("Sản phẩm này hiện không còn được mở bán.")
                 : (window.soopiT || (text => text))("Chưa tải được sản phẩm. Bạn thử lại nhé.");
             errorPanel.hidden = false;
+            window.soopiToast?.(status.textContent, 'error');
         } finally {
             clearTimeout(timeout);
             if (id === serial) {

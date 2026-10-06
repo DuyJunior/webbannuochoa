@@ -55,6 +55,7 @@ if (gallery) {
         } catch (error) {
             if (error.name === 'AbortError' || id !== serial) return;
             status.textContent = error.message || (window.soopiT || (text => text))("Kết nối bị gián đoạn. Bạn thử lại nhé.");
+            window.soopiToast?.(status.textContent, 'error');
         } finally {
             if (id === serial) { gallery.removeAttribute('aria-busy'); request = null; }
         }

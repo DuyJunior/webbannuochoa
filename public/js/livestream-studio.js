@@ -19,6 +19,7 @@
     let onAir = false;
 
     const setStatus = (message, error = false) => {
+        if (status.textContent !== message) window.soopiToast?.(message, error ? 'error' : 'info');
         status.textContent = message;
         status.classList.toggle('live-studio-error', error);
     };

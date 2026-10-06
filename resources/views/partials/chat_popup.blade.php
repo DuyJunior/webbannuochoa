@@ -72,7 +72,7 @@
         {{-- Footer nhập tin nhắn --}}
         <div class="chat-window-footer">
             <div id="chat-ai-notice" class="chat-ai-notice" role="status" aria-live="polite" hidden></div>
-            <div id="chat-error" class="chat-error" role="alert" hidden></div>
+            <div id="chat-error" data-toast-source="error" class="chat-error" role="alert" hidden></div>
             <form id="chat-input-form" class="chat-form-row">
                 <div class="chat-input-wrapper">
                     <textarea id="chat-input" class="chat-text-input" placeholder="{{ __('Nhập tin nhắn...') }}" aria-label="{{ __('Nội dung tin nhắn') }}" autocomplete="off" maxlength="1000" rows="1"></textarea>
