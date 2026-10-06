@@ -119,7 +119,7 @@ class HomeController extends Controller
         $homeVideos = $hasFilters ? collect() : Video::with(['perfume' => fn ($query) => $query->where('is_active', true)])
             ->where('is_active', true)->whereIn('placement', ['home', 'all'])
             ->whereNotNull('video_url')->where('video_url', '!=', '')
-            ->orderBy('sort_order')->orderBy('id')->take(4)->get();
+            ->orderBy('sort_order')->orderBy('id')->get();
 
         return view('home', compact('perfumes', 'categories', 'genderCounts', 'totalPerfumes', 'livestream', 'onAir', 'featuredOffer',
             'galleryFeatured', 'gallerySelection', 'galleryRemaining', 'wishlistIds', 'journalArticles', 'homeVideos', 'moodCollections', 'sampleCandidates', 'homeSampleAvailability'));

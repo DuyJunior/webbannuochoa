@@ -10,6 +10,7 @@ import './product-quick-view.js';
 import './scent-experience.js';
 import './atelier-typewriter.js';
 import './wishlist.js';
+import './journal-video-rail.js';
 
 document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-quantity-minus], [data-quantity-plus]');

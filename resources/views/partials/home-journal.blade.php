@@ -42,7 +42,14 @@
                 <div><span class="journal-eyebrow">SOOPI / VIDEO STORIES</span><h2 id="journal-video-heading">{{ __('Nhìn gần hơn.') }}<br><em>{{ __('Cảm nhận nhiều hơn.') }}</em></h2></div>
                 <div class="journal-video-intro"><span class="journal-library-count">{{ str_pad((string) $homeVideos->count(), 2, '0', STR_PAD_LEFT) }} {{ __('VIDEO TỪ SOOPI') }}</span><p>{{ __('Chọn một thước phim.') }} <br>{{ __('Khám phá câu chuyện phía sau.') }}</p></div>
             </header>
-            <div class="journal-video-grid">
+            <div class="journal-video-navigation" data-video-navigation hidden>
+                <span class="journal-video-range" data-video-range aria-live="polite" aria-atomic="true"></span>
+                <div class="journal-video-arrows">
+                    <button type="button" data-video-previous aria-label="{{ __('Xem video trước') }}" aria-controls="journal-video-track" disabled><span aria-hidden="true">←</span></button>
+                    <button type="button" data-video-next aria-label="{{ __('Xem video tiếp theo') }}" aria-controls="journal-video-track"><span aria-hidden="true">→</span></button>
+                </div>
+            </div>
+            <div class="journal-video-grid journal-video-rail" id="journal-video-track" data-video-rail tabindex="0" role="region" aria-label="{{ __('Danh sách video Soopi — vuốt ngang để xem thêm') }}">
                 @foreach($homeVideos as $vid)
                     <a class="journal-video js-open-video" href="{{ $vid->embed_url }}"
                        data-title="{{ $vid->localized_title }}" data-embed="{{ $vid->embed_url }}" data-desc="{{ $vid->localized_description }}" data-views="{{ $vid->formatted_views }}"
