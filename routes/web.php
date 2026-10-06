@@ -175,9 +175,9 @@ Route::middleware('guest')->group(function () {
 // XÁC THỰC EMAIL (Lab 03)
 // ============================================================
 // Hiển thị thông báo xác thực email
-Route::get('/email/verify', function () {
-    return view('auth.verify-email');
-})->middleware('auth')->name('verification.notice');
+Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->middleware('auth')->name('verification.notice');
+Route::post('/email/verify', [EmailVerificationController::class, 'confirm'])
+    ->middleware(['auth', 'throttle:10,1,email-otp'])->name('verification.confirm');
 
 // Liên kết đã ký xác thực trực tiếp, kể cả khi mở email trên trình duyệt khác.
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
@@ -195,11 +195,8 @@ Route::post('/email/demo-preview', function (Request $request) {
 })->middleware(['auth', 'throttle:6,1'])->name('verification.demo');
 
 // Gửi lại email xác nhận
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-
-    return back()->with('message', 'Đã gửi lại liên kết xác thực. Vui lòng kiểm tra hộp thư của bạn.');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
+    ->middleware(['auth', 'throttle:6,1,email-otp-send'])->name('verification.send');
 
 // ============================================================
 // ADMIN - Trang đăng nhập & quản trị RIÊNG BIỆT
