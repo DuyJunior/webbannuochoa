@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\EmailVerificationCodeService;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -10,6 +11,58 @@ use Illuminate\Support\Facades\Auth;
 
 class EmailVerificationController extends Controller
 {
+    public function notice(Request $request, EmailVerificationCodeService $codes)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return redirect()->route('welcome');
+        }
+
+        return view('auth.verify-email', ['retryAfter' => $codes->retryAfter($request->user())]);
+    }
+
+    public function confirm(Request $request, EmailVerificationCodeService $codes): RedirectResponse
+    {
+        $data = $request->validate(['code' => ['bail', 'required', 'string', 'regex:/\A[0-9]{6}\z/']], [
+            'code.required' => __('Vui lòng nhập mã OTP gồm 6 chữ số.'),
+            'code.string' => __('Vui lòng nhập mã OTP gồm 6 chữ số.'),
+            'code.regex' => __('Vui lòng nhập mã OTP gồm 6 chữ số.'),
+        ]);
+        $result = $codes->verify($request->user(), $data['code']);
+        if ($result === 'verified') {
+            event(new Verified($request->user()->fresh()));
+            $request->session()->regenerate();
+        }
+        if (in_array($result, ['verified', 'already_verified'], true)) {
+            return redirect()->intended(route('welcome'))->with('success', __('Xác thực email thành công. Chào mừng bạn đến với Soopi!'));
+        }
+
+        return back()->withErrors(['code' => match ($result) {
+            'expired' => __('Mã OTP đã hết hạn hoặc chưa được gửi. Vui lòng yêu cầu mã mới.'),
+            'locked' => __('Bạn đã nhập sai 5 lần. Vui lòng yêu cầu mã OTP mới.'),
+            default => __('Mã OTP chưa đúng. Vui lòng kiểm tra lại email.'),
+        }]);
+    }
+
+    public function resend(Request $request, EmailVerificationCodeService $codes): RedirectResponse
+    {
+        try {
+            $result = $codes->send($request->user());
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return back()->withErrors(['delivery' => __('Chưa thể gửi mã OTP. Vui lòng thử lại sau ít phút.')]);
+        }
+        if ($result === 'verified') {
+            return redirect()->route('welcome');
+        }
+        if ($result === 'cooldown') {
+            return back()->withErrors(['delivery' => __('Vui lòng đợi :seconds giây trước khi gửi lại mã.', ['seconds' => $codes->retryAfter($request->user())])]);
+        }
+
+        return back()->with('message', __('Mã OTP mới đang được gửi đến email của bạn. Vui lòng dùng mã mới nhất.'));
+    }
+
+    // Keep previously issued signed links valid; all new emails use OTP.
     public function verify(Request $request, string $id, string $hash): RedirectResponse
     {
         $user = User::findOrFail($id);

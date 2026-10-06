@@ -11,6 +11,7 @@ import './scent-experience.js';
 import './atelier-typewriter.js';
 import './wishlist.js';
 import './journal-video-rail.js';
+import './email-verification.js';
 
 document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-quantity-minus], [data-quantity-plus]');

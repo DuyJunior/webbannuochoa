@@ -132,7 +132,7 @@ class AuthAndEmailVerificationTest extends TestCase
 
         $response = $this->actingAs($user)->post(route('verification.send'));
 
-        $response->assertSessionHas('message', 'Đã gửi lại liên kết xác thực. Vui lòng kiểm tra hộp thư của bạn.');
+        $response->assertSessionHas('message', 'Mã OTP mới đang được gửi đến email của bạn. Vui lòng dùng mã mới nhất.');
     }
 
     public function test_user_can_login_and_is_redirected_to_welcome(): void
@@ -181,10 +181,10 @@ class AuthAndEmailVerificationTest extends TestCase
             'email' => $user->email,
             'password' => 'password123',
         ])->assertRedirect(route('verification.notice'))
-            ->assertSessionHas('message', 'Tài khoản của bạn chưa xác thực email. Vui lòng kiểm tra hộp thư hoặc bấm gửi lại liên kết bên dưới.');
+            ->assertSessionHas('message', 'Tài khoản của bạn chưa xác thực email. Nhập mã OTP hoặc bấm gửi lại mã bên dưới.');
 
         $this->assertAuthenticatedAs($user);
-        $this->get(route('verification.notice'))->assertOk()->assertSee('Gửi lại email xác thực');
+        $this->get(route('verification.notice'))->assertOk()->assertSee('Gửi lại mã OTP');
     }
     public function test_admin_is_redirected_to_dashboard(): void
     {

@@ -79,7 +79,7 @@ class AuthInputLocalizationTest extends TestCase
         ])->assertRedirect(route('verification.notice'));
         $user = User::where('email', 'legacy-policy@example.test')->firstOrFail();
         $this->assertTrue(Hash::check('abcdef', $user->password));
-        Notification::assertSentTo($user, VerifyEmail::class);
+        Notification::assertSentTo($user, \App\Notifications\EmailVerificationCode::class);
         Mail::assertNothingSent();
     }
 

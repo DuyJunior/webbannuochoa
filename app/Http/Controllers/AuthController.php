@@ -39,7 +39,7 @@ class AuthController extends Controller
             'email.required' => __('Vui lòng nhập địa chỉ email.'),
             'email.string' => __('Vui lòng nhập địa chỉ email hợp lệ.'),
             'email.max' => __('Địa chỉ email không được dài quá 255 ký tự.'),
-            'email.unique' => __('Email này đã được đăng ký. Vui lòng đăng nhập; nếu chưa xác thực, bạn có thể gửi lại liên kết xác thực.'),
+            'email.unique' => __('Email này đã được đăng ký. Vui lòng đăng nhập; nếu chưa xác thực, bạn có thể yêu cầu mã OTP mới.'),
             'email.email' => __('Vui lòng nhập địa chỉ email hợp lệ.'),
             'password.required' => __('Vui lòng nhập mật khẩu.'),
             'password.string' => __('Vui lòng nhập mật khẩu hợp lệ.'),
@@ -54,13 +54,20 @@ class AuthController extends Controller
             'role' => 'user', // Mặc định là user
         ]);
 
-        // Gửi email xác thực
-        $user->sendEmailVerificationNotification();
-
         Auth::login($user);
+        $request->session()->regenerate();
+
+        try {
+            $user->sendEmailVerificationNotification();
+        } catch (\Throwable $exception) {
+            report($exception);
+
+            return redirect()->route('verification.notice')
+                ->withErrors(['delivery' => __('Tài khoản đã được tạo nhưng chưa thể gửi mã OTP. Vui lòng bấm gửi lại mã.')]);
+        }
 
         return redirect()->route('verification.notice')
-            ->with('success', __('Vui lòng kiểm tra email để xác thực tài khoản.'));
+            ->with('success', __('Mã OTP đang được gửi đến email của bạn. Nhập mã để hoàn tất đăng ký.'));
     }
 
     // Hiển thị form đăng nhập
@@ -98,7 +105,7 @@ class AuthController extends Controller
 
             if (! Auth::user()->hasVerifiedEmail()) {
                 return redirect()->route('verification.notice')
-                    ->with('message', __('Tài khoản của bạn chưa xác thực email. Vui lòng kiểm tra hộp thư hoặc bấm gửi lại liên kết bên dưới.'));
+                    ->with('message', __('Tài khoản của bạn chưa xác thực email. Nhập mã OTP hoặc bấm gửi lại mã bên dưới.'));
             }
 
             return redirect()->intended(route('welcome'))

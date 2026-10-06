@@ -78,6 +78,7 @@ class StorefrontThemeTest extends TestCase
             'orders' => '/orders', 'order-detail' => '/orders/'.$order->id,
             'tracking' => '/kiem-tra-don-hang', 'wishlist' => '/yeu-thich',
             'wardrobe' => '/tu-nuoc-hoa', 'member' => '/thanh-vien', 'verify' => '/email/verify'] as $name => $url) {
+            if ($name === 'verify') $this->actingAs(User::factory()->unverified()->create());
             $response = $save($name, $url);
             if ($name === 'checkout') $response->assertSee('id="checkoutPaymentForm"', false)->assertSee('name="checkout_key"', false);
             if ($name === 'account') $response->assertSee('name="current_password"', false);

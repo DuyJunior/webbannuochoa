@@ -62,7 +62,7 @@
                            required
                            value="{{ is_string(old('email')) ? old('email') : '' }}">
                 </div>
-                <span class="luxury-form-hint">{{ __('Email này sẽ nhận liên kết xác thực tài khoản.') }}</span>
+                <span class="luxury-form-hint">{{ __('Email này sẽ nhận mã OTP để xác thực tài khoản.') }}</span>
             </div>
 
             <div class="luxury-form-group">
