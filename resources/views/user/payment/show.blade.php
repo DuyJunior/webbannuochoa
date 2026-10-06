@@ -125,6 +125,7 @@
                                         @endif
                                     </div>
                                     @include('partials.order-item-samples')
+                                    @include('partials.order-item-gift')
                                     <div class="detail-item-unitprice">
                                         {{ __('Đơn giá:') }} {{ number_format($item->price, 0, ',', '.') }}{{ __('₫ ×') }} {{ $item->quantity }}
                                     </div>

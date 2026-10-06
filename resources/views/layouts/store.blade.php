@@ -10,7 +10,7 @@
     <title>@yield('title', __('Soopi · Hương thơm của riêng bạn'))</title>
     <meta name="description" content="@yield('meta_description', __('Soopi — Khám phá nước hoa chính hãng. Giao hàng toàn quốc, hỗ trợ đổi trả trong :days ngày theo chính sách.', ['days' => config('storefront.return_days')]))">
     <meta name="keywords" content="@yield('meta_keywords', 'nước hoa chính hãng, nước hoa nữ, nước hoa nam, Dior, Chanel, YSL, nước hoa Soopi')">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="@yield('robots', 'index, follow')">
     <link rel="canonical" href="{{ url()->current() }}">
 
     {{-- Open Graph (Facebook / Zalo share) --}}

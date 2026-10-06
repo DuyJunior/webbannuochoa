@@ -85,6 +85,7 @@
                                         <div class="item-mini-info">
                                             <span class="item-mini-name">{{ $item->display_name }}</span>
                                             @include('partials.order-item-samples')
+                                            @include('partials.order-item-gift')
                                             <div class="item-mini-meta">
                                                 <span>{{ $item->volume_label }}</span>
                                                 <span class="meta-dot">·</span>

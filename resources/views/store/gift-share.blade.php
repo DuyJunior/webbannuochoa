@@ -54,6 +54,7 @@
                     <a href="{{ route('perfumes.show', $perfume) }}" class="ht-button ht-button-light">
                         {{ __('Xem Chi Tiết Chai Nước Hoa Này') }}
                     </a>
+                    <a href="{{ route('gifts.create', ['perfume_id' => $perfume->id]) }}" class="ht-button ht-button-light">{{ __('Tạo thiệp quà QR') }}</a>
                 </div>
             </div>
         </div>

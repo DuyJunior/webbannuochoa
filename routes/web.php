@@ -17,6 +17,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\GHNWebhookController;
+use App\Http\Controllers\GiftExperienceController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\LivekitRoomController;
@@ -30,8 +31,9 @@ use App\Http\Controllers\ProductQuickViewController;
 use App\Http\Controllers\StoreExperienceController;
 use App\Http\Controllers\User\ChatController as UserChatController;
 use App\Http\Controllers\User\GHNController;
-use App\Http\Controllers\User\SePayController;
 use App\Http\Controllers\User\OrderController as UserOrderController;
+use App\Http\Controllers\User\SePayController;
+use App\Http\Middleware\PrivateGiftResponse;
 use App\Support\DemoMode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -66,6 +68,25 @@ Route::get('/trac-nghiem-mui-huong', [StoreExperienceController::class, 'quiz'])
 Route::get('/hop-thu-mui', [StoreExperienceController::class, 'discoveryBox'])->name('store.discovery-box');
 Route::get('/mui-huong-hom-nay', [StoreExperienceController::class, 'scentOfTheDay'])->name('store.scent-of-the-day');
 Route::get('/tang-qua', [StoreExperienceController::class, 'giftShare'])->name('store.gift-share');
+Route::middleware(PrivateGiftResponse::class)->group(function () {
+    Route::middleware(['auth', 'verified'])->prefix('qua-cua-toi')->name('gifts.')->group(function () {
+        Route::get('/', [GiftExperienceController::class, 'index'])->name('index');
+        Route::get('/tao', [GiftExperienceController::class, 'create'])->name('create');
+        Route::post('/', [GiftExperienceController::class, 'store'])->middleware('throttle:10,1')->name('store');
+        Route::get('/{gift}/sua', [GiftExperienceController::class, 'edit'])->name('edit');
+        Route::put('/{gift}', [GiftExperienceController::class, 'update'])->middleware('throttle:10,1')->name('update');
+        Route::delete('/{gift}', [GiftExperienceController::class, 'destroy'])->name('destroy');
+        Route::get('/{gift}/xem-truoc', [GiftExperienceController::class, 'preview'])->name('preview');
+        Route::get('/{gift}/thiep', [GiftExperienceController::class, 'card'])->name('card');
+    });
+    Route::prefix('mo-qua/{token}')->where(['token' => '[A-Za-z0-9]{48}'])->name('gifts.')->group(function () {
+        Route::get('/', [GiftExperienceController::class, 'show'])->name('open');
+        Route::post('/', [GiftExperienceController::class, 'unlock'])->middleware('throttle:20,1')->name('unlock');
+        Route::post('/dong', [GiftExperienceController::class, 'lock'])->name('lock');
+        Route::post('/cam-on', [GiftExperienceController::class, 'thank'])->middleware('throttle:5,1')->name('thank');
+        Route::get('/media/{kind}', [GiftExperienceController::class, 'media'])->whereIn('kind', ['photo', 'audio'])->name('media');
+    });
+});
 Route::get('/tu-nuoc-hoa/chia-se/{user}', [StoreExperienceController::class, 'shareWardrobe'])->name('store.wardrobe.share');
 
 Route::middleware(['auth', 'admin'])->group(function () {

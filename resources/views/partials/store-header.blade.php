@@ -28,6 +28,7 @@
                             <a href="{{ route('store.wardrobe') }}">@include('partials.icon', ['name' => 'bottle', 'size' => 17]) <span>{{ __('Tủ nước hoa') }}</span></a>
                             <a href="{{ route('store.member') }}">@include('partials.icon', ['name' => 'crown', 'size' => 17]) <span>{{ __('Thành viên') }}</span></a>
                         </div>
+                        <a class="ht-account-tracking" href="{{ route('gifts.index') }}">@include('partials.icon', ['name' => 'gift', 'size' => 17]) {{ __('Quà của tôi') }} @include('partials.icon', ['name' => 'arrow', 'size' => 14])</a>
                         <a class="ht-account-tracking" href="{{ route('orders.tracking') }}">@include('partials.icon', ['name' => 'truck', 'size' => 17]) {{ __('Tra cứu đơn hàng') }} @include('partials.icon', ['name' => 'arrow', 'size' => 14])</a>
                         @if(Auth::user()->canManageLivestreams())
                             <div class="ht-account-staff">
