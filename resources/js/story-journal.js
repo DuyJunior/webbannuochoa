@@ -6,7 +6,10 @@ document.querySelectorAll('[data-story-explorer]').forEach((explorer) => {
     if (!tabs.length || tabs.length !== panels.length) return;
     const tablist = explorer.querySelector('[data-story-tabs]');
     tablist.setAttribute('role', 'tablist');
-    tablist.setAttribute('aria-orientation', 'vertical');
+    const compact = window.matchMedia('(max-width: 1050px)');
+    const orient = () => tablist.setAttribute('aria-orientation', compact.matches ? 'horizontal' : 'vertical');
+    orient();
+    compact.addEventListener('change', orient);
     const select = (index, focus = false) => {
         tabs.forEach((tab, i) => {
             tab.setAttribute('aria-selected', String(i === index));

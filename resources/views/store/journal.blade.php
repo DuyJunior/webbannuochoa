@@ -1,22 +1,21 @@
 @extends('layouts.store')
 @section('title', __('Cẩm nang nước hoa · Soopi'))
 @section('content')
-<div class="sj-world">
+<div class="sj-world sj-edition">
     <div class="store-container">
+        <div class="sj-masthead"><span>THE SCENT JOURNAL</span><span>{{ __('Dành cho những tâm hồn yêu hương.') }}</span><a href="#thu-vien-cau-chuyen">{{ __('Những trang hương') }} <span aria-hidden="true">↗</span></a></div>
         @if($articles->currentPage() === 1)
             <header class="sj-cover">
                 <div class="sj-cover-copy">
-                    <p class="sj-kicker">SOOPI / JOURNAL OLFACTIF</p>
-                    <h1>{{ __('Có những điều,') }}<br><em>{{ __('chỉ hương mới kể.') }}</em></h1>
+                    <p class="sj-kicker"><span class="sj-cover-index">01</span> SOOPI / {{ __('NGHỆ THUẬT MÙI HƯƠNG') }}</p>
+                    <h1>{{ __('Có những điều,') }}<br>{{ __('chỉ hương') }}<br><em>{{ __('mới kể.') }}</em></h1>
                     <p class="sj-cover-intro">{{ __('Một mùi hương không chỉ để chọn. Mà để hiểu, để cảm, để tìm thấy một phần của mình.') }}</p>
-                    <a class="sj-button" href="#loi-vao-cau-chuyen">{{ __('Mở một trang hương') }} <span aria-hidden="true">↓</span></a>
-                    <div class="sj-cover-foot"><span class="sj-rule"></span><span>{{ __('ĐỌC CHẬM. CẢM NHẬN SÂU.') }}</span></div>
+                    <a class="sj-button" href="#loi-vao-cau-chuyen">{{ __('Bắt đầu khám phá') }} <span aria-hidden="true">↗</span></a>
                 </div>
                 <div class="sj-cover-art">
-                    <img src="{{ asset('images/journal/ritual.webp') }}" alt="{{ __('Khoảnh khắc xịt nước hoa trên cổ tay giữa ánh sáng và lụa hồng') }}" width="1200" height="800" fetchpriority="high">
-                    <span class="sj-art-caption">THE SOOPI SCENT LETTERS</span>
-                    <div class="sj-cover-letter"><span class="sj-kicker">{{ __('GỬI NGƯỜI YÊU HƯƠNG') }}</span><p>{{ __('Có thể bạn sẽ quên một cái tên.') }}<br><em>{{ __('Nhưng nhớ mãi một mùi hương.') }}</em></p>@include('partials.brand-mark', ['size'=>28])</div>
+                    <img src="{{ asset('images/journal/scent-cover-v2.webp') }}" alt="{{ __('Chai hương hổ phách và hoa diên vĩ trong ánh nắng chiều') }}" width="1536" height="1024" fetchpriority="high">
                 </div>
+                <div class="sj-cover-bottom"><span>{{ __('ĐỌC CHẬM. CẢM NHẬN SÂU.') }}</span><span>THE ART OF SCENT <span aria-hidden="true">—</span> SOOPI</span><a href="#loi-vao-cau-chuyen" aria-label="{{ __('Mở một trang hương') }}">↓</a></div>
             </header>
             <div class="sj-manifesto" id="loi-vao-cau-chuyen"><span>01 / {{ __('PHÒNG ĐỌC MÙI HƯƠNG') }}</span><p>{{ __('Không cần biết mọi điều về nước hoa.') }}<br><em>{{ __('Chỉ cần bắt đầu từ một chút tò mò.') }}</em></p><a href="#thu-vien-cau-chuyen">{{ __('Xem tất cả bài viết') }} ↗</a></div>
             @php
@@ -29,8 +28,11 @@
             @endphp
             @if(count($paths))
                 <section class="sj-explorer" data-story-explorer aria-labelledby="sj-explorer-title">
+                    <header class="sj-explorer-heading">
+                        <div><p class="sj-kicker">{{ __('BẮT ĐẦU TỪ ĐIỀU BẠN TÒ MÒ') }}</p><h2 id="sj-explorer-title">{{ __('Bạn muốn hiểu') }}<br><em>{{ __('điều gì hôm nay?') }}</em></h2></div>
+                        <p>{{ __('Mỗi chương mở ra một góc nhìn. Chọn điều bạn tò mò, để hiểu hơn mùi hương mình yêu.') }}</p>
+                    </header>
                     <div class="sj-explorer-menu">
-                        <p class="sj-kicker">{{ __('BẮT ĐẦU TỪ ĐIỀU BẠN TÒ MÒ') }}</p><h2 id="sj-explorer-title">{{ __('Bạn muốn hiểu') }}<br><em>{{ __('điều gì hôm nay?') }}</em></h2>
                         <div class="sj-paths" data-story-tabs aria-label="{{ __('Chọn lối đọc') }}">
                             @foreach($paths as $path)
                                 <a href="#story-path-{{ $loop->index }}" class="sj-path" data-story-tab id="story-tab-{{ $loop->index }}"><span class="sj-path-number">{{ $path['number'] }}</span><span><strong>{{ $path['title'] }}</strong><small>{{ $path['subtitle'] }}</small></span><span class="sj-path-arrow" aria-hidden="true">↗</span></a>
@@ -42,7 +44,7 @@
                             @php($story = $readingPaths->get($path['slug']))
                             <article class="sj-path-story" id="story-path-{{ $loop->index }}" data-story-panel aria-labelledby="story-tab-{{ $loop->index }}">
                                 <a href="{{ route('store.article', $story->slug) }}" class="sj-path-photo" tabindex="-1" aria-hidden="true"><img src="{{ asset(config('journal-art.'.$story->slug, $story->image_url) ?: 'images/journal/notes.webp') }}" alt="" width="640" height="427" loading="lazy"><span>{{ $path['number'] }} / SOOPI</span></a>
-                                <div class="sj-path-copy"><p class="sj-kicker">{{ __('MỘT CÂU CHUYỆN ĐỂ BẮT ĐẦU') }}</p><h3><a href="{{ route('store.article', $story->slug) }}">{{ $story->localized_title }}</a></h3><p>{{ $story->localized_excerpt }}</p><a class="sj-text-link" href="{{ route('store.article', $story->slug) }}">{{ __('Đọc câu chuyện') }} <span aria-hidden="true">↗</span></a></div>
+                                <div class="sj-path-copy"><span class="sj-chapter-number" aria-hidden="true">{{ $path['number'] }}</span><p class="sj-kicker">{{ __('MỘT CÂU CHUYỆN ĐỂ BẮT ĐẦU') }}</p><h3><a href="{{ route('store.article', $story->slug) }}">{{ $story->localized_title }}</a></h3><p>{{ $story->localized_excerpt }}</p><a class="sj-text-link" href="{{ route('store.article', $story->slug) }}">{{ __('Đọc câu chuyện') }} <span aria-hidden="true">↗</span></a></div>
                             </article>
                         @endforeach
                     </div>
@@ -51,9 +53,9 @@
         @endif
         <section class="sj-library" id="thu-vien-cau-chuyen" aria-labelledby="sj-library-title">
             <header class="sj-section-heading"><div><p class="sj-kicker">02 / {{ __('NHỮNG TRANG HƯƠNG') }}</p><h{{ $articles->currentPage() === 1 ? '2' : '1' }} id="sj-library-title">{{ __('Mỗi lần đọc,') }} <em>{{ __('một khám phá.') }}</em></h{{ $articles->currentPage() === 1 ? '2' : '1' }}></div><span class="sj-library-count">{{ __('Bài viết') }} <b>{{ str_pad((string)$articles->total(), 2, '0', STR_PAD_LEFT) }}</b></span></header>
-            <div class="sj-library-grid {{ in_array($articles->count(), [2, 4]) ? 'sj-library-grid--paired' : '' }}">
+            <div class="sj-library-grid sj-library-grid--editorial" style="--sj-feature-span: {{ max(1, min(3, $articles->count() - 1)) }}">
                 @forelse($articles as $article)
-                    @include('store.partials.story-card', ['story'=>$article, 'number'=>$articles->firstItem() + $loop->index])
+                    @include('store.partials.story-card', ['story'=>$article, 'number'=>$articles->firstItem() + $loop->index, 'presentation'=>$loop->first ? 'feature' : 'row'])
                 @empty
                     <div class="sj-empty">@include('partials.brand-mark', ['size'=>36])<h3>{{ __('Những trang hương đang được viết.') }}</h3><p>{{ __('Bạn ghé lại sau nhé. Trong lúc chờ, cùng khám phá một mùi hương dành cho mình.') }}</p><a class="sj-text-link" href="{{ route('store.finder') }}">{{ __('Tìm mùi hương của bạn ↗') }}</a></div>
                 @endforelse
