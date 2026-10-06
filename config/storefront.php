@@ -8,7 +8,15 @@ return [
     'facebook_url' => 'https://www.facebook.com/khanhduy.nguyentran.39',
     'instagram_url' => 'https://www.instagram.com/ntkduy_1312/',
     // Publish only details confirmed by the shop owner. Empty values stay hidden.
-    'address' => env('STORE_ADDRESS'),
+    'address' => env('STORE_ADDRESS', 'Sân vận động Mỹ Đình, đường Lê Đức Thọ, Hà Nội'),
+    // Demo shop location requested by the team: My Dinh National Stadium.
+    // This custom label does not create or rename a business on Google Maps.
+    'location' => [
+        'name' => 'Shop Soopi',
+        'address' => 'Sân vận động Mỹ Đình, đường Lê Đức Thọ, Hà Nội',
+        'latitude' => 21.0205,
+        'longitude' => 105.76393,
+    ],
     'support_hours' => env('STORE_SUPPORT_HOURS'),
     'contact_email' => env('STORE_CONTACT_EMAIL'),
     'privacy_updated_at' => '03/10/2026',

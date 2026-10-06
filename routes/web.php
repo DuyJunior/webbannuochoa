@@ -261,6 +261,8 @@ Route::middleware(['auth', 'livestream.staff'])->prefix('admin')->group(function
 
 // Khu vực quản trị (yêu cầu đăng nhập với quyền admin)
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+    Route::get('/shop-location', [\App\Http\Controllers\Admin\ShopLocationController::class, 'edit'])->name('admin.shop-location.edit');
+    Route::put('/shop-location', [\App\Http\Controllers\Admin\ShopLocationController::class, 'update'])->middleware('throttle:20,1')->name('admin.shop-location.update');
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
     Route::post('/coupons', [CouponController::class, 'store'])->name('admin.coupons.store');

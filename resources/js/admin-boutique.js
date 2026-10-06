@@ -1,4 +1,5 @@
 import './admin-chat.js';
+import './admin-shop-location.js';
 
 const toggle = document.querySelector('.ht-admin-toggle');
 const backdrop = document.querySelector('.ht-admin-backdrop');

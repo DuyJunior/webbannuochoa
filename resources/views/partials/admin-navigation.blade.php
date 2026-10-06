@@ -8,6 +8,7 @@
             ['admin.users.index', 'admin.users.*', __('Khách hàng & nhân viên'), 'users'],
         ],
         'Thương hiệu & nội dung' => [
+            ['admin.shop-location.edit', 'admin.shop-location.*', __('Vị trí cửa hàng'), 'location-dot'],
             ['admin.coupons.index', 'admin.coupons.*', __('Mã ưu đãi'), 'ticket'],
             ['admin.articles.index', 'admin.articles.*', __('Cẩm nang'), 'book-open'],
             ['admin.videos.index', 'admin.videos.*', 'Video & Shorts', 'clapperboard'],

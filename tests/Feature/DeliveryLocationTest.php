@@ -15,6 +15,21 @@ class DeliveryLocationTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_checkout_location_assistant_renders_google_preview_and_autofill(): void
+    {
+        $html = view('user.payment.partials.location-assistant')->render();
+
+        $this->assertStringContainsString('data-locate', $html);
+        $this->assertStringContainsString('Điền địa chỉ bằng vị trí của bạn.', $html);
+        $this->assertStringContainsString('data-location-step="applying"', $html);
+        $this->assertStringContainsString('không theo dõi vị trí liên tục', $html);
+        $this->assertStringNotContainsString('data-location-map', $html);
+        $this->assertStringContainsString('data-delivery-google-map', $html);
+        $this->assertStringContainsString('https://maps.google.com/maps?q=Hanoi%2CVietnam', $html);
+        $this->assertStringContainsString('Chưa định vị', $html);
+        $this->assertStringContainsString('Google để hiển thị bản đồ', $html);
+    }
+
     protected function setUp(): void
     {
         parent::setUp();

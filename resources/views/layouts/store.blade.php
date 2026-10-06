@@ -79,6 +79,7 @@
             </div>
         @endif
         @yield('content')
+        @yield('after_content')
     </main>
     @include('partials.store-footer')
     @unless(request()->routeIs('livestream.show'))

@@ -48,6 +48,7 @@
 @if(!$isFiltered)
 @include('partials.home-journal')
 @include('partials.home-moments')
+@include('partials.store-location')
 
 {{-- ── 4. SẢN PHẨM VỪA XEM GẦN ĐÂY (RECENTLY VIEWED) ── --}}
 @php

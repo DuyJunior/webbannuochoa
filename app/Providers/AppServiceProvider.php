@@ -30,6 +30,11 @@ class AppServiceProvider extends ServiceProvider
         // Read after configuration is loaded, including when config:cache is enabled.
         TrustProxies::at(config('deployment.trusted_proxies', []));
         Paginator::useBootstrapFour();
+        View::composer(['partials.store-location', 'store.contact', 'partials.store-footer'], function ($view) {
+            $locations = app(\App\Services\ShopLocationService::class);
+            $view->with('shopLocation', $locations->current());
+            $view->with('savedShopLocation', $locations->saved());
+        });
 
         // Keep Laravel's notification and signed URL; customize only the email presentation.
         VerifyEmail::toMailUsing(function ($notifiable, string $url): MailMessage {

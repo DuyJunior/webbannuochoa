@@ -7,7 +7,7 @@ const matcherSource = fs.readFileSync('resources/js/delivery-regions.js', 'utf8'
 const source = matcherSource + '\n' + fs.readFileSync('resources/js/delivery-location.js', 'utf8').replace(/^import .*;\s*/gm, '');
 const tick = () => new Promise(resolve => setImmediate(resolve));
 
-function checkout(existing = '') {
+function checkout(existing = '', options = {}) {
     const messages = {
         accuracy: 'Accuracy :meters', filled: 'Filled: :fields.', remaining: 'Complete: :fields.',
         noneFilled: 'Nothing matched', houseAndStreet: 'house and street', checkStreetAndHouse: 'house number; check suggested street',
@@ -15,9 +15,12 @@ function checkout(existing = '') {
         stateApplying: 'Applying', statePartial: 'Partial', stateFilled: 'Filled',
         stateIdle: 'Idle', stateReady: 'Ready', stateError: 'Error',
         buttonIdle: 'Locate', buttonRetry: 'Retry', ready: 'Review first',
-        mapPosition: 'Device location :meters m',
+        denied: 'Permission denied', timeout: 'Position timed out', unavailable: 'Position unavailable',
+        connection: 'Lookup unavailable', limited: 'Try later', manual: 'Enter manually', unsupported: 'Not supported',
+        mapDevice: 'Device position :meters m', mapDeviceTitle: 'Device position, not confirmed delivery address',
     };
-    let focused, calls = 0, application, cancelled = 0;
+    let focused, calls = 0, application, cancelled = 0, finishPosition;
+    const requests = [];
     class Element {
         constructor(id = '') { this.id = id; this.value = ''; this.dataset = {}; this.listeners = {}; this.hidden = true; }
         addEventListener(name, fn) { this.listeners[name] = fn; }
@@ -49,12 +52,21 @@ function checkout(existing = '') {
     vm.runInNewContext(source, {
         document, AbortController, URLSearchParams, setTimeout, clearTimeout,
         CustomEvent: class { constructor(type, options) { this.type = type; this.detail = options?.detail; } },
-        window: {isSecureContext: true, addEventListener() {}, matchMedia: () => ({matches:true})},
-        navigator: {geolocation: {getCurrentPosition(ok) { calls++; ok({coords:{latitude:21,longitude:105,accuracy:20}}); }}},
-        fetch: async () => ({ok:true,json:async () => result}),
+        window: {isSecureContext: options.secure !== false, addEventListener() {}, matchMedia: () => ({matches:true})},
+        navigator: {geolocation: {getCurrentPosition(ok, fail) {
+            calls++;
+            finishPosition = () => options.geoError ? fail({code:options.geoError}) : ok({coords:{latitude:21,longitude:105,accuracy:20}});
+            if (!options.deferPosition) finishPosition();
+        }}},
+        fetch: async (url, init) => {
+            requests.push({url, init});
+            if (options.lookupError) throw new Error('Network failure');
+            return {ok:!options.httpStatus,status:options.httpStatus || 200,json:async () => result};
+        },
     });
     return {
-        root, node, address, fields, result, locate: () => node('[data-locate]').fire('click'),
+        root, node, address, fields, result, requests, locate: () => node('[data-locate]').fire('click'),
+        finishPosition: () => finishPosition(),
         apply: () => node('[data-location-apply]').fire('click'),
         get calls() { return calls; }, get application() { return application; }, get cancelled() { return cancelled; },
         get focused() { return focused; },
@@ -65,6 +77,8 @@ function checkout(existing = '') {
 test('empty checkout autofills only after a location request and waits for the shipping cascade', async () => {
     const page = checkout();
     assert.equal(page.calls, 0);
+    assert.equal(page.requests.length, 0);
+    assert.equal(page.node('[data-delivery-google-map]').src, undefined);
     const work = page.locate(); await tick();
     assert.equal(page.root.dataset.phase, 'applying');
     assert.equal(page.node('[data-location-applied-summary]').hidden, true);
@@ -75,6 +89,57 @@ test('empty checkout autofills only after a location request and waits for the s
     assert.match(page.node('[data-location-applied-summary]').textContent, /Sample street/);
     assert.match(page.node('[data-location-applied-summary]').textContent, /check suggested street/);
     assert.equal(page.focused, page.address);
+    assert.equal(page.requests.length, 1);
+    assert.equal(page.requests[0].url, '/locations/current-address');
+    assert.deepEqual(JSON.parse(page.requests[0].init.body), {latitude:21,longitude:105});
+    assert.equal(page.node('[data-delivery-google-map]').src, 'https://maps.google.com/maps?q=21.00000%2C105.00000&z=16&output=embed');
+    assert.equal(page.node('[data-delivery-map-caption]').textContent, 'Device position 20 m');
+});
+
+test('permission refusal, timeout and unavailable position never send coordinates or replace fields', async () => {
+    for (const [geoError, message] of [[1,'Permission denied'], [2,'Position unavailable'], [3,'Position timed out']]) {
+        const page = checkout('Keep my address', {geoError});
+        await page.locate();
+        assert.equal(page.root.dataset.phase, 'error');
+        assert.equal(page.node('[data-location-status]').textContent, message);
+        assert.equal(page.address.value, 'Keep my address');
+        assert.equal(page.requests.length, 0);
+        assert.equal(page.node('[data-delivery-google-map]').src, undefined);
+        assert.equal(page.application, undefined);
+        assert.equal(page.node('[data-locate]').disabled, false);
+    }
+});
+
+test('failed or throttled address lookup preserves manual input and permits retry', async () => {
+    for (const options of [{lookupError:true}, {httpStatus:429}]) {
+        const page = checkout('Keep my address', options);
+        await page.locate();
+        assert.equal(page.root.dataset.phase, 'error');
+        assert.equal(page.address.value, 'Keep my address');
+        assert.equal(page.application, undefined);
+        assert.equal(page.node('[data-locate]').disabled, false);
+        assert.equal(page.node('[data-location-status]').textContent, options.lookupError ? 'Lookup unavailable' : 'Try later');
+    }
+});
+
+test('switching to manual input ignores a late position without sending coordinates', async () => {
+    const page = checkout('', {deferPosition:true});
+    const work = page.locate();
+    page.node('[data-location-manual]').fire('click');
+    page.address.value = 'My manual address';
+    page.finishPosition();
+    await work;
+    assert.equal(page.requests.length, 0);
+    assert.equal(page.node('[data-delivery-google-map]').src, undefined);
+    assert.equal(page.address.value, 'My manual address');
+    assert.equal(page.root.dataset.phase, 'idle');
+});
+
+test('insecure origins use manual entry instead of requesting geolocation', async () => {
+    const page = checkout('', {secure:false});
+    await page.locate();
+    assert.equal(page.calls, 0);
+    assert.equal(page.node('[data-location-status]').textContent, 'Not supported');
 });
 
 test('an existing address is preserved until the explicit confirmation', async () => {

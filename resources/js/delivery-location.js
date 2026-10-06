@@ -15,22 +15,24 @@ function setupDeliveryLocation() {
     const fields = [...document.querySelectorAll('#province_select, #district_select, #ward_select')];
     const applyButton = root.querySelector('[data-location-apply]');
     const appliedSummary = document.querySelector('[data-location-applied-summary]');
-    let mapReady;
-    const getMap = () => mapReady ??= import('./delivery-map.js').then(module => module.createDeliveryMap(root, messages));
-    if ('IntersectionObserver' in window) {
-        const observer = new IntersectionObserver(entries => {
-            if (entries.some(entry => entry.isIntersecting)) {
-                observer.disconnect();
-                getMap().catch(() => {});
-            }
-        });
-        observer.observe(root);
-    }
     let version = 0;
     let controller;
     let suggestion;
     let pending = false;
     let applying = false;
+
+    function showDevicePosition(position) {
+        const { latitude, longitude, accuracy } = position.coords;
+        const frame = root.querySelector('[data-delivery-google-map]');
+        if (!frame || !Number.isFinite(latitude) || !Number.isFinite(longitude)
+            || Math.abs(latitude) > 90 || Math.abs(longitude) > 180) return;
+        const coordinates = encodeURIComponent(`${latitude.toFixed(5)},${longitude.toFixed(5)}`);
+        frame.src = `https://maps.google.com/maps?q=${coordinates}&z=16&output=embed`;
+        frame.title = messages.mapDeviceTitle;
+        root.querySelector('[data-delivery-map-link]').href = `https://www.google.com/maps/search/?api=1&query=${coordinates}`;
+        root.querySelector('[data-delivery-map-caption]').textContent = messages.mapDevice
+            .replace(':meters', String(Math.ceil(accuracy)));
+    }
 
     function phase(value, detail) {
         root.dataset.phase = value;
@@ -87,13 +89,13 @@ function setupDeliveryLocation() {
                 });
             });
             if (!active()) return;
-            // The map display does not block address lookup or shipping calculations.
-            getMap().then(map => map.showPosition(position)).catch(() => {});
+            // A blocked map iframe must never prevent address lookup or manual entry.
+            showDevicePosition(position);
             phase('searching');
             status.dataset.toastSource = 'info';
             status.textContent = messages.searching;
             controller = new AbortController();
-            // Only the map lookup runs here. Shipping dropdowns load separately.
+            // Address lookup is independent of the Google preview. No continuous tracking.
             const timeout = setTimeout(() => controller?.abort(), 35000);
             let response;
             try {

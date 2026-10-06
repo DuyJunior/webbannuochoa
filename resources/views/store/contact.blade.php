@@ -16,10 +16,10 @@
                 <a href="{{ config('storefront.facebook_url') }}" target="_blank" rel="noopener noreferrer">Facebook <span aria-hidden="true">↗</span></a>
                 <a href="{{ config('storefront.instagram_url') }}" target="_blank" rel="noopener noreferrer">Instagram <span aria-hidden="true">↗</span></a>
             </div>
-            @if(config('storefront.address') || config('storefront.support_hours') || config('storefront.contact_email'))
+            @if(($savedShopLocation?->address ?? config('storefront.address')) || ($savedShopLocation ? $savedShopLocation->hours : config('storefront.support_hours')) || config('storefront.contact_email'))
                 <dl class="info-shop-details">
-                    @if(config('storefront.address'))<div><dt>{{ __('Địa chỉ / hình thức phục vụ') }}</dt><dd>{{ config('storefront.address') }}</dd></div>@endif
-                    @if(config('storefront.support_hours'))<div><dt>{{ __('Giờ hỗ trợ') }}</dt><dd>{{ config('storefront.support_hours') }}</dd></div>@endif
+                    @if(($savedShopLocation?->address ?? config('storefront.address')))<div><dt>{{ __('Địa chỉ / hình thức phục vụ') }}</dt><dd>{{ ($savedShopLocation?->address ?? config('storefront.address')) }}</dd></div>@endif
+                    @if(($savedShopLocation ? $savedShopLocation->hours : config('storefront.support_hours')))<div><dt>{{ __('Giờ hỗ trợ') }}</dt><dd>{{ ($savedShopLocation ? $savedShopLocation->hours : config('storefront.support_hours')) }}</dd></div>@endif
                     @if(config('storefront.contact_email'))<div><dt>{{ __('Email liên hệ') }}</dt><dd><a href="mailto:{{ config('storefront.contact_email') }}">{{ config('storefront.contact_email') }}</a></dd></div>@endif
                 </dl>
             @endif
@@ -33,4 +33,7 @@
     </div>
     <div class="info-closing"><span>{{ __('CHỌN HƯƠNG. CHỌN CHÍNH MÌNH.') }}</span><a href="{{ route('store.finder') }}">{{ __('Khám phá mùi hương phù hợp') }} <span aria-hidden="true">↗</span></a></div>
 </section>
+@endsection
+@section('after_content')
+@include('partials.store-location')
 @endsection
