@@ -44,6 +44,10 @@ return [
         'default_weight' => env('GHN_DEFAULT_WEIGHT', 200),
     ],
 
+    'photon' => [
+        'url' => env('PHOTON_URL', 'https://photon.komoot.io'),
+    ],
+
     'livekit' => [
         'url' => env('LIVEKIT_URL'),
         'key' => env('LIVEKIT_API_KEY'),

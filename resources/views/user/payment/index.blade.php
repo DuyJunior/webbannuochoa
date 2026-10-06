@@ -86,6 +86,8 @@
                         </div>
                     </div>
 
+                    @include('user.payment.partials.location-assistant')
+
                     <div class="ghn-partner-banner">
                         <div class="ghn-badge-logo">
                             <span class="truck-icon">@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
@@ -1012,6 +1014,11 @@ document.addEventListener("DOMContentLoaded", function () {
     districtSelect.addEventListener('change', () => loadWards());
     wardSelect.addEventListener('change', loadFee);
     loadProvinces(restoreAddress);
+
+    document.addEventListener('soopi:delivery-location', (event) => {
+        // Reuse the guarded GHN cascade, including server-calculated shipping fees.
+        loadProvinces(event.detail);
+    });
 
 
     // Ràng buộc số điện thoại chỉ đúng 10 chữ số (bắt đầu bằng số 0)

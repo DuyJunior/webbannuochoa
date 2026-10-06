@@ -163,6 +163,8 @@ Route::middleware(['auth'])->prefix('user')->name('user.')->group(function () {
 
 // Tra cứu địa giới hành chính & cước vận chuyển GHN
 Route::prefix('locations')->name('locations.')->group(function () {
+    Route::post('/current-address', \App\Http\Controllers\User\DeliveryLocationController::class)
+        ->middleware(['auth', 'throttle:5,1'])->name('current-address');
     Route::get('/provinces', [GHNController::class, 'getProvinces'])->name('provinces');
     Route::get('/districts/{provinceId}', [GHNController::class, 'getDistricts'])->name('districts');
     Route::get('/wards/{districtId}', [GHNController::class, 'getWards'])->name('wards');

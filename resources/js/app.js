@@ -15,6 +15,7 @@ import './wishlist.js';
 import './journal-video-rail.js';
 import './email-verification.js';
 import './gift-experience.js';
+import './delivery-location.js';
 
 document.addEventListener('click', (event) => {
     const button = event.target.closest('[data-quantity-minus], [data-quantity-plus]');

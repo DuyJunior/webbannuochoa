@@ -1,0 +1,21 @@
+.delivery-location{padding:22px;margin-bottom:22px;border:1px solid #e5d8dc;border-radius:16px;background:linear-gradient(130deg,#faf6f1,#f7f0f4);color:#49343f;min-width:0}
+.delivery-location__intro{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px}
+.delivery-location__icon{display:grid;place-items:center;flex:0 0 38px;height:38px;border:1px solid #d6c2cb;border-radius:50%;font-size:27px;color:#79445f}
+.delivery-location h3{margin:0 0 5px;font-family:inherit;font-size:16px;font-weight:650;line-height:1.5}
+.delivery-location p{font-size:13px;line-height:1.65;margin:0;color:#65535d}
+.delivery-location button{font-family:inherit;font-size:13px;font-weight:600;line-height:1.4;min-height:44px;border-radius:9px;padding:11px 16px;cursor:pointer;border:1px solid #694856;background:#fff;color:#50313e}
+.delivery-location button:focus-visible,.delivery-location a:focus-visible{outline:3px solid #aa728d;outline-offset:3px}
+.delivery-location button:disabled{cursor:wait;opacity:.65}
+.delivery-location .delivery-location__locate,.delivery-location [data-location-apply]{background:#4a2e3c;color:#fff;border-color:#4a2e3c}
+.delivery-location__locate{display:flex;align-items:center;justify-content:space-between;gap:25px}
+.delivery-location .delivery-location__privacy{margin:12px 0 0;font-size:12px}
+.delivery-location .delivery-location__status:empty{display:none}
+.delivery-location .delivery-location__status{margin-top:12px;font-weight:500}
+.delivery-location__suggestion{background:#fffdfb;border:1px solid #dfcbd3;border-radius:12px;padding:16px;margin-top:16px}
+.delivery-location [hidden]{display:none!important}
+.delivery-location__eyebrow{font-size:10px;letter-spacing:.12em;color:#84566e}
+.delivery-location .delivery-location__address{font-size:15px;font-weight:650;margin:6px 0 10px;overflow-wrap:anywhere;color:#422b37}
+.delivery-location__actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.delivery-location__credit{display:block;margin-top:12px;font-size:10px;color:#72646b}
+.delivery-location__credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:480px){.delivery-location{padding:16px}.delivery-location__locate{width:100%}.delivery-location__actions{flex-direction:column}.delivery-location__actions button{width:100%}}
