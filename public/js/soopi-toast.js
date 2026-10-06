@@ -31,6 +31,13 @@
         type = types.includes(type) ? type : 'info';
         const key = `${type}:${message}`;
         if (active.has(key) || queue.some(item => item.key === key)) return;
+        // A multi-step action updates one notification instead of stacking each phase.
+        if (options.group) {
+            for (let i = queue.length - 1; i >= 0; i--) {
+                if (queue[i].options.group === options.group) queue.splice(i, 1);
+            }
+            [...active.values()].filter(item => item.group === options.group).forEach(item => item.dismiss());
+        }
         if (active.size >= 4) {
             if (queue.length < 20) queue.push({message, type, options, key});
             return;
@@ -92,7 +99,7 @@
             started = Date.now(); timer = setTimeout(dismiss, remaining);
         };
         const visibility = () => document.hidden ? pause() : resume();
-        active.set(key, {toast, dismiss});
+        active.set(key, {toast, dismiss, group: options.group});
         close.addEventListener('click', dismiss);
         toast.addEventListener('mouseenter', () => {hovering = true; pause();});
         toast.addEventListener('mouseleave', () => {hovering = false; resume();});
@@ -118,7 +125,7 @@
                 if (!message || source.hidden) { previous = ''; return; }
                 if (message === previous) return;
                 previous = message;
-                show(message, source.dataset.toastSource);
+                show(message, source.dataset.toastSource, {group: source.dataset.toastGroup});
                 source.setAttribute('data-toast-consumed', '');
                 source.removeAttribute('role');
                 source.removeAttribute('aria-live');

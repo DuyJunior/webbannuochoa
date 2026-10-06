@@ -13,6 +13,22 @@ function setupDeliveryLocation() {
     let suggestion;
     let pending = false;
 
+    function phase(value) {
+        root.dataset.phase = value;
+        const labels = {
+            idle: ['buttonIdle', 'stateIdle'], locating: ['buttonLocating', 'stateLocating'],
+            searching: ['buttonSearching', 'stateSearching'], ready: ['buttonRetry', 'stateReady'],
+            error: ['buttonRetry', 'stateError'], applied: ['buttonRetry', 'stateApplied'],
+        };
+        const [button, state] = labels[value];
+        root.querySelector('[data-locate-label]').textContent = messages[button];
+        root.querySelector('[data-location-state]').textContent = messages[state];
+        root.querySelectorAll('[data-location-step]').forEach(step => {
+            if (step.dataset.locationStep === value) step.setAttribute('aria-current', 'step');
+            else step.removeAttribute('aria-current');
+        });
+    }
+
     function cancel() {
         version += 1;
         controller?.abort();
@@ -21,11 +37,13 @@ function setupDeliveryLocation() {
         result.hidden = true;
         locate.disabled = false;
         root.removeAttribute('aria-busy');
+        phase('idle');
     }
 
     locate.addEventListener('click', async () => {
         cancel();
         if (!window.isSecureContext || !navigator.geolocation) {
+            phase('error');
             status.dataset.toastSource = 'error';
             status.textContent = messages.unsupported;
             return;
@@ -35,6 +53,7 @@ function setupDeliveryLocation() {
         pending = true;
         locate.disabled = true;
         root.setAttribute('aria-busy', 'true');
+        phase('locating');
         status.dataset.toastSource = 'info';
         status.textContent = messages.locating;
         try {
@@ -44,6 +63,7 @@ function setupDeliveryLocation() {
                 });
             });
             if (!active()) return;
+            phase('searching');
             status.dataset.toastSource = 'info';
             status.textContent = messages.searching;
             controller = new AbortController();
@@ -63,6 +83,7 @@ function setupDeliveryLocation() {
             }
             if (!active()) return;
             if (!response.ok) {
+                phase('error');
                 status.dataset.toastSource = 'error';
                 status.textContent = [401, 419].includes(response.status) ? messages.expired
                     : response.status === 429 ? messages.limited : messages.failed;
@@ -76,10 +97,12 @@ function setupDeliveryLocation() {
             root.querySelector('[data-location-accuracy]').textContent = messages.accuracy
                 .replace(':meters', String(Math.ceil(position.coords.accuracy)));
             result.hidden = false;
+            phase('ready');
             status.dataset.toastSource = 'info';
             status.textContent = messages.ready;
         } catch (error) {
             if (!active()) return;
+            phase('error');
             status.dataset.toastSource = 'error';
             status.textContent = error.code === 1 ? messages.denied : error.code === 3 ? messages.timeout
                 : error.code === 2 ? messages.unavailable : messages.failed;
@@ -99,16 +122,18 @@ function setupDeliveryLocation() {
         // Clear unmatched fields as well: an old region must not be paired with a new street.
         address.value = chosen.street || '';
         document.dispatchEvent(new CustomEvent('soopi:delivery-location', { detail: chosen.selection }));
+        phase('applied');
         status.dataset.toastSource = 'success';
         status.textContent = messages.applied;
         address.focus({ preventScroll: true });
     });
-    root.querySelector('[data-location-dismiss]').addEventListener('click', () => {
+    root.querySelectorAll('[data-location-dismiss], [data-location-manual]').forEach(button => button.addEventListener('click', () => {
         cancel();
         status.dataset.toastSource = 'info';
         status.textContent = messages.manual;
         address.focus({ preventScroll: true });
-    });
+        address.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }));
     [address, ...document.querySelectorAll('#province_select, #district_select, #ward_select')].forEach(field => {
         field.addEventListener(field === address ? 'input' : 'change', () => {
             if (!pending && !suggestion) return;

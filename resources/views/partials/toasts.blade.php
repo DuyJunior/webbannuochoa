@@ -9,5 +9,5 @@
     @if($errors->any())
         <div data-toast-source="error" class="soopi-toast-fallback" role="alert">{{ __('Chưa thể hoàn tất thao tác. Vui lòng kiểm tra lại:') }} {{ $errors->first() }}</div>
     @endif
-    <script src="{{ asset('js/soopi-toast.js') }}?v=1"></script>
+    <script src="{{ asset('js/soopi-toast.js') }}?v=2"></script>
 @endonce
