@@ -117,6 +117,9 @@ class GHNTest extends TestCase
 
     public function test_can_calculate_shipping_fee(): void
     {
+        $geocoder = $this->createMock(\App\Services\PhotonGeocoder::class);
+        $geocoder->expects($this->never())->method('reverse');
+        $this->app->instance(\App\Services\PhotonGeocoder::class, $geocoder);
         $response = $this->postJson(route('locations.fee'), [
             'to_district_id' => 1493,
             'to_ward_code' => '1A0706',
@@ -125,6 +128,22 @@ class GHNTest extends TestCase
         $response->assertOk()
             ->assertJsonPath('code', 200)
             ->assertJsonPath('data.total', 20900);
+    }
+
+    public function test_ward_directory_requires_login_and_returns_shipping_names_without_map_lookup(): void
+    {
+        $url = route('locations.ward-directory', ['provinceId' => 201]);
+        $this->getJson($url)->assertUnauthorized();
+        $geocoder = $this->createMock(\App\Services\PhotonGeocoder::class);
+        $geocoder->expects($this->never())->method('reverse');
+        $this->app->instance(\App\Services\PhotonGeocoder::class, $geocoder);
+        $ghn = $this->createMock(GHNService::class);
+        $ghn->expects($this->once())->method('getWardDirectory')->with(201)->willReturn([
+            'code' => 200, 'data' => [['DistrictID' => 1482, 'WardCode' => '11007', 'WardName' => 'Phú Diễn']],
+        ]);
+        $this->app->instance(GHNService::class, $ghn);
+        $this->actingAs(User::factory()->create())->getJson($url)->assertOk()
+            ->assertJsonPath('data.0.DistrictID', 1482)->assertJsonPath('data.0.WardCode', '11007');
     }
 
     public function test_user_can_view_payment_page_with_cart(): void

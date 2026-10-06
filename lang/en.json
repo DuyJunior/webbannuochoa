@@ -1,4 +1,15 @@
 {
+  "Tải lại bản đồ": "Reload map",
+  "Vị trí thiết bị": "Device location",
+  "Bản đồ khu vực giao hàng": "Delivery area map",
+  "Xem trước bản đồ · Hà Nội": "Map preview · Hanoi",
+  "Mở bản đồ lớn": "Open larger map",
+  "Vị trí thiết bị · Sai số khoảng :meters m": "Device location · Approx. accuracy :meters m",
+  "Khi bạn cho phép, tọa độ được gửi đến Photon để tìm địa chỉ và OpenStreetMap để hiển thị bản đồ. Địa chỉ gợi ý được lưu tạm 15 phút, không gắn với tài khoản.": "With your permission, coordinates are sent to Photon for address lookup and OpenStreetMap to display the map. Address suggestions are cached for 15 minutes and are not linked to your account.",
+  "Dùng vị trí hoặc tự nhập địa chỉ. Phí giao hàng được tính từ các ô bên dưới.": "Use your location or enter your address. Shipping is calculated from the fields below.",
+  "Tính phí theo địa chỉ đã chọn": "Shipping based on the selected address",
+  "Định vị giúp điền các ô địa chỉ còn trống. Bạn kiểm tra, bổ sung số nhà; GHN tính phí từ địa chỉ đã chọn.": "Location helps fill empty address fields. Check the result and add your house number; GHN calculates shipping from the selected address.",
+  "Đang tìm tên địa chỉ từ vị trí của bạn": "Looking up the address for your location",
   "Soopi · Hương thơm của riêng bạn": "Soopi · Your signature scent",
   "Mùi hương bạn đang tìm": "The fragrance you are looking for",
   "Nước hoa dành cho chàng": "Fragrances for him",
@@ -3513,6 +3524,7 @@
   "Đã điền một phần · Kiểm tra các ô còn thiếu": "Partly filled · Review missing fields",
   "Đã điền khu vực · Kiểm tra số nhà, tên đường": "Areas filled · Review house number and street",
   "số nhà, tên đường": "house number and street",
+  "số nhà; kiểm tra tên đường/ngõ gợi ý gần vị trí": "house number; check the suggested nearby street or alley",
   "quận/huyện": "district",
   "phường/xã": "ward",
   "tỉnh/thành phố": "province/city"

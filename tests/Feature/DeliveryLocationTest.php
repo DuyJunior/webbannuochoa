@@ -8,6 +8,7 @@ use App\Services\GHNService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Sleep;
 use Tests\TestCase;
 
 class DeliveryLocationTest extends TestCase
@@ -18,6 +19,7 @@ class DeliveryLocationTest extends TestCase
     {
         parent::setUp();
         Http::preventStrayRequests();
+        Sleep::fake();
         config(['services.photon.url' => 'https://geocoder.test']);
     }
 
@@ -38,22 +40,12 @@ class DeliveryLocationTest extends TestCase
         ]]])]);
     }
 
-    private function ghn(bool $ambiguous = false): void
+    private function ghn(): void
     {
         $ghn = $this->createMock(GHNService::class);
         $ghn->method('getProvinces')->willReturn(['code' => 200, 'data' => [
-            ['ProvinceID' => 201, 'ProvinceName' => 'Thành phố Hà Nội'],
+            ['ProvinceID' => 201, 'ProvinceName' => 'Hà Nội'],
         ]]);
-        $districts = [['DistrictID' => 1, 'DistrictName' => 'Quận Ba Đình']];
-        if ($ambiguous) $districts[] = ['DistrictID' => 2, 'DistrictName' => 'Ba Đình'];
-        $ghn->method('getDistricts')->with(201)->willReturn(['code' => 200, 'data' => $districts]);
-        if ($ambiguous) {
-            $ghn->expects($this->never())->method('getWards');
-        } else {
-            $ghn->method('getWards')->with(1)->willReturn(['code' => 200, 'data' => [
-                ['WardCode' => '001', 'WardName' => 'Điện Biên'],
-            ]]);
-        }
         $this->app->instance(GHNService::class, $ghn);
     }
 
@@ -71,55 +63,21 @@ class DeliveryLocationTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_suggestion_matches_scoped_ghn_ids_and_does_not_invent_a_house_number(): void
+    public function test_lookup_returns_address_names_without_shipping_ids_or_a_house_number(): void
     {
         $this->signIn();
         $this->provider();
         $this->ghn();
         $result = $this->lookup()->assertOk()->assertJsonPath('street', 'Đường Hoàng Diệu')
-            ->assertJsonPath('selection', ['province' => '201', 'district' => '1', 'ward' => '001']);
+            ->assertJsonPath('regions.province', ['Hà Nội'])
+            ->assertJsonPath('regions.district', ['Quận Ba Đình', 'Phường Điện Biên'])
+            ->assertJsonPath('regions.ward', ['Phường Điện Biên'])
+            ->assertJsonMissingPath('selection')->assertJsonMissingPath('matched');
         $this->assertStringContainsString('no-store', $result->headers->get('Cache-Control'));
         $result->assertDontSee('999')->assertJsonMissingPath('latitude')->assertJsonMissingPath('longitude');
         $this->lookup()->assertOk();
         Http::assertSentCount(1);
-        Http::assertSent(fn ($request) => $request['lat'] === 21.0288 && $request['limit'] === 1);
-    }
-
-    public function test_ambiguous_ghn_names_remain_unselected(): void
-    {
-        $this->signIn();
-        $this->provider();
-        $this->ghn(true);
-        $this->lookup()->assertOk()->assertJsonPath('selection', ['province' => '201', 'district' => '', 'ward' => '']);
-    }
-
-    public function test_canonical_region_name_wins_over_a_shared_legacy_alias(): void
-    {
-        $this->signIn();
-        $this->provider();
-        $ghn = $this->createMock(GHNService::class);
-        $ghn->method('getProvinces')->willReturn(['code' => 200, 'data' => [
-            ['ProvinceID' => 2002, 'ProvinceName' => 'Hà Nội 02', 'NameExtension' => ['Hà Nội']],
-            ['ProvinceID' => 201, 'ProvinceName' => 'Hà Nội', 'NameExtension' => ['Hà Nội']],
-        ]]);
-        $ghn->expects($this->once())->method('getDistricts')->with(201)->willReturn(['code' => 200, 'data' => []]);
-        $ghn->expects($this->never())->method('getWards');
-        $this->app->instance(GHNService::class, $ghn);
-        $this->lookup()->assertOk()->assertJsonPath('selection', ['province' => '201', 'district' => '', 'ward' => '']);
-    }
-
-    public function test_shared_alias_without_a_canonical_match_stays_unselected(): void
-    {
-        $this->signIn();
-        $this->provider();
-        $ghn = $this->createMock(GHNService::class);
-        $ghn->method('getProvinces')->willReturn(['code' => 200, 'data' => [
-            ['ProvinceID' => 2002, 'ProvinceName' => 'Hà Nội 02', 'NameExtension' => ['Hà Nội']],
-            ['ProvinceID' => 2003, 'ProvinceName' => 'Hà Nội 03', 'NameExtension' => ['Hà Nội']],
-        ]]);
-        $ghn->expects($this->never())->method('getDistricts');
-        $this->app->instance(GHNService::class, $ghn);
-        $this->lookup()->assertOk()->assertJsonPath('selection', ['province' => '', 'district' => '', 'ward' => '']);
+        Http::assertSent(fn ($request) => $request['lat'] === 21.0288 && $request['limit'] === 5);
     }
 
     public function test_missing_or_foreign_results_never_supply_a_delivery_address(): void
@@ -135,13 +93,41 @@ class DeliveryLocationTest extends TestCase
         Http::fake(['*' => Http::failedConnection()]);
         $this->lookup()->assertStatus(503)->assertJsonPath('code', 'connection')
             ->assertDontSee('21.0288')->assertDontSee('geocoder.test');
+        Http::assertSentCount(2);
+    }
+
+    public function test_transient_connection_failure_recovers_without_another_user_click(): void
+    {
+        $this->signIn();
+        $this->ghn();
+        Http::fake(['geocoder.test/*' => Http::sequence()->pushFailedConnection()->push(['features' => [[
+            'properties' => ['countrycode' => 'VN', 'city' => 'Hà Nội'],
+        ]]])]);
+        $this->lookup()->assertOk()->assertJsonPath('regions.province', ['Hà Nội']);
+        Http::assertSentCount(2);
+        $this->lookup()->assertOk();
+        Http::assertSentCount(2);
+    }
+
+    public function test_transient_server_failure_recovers_but_forbidden_requests_are_not_retried(): void
+    {
+        $this->signIn();
+        $this->ghn();
+        Http::fake(['geocoder.test/*' => Http::sequence()->pushStatus(502)->push(['features' => [[
+            'properties' => ['countrycode' => 'VN', 'city' => 'Hà Nội'],
+        ]]])->pushStatus(403)]);
+        $this->lookup()->assertOk();
+        Http::assertSentCount(2);
+        Cache::forget('delivery-location:provider-limit');
+        $this->lookup(['latitude' => 21.03, 'longitude' => 105.85])->assertStatus(503)->assertJsonPath('code', 'unavailable');
+        Http::assertSentCount(3);
     }
 
     public function test_map_outage_empty_coverage_and_busy_provider_have_distinct_safe_errors(): void
     {
         $this->signIn();
         $sequence = Http::sequence();
-        foreach ([[503, []], [429, []], [200, ['features'=>[]]], [200, ['unexpected'=>'payload']]] as [$status, $payload]) {
+        foreach ([[503, []], [503, []], [429, []], [200, ['features'=>[]]], [200, ['unexpected'=>'payload']]] as [$status, $payload]) {
             $sequence->push($payload, $status);
         }
         Http::fake(['geocoder.test/*'=>$sequence]);
@@ -152,17 +138,31 @@ class DeliveryLocationTest extends TestCase
             Cache::forget('delivery-location:provider-limit');
             $this->lookup()->assertStatus(503)->assertJsonPath('code', $code)->assertJsonMissingPath('selection');
         }
+        Http::assertSentCount(5);
     }
 
-    public function test_ghn_failure_keeps_the_map_suggestion_without_inventing_region_ids(): void
+    public function test_deploy_diagnostic_distinguishes_map_outage_from_working_ghn(): void
+    {
+        $this->ghn();
+        Http::fake(['*' => Http::failedConnection('private coordinate-bearing URL')]);
+        $this->artisan('delivery-location:check')
+            ->expectsOutputToContain('FAIL Map lookup: connection')
+            ->expectsOutputToContain('PASS GHN area lookup')
+            ->assertFailed();
+        Http::assertSentCount(2);
+    }
+
+    public function test_map_lookup_never_calls_ghn_even_when_shipping_is_unavailable(): void
     {
         $this->signIn();
         $this->provider();
         $ghn = $this->createMock(GHNService::class);
-        $ghn->method('getProvinces')->willThrowException(new \RuntimeException('upstream unavailable'));
+        foreach (['getProvinces', 'getDistricts', 'getWards', 'calculateFee'] as $method) {
+            $ghn->expects($this->never())->method($method);
+        }
         $this->app->instance(GHNService::class, $ghn);
-        $this->lookup()->assertOk()->assertJsonPath('street', 'Đường Hoàng Diệu')->assertJsonPath('matched', false)
-            ->assertJsonPath('selection', ['province'=>'', 'district'=>'', 'ward'=>''])
+        $this->lookup()->assertOk()->assertJsonPath('street', 'Đường Hoàng Diệu')->assertJsonMissingPath('selection')
+            ->assertJsonPath('regions.ward', ['Phường Điện Biên'])
             ->assertDontSee('upstream unavailable');
         Http::assertSentCount(1);
     }
@@ -176,9 +176,55 @@ class DeliveryLocationTest extends TestCase
             'geometry'=>['coordinates'=>[105.8575, 21.0338]],
         ]]])]);
         $this->lookup()->assertOk()->assertJsonPath('street', '')->assertJsonPath('label', 'Hà Nội')
-            ->assertJsonPath('selection.province', '201')->assertJsonPath('matched', false);
+            ->assertJsonPath('regions.province', ['Hà Nội'])->assertJsonMissingPath('selection');
         $this->lookup()->assertOk()->assertJsonPath('street', '');
         Http::assertSentCount(1);
+    }
+
+    public function test_area_only_first_result_uses_a_nearby_road_name_for_the_detail_field(): void
+    {
+        $this->signIn();
+        Http::fake(['geocoder.test/*' => Http::response(['features' => [
+            ['properties' => ['countrycode' => 'VN', 'city' => 'Hà Nội', 'district' => 'Phú Diễn']],
+            ['properties' => ['countrycode' => 'VN', 'city' => 'Hà Nội', 'district' => 'Phú Diễn',
+                'type' => 'street', 'name' => 'Ngõ 205 Đường Phú Diễn'],
+                'geometry' => ['coordinates' => [105.8526, 21.0288]]],
+        ]] )]);
+        $this->lookup()->assertOk()->assertJsonPath('street', 'Ngõ 205 Đường Phú Diễn')
+            ->assertJsonPath('regions.ward', ['Phú Diễn']);
+        $this->lookup()->assertOk()->assertJsonPath('street', 'Ngõ 205 Đường Phú Diễn');
+        Http::assertSentCount(1);
+    }
+
+    public function test_closest_compatible_street_is_used_without_copying_a_neighbours_house_number(): void
+    {
+        $this->signIn();
+        $base = ['countrycode' => 'VN', 'city' => 'Hà Nội'];
+        Http::fake(['geocoder.test/*' => Http::response(['features' => [
+            ['properties' => $base],
+            ['properties' => $base + ['type' => 'street', 'name' => 'Further road'],
+                'geometry' => ['coordinates' => [105.8535, 21.0288]]],
+            ['properties' => $base + ['street' => 'Near alley', 'name' => 'Neighbour shop', 'housenumber' => '123'],
+                'geometry' => ['coordinates' => [105.8526, 21.0288]]],
+        ]] )]);
+        $this->lookup()->assertOk()->assertJsonPath('street', 'Near alley')->assertDontSee('123')->assertDontSee('Neighbour shop');
+    }
+
+    public function test_poi_names_distant_roads_and_conflicting_areas_are_not_used_as_detail_addresses(): void
+    {
+        $this->signIn();
+        $base = ['countrycode' => 'VN', 'city' => 'Hà Nội', 'district' => 'Phú Diễn'];
+        Http::fake(['geocoder.test/*' => Http::response(['features' => [
+            ['properties' => $base],
+            ['properties' => $base + ['name' => 'A restaurant', 'type' => 'house'],
+                'geometry' => ['coordinates' => [105.8525, 21.0288]]],
+            ['properties' => $base + ['type' => 'street', 'name' => 'Distant road'],
+                'geometry' => ['coordinates' => [105.86, 21.0288]]],
+            ['properties' => array_replace($base, ['district' => 'Another ward', 'type' => 'street', 'name' => 'Wrong area']),
+                'geometry' => ['coordinates' => [105.8525, 21.0288]]],
+            ['properties' => $base + ['type' => 'street', 'name' => 'Missing geometry']],
+        ]] )]);
+        $this->lookup()->assertOk()->assertJsonPath('street', '')->assertJsonPath('regions.ward', ['Phú Diễn']);
     }
 
     public function test_provider_backoff_and_per_user_rate_limit(): void
@@ -188,17 +234,6 @@ class DeliveryLocationTest extends TestCase
         for ($attempt = 0; $attempt < 5; $attempt++) $this->lookup()->assertStatus(503);
         $this->lookup()->assertTooManyRequests();
         Http::assertNothingSent();
-    }
-
-    public function test_unmatched_province_preserves_address_suggestion_without_guessing_ids(): void
-    {
-        $this->signIn();
-        $this->provider(['state' => 'Tên tỉnh mới', 'city' => '']);
-        $ghn = $this->createMock(GHNService::class);
-        $ghn->method('getProvinces')->willReturn(['code' => 200, 'data' => [['ProvinceID' => 201, 'ProvinceName' => 'Hà Nội']]]);
-        $ghn->expects($this->never())->method('getDistricts');
-        $this->app->instance(GHNService::class, $ghn);
-        $this->lookup()->assertOk()->assertJsonPath('selection', ['province' => '', 'district' => '', 'ward' => '']);
     }
 
     public function test_checkout_location_controls_render_in_both_languages(): void

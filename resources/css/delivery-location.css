@@ -1,8 +1,10 @@
 .delivery-location{--dl-ink:#49303d;--dl-muted:#776773;position:relative;min-width:0;margin-bottom:24px;padding:28px;border:1px solid #e2d5ce;border-radius:18px;background:radial-gradient(ellipse at 0 0,#fffdf8 0,transparent 65%),#f8f3ee;box-shadow:inset 0 1px 0 #fff,0 8px 24px #4c304007;color:var(--dl-ink)}
-.delivery-location__main{display:grid;grid-template-columns:150px minmax(0,1fr);gap:26px;align-items:center}
-.delivery-location__art{position:relative;text-align:center}
-.delivery-location__art svg{display:block;width:100%;height:auto;border-radius:70px;overflow:hidden}
-.delivery-location__art>span{display:block;font:500 8px/1.5 'Be Vietnam Pro',sans-serif;letter-spacing:.18em;color:#8f756d;margin-top:10px}
+.delivery-location__main{display:grid;grid-template-columns:minmax(240px,.9fr) minmax(0,1fr);gap:28px;align-items:center}
+.delivery-location__map{min-width:0;overflow:hidden;border:1px solid #d9d3cc;border-radius:10px;background:#fff;box-shadow:0 4px 14px #49303d09}
+.delivery-location__map-canvas{position:relative;z-index:0;display:block;width:100%;height:250px;border:0;background:#f0eee9}
+.delivery-location__map-caption{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;color:#70636a;font:400 10px/1.6 'Be Vietnam Pro',sans-serif}
+.delivery-location__map-caption a{display:grid;place-items:center;flex:0 0 28px;min-height:28px;color:#49303d;text-decoration:none;font-size:18px}
+.delivery-location .delivery-location__map-caption button{min-height:28px;padding:3px 6px;font-size:10px;box-shadow:none}
 .delivery-location .delivery-location__eyebrow{display:inline-block;color:#986e7a;font:500 9px/1.7 'Be Vietnam Pro',sans-serif;letter-spacing:.13em}
 .delivery-location .delivery-location__intro h3{margin:9px 0 12px;color:var(--dl-ink);font-family:'Playfair Display','Soopi Serif',Georgia,serif;font-size:clamp(23px,2vw,29px);font-weight:400;line-height:1.3;letter-spacing:-.03em}
 .delivery-location p{margin:0;color:var(--dl-muted);font:400 12px/1.8 'Be Vietnam Pro',sans-serif}
@@ -43,19 +45,14 @@
 .delivery-location[data-phase=applied] .delivery-location__state{color:#426650}
 .delivery-location-filled{padding:16px 18px;margin:0 0 18px;border:1px solid #d8e3d9;border-left:3px solid #68826e;border-radius:10px;background:#f4f8f3;color:#375641;font:400 13px/1.8 'Be Vietnam Pro',sans-serif;overflow-wrap:anywhere;scroll-margin-top:130px}
 .delivery-location-filled[hidden]{display:none}
-.delivery-location[data-phase=locating] .delivery-location__ripple,.delivery-location[data-phase=searching] .delivery-location__ripple{transform-origin:99px 126px;animation:delivery-ripple 2.2s ease-out infinite}
-.delivery-location[data-phase=locating] .delivery-location__pin,.delivery-location[data-phase=searching] .delivery-location__pin{animation:delivery-float 2.2s ease-in-out infinite}
 .delivery-location[aria-busy=true] .delivery-location__target{animation:delivery-spin 3s linear infinite}
-@keyframes delivery-ripple{from{transform:scale(.7);opacity:.8}to{transform:scale(1.5);opacity:0}}
-@keyframes delivery-float{50%{transform:translateY(-5px)}}
 @keyframes delivery-spin{to{transform:rotate(360deg)}}
-@media(max-width:1100px) and (min-width:769px){.delivery-location__main{grid-template-columns:100px minmax(0,1fr);gap:18px}.delivery-location{padding:22px}}
+@media(max-width:1100px) and (min-width:769px){.delivery-location__main{grid-template-columns:1fr;gap:20px}.delivery-location__intro{grid-row:1}.delivery-location{padding:22px}.delivery-location__map-canvas{height:230px}}
 @media(max-width:540px){
 .delivery-location{padding:20px 16px;border-radius:14px}
-.delivery-location__main{grid-template-columns:minmax(0,1fr) 72px;gap:0 12px;align-items:start}
-.delivery-location__intro{display:contents}
-.delivery-location__art{grid-column:2;grid-row:1 / 3;align-self:center}
-.delivery-location__art>span{display:none}
+.delivery-location__main{grid-template-columns:1fr;gap:20px;align-items:start}
+.delivery-location__intro{grid-row:1}
+.delivery-location__map-canvas{height:220px}
 .delivery-location__intro>.delivery-location__eyebrow,.delivery-location__intro>h3{grid-column:1}
 .delivery-location .delivery-location__intro h3{font-size:24px;margin:8px 0 14px}
 .delivery-location__intro>p,.delivery-location__controls,.delivery-location__state{grid-column:1 / -1}

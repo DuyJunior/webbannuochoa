@@ -25,6 +25,12 @@ class GHNController extends Controller
         return response()->json($ghn->getWards($districtId));
     }
 
+    public function getWardDirectory(int $provinceId, GHNService $ghn)
+    {
+        $result = $ghn->getWardDirectory($provinceId);
+        return response()->json($result, ($result['code'] ?? null) == 200 ? 200 : 503);
+    }
+
     public function getShippingFee(Request $request, GHNService $ghn)
     {
         $request->validate([

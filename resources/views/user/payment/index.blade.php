@@ -81,8 +81,8 @@
                     <div class="card-section-header">
                         <div class="icon-circle">2</div>
                         <div>
-                            <h2>{{ __('Địa chỉ giao hàng (GHN)') }}</h2>
-                            <small>{{ __('Chọn khu vực để hệ thống kết nối GHN tính phí tự động') }}</small>
+                            <h2>{{ __('Địa chỉ giao hàng') }}</h2>
+                            <small>{{ __('Dùng vị trí hoặc tự nhập địa chỉ. Phí giao hàng được tính từ các ô bên dưới.') }}</small>
                         </div>
                     </div>
 
@@ -93,7 +93,7 @@
                             <span class="truck-icon">@include('partials.icon', ['name' => 'truck', 'size' => '1em'])</span>
                             <strong>{{ __('Giao Hàng Nhanh (GHN Express)') }}</strong>
                         </div>
-                        <span class="ghn-status-live">{{ __('● Kết nối API trực tiếp') }}</span>
+                        <span class="ghn-status-live">{{ __('Tính phí theo địa chỉ đã chọn') }}</span>
                     </div>
 
                     <p class="delivery-location-filled" data-location-applied-summary role="status" hidden></p>
@@ -881,7 +881,7 @@ document.addEventListener("DOMContentLoaded", function () {
     resetShippingFee();
 
     // Each dependent request owns a version so an older response cannot replace a new address.
-    const versions = { province: 0, district: 0, ward: 0, fee: 0 };
+    const versions = { province: 0, district: 0, ward: 0, fee: 0, areaDirectory: 0 };
     const requests = {};
     const restoreAddress = {{ Illuminate\Support\Js::from(['province' => (string) $checkoutInput('to_province_id'), 'district' => (string) $checkoutInput('to_district_id'), 'ward' => (string) $checkoutInput('to_ward_code')]) }};
     let retryShipping = null;
@@ -903,10 +903,10 @@ document.addEventListener("DOMContentLoaded", function () {
         shippingRetry.hidden = false;
         resetShippingFee(message);
     }
-    async function requestJSON(name, url, options = {}) {
+    async function requestJSON(name, url, options = {}, timeoutMs = 15000) {
         const controller = new AbortController();
         requests[name] = controller;
-        const timeout = setTimeout(() => controller.abort(), 15000);
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
         try {
             const response = await fetch(url, { ...options, signal: controller.signal, headers: { Accept: 'application/json', ...options.headers } });
             if (!response.ok) throw new Error('Shipping request failed');
@@ -916,7 +916,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     async function loadProvinces(restore = {}) {
-        invalidate('province', 'district', 'ward', 'fee');
+        invalidate('province', 'district', 'ward', 'fee', 'areaDirectory');
         const version = versions.province;
         resetShippingFee((window.soopiT || (text => text))("Đang tải khu vực giao hàng…"));
         optionsFor(provinceSelect, (window.soopiT || (text => text))("-- Đang tải Tỉnh/Thành... --"));
@@ -928,8 +928,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!Array.isArray(response.data) || !response.data.length) throw new Error('No provinces');
             optionsFor(provinceSelect, (window.soopiT || (text => text))("-- Chọn Tỉnh/Thành phố --"), response.data, 'ProvinceID', 'ProvinceName');
             resetShippingFee();
-            if (restore.province) {
-                provinceSelect.value = restore.province;
+            const province = restore.regions
+                ? window.soopiMatchDeliveryRegion(response.data, 'ProvinceName', restore.regions.province)?.ProvinceID
+                : restore.province;
+            if (province) {
+                provinceSelect.value = String(province);
                 if (provinceSelect.value) await loadDistricts(restore);
             }
         } catch {
@@ -939,7 +942,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
     async function loadDistricts(restore = {}) {
-        invalidate('district', 'ward', 'fee');
+        invalidate('district', 'ward', 'fee', 'areaDirectory');
         const version = versions.district;
         const province = provinceSelect.value;
         resetShippingFee();
@@ -951,8 +954,28 @@ document.addEventListener("DOMContentLoaded", function () {
             if (version !== versions.district || province !== provinceSelect.value) return;
             if (!Array.isArray(response.data) || !response.data.length) throw new Error('No districts');
             optionsFor(districtSelect, (window.soopiT || (text => text))("-- Chọn Quận/Huyện --"), response.data, 'DistrictID', 'DistrictName');
-            if (restore.district) {
-                districtSelect.value = restore.district;
+            let district = restore.regions
+                ? window.soopiMatchDeliveryRegion(response.data, 'DistrictName', restore.regions.district)?.DistrictID
+                : restore.district;
+            if (!district && restore.regions?.ward?.length) {
+                // Some address providers return a ward and province without the
+                // legacy district GHN needs. Find its unique parent in GHN's own directory.
+                try {
+                    const directoryUrl = @json(route('locations.ward-directory', ['provinceId' => '__PROVINCE__']));
+                    const directory = await requestJSON('areaDirectory', directoryUrl.replace('__PROVINCE__', encodeURIComponent(province)), {}, 40000);
+                    if (version !== versions.district || province !== provinceSelect.value) return;
+                    const ward = Number(directory.code) === 200
+                        ? window.soopiMatchDeliveryRegion(directory.data, 'WardName', restore.regions.ward) : null;
+                    if (ward && response.data.some(row => String(row.DistrictID) === String(ward.DistrictID))) {
+                        district = ward.DistrictID;
+                    }
+                } catch {
+                    if (version !== versions.district || province !== provinceSelect.value) return;
+                    // Keep the loaded choices available for manual selection.
+                }
+            }
+            if (district) {
+                districtSelect.value = String(district);
                 if (districtSelect.value) await loadWards(restore);
             }
         } catch {
@@ -973,8 +996,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (version !== versions.ward || district !== districtSelect.value) return;
             if (!Array.isArray(response.data) || !response.data.length) throw new Error('No wards');
             optionsFor(wardSelect, (window.soopiT || (text => text))("-- Chọn Phường/Xã --"), response.data, 'WardCode', 'WardName');
-            if (restore.ward) {
-                wardSelect.value = restore.ward;
+            const ward = restore.regions
+                ? window.soopiMatchDeliveryRegion(response.data, 'WardName', restore.regions.ward)?.WardCode
+                : restore.ward;
+            if (ward) {
+                wardSelect.value = String(ward);
                 if (wardSelect.value) await loadFee();
             }
         } catch {

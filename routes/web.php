@@ -168,6 +168,8 @@ Route::prefix('locations')->name('locations.')->group(function () {
     Route::get('/provinces', [GHNController::class, 'getProvinces'])->name('provinces');
     Route::get('/districts/{provinceId}', [GHNController::class, 'getDistricts'])->name('districts');
     Route::get('/wards/{districtId}', [GHNController::class, 'getWards'])->name('wards');
+    Route::get('/ward-directory/{provinceId}', [GHNController::class, 'getWardDirectory'])
+        ->whereNumber('provinceId')->middleware(['auth', 'throttle:10,1'])->name('ward-directory');
     Route::post('/calculate-fee', [GHNController::class, 'getShippingFee'])->name('fee');
 });
 

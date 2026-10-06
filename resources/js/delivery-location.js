@@ -1,4 +1,8 @@
 import '../css/delivery-location.css';
+import { matchDeliveryRegion } from './delivery-regions.js';
+
+// Shared with the checkout's existing delivery dropdown cascade.
+window.soopiMatchDeliveryRegion = matchDeliveryRegion;
 
 function setupDeliveryLocation() {
     const root = document.querySelector('[data-delivery-location]');
@@ -11,6 +15,17 @@ function setupDeliveryLocation() {
     const fields = [...document.querySelectorAll('#province_select, #district_select, #ward_select')];
     const applyButton = root.querySelector('[data-location-apply]');
     const appliedSummary = document.querySelector('[data-location-applied-summary]');
+    let mapReady;
+    const getMap = () => mapReady ??= import('./delivery-map.js').then(module => module.createDeliveryMap(root, messages));
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+            if (entries.some(entry => entry.isIntersecting)) {
+                observer.disconnect();
+                getMap().catch(() => {});
+            }
+        });
+        observer.observe(root);
+    }
     let version = 0;
     let controller;
     let suggestion;
@@ -72,11 +87,14 @@ function setupDeliveryLocation() {
                 });
             });
             if (!active()) return;
+            // The map display does not block address lookup or shipping calculations.
+            getMap().then(map => map.showPosition(position)).catch(() => {});
             phase('searching');
             status.dataset.toastSource = 'info';
             status.textContent = messages.searching;
             controller = new AbortController();
-            const timeout = setTimeout(() => controller?.abort(), 65000);
+            // Only the map lookup runs here. Shipping dropdowns load separately.
+            const timeout = setTimeout(() => controller?.abort(), 35000);
             let response;
             try {
                 response = await fetch(root.dataset.endpoint, {
@@ -103,20 +121,25 @@ function setupDeliveryLocation() {
             }
             const data = await response.json();
             if (!active()) return;
-            if (typeof data.label !== 'string' || !data.selection) throw new Error('Invalid suggestion');
+            if (typeof data.label !== 'string' || !data.regions
+                || !['province', 'district', 'ward'].every(key => Array.isArray(data.regions[key]))) {
+                throw new Error('Invalid suggestion');
+            }
             suggestion = data;
             root.querySelector('[data-location-address]').textContent = data.label;
             root.querySelector('[data-location-accuracy]').textContent = messages.accuracy
                 .replace(':meters', String(Math.ceil(position.coords.accuracy)));
-            root.querySelector('[data-location-match]').textContent = !data.street ? messages.areaOnly
-                : data.matched === false ? messages.partial : messages.check;
+            root.querySelector('[data-location-match]').textContent = !data.street ? messages.areaOnly : messages.check;
             result.hidden = false;
             phase('ready');
             status.dataset.toastSource = 'info';
             status.textContent = messages.ready;
-            // Using current location can fill an empty form immediately. Existing
-            // delivery details always require the explicit replacement button.
-            if (!address.value.trim() && fields.every(field => !field.value) && data.selection.province) {
+            // Complete empty child regions when selected parents already match.
+            // A conflicting or unmatched existing choice still needs confirmation.
+            const regionKeys = ['province', 'district', 'ward'];
+            const compatible = fields.every((field, index) => !field.value
+                || matchDeliveryRegion([{ name: field.selectedOptions[0]?.textContent }], 'name', data.regions[regionKeys[index]]));
+            if (!address.value.trim() && compatible && data.regions.province.length) {
                 await applySuggestion();
             }
         } catch (error) {
@@ -152,7 +175,7 @@ function setupDeliveryLocation() {
         address.value = chosen.street || '';
         await new Promise(resolve => {
             document.dispatchEvent(new CustomEvent('soopi:delivery-location', {
-                detail: { ...chosen.selection, complete: resolve },
+                detail: { regions: chosen.regions, complete: resolve },
             }));
         });
         if (applyVersion !== version) return;
@@ -162,17 +185,20 @@ function setupDeliveryLocation() {
         root.removeAttribute('aria-busy');
         const missing = fields.filter(field => !field.value);
         const filled = fields.filter(field => field.value).map(field => field.selectedOptions[0].textContent);
+        const hasRegion = filled.length > 0;
         const names = { province_select: messages.province, district_select: messages.district, ward_select: messages.ward };
-        const remaining = [...missing.map(field => names[field.id]), messages.houseAndStreet];
-        const feedback = (filled.length ? messages.filled.replace(':fields', filled.join(' · ')) : messages.noneFilled)
+        if (address.value) filled.push(address.value);
+        const remaining = [...missing.map(field => names[field.id]), address.value ? messages.checkStreetAndHouse : messages.houseAndStreet];
+        const feedback = (!hasRegion ? messages.noneFilled + ' ' : '')
+            + (filled.length ? messages.filled.replace(':fields', filled.join(' · ')) : '')
             + ' ' + messages.remaining.replace(':fields', remaining.join(', '));
         if (appliedSummary) {
             appliedSummary.textContent = feedback;
             appliedSummary.hidden = false;
         }
-        phase(filled.length ? 'applied' : 'error', filled.length
+        phase(hasRegion ? 'applied' : 'error', hasRegion
             ? (missing.length ? messages.statePartial : messages.stateFilled) : messages.noneFilled);
-        status.dataset.toastSource = filled.length ? 'success' : 'info';
+        status.dataset.toastSource = hasRegion && !missing.length ? 'success' : 'info';
         status.textContent = feedback;
         const target = missing.find(field => !field.disabled) || address;
         target.focus({ preventScroll: true });
