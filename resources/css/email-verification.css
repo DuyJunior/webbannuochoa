@@ -1,0 +1,32 @@
+.soopi-store .otp-page{padding:48px 24px 64px;background:radial-gradient(ellipse at 20% 20%,#f1e4e9,transparent 65%),#faf7f5;color:#422b38}
+.otp-shell{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);max-width:940px;margin:auto;background:#fffdfa;border:1px solid #e7d9df;border-radius:18px;overflow:hidden;box-shadow:0 18px 65px #5133440b}
+.otp-story{position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:620px;padding:38px;color:#fff9f4;background:#422b38;isolation:isolate}
+.otp-story>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.otp-story:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,#32212b60 0%,#39233218 35%,#32212bdf 100%);z-index:-1}
+.otp-story .otp-story-brand{font:500 10px/1.7 var(--ht-sans);letter-spacing:.22em;color:#fff7f1}
+.soopi-store.soopi-interior .public-main .otp-story h2{font:400 42px/1.12 var(--ht-serif);letter-spacing:-1px;color:#fff9f4;margin:18px 0}
+.otp-story p{font:400 13px/1.85 var(--ht-sans);color:#fff3ed;max-width:250px;margin:0}
+.otp-panel{padding:36px 40px;min-width:0}
+.otp-step{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px;color:#8b6178;font:500 10px/1.5 var(--ht-sans);letter-spacing:.14em}
+.otp-step .otp-seal{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:#f6edf1;border:1px solid #ead8e2;flex-shrink:0}
+.soopi-store.soopi-interior .public-main .otp-panel h1{font:400 clamp(29px,3vw,38px)/1.2 var(--ht-serif);letter-spacing:-.6px;margin:0 0 13px;color:#422b38}
+.otp-lead{font:400 13px/1.75 var(--ht-sans);color:#77626e;margin:0 0 16px}
+.otp-address{display:flex;align-items:center;gap:10px;font:500 13px/1.5 var(--ht-sans);background:#f8f3f5;border:1px solid #ece0e6;border-radius:8px;padding:12px 14px;min-width:0;margin-bottom:24px}
+.otp-address svg{flex-shrink:0;color:#8b6178}.otp-address span{overflow-wrap:anywhere;min-width:0}
+.otp-form label{display:block;font:600 12px/1.6 var(--ht-sans);margin-bottom:10px;color:#503746}
+#verification-code.otp-code-input{display:block;box-sizing:border-box;width:100%;min-width:0;height:66px;border:1px solid #c7abba;border-radius:9px;background:#fffdfa;color:#422b38;text-align:center;font:500 28px/1.4 ui-monospace,Consolas,monospace;letter-spacing:.45em;padding:12px 6px 12px 18px;transition:border-color .15s,box-shadow .15s}
+#verification-code.otp-code-input::placeholder{color:#bea8b4;opacity:1}#verification-code.otp-code-input:focus{outline:none;border-color:#80546c;box-shadow:0 0 0 3px #80546c15}
+#verification-code.otp-code-input[aria-invalid=true]{border-color:#a34152}
+.otp-code-help{display:flex;justify-content:space-between;gap:12px;margin-top:10px;font:400 11px/1.6 var(--ht-sans);color:#836b79}
+.otp-primary{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:15px 18px;margin-top:24px;border:1px solid #422b38;border-radius:8px;background:#422b38;color:#fff9f4;font:600 13px/1.5 var(--ht-sans);cursor:pointer}
+.otp-primary:hover{background:#5b394e}.otp-primary:disabled{opacity:.65;cursor:wait}
+.otp-resend{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;align-items:center;margin:20px 0 22px;font:400 12px/1.6 var(--ht-sans);color:#77626e}
+.otp-resend form{margin:0}.otp-resend button{background:none;border:0;padding:5px;color:#70455e;font:600 12px/1.6 var(--ht-sans);text-decoration:underline;text-underline-offset:4px;cursor:pointer}.otp-resend button:disabled{color:#927f89;cursor:default;text-decoration:none}
+.otp-guidance{padding:15px 16px;background:#f9f5f2;border-radius:9px;font:400 12px/1.75 var(--ht-sans);color:#77626e}
+.otp-guidance strong{display:block;color:#503746;font-weight:600;margin-bottom:5px}.otp-guidance p{margin:0}
+.otp-leave{margin-top:22px;text-align:center}.otp-leave button{padding:6px;background:none;border:0;color:#836b79;font:400 12px/1.6 var(--ht-sans);cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.otp-feedback{border-radius:8px;padding:12px 14px;margin:0 0 20px;font:400 12px/1.75 var(--ht-sans)}.otp-feedback-success{background:#eef5ef;color:#386046;border:1px solid #dbe9dc}.otp-feedback-error{background:#fff2f3;border:1px solid #efd1d7;color:#933d50}.otp-feedback-error p{margin:0}
+.otp-page button:focus-visible{outline:2px solid #80546c;outline-offset:4px}
+@media(max-width:720px){.otp-shell{max-width:500px;grid-template-columns:1fr}.otp-story{display:none}.soopi-store .otp-page{padding:24px 16px 40px}.otp-panel{padding:26px 24px}.otp-step{margin-bottom:20px}.soopi-store.soopi-interior .public-main .otp-panel h1{font-size:34px}}
+@media(max-width:360px){.otp-panel{padding:22px 18px}#verification-code.otp-code-input{font-size:25px;letter-spacing:.36em}.soopi-store.soopi-interior .public-main .otp-panel h1{font-size:30px}.otp-code-help{font-size:10px}}
+@media(prefers-reduced-motion:reduce){#verification-code.otp-code-input{transition:none}}

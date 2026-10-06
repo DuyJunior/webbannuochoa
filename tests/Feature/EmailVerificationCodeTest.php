@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use RuntimeException;
 use Tests\TestCase;
 
 class EmailVerificationCodeTest extends TestCase
@@ -141,9 +142,9 @@ class EmailVerificationCodeTest extends TestCase
         }
     }
 
-    public function test_queue_failure_leaves_registered_account_logged_in_for_retry(): void
+    public function test_delivery_failure_leaves_registered_account_logged_in_for_retry(): void
     {
-        $this->mock(EmailVerificationCodeService::class, fn ($mock) => $mock->shouldReceive('send')->once()->andThrow(new \RuntimeException('Queue unavailable')));
+        $this->mock(EmailVerificationCodeService::class, fn ($mock) => $mock->shouldReceive('send')->once()->andThrow(new RuntimeException('SMTP unavailable')));
         $this->post('/register', ['name' => 'Linh', 'email' => 'retry@example.test', 'password' => 'secret123', 'password_confirmation' => 'secret123'])
             ->assertRedirect(route('verification.notice'))->assertSessionHasErrors('delivery');
         $this->assertAuthenticated();
@@ -178,5 +179,43 @@ class EmailVerificationCodeTest extends TestCase
         $this->assertStringContainsString($notice->code, $mail->getTextBody());
         $this->assertStringContainsString($notice->code, $mail->getHtmlBody());
         $this->assertStringNotContainsString('/email/verify/', $mail->getHtmlBody());
+    }
+
+    public function test_new_codes_are_sent_immediately_without_a_queue_worker(): void
+    {
+        config(['mail.default' => 'array', 'queue.default' => 'database']);
+        Notification::swap(new ChannelManager($this->app));
+        $user = User::factory()->unverified()->create();
+        $this->assertSame('sent', app(EmailVerificationCodeService::class)->send($user));
+        $this->assertDatabaseCount('jobs', 0);
+        $messages = app('mail.manager')->mailer('array')->getSymfonyTransport()->messages();
+        $this->assertCount(1, $messages);
+        $mail = $messages->first()->getOriginalMessage();
+        $this->assertSame($user->email, $mail->getTo()[0]->getAddress());
+        preg_match('/\b([0-9]{6})\b/', $mail->getTextBody(), $matches);
+        $hash = DB::table('email_verification_codes')->where('user_id', $user->id)->value('code_hash');
+        $this->assertTrue(Hash::check($matches[1], $hash));
+    }
+
+    public function test_failed_delivery_does_not_replace_the_previous_code_or_restart_cooldown(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $previous = $this->issue($user);
+        $this->travel(61)->seconds();
+        Notification::shouldReceive('sendNow')->once()->andThrow(new RuntimeException('SMTP unavailable'));
+        $this->actingAs($user)->from(route('verification.notice'))->post(route('verification.send'))->assertSessionHasErrors('delivery');
+        $this->assertTrue(Hash::check($previous->code, DB::table('email_verification_codes')->where('user_id', $user->id)->value('code_hash')));
+        $this->assertSame(0, app(EmailVerificationCodeService::class)->retryAfter($user));
+        $this->get(route('verification.notice'))->assertOk()->assertSee('Chưa thể gửi mã OTP.')->assertSee('data-retry-after="0"', false);
+    }
+
+    public function test_log_only_mail_configuration_cannot_claim_otp_delivery(): void
+    {
+        config(['mail.default' => 'log']);
+        $user = User::factory()->unverified()->create();
+        $this->app->instance('env', 'local');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Email OTP requires a live mail transport.');
+        app(EmailVerificationCodeService::class)->send($user);
     }
 }

@@ -18,6 +18,10 @@ class EmailVerificationCodeService
 
     public function send(User $user): string
     {
+        if (! app()->runningUnitTests() && ! $this->usesLiveTransport((string) config('mail.default'))) {
+            throw new \RuntimeException('Email OTP requires a live mail transport.');
+        }
+
         return DB::transaction(function () use ($user) {
             // Serialize issuance and verification, including simultaneous requests from different sessions.
             $user = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
@@ -39,10 +43,28 @@ class EmailVerificationCodeService
                 'expires_at' => now()->addMinutes(self::EXPIRES_MINUTES),
                 'sent_at' => now(),
             ]);
-            $user->notify((new EmailVerificationCode($code))->locale(app()->getLocale()));
+            // OTP must leave the request immediately, even when no queue worker is running locally.
+            // A transport failure rolls back the code and cooldown so the customer can retry.
+            $user->notifyNow((new EmailVerificationCode($code))->locale(app()->getLocale()));
 
             return 'sent';
         });
+    }
+
+    private function usesLiveTransport(string $name, array $seen = []): bool
+    {
+        if (in_array($name, $seen, true)) {
+            return false;
+        }
+        $mailer = config('mail.mailers.'.$name, []);
+        $transport = $mailer['transport'] ?? null;
+        if (in_array($transport, ['failover', 'roundrobin'], true)) {
+            $children = $mailer['mailers'] ?? [];
+
+            return $children !== [] && collect($children)->every(fn ($child) => $this->usesLiveTransport($child, [...$seen, $name]));
+        }
+
+        return in_array($transport, ['smtp', 'sendmail', 'ses', 'ses-v2', 'postmark', 'resend', 'mailgun'], true);
     }
 
     public function retryAfter(User $user): int

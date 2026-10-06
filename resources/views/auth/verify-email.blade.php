@@ -1,38 +1,43 @@
 @extends('layouts.store')
 @section('title', __('Xác thực Email · Soopi'))
 @section('content')
-<section class="luxury-auth-section">
-    <div class="luxury-auth-card" style="max-width:480px;text-align:center">
-        <div class="luxury-auth-header">
-            <div class="luxury-auth-icon-wrap">@include('partials.brand-mark', ['size' => 32])</div>
-            <h1 class="luxury-auth-title">{{ __('Xác thực Email') }}</h1>
-            <p class="luxury-auth-subtitle">{{ __('Nhập mã OTP gồm 6 chữ số được gửi đến') }}<br><strong style="overflow-wrap:anywhere">{{ auth()->user()->email }}</strong></p>
-        </div>
-        @if(session('message'))
-            <div class="luxury-auth-alert alert-success" role="status">{{ session('message') }}</div>
-        @endif
-        @if($errors->any())
-            <div class="luxury-auth-alert alert-danger" role="alert"><ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul></div>
-        @endif
-        <form method="POST" action="{{ route('verification.confirm') }}" class="luxury-auth-form">
-            @csrf
-            <div class="luxury-form-group">
-                <label for="verification-code" class="luxury-form-label">{{ __('Mã xác thực OTP') }}</label>
-                <input id="verification-code" name="code" type="text" class="luxury-form-input" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required autofocus aria-describedby="otp-help" @if($errors->has('code')) aria-invalid="true" @endif style="text-align:center;font-size:28px;letter-spacing:.35em;padding:16px;min-width:0;width:100%;box-sizing:border-box" placeholder="000000">
-                <p id="otp-help" class="luxury-form-hint">{{ __('Mã có hiệu lực 10 phút. Không chia sẻ mã này với người khác.') }}</p>
+<section class="otp-page" aria-labelledby="otp-title">
+    <div class="otp-shell">
+        <aside class="otp-story" aria-label="Soopi Perfume Studio">
+            <img src="{{ asset('images/journal/detail.webp') }}" alt="" width="640" height="640">
+            <span class="otp-story-brand">SOOPI / YOUR SCENT STORY</span>
+            <div>
+                @include('partials.brand-mark', ['size' => 38, 'light' => true])
+                <h2>{{ __('Chỉ một bước nữa.') }}</h2>
+                <p>{{ __('Lưu những mùi hương bạn yêu. Bắt đầu câu chuyện của riêng bạn cùng Soopi.') }}</p>
             </div>
-            <button type="submit" class="luxury-auth-btn">{{ __('Xác nhận mã OTP') }} <span aria-hidden="true">→</span></button>
-        </form>
-        <div style="display:flex;flex-direction:column;gap:14px;margin-top:24px">
-            <p class="luxury-form-hint">{{ __('Chưa nhận được mã? Kiểm tra thư rác hoặc yêu cầu gửi lại. Mã mới sẽ thay thế mã cũ.') }}</p>
-            <form method="POST" action="{{ route('verification.send') }}" data-otp-resend data-retry-after="{{ $retryAfter }}">
+        </aside>
+        <div class="otp-panel">
+            <div class="otp-step"><span>{{ __('02 / XÁC THỰC TÀI KHOẢN') }}</span><span class="otp-seal">@include('partials.icon', ['name' => 'mail', 'size' => 20])</span></div>
+            <h1 id="otp-title">{{ __('Xác thực Email') }}</h1>
+            <p class="otp-lead">{{ __('Nhập mã OTP gồm 6 chữ số được gửi đến') }}</p>
+            <div class="otp-address">@include('partials.icon', ['name' => 'mail', 'size' => 16])<span>{{ auth()->user()->email }}</span></div>
+            @if($errors->any())
+                <div class="otp-feedback otp-feedback-error" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
+            @elseif(session('message') || session('success'))
+                <div class="otp-feedback otp-feedback-success" role="status">{{ session('message') ?: session('success') }}</div>
+            @endif
+            <form method="POST" action="{{ route('verification.confirm') }}" class="otp-form" data-otp-submit data-busy-label="{{ __('Đang xác thực…') }}">
                 @csrf
-                <button type="submit" class="luxury-auth-secondary-btn"><span>{{ __('Gửi lại mã OTP') }}</span><span data-otp-countdown aria-hidden="true"></span></button>
+                <label for="verification-code">{{ __('Mã xác thực OTP') }}</label>
+                <input id="verification-code" name="code" type="text" class="otp-code-input" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" minlength="6" maxlength="6" required aria-describedby="otp-help" @if($errors->has('code')) aria-invalid="true" @endif placeholder="000000">
+                <div class="otp-code-help" id="otp-help"><span>{{ __('6 chữ số') }}</span><span>{{ __('Hiệu lực trong 10 phút') }}</span></div>
+                <button type="submit" class="otp-primary"><span data-otp-button-label>{{ __('Xác nhận mã OTP') }}</span><span aria-hidden="true">→</span></button>
             </form>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="luxury-auth-secondary-btn">{{ __('Đăng xuất') }}</button>
-            </form>
+            <div class="otp-resend">
+                <span>{{ __('Chưa nhận được mã?') }}</span>
+                <form method="POST" action="{{ route('verification.send') }}" data-otp-resend data-retry-after="{{ $retryAfter }}" data-otp-submit data-busy-label="{{ __('Đang gửi mã…') }}">
+                    @csrf
+                    <button type="submit"><span data-otp-button-label>{{ __('Gửi lại mã OTP') }}</span><span data-otp-countdown aria-hidden="true"></span></button>
+                </form>
+            </div>
+            <div class="otp-guidance"><strong>{{ __('Một lưu ý nhỏ') }}</strong><p>{{ __('Kiểm tra cả mục Thư rác và Quảng cáo. Chỉ dùng mã trong email mới nhất và không chia sẻ mã với người khác.') }}</p></div>
+            <form method="POST" action="{{ route('logout') }}" class="otp-leave">@csrf<button type="submit">{{ __('Dùng tài khoản khác') }}</button></form>
         </div>
     </div>
 </section>

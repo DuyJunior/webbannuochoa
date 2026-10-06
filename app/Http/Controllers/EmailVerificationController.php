@@ -59,7 +59,7 @@ class EmailVerificationController extends Controller
             return back()->withErrors(['delivery' => __('Vui lòng đợi :seconds giây trước khi gửi lại mã.', ['seconds' => $codes->retryAfter($request->user())])]);
         }
 
-        return back()->with('message', __('Mã OTP mới đang được gửi đến email của bạn. Vui lòng dùng mã mới nhất.'));
+        return back()->with('message', __('Đã gửi mã OTP mới. Vui lòng kiểm tra hộp thư và dùng mã mới nhất.'));
     }
 
     // Keep previously issued signed links valid; all new emails use OTP.

@@ -67,7 +67,7 @@ class AuthController extends Controller
         }
 
         return redirect()->route('verification.notice')
-            ->with('success', __('Mã OTP đang được gửi đến email của bạn. Nhập mã để hoàn tất đăng ký.'));
+            ->with('success', __('Đã gửi mã OTP. Kiểm tra hộp thư để hoàn tất đăng ký.'));
     }
 
     // Hiển thị form đăng nhập
