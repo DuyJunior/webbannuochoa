@@ -1,0 +1,110 @@
+/* Customer order receipt. Scoped to avoid changing account and admin tables. */
+.soopi-store .order-folio{--of-ink:#402737;--of-muted:#786570;--of-line:#e5d9d2;--of-paper:#fffdfa;background:#faf7f3;padding:30px 0 64px;color:var(--of-ink)}
+.order-folio .store-container{max-width:1280px}
+.order-folio *, .order-folio *::before,.order-folio *::after{box-sizing:border-box}
+.order-folio a,.order-folio button,.order-folio summary{touch-action:manipulation}
+.order-folio :focus-visible{outline:2px solid #8d6078;outline-offset:5px}
+.order-folio .of-breadcrumb{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--of-muted);margin:0 0 30px}
+.of-breadcrumb a{color:inherit;text-decoration:none}
+.order-folio .of-header{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:30px}
+.order-folio .of-eyebrow{font:500 10px/1.7 var(--ht-sans);letter-spacing:.18em;text-transform:uppercase;margin:0 0 10px;color:var(--of-muted)}
+.order-folio .of-header h1{font:400 clamp(30px,3.5vw,46px)/1.2 var(--ht-serif);margin:0 0 10px;letter-spacing:-.03em;color:var(--of-ink)}
+.soopi-store.soopi-interior .public-main .order-folio .of-header h1{font-size:clamp(30px,3.5vw,46px);line-height:1.2}
+.of-header h1 span{color:#946e82;white-space:nowrap}
+.order-folio .of-created{font-size:12px;color:var(--of-muted);margin:0}
+.order-folio .of-button{display:inline-flex;align-items:center;justify-content:center;gap:12px;border:1px solid #d4c2cb;border-radius:7px;background:transparent;color:var(--of-ink);padding:13px 18px;font:500 12px/1.5 var(--ht-sans);text-decoration:none;cursor:pointer;transition:background .2s,border-color .2s}
+.order-folio .of-button:hover{background:#f0e7e9;border-color:#aa879c}
+.order-folio .of-journey{background:linear-gradient(115deg,#382632,#523444);color:#fff8f0;border-radius:12px;padding:30px 34px;box-shadow:0 12px 32px #4027370c;margin-bottom:28px}
+.of-journey-heading{display:flex;gap:22px;align-items:center}
+.of-seal{width:68px;height:68px;flex:none;border-radius:50%;border:1px solid #a17d8e;display:grid;place-items:center;color:#eadacc;background:#ffffff06}
+.of-journey-copy{flex:1;min-width:0}
+.order-folio .of-journey .of-eyebrow{color:#d8bbc9;font-size:9px}
+.order-folio .of-journey h2{font:400 clamp(26px,2.4vw,34px)/1.25 var(--ht-serif);margin:0 0 9px;color:#fff8f0}
+.soopi-store.soopi-interior .public-main .order-folio .of-journey h2{color:#fff8f0;line-height:1.25}
+.order-folio .of-journey-copy>p:last-child{font-size:12px;line-height:1.85;max-width:550px;color:#e0cfd7;margin:0}
+.of-carrier{display:flex;flex-direction:column;gap:7px;max-width:220px;min-width:160px;border-left:1px solid #ffffff26;padding-left:26px;font-size:12px;overflow-wrap:anywhere}
+.of-carrier>span{display:flex;gap:9px;align-items:center;color:#fff8f0}
+.of-carrier small{font-size:10px;color:#dcc6d0;line-height:1.7}
+.of-carrier strong{font:500 14px/1.4 var(--ht-sans);letter-spacing:.09em}
+.order-folio .of-progress{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;padding:26px 0 0;margin:26px 0 0;border-top:1px solid #ffffff21}
+.of-progress li{position:relative;display:flex;align-items:center;gap:10px;font:400 11px/1.5 var(--ht-sans);color:#c0acb7;padding-right:12px}
+.of-step-number{display:grid;place-items:center;width:30px;height:30px;flex:none;border:1px solid #ffffff3b;border-radius:50%;font-size:10px}
+.of-progress .is-reached{color:#fff8f0}
+.is-reached .of-step-number{background:#f2e6da;border-color:#f2e6da;color:#4c2e40}
+.is-current .of-step-number{box-shadow:0 0 0 4px #f2e6da17}
+.of-progress .is-current{font-weight:600}
+.of-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:26px;align-items:start}
+.of-main,.of-sidebar{min-width:0}
+.order-folio .of-card{background:var(--of-paper);border:1px solid var(--of-line);border-radius:10px;padding:26px;margin-bottom:20px}
+.of-section-heading{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:24px}
+.order-folio .of-section-heading .of-eyebrow{font-size:9px;margin-bottom:7px}
+.order-folio .of-section-heading h2,.order-folio .of-receipt h2{font:400 23px/1.3 var(--ht-serif);color:var(--of-ink);margin:0}
+.of-count{font:500 10px/1.4 var(--ht-sans);border:1px solid var(--of-line);border-radius:20px;padding:7px 10px;white-space:nowrap;color:var(--of-muted)}
+.order-folio .of-products{scroll-margin-top:135px}
+.soopi-store .order-folio .detail-item-row{display:grid;grid-template-columns:100px minmax(0,1fr) auto;gap:18px;padding:23px 0;border-top:1px solid var(--of-line);align-items:start}
+.order-folio .detail-item-row:last-child{padding-bottom:0}
+.order-folio .detail-item-thumb{width:100px;height:124px;border:1px solid #eee3dc;border-radius:6px;overflow:hidden;background:#f6f0eb;display:grid;place-items:center;color:#896177}
+.order-folio .detail-item-thumb img{width:100%;height:100%;object-fit:contain;display:block}
+.order-folio .detail-item-thumb>span{font-size:35px}
+.order-folio .detail-item-info h4{font:500 14px/1.65 var(--ht-sans);margin:1px 0 8px;color:var(--of-ink)}
+.order-folio .detail-item-meta{display:flex;flex-wrap:wrap;gap:7px;font-size:11px;line-height:1.6;color:var(--of-muted)}
+.order-folio .badge-gift,.order-folio .badge-engrave{display:inline-flex;gap:5px;align-items:center;background:#f1e8ed;padding:3px 7px;border-radius:4px;color:#694459}
+.order-folio .detail-item-unitprice{margin-top:10px;color:var(--of-muted);font-size:11px;line-height:1.7}
+.order-folio .detail-item-total{font:600 13px/1.6 var(--ht-sans);color:var(--of-ink);text-align:right;white-space:nowrap;padding-top:2px}
+.order-folio .gx-order-link{display:flex;width:fit-content;align-items:center;gap:6px;font-size:11px;margin-top:10px;color:#7e4f69}
+.order-folio .order-product-reviews{grid-column:1/-1;background:#f7f2ef;border-radius:6px;padding:12px 14px}
+.order-folio .order-review-hint{color:#786570;font-size:11px}
+.of-delivery-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:28px;font-size:13px;line-height:1.8}
+.of-delivery-grid>div+div{border-left:1px solid var(--of-line);padding-left:26px}
+.order-folio .of-label{display:block;font:500 10px/1.7 var(--ht-sans);color:var(--of-muted);margin-bottom:7px}
+.order-folio .of-delivery-grid p{margin:3px 0}
+.of-preserve{white-space:pre-line;overflow-wrap:anywhere}
+.of-note{border-top:1px solid var(--of-line);padding-top:16px;margin-top:20px}
+.order-folio .of-note p{font-size:12px;line-height:1.8;margin:0}
+.order-folio .of-gift{background:#f5eeea}
+.of-gift-details{margin:0;display:flex;flex-wrap:wrap;gap:20px 32px;font-size:12px;line-height:1.8}
+.of-gift-details dt{color:var(--of-muted);font-size:10px}
+.of-gift-details dd{margin:0}
+.of-gift-message{padding-top:20px;margin-top:20px;border-top:1px solid #deccc6}
+.order-folio .of-gift-message blockquote{font:italic 400 25px/1.5 var(--ht-serif);margin:8px 0 0;color:#80576d;white-space:pre-line;overflow-wrap:anywhere}
+.order-folio .of-history{padding:0;overflow:hidden}
+.of-history>summary{display:flex;justify-content:space-between;align-items:center;gap:16px;list-style:none;padding:22px 26px;cursor:pointer;font-size:13px;font-weight:500}
+.of-history>summary::-webkit-details-marker{display:none}
+.of-history>summary>span:first-child{display:flex;align-items:center;gap:10px}
+.of-expand{font-size:22px;font-weight:300}
+.of-history[open] .of-expand{transform:rotate(45deg)}
+.order-folio .of-history .order-history-panel{margin:0!important;border:0!important;border-radius:0!important;border-top:1px solid var(--of-line)!important;padding:20px 26px!important;background:transparent!important;font-size:12px;line-height:1.8}
+.of-history .order-history-panel h2{display:none}
+.of-history .order-history-panel ol{border-color:#b899a8!important}
+.order-folio .of-receipt{border:1px solid #decec3;background:#f4ede5;border-radius:10px;overflow:hidden;box-shadow:0 8px 24px #5f3b2910}
+.of-receipt-top{position:relative;border-bottom:1px dashed #cbb8aa;padding:26px}
+.order-folio .of-receipt-top .of-eyebrow{font-size:8px}
+.of-receipt-id{display:block;font-size:11px;letter-spacing:.15em;color:#907561;margin-top:14px}
+.of-receipt-body{padding:24px 26px 28px}
+.of-costs{margin:0;font:400 12px/1.7 var(--ht-sans)}
+.of-costs>div{display:flex;align-items:baseline;justify-content:space-between;gap:18px;margin-bottom:14px}
+.of-costs dt{color:#776252}
+.of-costs dd{margin:0;white-space:nowrap;font-weight:500}
+.of-costs small{display:block;font-size:10px;color:#7f6858;font-weight:400;overflow-wrap:anywhere}
+.of-costs .of-discount dd{color:#3c6956}
+.of-costs .of-total{display:block;padding-top:22px;margin-top:22px;border-top:1px solid #d9c8ba;margin-bottom:24px}
+.of-total dd{font:500 clamp(25px,2.4vw,31px)/1.4 var(--ht-sans);margin-top:7px;letter-spacing:-.05em}
+.of-total dd small{display:inline;font-size:11px;letter-spacing:.02em}
+.of-payment{padding-top:19px;border-top:1px solid #decec3;font-size:11px;line-height:1.8}
+.order-folio .pay-badge{display:inline-block;background:#e9dfd5;border-radius:5px;color:#624a3c;padding:6px 9px;font-size:11px;line-height:1.6}
+.order-folio .pay-success{background:#e1ebdf;color:#345e44}
+.order-folio .of-deadline{font-size:11px;line-height:1.8;color:#775447;margin:15px 0 0}
+.of-payment-action{margin-top:20px}
+.order-folio .of-button-primary{width:100%;background:#49303f;border-color:#49303f;color:#fff9f2}
+.order-folio .of-button-primary:hover{background:#644455;color:#fff9f2}
+.of-support{padding:24px 0;text-align:center;border-bottom:1px solid var(--of-line);margin-bottom:15px}
+.order-folio .of-support p{font:400 20px/1.4 var(--ht-serif);margin:0 0 13px}
+.of-support .of-button{font-size:11px;padding:10px 16px}
+.of-cancel{text-align:center}
+.order-folio .of-cancel button{border:0;background:none;padding:10px;color:#98616c;text-decoration:underline;text-underline-offset:4px;font:400 11px/1.6 var(--ht-sans);cursor:pointer}
+.order-folio .of-signature{font:italic 400 22px/1.6 var(--ht-serif);text-align:center;color:#997889;margin:35px 0 0}
+.of-signature span{white-space:nowrap}
+@media(max-width:1050px){.of-layout{grid-template-columns:minmax(0,1fr) 300px;gap:20px}.order-folio .of-card{padding:22px}.soopi-store .order-folio .detail-item-row{grid-template-columns:80px minmax(0,1fr)}.order-folio .detail-item-thumb{width:80px;height:104px;grid-row:1/3}.order-folio .detail-item-total{grid-column:2;text-align:left;padding:0}.of-carrier{min-width:150px;padding-left:20px}.order-folio .of-history{padding:0}}
+@media(max-width:800px){.order-folio .store-container{width:calc(100% - 40px)}.of-layout{grid-template-columns:1fr}.of-sidebar{display:grid;grid-template-columns:1fr;gap:0}.of-carrier{max-width:180px}.of-seal{display:none}.order-folio .of-header{align-items:flex-start}.order-folio .of-header>.of-button{display:none}.of-progress li{flex-direction:column;align-items:flex-start;gap:10px}.order-folio .of-journey{padding:26px}.of-delivery-grid{grid-template-columns:1fr 1.3fr}.order-folio .of-signature{margin-top:24px}}
+@media(max-width:480px){.soopi-store .order-folio{padding-top:22px}.order-folio .store-container{width:calc(100% - 28px)}.order-folio .of-breadcrumb{font-size:10px;gap:8px;margin-bottom:24px}.order-folio .of-header h1{font-size:31px}.order-folio .of-journey{padding:23px 20px}.of-journey-heading{display:block}.of-carrier{max-width:none;border-left:0;border-top:1px solid #ffffff21;padding:15px 0 0;margin-top:18px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:7px 12px}.of-carrier>span{font-size:11px}.of-carrier small{grid-column:1;font-size:9px}.of-carrier strong{grid-column:2;grid-row:1/3;font-size:12px}.order-folio .of-progress{gap:9px;padding-top:20px;margin-top:18px}.of-progress li{font-size:10px;padding:0;gap:10px}.of-step-number{width:28px;height:28px}.order-folio .of-card{padding:20px 17px}.order-folio .of-section-heading h2{font-size:22px}.of-count{font-size:9px;padding:6px 8px}.soopi-store .order-folio .detail-item-row{gap:12px;grid-template-columns:76px minmax(0,1fr)}.order-folio .detail-item-thumb{width:76px;height:98px}.order-folio .detail-item-info h4{font-size:13px}.order-folio .detail-item-total{font-size:13px}.order-folio .of-delivery-grid{grid-template-columns:1fr;gap:18px}.of-delivery-grid>div+div{border:0;border-top:1px solid var(--of-line);padding:16px 0 0}.order-folio .of-history{padding:0}.of-history>summary{padding:20px 17px;font-size:12px}.order-folio .of-history .order-history-panel{padding:18px!important}.order-folio .of-signature{font-size:20px}.of-count{white-space:normal;text-align:center}.order-folio .order-product-reviews{padding:11px}}
+@media(prefers-reduced-motion:reduce){.order-folio *{transition:none!important;scroll-behavior:auto!important}}

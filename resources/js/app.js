@@ -1,6 +1,7 @@
 import './bootstrap';
 import '../css/store-information.css';
 import '../css/order-reviews.css';
+import './order-folio.js';
 import '../css/email-verification.css';
 import '../css/gift-bundle.css';
 import './gift-bundle.js';

@@ -237,7 +237,7 @@ class GHNTest extends TestCase
         $responseShow = $this->actingAs($user)->get(route('orders.show', $order->id));
         $responseShow->assertOk()
             ->assertSee('GHNTEST123')
-            ->assertSee('Chi Tiết Đơn Hàng');
+            ->assertSee('Chi tiết đơn hàng');
     }
 
     public function test_user_can_cancel_order(): void
