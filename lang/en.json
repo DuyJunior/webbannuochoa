@@ -3254,5 +3254,20 @@
   "Nhập mã sau trên trang xác thực của Soopi để hoàn tất đăng ký:": "Enter this code on the Soopi verification page to complete your registration:",
   "Mã có hiệu lực :minutes phút và chỉ sử dụng một lần.": "This code expires in :minutes minutes and can only be used once.",
   "Chỉ dùng mã trong email mới nhất. Không chia sẻ mã OTP hoặc mật khẩu với bất kỳ ai.": "Use the code in the most recent email. Never share your OTP or password with anyone.",
-  "Nếu bạn không tạo tài khoản tại Soopi, hãy bỏ qua email này.": "If you did not create a Soopi account, please ignore this email."
+  "Nếu bạn không tạo tài khoản tại Soopi, hãy bỏ qua email này.": "If you did not create a Soopi account, please ignore this email.",
+  "Bạn có thể đánh giá sau khi nhận hàng thành công.": "You can review this product once your order has been delivered.",
+  "Đánh giá sản phẩm": "Review product",
+  "Sửa đánh giá": "Edit review",
+  "Chọn số sao": "Choose a rating",
+  "Cập nhật đánh giá": "Update review",
+  "Đã đánh giá": "Reviewed",
+  "Đã lưu đánh giá của bạn.": "Your review has been saved.",
+  "Sản phẩm này hiện không nhận đánh giá.": "Reviews are currently unavailable for this product.",
+  "Ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.": "JPG, PNG or WEBP image, up to 3 MB.",
+  "Vui lòng chọn số sao cho sản phẩm.": "Please choose a star rating for this product.",
+  "Số sao phải từ 1 đến 5.": "The rating must be between 1 and 5 stars.",
+  "Vui lòng chia sẻ cảm nhận về sản phẩm.": "Please share your experience with this product.",
+  "Cảm nhận cần ít nhất 10 ký tự.": "Your review must contain at least 10 characters.",
+  "Cảm nhận không được vượt quá 2.000 ký tự.": "Your review must not exceed 2,000 characters.",
+  "Vui lòng chọn ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.": "Please choose a JPG, PNG or WEBP image up to 3 MB."
 }

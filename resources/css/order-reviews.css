@@ -1,0 +1,24 @@
+.order-product-reviews{margin-top:12px;min-width:0;color:#49313f;text-align:left}
+.orders-history-page .item-mini-info,.order-detail-page .detail-item-info{min-width:0;flex:1}
+.soopi-store .orders-history-page .item-mini-row{display:grid;grid-template-columns:52px minmax(0,1fr);align-items:start}
+.soopi-store .order-detail-page .detail-item-row{display:grid;grid-template-columns:60px minmax(0,1fr) auto;align-items:start}
+.item-mini-row>.order-product-reviews,.detail-item-row>.order-product-reviews{grid-column:1/-1;margin-top:0}
+.order-review-entry{scroll-margin-top:140px;margin-top:10px}
+.order-review-details>summary{display:flex;align-items:center;gap:8px;list-style:none;width:fit-content;max-width:100%;padding:10px 14px;border:1px solid #cab1bf;border-radius:8px;color:#674459;background:#fffafc;cursor:pointer;font:600 12px/1.5 var(--ht-sans);overflow-wrap:anywhere}
+.order-review-details>summary::-webkit-details-marker{display:none}
+.order-review-details>summary:hover,.order-review-details[open]>summary{background:#f2e7ed;border-color:#927286}
+.order-review-details>summary:focus-visible,.order-review-form :focus-visible{outline:2px solid #825269;outline-offset:3px}
+.order-review-score{white-space:nowrap;border-left:1px solid #dac5d0;padding-left:8px}
+.order-review-form{display:grid;gap:10px;background:#fcf8fa;border:1px solid #e4d6df;border-radius:12px;padding:18px;margin-top:12px;max-width:560px;min-width:0}
+.order-review-form .order-review-product{font:600 15px/1.5 var(--ht-sans);margin:0 0 4px;color:#49313f}
+.order-review-form label{font:500 12px/1.5 var(--ht-sans);margin:5px 0 0}
+.order-review-form select,.order-review-form textarea,.order-review-form input[type=file]{font:400 14px/1.6 var(--ht-sans);width:100%;min-width:0;max-width:100%;box-sizing:border-box;border:1px solid #d7c3cf;border-radius:6px;background:#fff;color:#49313f;padding:10px}
+.order-review-form textarea{resize:vertical}
+.order-review-form small,.order-review-hint{font:400 12px/1.7 var(--ht-sans);color:#76616c;margin:0}
+.order-review-form button{justify-self:start;border:0;border-radius:7px;background:#49313f;color:#fff;padding:12px 18px;font:600 12px/1.5 var(--ht-sans);cursor:pointer}
+.order-review-saved{display:inline-block;color:#426a50;font:500 11px/1.6 var(--ht-sans);margin-top:6px}
+.order-review-success{color:#356047;background:#eff7f0;padding:10px;border-radius:6px;font:500 12px/1.6 var(--ht-sans)}
+.order-review-errors{color:#923b43;font:400 12px/1.6 var(--ht-sans)}
+.order-review-errors p{margin:0}
+.order-review-form .order-review-photo{width:80px;height:80px;object-fit:cover;border-radius:6px}
+@media(max-width:600px){.soopi-store .order-detail-page .detail-item-row{grid-template-columns:52px minmax(0,1fr)}.soopi-store .order-detail-page .detail-item-total{grid-column:2}.order-review-form{padding:12px}.order-review-form select,.order-review-form textarea{font-size:16px}.order-review-form button{width:100%}}

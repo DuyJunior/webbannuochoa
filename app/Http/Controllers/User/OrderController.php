@@ -324,7 +324,7 @@ class OrderController extends Controller
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        return view('user.payment.order', compact('orders'));
+        return view('user.payment.order', compact('orders') + \App\Services\OrderReviewService::viewData($orders->getCollection(), Auth::id()));
     }
 
     public function show(Order $order)
@@ -342,7 +342,7 @@ class OrderController extends Controller
 
         $order->load($with);
 
-        return view('user.payment.show', compact('order'));
+        return view('user.payment.show', compact('order') + \App\Services\OrderReviewService::viewData([$order], Auth::id()));
     }
 
     public function cancel(Order $order, GHNService $ghn)

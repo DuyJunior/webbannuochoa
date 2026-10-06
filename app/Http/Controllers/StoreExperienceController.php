@@ -393,28 +393,51 @@ class StoreExperienceController extends Controller
     public function review(Request $request, Perfume $perfume): RedirectResponse
     {
         abort_unless($perfume->is_active, 404);
-        $purchased = Order::where('user_id', $request->user()->id)
-            ->where('status', '!=', 'cancelled')
-            ->where(fn ($query) => $query->where('status', 'completed')->orWhere('shipping_status', 'delivered'))
-            ->whereHas('items', fn ($items) => $items->where('perfume_id', $perfume->id))->exists();
+        $context = $request->validate([
+            'order_id' => 'nullable|integer|min:1|required_with:order_item_id',
+            'order_item_id' => 'nullable|integer|min:1|required_with:order_id',
+        ]);
+        $reviewKey = isset($context['order_id'], $context['order_item_id'])
+            ? $context['order_id'].'-'.$context['order_item_id'].'-'.$perfume->id : null;
+        $response = fn () => $reviewKey ? back()->withFragment('review-'.$reviewKey) : back();
+        $purchased = Order::where('user_id', $request->user()->id)->reviewable()
+            ->when($reviewKey, fn ($query) => $query->whereKey($context['order_id']))
+            ->with(['items' => fn ($items) => $items->when($reviewKey, fn ($query) => $query->whereKey($context['order_item_id']))])
+            ->lazy(100)->contains(fn ($order) => $order->items->contains(fn ($item) => in_array((int) $perfume->id, $item->reviewProductIds(), true)));
         if (! $purchased) {
-            return back()->withErrors(['review' => __('Bạn chỉ có thể đánh giá sản phẩm đã mua và nhận hàng thành công.')]);
+            return $response()->withErrors(['review' => __('Bạn chỉ có thể đánh giá sản phẩm đã mua và nhận hàng thành công.')])
+                ->withInput($request->only('rating', 'body', 'review_key'));
         }
-        $data = $request->validate([
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'rating' => 'required|integer|between:1,5',
             'body' => 'required|string|min:10|max:2000',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+        ], [
+            'rating.required' => __('Vui lòng chọn số sao cho sản phẩm.'),
+            'rating.integer' => __('Số sao phải từ 1 đến 5.'),
+            'rating.between' => __('Số sao phải từ 1 đến 5.'),
+            'body.required' => __('Vui lòng chia sẻ cảm nhận về sản phẩm.'),
+            'body.string' => __('Vui lòng chia sẻ cảm nhận về sản phẩm.'),
+            'body.min' => __('Cảm nhận cần ít nhất 10 ký tự.'),
+            'body.max' => __('Cảm nhận không được vượt quá 2.000 ký tự.'),
+            'image.image' => __('Vui lòng chọn ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.'),
+            'image.mimes' => __('Vui lòng chọn ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.'),
+            'image.max' => __('Vui lòng chọn ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.'),
         ]);
-        $review = PerfumeReview::firstOrNew(['user_id' => $request->user()->id, 'perfume_id' => $perfume->id]);
+        if ($validator->fails()) {
+            return $response()->withErrors($validator)->withInput($request->only('rating', 'body', 'review_key'));
+        }
+        $data = $validator->validated();
+        $attributes = ['rating' => $data['rating'], 'body' => $data['body']];
         if ($request->hasFile('image')) {
             File::ensureDirectoryExists(public_path('images/reviews'));
             $name = Str::uuid().'.'.$request->file('image')->extension();
             $request->file('image')->move(public_path('images/reviews'), $name);
-            $review->image_path = 'images/reviews/'.$name;
+            $attributes['image_path'] = 'images/reviews/'.$name;
         }
-        $review->fill(['rating' => $data['rating'], 'body' => $data['body']])->save();
+        PerfumeReview::updateOrCreate(['user_id' => $request->user()->id, 'perfume_id' => $perfume->id], $attributes);
 
-        return back()->with('success', __('Cảm ơn bạn đã chia sẻ cảm nhận.'));
+        return $response()->with('success', __('Cảm ơn bạn đã chia sẻ cảm nhận.'))->with('review_saved', $reviewKey);
     }
 
     public function stockAlert(Request $request, Perfume $perfume): RedirectResponse

@@ -39,6 +39,12 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
+    public function reviewProductIds(): array
+    {
+        return collect($this->stock_components ?? [])->pluck('perfume_id')->push($this->perfume_id)
+            ->map(fn ($id) => (int) $id)->filter()->unique()->values()->all();
+    }
+
     public function perfume(): BelongsTo
     {
         return $this->belongsTo(Perfume::class, 'perfume_id')->withTrashed();

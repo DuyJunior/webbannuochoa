@@ -93,6 +93,7 @@
                                                 <span class="item-price-tag">{{ number_format($item->price, 0, ',', '.') }}₫</span>
                                             </div>
                                         </div>
+                                        @include('partials.order-item-review')
                                     </div>
                                 @endforeach
                             </div>

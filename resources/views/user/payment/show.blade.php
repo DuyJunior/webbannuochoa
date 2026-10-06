@@ -132,6 +132,7 @@
                                 <div class="detail-item-total">
                                     {{ number_format($item->price * $item->quantity, 0, ',', '.') }} {{ __('VNĐ') }}
                                 </div>
+                                @include('partials.order-item-review')
                             </div>
                         @endforeach
                     </div>

@@ -103,6 +103,17 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function canReviewProducts(): bool
+    {
+        return $this->status !== 'cancelled' && ($this->status === 'completed' || $this->shipping_status === 'delivered');
+    }
+
+    public function scopeReviewable(\Illuminate\Database\Eloquent\Builder $query): void
+    {
+        $query->where('status', '!=', 'cancelled')
+            ->where(fn ($query) => $query->where('status', 'completed')->orWhere('shipping_status', 'delivered'));
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
