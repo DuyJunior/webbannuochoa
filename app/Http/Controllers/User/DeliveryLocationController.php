@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Exceptions\DeliveryLocationException;
 use App\Services\DeliveryLocationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class DeliveryLocationController extends Controller
@@ -18,8 +20,17 @@ class DeliveryLocationController extends Controller
         try {
             $suggestion = $locations->suggest((float) $input['latitude'], (float) $input['longitude']);
         } catch (Throwable $exception) {
-            // Connection exceptions include the coordinate-bearing URL; do not log/report them.
-            return response()->json(['message' => __('Chưa tìm được địa chỉ phù hợp. Bạn có thể thử lại hoặc nhập địa chỉ bên dưới.')], 503)
+            $reason = $exception instanceof DeliveryLocationException ? $exception->getMessage() : 'unavailable';
+            $messages = [
+                'connection' => __('Đã lấy được vị trí nhưng kết nối đến bản đồ bị gián đoạn. Hãy thử lại hoặc tự nhập địa chỉ.'),
+                'busy' => __('Dịch vụ bản đồ đang bận. Vui lòng chờ vài giây rồi thử lại hoặc tự nhập địa chỉ.'),
+                'not_found' => __('Bản đồ chưa có địa chỉ đủ chi tiết tại vị trí này. Vui lòng tự nhập địa chỉ giao hàng.'),
+                'unavailable' => __('Dịch vụ tìm địa chỉ tạm thời chưa phản hồi. Bạn vẫn có thể tự nhập địa chỉ để tiếp tục.'),
+            ];
+            if (!isset($messages[$reason])) $reason = 'unavailable';
+            // Only a fixed reason code is logged, never exception messages, URLs, coordinates or user IDs.
+            Log::warning('Delivery address lookup unavailable', ['reason' => $reason]);
+            return response()->json(['code' => $reason, 'message' => $messages[$reason]], 503)
                 ->header('Cache-Control', 'no-store, private');
         }
 

@@ -13,7 +13,7 @@ function setupDeliveryLocation() {
     let suggestion;
     let pending = false;
 
-    function phase(value) {
+    function phase(value, detail) {
         root.dataset.phase = value;
         const labels = {
             idle: ['buttonIdle', 'stateIdle'], locating: ['buttonLocating', 'stateLocating'],
@@ -22,7 +22,7 @@ function setupDeliveryLocation() {
         };
         const [button, state] = labels[value];
         root.querySelector('[data-locate-label]').textContent = messages[button];
-        root.querySelector('[data-location-state]').textContent = messages[state];
+        root.querySelector('[data-location-state]').textContent = detail || messages[state];
         root.querySelectorAll('[data-location-step]').forEach(step => {
             if (step.dataset.locationStep === value) step.setAttribute('aria-current', 'step');
             else step.removeAttribute('aria-current');
@@ -83,10 +83,13 @@ function setupDeliveryLocation() {
             }
             if (!active()) return;
             if (!response.ok) {
-                phase('error');
+                const failure = await response.json().catch(() => ({}));
+                if (!active()) return;
+                phase('error', messages.stateLookupError);
                 status.dataset.toastSource = 'error';
+                const codes = { connection: 'connection', busy: 'busy', not_found: 'notFound', unavailable: 'serviceUnavailable' };
                 status.textContent = [401, 419].includes(response.status) ? messages.expired
-                    : response.status === 429 ? messages.limited : messages.failed;
+                    : response.status === 429 ? messages.limited : messages[codes[failure.code]] || messages.failed;
                 return;
             }
             const data = await response.json();
@@ -96,15 +99,19 @@ function setupDeliveryLocation() {
             root.querySelector('[data-location-address]').textContent = data.label;
             root.querySelector('[data-location-accuracy]').textContent = messages.accuracy
                 .replace(':meters', String(Math.ceil(position.coords.accuracy)));
+            root.querySelector('[data-location-match]').textContent = !data.street ? messages.areaOnly
+                : data.matched === false ? messages.partial : messages.check;
             result.hidden = false;
             phase('ready');
             status.dataset.toastSource = 'info';
             status.textContent = messages.ready;
         } catch (error) {
             if (!active()) return;
-            phase('error');
+            const lookupFailed = root.dataset.phase === 'searching';
+            phase('error', lookupFailed ? messages.stateLookupError : undefined);
             status.dataset.toastSource = 'error';
-            status.textContent = error.code === 1 ? messages.denied : error.code === 3 ? messages.timeout
+            status.textContent = lookupFailed ? messages.connection
+                : error.code === 1 ? messages.denied : error.code === 3 ? messages.timeout
                 : error.code === 2 ? messages.unavailable : messages.failed;
         } finally {
             if (active()) {

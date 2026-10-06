@@ -43,7 +43,7 @@
         <div class="delivery-location__result-heading"><span class="delivery-location__eyebrow">{{ __('ĐỊA CHỈ GỢI Ý') }}</span><span class="delivery-location__result-badge">{{ __('Chờ bạn xác nhận') }}</span></div>
         <p class="delivery-location__address" data-location-address></p>
         <p data-location-accuracy></p>
-        <p>{{ __('Kiểm tra số nhà và khu vực GHN bên dưới. Địa chỉ bản đồ có thể khác tên hành chính dùng để giao hàng.') }}</p>
+        <p data-location-match>{{ __('Kiểm tra số nhà và khu vực GHN bên dưới. Địa chỉ bản đồ có thể khác tên hành chính dùng để giao hàng.') }}</p>
         <div class="delivery-location__actions">
             <button type="button" data-location-apply>{{ __('Dùng địa chỉ này') }}</button>
             <button type="button" data-location-dismiss>{{ __('Tự nhập địa chỉ') }}</button>
@@ -63,6 +63,14 @@
         'stateSearching' => __('Đang đối chiếu khu vực giao hàng'),
         'stateReady' => __('Đã có gợi ý · Bạn kiểm tra bên dưới'),
         'stateError' => __('Chưa lấy được vị trí · Bạn vẫn có thể tự nhập'),
+        'stateLookupError' => __('Đã lấy vị trí · Chưa tìm được địa chỉ'),
+        'connection' => __('Đã lấy được vị trí nhưng kết nối đến bản đồ bị gián đoạn. Hãy thử lại hoặc tự nhập địa chỉ.'),
+        'busy' => __('Dịch vụ bản đồ đang bận. Vui lòng chờ vài giây rồi thử lại hoặc tự nhập địa chỉ.'),
+        'notFound' => __('Bản đồ chưa có địa chỉ đủ chi tiết tại vị trí này. Vui lòng tự nhập địa chỉ giao hàng.'),
+        'serviceUnavailable' => __('Dịch vụ tìm địa chỉ tạm thời chưa phản hồi. Bạn vẫn có thể tự nhập địa chỉ để tiếp tục.'),
+        'partial' => __('Đã tìm được khu vực gần bạn nhưng chưa đối chiếu đủ với GHN. Sau khi áp dụng, hãy chọn các khu vực còn thiếu và bổ sung số nhà.'),
+        'areaOnly' => __('Chỉ tìm được khu vực gần bạn, chưa xác định được tên đường. Hãy bổ sung số nhà, tên đường và chọn đủ khu vực giao hàng sau khi áp dụng.'),
+        'check' => __('Kiểm tra số nhà và khu vực GHN bên dưới. Địa chỉ bản đồ có thể khác tên hành chính dùng để giao hàng.'),
         'stateApplied' => __('Đã điền gợi ý · Hãy bổ sung số nhà'),
         'locating' => __('Đang xác định vị trí… Hãy cho phép truy cập vị trí khi trình duyệt hỏi.'),
         'searching' => __('Đã nhận vị trí. Đang tìm địa chỉ phù hợp…'),

@@ -3494,5 +3494,12 @@
   "ĐỪNG KHÉP TRANG VỘI": "STAY A LITTLE LONGER",
   "Còn một điều": "There is more",
   "đáng để khám phá.": "waiting to be discovered.",
-  "Bài viết": "Stories"
+  "Bài viết": "Stories",
+  "Đã lấy vị trí · Chưa tìm được địa chỉ": "Location received · Address not yet found",
+  "Đã lấy được vị trí nhưng kết nối đến bản đồ bị gián đoạn. Hãy thử lại hoặc tự nhập địa chỉ.": "Your location was received, but the map connection was interrupted. Try again or enter your address manually.",
+  "Dịch vụ bản đồ đang bận. Vui lòng chờ vài giây rồi thử lại hoặc tự nhập địa chỉ.": "The map service is busy. Wait a few seconds and try again, or enter your address manually.",
+  "Bản đồ chưa có địa chỉ đủ chi tiết tại vị trí này. Vui lòng tự nhập địa chỉ giao hàng.": "The map does not have a detailed enough address for this location. Please enter your delivery address manually.",
+  "Dịch vụ tìm địa chỉ tạm thời chưa phản hồi. Bạn vẫn có thể tự nhập địa chỉ để tiếp tục.": "The address service is temporarily unavailable. You can still enter your address manually to continue.",
+  "Đã tìm được khu vực gần bạn nhưng chưa đối chiếu đủ với GHN. Sau khi áp dụng, hãy chọn các khu vực còn thiếu và bổ sung số nhà.": "A nearby area was found, but it could not be fully matched with GHN. After applying, select the missing areas and add your house number.",
+  "Chỉ tìm được khu vực gần bạn, chưa xác định được tên đường. Hãy bổ sung số nhà, tên đường và chọn đủ khu vực giao hàng sau khi áp dụng.": "Only a nearby area was found, not the street. After applying, add your house number and street, and select all delivery areas."
 }
