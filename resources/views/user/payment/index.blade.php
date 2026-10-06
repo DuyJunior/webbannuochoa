@@ -96,6 +96,7 @@
                         <span class="ghn-status-live">{{ __('● Kết nối API trực tiếp') }}</span>
                     </div>
 
+                    <p class="delivery-location-filled" data-location-applied-summary role="status" hidden></p>
                     <div class="form-row-3">
                         <div class="form-group-item">
                             <label for="province_select">{{ __('Tỉnh / Thành phố') }} <span class="req">*</span></label>
@@ -1013,9 +1014,17 @@ document.addEventListener("DOMContentLoaded", function () {
     wardSelect.addEventListener('change', loadFee);
     loadProvinces(restoreAddress);
 
-    document.addEventListener('soopi:delivery-location', (event) => {
+    document.addEventListener('soopi:delivery-location', async (event) => {
         // Reuse the guarded GHN cascade, including server-calculated shipping fees.
-        loadProvinces(event.detail);
+        try {
+            await loadProvinces(event.detail);
+        } finally {
+            event.detail.complete?.();
+        }
+    });
+    document.addEventListener('soopi:delivery-location-cancel', () => {
+        // Cancel stale automatic selections while keeping choices already made.
+        loadProvinces({ province: provinceSelect.value, district: districtSelect.value, ward: wardSelect.value });
     });
 
     // Ràng buộc số điện thoại chỉ đúng 10 chữ số (bắt đầu bằng số 0)

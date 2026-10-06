@@ -22,7 +22,7 @@
         <div class="delivery-location__intro">
             <span class="delivery-location__eyebrow">{{ __('MỘT CHẠM · GẦN BẠN HƠN') }}</span>
             <h3 id="delivery-location-title">{{ __('Hương thơm, gửi đến bạn.') }}</h3>
-            <p>{{ __('Để Soopi tìm địa chỉ gần bạn. Bạn chỉ cần kiểm tra và thêm số nhà trước khi nhận hàng.') }}</p>
+            <p>{{ __('Tự điền khu vực tìm được khi biểu mẫu còn trống. Bạn kiểm tra lại và bổ sung số nhà, tên đường còn thiếu.') }}</p>
             <div class="delivery-location__controls">
                 <button type="button" class="delivery-location__locate" data-locate>
                     <svg class="delivery-location__target" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2V5M12 19V22M2 12H5M19 12H22"/></svg>
@@ -36,7 +36,7 @@
     <ol class="delivery-location__steps" aria-label="{{ __('Các bước xác định địa chỉ') }}">
         <li data-location-step="locating"><span>01</span>{{ __('Lấy vị trí') }}</li>
         <li data-location-step="searching"><span>02</span>{{ __('Tìm địa chỉ') }}</li>
-        <li data-location-step="ready"><span>03</span>{{ __('Bạn xác nhận') }}</li>
+        <li data-location-step="ready"><span>03</span>{{ __('Kiểm tra địa chỉ') }}</li>
     </ol>
     <p class="delivery-location__status" role="status" aria-live="polite" data-location-status data-toast-source="info" data-toast-group="delivery-location"></p>
     <div class="delivery-location__suggestion" data-location-result hidden>
@@ -45,7 +45,7 @@
         <p data-location-accuracy></p>
         <p data-location-match>{{ __('Kiểm tra số nhà và khu vực GHN bên dưới. Địa chỉ bản đồ có thể khác tên hành chính dùng để giao hàng.') }}</p>
         <div class="delivery-location__actions">
-            <button type="button" data-location-apply>{{ __('Dùng địa chỉ này') }}</button>
+            <button type="button" data-location-apply>{{ __('Xác nhận và điền địa chỉ') }}</button>
             <button type="button" data-location-dismiss>{{ __('Tự nhập địa chỉ') }}</button>
         </div>
     </div>
@@ -57,6 +57,17 @@
         'buttonIdle' => __('Dùng vị trí hiện tại'),
         'buttonLocating' => __('Đang lấy vị trí…'),
         'buttonSearching' => __('Đang tìm địa chỉ…'),
+        'buttonApplying' => __('Đang điền địa chỉ…'),
+        'stateApplying' => __('Đang điền khu vực và cập nhật phí giao hàng…'),
+        'statePartial' => __('Đã điền một phần · Kiểm tra các ô còn thiếu'),
+        'stateFilled' => __('Đã điền khu vực · Kiểm tra số nhà, tên đường'),
+        'filled' => __('Đã tự điền: :fields.'),
+        'noneFilled' => __('Chưa khớp được khu vực giao hàng. Vui lòng chọn các ô bên dưới.'),
+        'remaining' => __('Bạn kiểm tra và bổ sung: :fields.'),
+        'province' => __('tỉnh/thành phố'),
+        'district' => __('quận/huyện'),
+        'ward' => __('phường/xã'),
+        'houseAndStreet' => __('số nhà, tên đường'),
         'buttonRetry' => __('Thử định vị lại'),
         'stateIdle' => __('Chỉ định vị khi bạn cho phép'),
         'stateLocating' => __('Cho phép vị trí trong trình duyệt để tiếp tục'),

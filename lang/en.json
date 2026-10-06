@@ -3501,5 +3501,19 @@
   "Bản đồ chưa có địa chỉ đủ chi tiết tại vị trí này. Vui lòng tự nhập địa chỉ giao hàng.": "The map does not have a detailed enough address for this location. Please enter your delivery address manually.",
   "Dịch vụ tìm địa chỉ tạm thời chưa phản hồi. Bạn vẫn có thể tự nhập địa chỉ để tiếp tục.": "The address service is temporarily unavailable. You can still enter your address manually to continue.",
   "Đã tìm được khu vực gần bạn nhưng chưa đối chiếu đủ với GHN. Sau khi áp dụng, hãy chọn các khu vực còn thiếu và bổ sung số nhà.": "A nearby area was found, but it could not be fully matched with GHN. After applying, select the missing areas and add your house number.",
-  "Chỉ tìm được khu vực gần bạn, chưa xác định được tên đường. Hãy bổ sung số nhà, tên đường và chọn đủ khu vực giao hàng sau khi áp dụng.": "Only a nearby area was found, not the street. After applying, add your house number and street, and select all delivery areas."
+  "Chỉ tìm được khu vực gần bạn, chưa xác định được tên đường. Hãy bổ sung số nhà, tên đường và chọn đủ khu vực giao hàng sau khi áp dụng.": "Only a nearby area was found, not the street. After applying, add your house number and street, and select all delivery areas.",
+  "Xác nhận và điền địa chỉ": "Confirm and fill address",
+  "Đang điền địa chỉ…": "Filling address…",
+  "Đang điền khu vực và cập nhật phí giao hàng…": "Filling delivery areas and updating the shipping fee…",
+  "Đã tự điền: :fields.": "Filled in: :fields.",
+  "Chưa khớp được khu vực giao hàng. Vui lòng chọn các ô bên dưới.": "No delivery area could be matched. Please select the fields below.",
+  "Bạn kiểm tra và bổ sung: :fields.": "Please review and complete: :fields.",
+  "Tự điền khu vực tìm được khi biểu mẫu còn trống. Bạn kiểm tra lại và bổ sung số nhà, tên đường còn thiếu.": "Fill the areas found when the form is empty. Review the result and add any missing house number and street.",
+  "Kiểm tra địa chỉ": "Review address",
+  "Đã điền một phần · Kiểm tra các ô còn thiếu": "Partly filled · Review missing fields",
+  "Đã điền khu vực · Kiểm tra số nhà, tên đường": "Areas filled · Review house number and street",
+  "số nhà, tên đường": "house number and street",
+  "quận/huyện": "district",
+  "phường/xã": "ward",
+  "tỉnh/thành phố": "province/city"
 }

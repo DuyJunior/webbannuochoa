@@ -8,10 +8,14 @@ function setupDeliveryLocation() {
     const status = root.querySelector('[data-location-status]');
     const result = root.querySelector('[data-location-result]');
     const address = document.getElementById('address');
+    const fields = [...document.querySelectorAll('#province_select, #district_select, #ward_select')];
+    const applyButton = root.querySelector('[data-location-apply]');
+    const appliedSummary = document.querySelector('[data-location-applied-summary]');
     let version = 0;
     let controller;
     let suggestion;
     let pending = false;
+    let applying = false;
 
     function phase(value, detail) {
         root.dataset.phase = value;
@@ -19,6 +23,7 @@ function setupDeliveryLocation() {
             idle: ['buttonIdle', 'stateIdle'], locating: ['buttonLocating', 'stateLocating'],
             searching: ['buttonSearching', 'stateSearching'], ready: ['buttonRetry', 'stateReady'],
             error: ['buttonRetry', 'stateError'], applied: ['buttonRetry', 'stateApplied'],
+            applying: ['buttonApplying', 'stateApplying'],
         };
         const [button, state] = labels[value];
         root.querySelector('[data-locate-label]').textContent = messages[button];
@@ -32,9 +37,13 @@ function setupDeliveryLocation() {
     function cancel() {
         version += 1;
         controller?.abort();
+        if (applying) document.dispatchEvent(new CustomEvent('soopi:delivery-location-cancel'));
+        applying = false;
         suggestion = null;
         pending = false;
         result.hidden = true;
+        applyButton.hidden = false;
+        if (appliedSummary) appliedSummary.hidden = true;
         locate.disabled = false;
         root.removeAttribute('aria-busy');
         phase('idle');
@@ -105,6 +114,11 @@ function setupDeliveryLocation() {
             phase('ready');
             status.dataset.toastSource = 'info';
             status.textContent = messages.ready;
+            // Using current location can fill an empty form immediately. Existing
+            // delivery details always require the explicit replacement button.
+            if (!address.value.trim() && fields.every(field => !field.value) && data.selection.province) {
+                await applySuggestion();
+            }
         } catch (error) {
             if (!active()) return;
             const lookupFailed = root.dataset.phase === 'searching';
@@ -122,18 +136,49 @@ function setupDeliveryLocation() {
         }
     });
 
-    root.querySelector('[data-location-apply]').addEventListener('click', () => {
+    async function applySuggestion() {
         if (!suggestion) return;
         const chosen = suggestion;
         cancel();
+        const applyVersion = version;
+        applying = true;
+        pending = true;
+        locate.disabled = true;
+        root.setAttribute('aria-busy', 'true');
+        phase('applying');
+        status.dataset.toastSource = 'info';
+        status.textContent = messages.stateApplying;
         // Clear unmatched fields as well: an old region must not be paired with a new street.
         address.value = chosen.street || '';
-        document.dispatchEvent(new CustomEvent('soopi:delivery-location', { detail: chosen.selection }));
-        phase('applied');
-        status.dataset.toastSource = 'success';
-        status.textContent = messages.applied;
-        address.focus({ preventScroll: true });
-    });
+        await new Promise(resolve => {
+            document.dispatchEvent(new CustomEvent('soopi:delivery-location', {
+                detail: { ...chosen.selection, complete: resolve },
+            }));
+        });
+        if (applyVersion !== version) return;
+        applying = false;
+        pending = false;
+        locate.disabled = false;
+        root.removeAttribute('aria-busy');
+        const missing = fields.filter(field => !field.value);
+        const filled = fields.filter(field => field.value).map(field => field.selectedOptions[0].textContent);
+        const names = { province_select: messages.province, district_select: messages.district, ward_select: messages.ward };
+        const remaining = [...missing.map(field => names[field.id]), messages.houseAndStreet];
+        const feedback = (filled.length ? messages.filled.replace(':fields', filled.join(' · ')) : messages.noneFilled)
+            + ' ' + messages.remaining.replace(':fields', remaining.join(', '));
+        if (appliedSummary) {
+            appliedSummary.textContent = feedback;
+            appliedSummary.hidden = false;
+        }
+        phase(filled.length ? 'applied' : 'error', filled.length
+            ? (missing.length ? messages.statePartial : messages.stateFilled) : messages.noneFilled);
+        status.dataset.toastSource = filled.length ? 'success' : 'info';
+        status.textContent = feedback;
+        const target = missing.find(field => !field.disabled) || address;
+        target.focus({ preventScroll: true });
+        (appliedSummary || target).scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    }
+    applyButton.addEventListener('click', applySuggestion);
     root.querySelectorAll('[data-location-dismiss], [data-location-manual]').forEach(button => button.addEventListener('click', () => {
         cancel();
         status.dataset.toastSource = 'info';
@@ -141,8 +186,10 @@ function setupDeliveryLocation() {
         address.focus({ preventScroll: true });
         address.scrollIntoView({ block: 'center', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     }));
-    [address, ...document.querySelectorAll('#province_select, #district_select, #ward_select')].forEach(field => {
+    [address, ...fields].forEach(field => {
         field.addEventListener(field === address ? 'input' : 'change', () => {
+            if (appliedSummary) appliedSummary.hidden = true;
+            if (root.dataset.phase === 'applied') phase('idle');
             if (!pending && !suggestion) return;
             cancel();
             status.dataset.toastSource = 'info';

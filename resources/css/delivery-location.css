@@ -41,6 +41,8 @@
 .delivery-location[data-phase=error] .delivery-location__state{color:#9b4254}
 .delivery-location[data-phase=error] .delivery-location__state::before{background:#b66672}
 .delivery-location[data-phase=applied] .delivery-location__state{color:#426650}
+.delivery-location-filled{padding:16px 18px;margin:0 0 18px;border:1px solid #d8e3d9;border-left:3px solid #68826e;border-radius:10px;background:#f4f8f3;color:#375641;font:400 13px/1.8 'Be Vietnam Pro',sans-serif;overflow-wrap:anywhere;scroll-margin-top:130px}
+.delivery-location-filled[hidden]{display:none}
 .delivery-location[data-phase=locating] .delivery-location__ripple,.delivery-location[data-phase=searching] .delivery-location__ripple{transform-origin:99px 126px;animation:delivery-ripple 2.2s ease-out infinite}
 .delivery-location[data-phase=locating] .delivery-location__pin,.delivery-location[data-phase=searching] .delivery-location__pin{animation:delivery-float 2.2s ease-in-out infinite}
 .delivery-location[aria-busy=true] .delivery-location__target{animation:delivery-spin 3s linear infinite}
