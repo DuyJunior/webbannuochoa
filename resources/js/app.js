@@ -14,6 +14,7 @@ import './scent-experience.js';
 import './atelier-typewriter.js';
 import './wishlist.js';
 import './journal-video-rail.js';
+import './story-journal.js';
 import './email-verification.js';
 import './gift-experience.js';
 import './delivery-location.js';
