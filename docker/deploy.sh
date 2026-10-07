@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Called only for this application; never prune Docker or manage other projects.
+# The only Docker cleanup is removing this app's own superseded image digests.
 set -Eeuo pipefail
 umask 0077
 
@@ -21,9 +22,25 @@ exec 9>"$ROOT/.deploy.lock"
 flock -n 9 || fail 'Another Soopi deployment is running.'
 cd "$ROOT"
 
+# Remove only this app's superseded images so they cannot fill the disk. Keep the
+# running and target images; older digests stay in .previous-image and on Docker Hub
+# for re-pulling. docker rmi without -f also refuses images any container uses.
+repository="${image%@*}"
+keep_ids=()
+for ref in "$image" "$(cat "$ROOT/.deployed-image" 2>/dev/null)"; do
+    [[ "$ref" =~ ^docker\.io/[a-z0-9_-]+/webbannuochoa@sha256:[a-f0-9]{64}$ ]] || continue
+    keep_ids+=("$(docker image inspect --format '{{.Id}}' "$ref" 2>/dev/null || true)")
+done
+while read -r id; do
+    [[ " ${keep_ids[*]} " == *" $id "* ]] && continue
+    if docker rmi "$id" >/dev/null 2>&1; then
+        printf 'Removed superseded Soopi image %s\n' "${id:7:12}"
+    fi
+done < <(docker image ls --no-trunc --format '{{.ID}}' "$repository" | sort -u)
+
 # Leave room for image unpacking, MySQL, and backups; never auto-delete shared data.
 free_kb=$(df -Pk "$ROOT" | awk 'NR==2 {print $4}')
-(( free_kb >= 4 * 1024 * 1024 )) || fail 'Need at least 4 GiB free before deployment; no cleanup was performed.'
+(( free_kb >= 4 * 1024 * 1024 )) || fail 'Need at least 4 GiB free before deployment; only superseded Soopi images were removed.'
 
 auth_dir=$(mktemp -d "$ROOT/.docker-auth.XXXXXX")
 backup_container=''
