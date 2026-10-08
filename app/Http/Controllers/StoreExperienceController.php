@@ -396,22 +396,35 @@ class StoreExperienceController extends Controller
         $context = $request->validate([
             'order_id' => 'nullable|integer|min:1|required_with:order_item_id',
             'order_item_id' => 'nullable|integer|min:1|required_with:order_id',
+            'legacy_review_id' => 'nullable|integer|min:1|prohibits:order_id,order_item_id',
+            'review_source' => 'nullable|in:product,order',
         ]);
         $reviewKey = isset($context['order_id'], $context['order_item_id'])
             ? $context['order_id'].'-'.$context['order_item_id'].'-'.$perfume->id : null;
-        $response = fn () => $reviewKey ? back()->withFragment('review-'.$reviewKey) : back();
-        $purchased = Order::where('user_id', $request->user()->id)->reviewable()
-            ->when($reviewKey, fn ($query) => $query->whereKey($context['order_id']))
-            ->with(['items' => fn ($items) => $items->when($reviewKey, fn ($query) => $query->whereKey($context['order_item_id']))])
-            ->lazy(100)->contains(fn ($order) => $order->items->contains(fn ($item) => in_array((int) $perfume->id, $item->reviewProductIds(), true)));
-        if (! $purchased) {
+        $response = fn () => ($context['review_source'] ?? null) === 'product'
+            ? back()->withFragment('review-compose') : ($reviewKey ? back()->withFragment('review-'.$reviewKey) : back());
+        $eligibleItems = \App\Services\OrderReviewService::eligibleItems($request->user()->id, $perfume);
+        $legacyReview = isset($context['legacy_review_id']) ? PerfumeReview::whereKey($context['legacy_review_id'])
+            ->where('user_id', $request->user()->id)->where('perfume_id', $perfume->id)->whereNull('order_item_id')->first() : null;
+        $purchaseItem = $reviewKey
+            ? $eligibleItems->first(fn ($item) => (int) $item->id === (int) $context['order_item_id'] && (int) $item->order_id === (int) $context['order_id'])
+            : ($eligibleItems->count() === 1 ? $eligibleItems->first() : null);
+        if (($reviewKey && ! $purchaseItem) || $eligibleItems->isEmpty() || (isset($context['legacy_review_id']) && ! $legacyReview)) {
             return $response()->withErrors(['review' => __('Bạn chỉ có thể đánh giá sản phẩm đã mua và nhận hàng thành công.')])
-                ->withInput($request->only('rating', 'body', 'review_key'));
+                ->withInput($request->only('rating', 'body', 'tags', 'review_key'));
+        }
+        if (! $legacyReview && ! $purchaseItem) {
+            return $response()->withErrors(['review' => __('Vui lòng chọn lần mua bạn muốn đánh giá.')])
+                ->withInput($request->only('rating', 'body', 'tags', 'review_key'));
         }
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
             'rating' => 'required|integer|between:1,5',
             'body' => 'required|string|min:10|max:2000',
             'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+            'images' => 'nullable|array|max:4',
+            'images.*' => 'required|image|mimes:jpg,jpeg,png,webp|max:3072',
+            'tags' => 'nullable|array|max:4',
+            'tags.*' => ['string', 'distinct', \Illuminate\Validation\Rule::in(array_keys(PerfumeReview::TAGS))],
         ], [
             'rating.required' => __('Vui lòng chọn số sao cho sản phẩm.'),
             'rating.integer' => __('Số sao phải từ 1 đến 5.'),
@@ -423,21 +436,44 @@ class StoreExperienceController extends Controller
             'image.image' => __('Vui lòng chọn ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.'),
             'image.mimes' => __('Vui lòng chọn ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.'),
             'image.max' => __('Vui lòng chọn ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.'),
+            'images.max' => __('Chọn tối đa 4 ảnh, mỗi ảnh không quá 3 MB.'),
+            'images.*.image' => __('Vui lòng chọn ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.'),
+            'images.*.mimes' => __('Vui lòng chọn ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.'),
+            'images.*.max' => __('Chọn tối đa 4 ảnh, mỗi ảnh không quá 3 MB.'),
         ]);
         if ($validator->fails()) {
-            return $response()->withErrors($validator)->withInput($request->only('rating', 'body', 'review_key'));
+            return $response()->withErrors($validator)->withInput($request->only('rating', 'body', 'tags', 'review_key'));
         }
         $data = $validator->validated();
-        $attributes = ['rating' => $data['rating'], 'body' => $data['body']];
-        if ($request->hasFile('image')) {
+        $attributes = ['rating' => $data['rating'], 'body' => $data['body'], 'tags' => $data['tags'] ?? []];
+        $uploads = $request->file('images', []) ?: ($request->hasFile('image') ? [$request->file('image')] : []);
+        if ($uploads) {
             File::ensureDirectoryExists(public_path('images/reviews'));
-            $name = Str::uuid().'.'.$request->file('image')->extension();
-            $request->file('image')->move(public_path('images/reviews'), $name);
-            $attributes['image_path'] = 'images/reviews/'.$name;
+            $paths = [];
+            foreach ($uploads as $upload) {
+                $name = Str::uuid().'.'.$upload->extension();
+                $upload->move(public_path('images/reviews'), $name);
+                $paths[] = 'images/reviews/'.$name;
+            }
+            $attributes['images'] = $paths;
+            $attributes['image_path'] = $paths[0];
         }
-        PerfumeReview::updateOrCreate(['user_id' => $request->user()->id, 'perfume_id' => $perfume->id], $attributes);
+        if ($legacyReview) {
+            $legacyReview->update($attributes);
+        } else {
+            PerfumeReview::updateOrCreate(['user_id' => $request->user()->id, 'perfume_id' => $perfume->id, 'order_item_id' => $purchaseItem->id], $attributes);
+        }
 
         return $response()->with('success', __('Cảm ơn bạn đã chia sẻ cảm nhận.'))->with('review_saved', $reviewKey);
+    }
+
+    public function replyToReview(Request $request, PerfumeReview $review): RedirectResponse
+    {
+        abort_unless($request->user()?->role === 'admin', 403);
+        $data = $request->validate(['seller_reply' => 'required|string|min:3|max:2000']);
+        $review->update(['seller_reply' => $data['seller_reply'], 'replied_at' => now()]);
+
+        return back()->withFragment('customer-review-'.$review->id)->with('success', __('Đã lưu phản hồi của Soopi.'));
     }
 
     public function stockAlert(Request $request, Perfume $perfume): RedirectResponse

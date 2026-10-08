@@ -1,5 +1,6 @@
 <svg class="ht-icon" width="{{ $size ?? 20 }}" height="{{ $size ?? 20 }}" style="display:inline-block;vertical-align:-.15em;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
 @switch($name)
+@case('camera') <path d="M8 6l2-3h4l2 3h4a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="4"/> @break
 @case('menu') <path d="M4 6h16M4 12h16M4 18h16"/> @break
 @case('search') <circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4.5 4.5"/> @break
 @case('bag') <path d="M5 7h14l1 14H4L5 7Z"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/> @break

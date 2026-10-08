@@ -8,7 +8,7 @@
             @foreach($item->reviewProductIds() as $reviewProductId)
                 @php
                     $reviewProduct = $reviewProducts->get($reviewProductId);
-                    $myReview = $customerReviews->get($reviewProductId);
+                    $myReview = $customerReviews->get($item->id.'-'.$reviewProductId);
                     $reviewKey = $order->id.'-'.$item->id.'-'.$reviewProductId;
                     $reviewFailed = old('review_key') === $reviewKey && $errors->any();
                     $selectedRating = $reviewFailed ? old('rating') : $myReview?->rating;
@@ -34,19 +34,7 @@
                                 @if($reviewFailed)
                                     <div class="order-review-errors" role="alert">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>
                                 @endif
-                                <label for="rating-{{ $reviewKey }}">{{ __('Đánh giá') }}</label>
-                                <select id="rating-{{ $reviewKey }}" name="rating" required>
-                                    <option value="">{{ __('Chọn số sao') }}</option>
-                                    @foreach([5 => __('5 sao · Rất thích'), 4 => __('4 sao · Hài lòng'), 3 => __('3 sao · Khá'), 2 => __('2 sao · Chưa hợp'), 1 => __('1 sao · Không hợp')] as $rating => $ratingLabel)
-                                        <option value="{{ $rating }}" @selected($selectedRating === (string) $rating)>{{ $ratingLabel }}</option>
-                                    @endforeach
-                                </select>
-                                <label for="body-{{ $reviewKey }}">{{ __('Cảm nhận') }}</label>
-                                <textarea id="body-{{ $reviewKey }}" name="body" rows="4" minlength="10" maxlength="2000" required placeholder="{{ __('Bạn cảm nhận mùi hương như thế nào?') }}">{{ $reviewFailed && is_string(old('body')) ? old('body') : $myReview?->body }}</textarea>
-                                @if($myReview?->image_path)<img class="order-review-photo" src="{{ asset($myReview->image_path) }}" alt="{{ __('Ảnh do khách hàng chia sẻ') }}" loading="lazy">@endif
-                                <label for="image-{{ $reviewKey }}">{{ __('Ảnh trải nghiệm (không bắt buộc)') }}</label>
-                                <input id="image-{{ $reviewKey }}" type="file" name="image" accept="image/jpeg,image/png,image/webp" aria-describedby="image-help-{{ $reviewKey }}">
-                                <small id="image-help-{{ $reviewKey }}">{{ __('Ảnh JPG, PNG hoặc WEBP, tối đa 3 MB.') }}</small>
+                                @include('partials.review-fields', ['fieldKey'=>$reviewKey, 'formReview'=>$myReview, 'restoreReview'=>$reviewFailed])
                                 <button type="submit">{{ $myReview ? __('Cập nhật đánh giá') : __('Gửi đánh giá') }}</button>
                             </form>
                         </details>

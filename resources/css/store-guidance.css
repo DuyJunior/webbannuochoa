@@ -1,0 +1,87 @@
+/* Reading and discovery pages share the store's ivory, rose and plum palette. */
+.soopi-store.soopi-interior .ht-faq-page{max-width:1200px}
+.soopi-store.soopi-interior .public-main .ht-faq-page>header{padding:32px 0 40px;background:none;margin-bottom:40px}
+.soopi-store.soopi-interior .ht-faq-page>header h1{font-size:clamp(38px,4vw,60px);margin:18px 0}
+.faq-reading-layout{display:grid;grid-template-columns:240px minmax(0,1fr);gap:64px;align-items:start}
+.soopi-store .faq-reading-layout .ht-faq-tabs{position:sticky;top:120px;display:flex;flex-direction:column;align-items:stretch;gap:0;margin:0;padding:0 24px 24px 0;border-right:1px solid #e2d4db}
+.faq-topic-label{font:500 10px/1.6 var(--ht-sans);letter-spacing:.15em;text-transform:uppercase;color:#876778;margin-bottom:20px}
+.soopi-store.soopi-interior .faq-reading-layout .ht-faq-tab{display:flex;justify-content:space-between;align-items:center;min-height:48px;padding:12px 16px;border:0;border-radius:6px;background:transparent;color:#6d5362;font-size:14px;font-weight:400}
+.faq-reading-layout .ht-faq-tab:after{content:'↗';font-size:16px;opacity:.45}
+.soopi-store.soopi-interior .faq-reading-layout .ht-faq-tab.active{background:#f0e5e9;color:#452739;font-weight:500}
+.soopi-store.soopi-interior .faq-reading-layout .ht-faq-tab:hover{background:#f6edef;color:#452739}
+.faq-reading-content{min-width:0}
+.soopi-store .faq-reading-content .ht-faq-group{margin-bottom:40px}
+.soopi-store .faq-reading-content .ht-faq-group-title{font:500 11px/1.7 var(--ht-sans);letter-spacing:.13em;color:#805d71;margin-bottom:16px}
+.soopi-store.soopi-interior .faq-reading-content .ht-faq-item{border:0;border-bottom:1px solid #e3d7dd;border-radius:0;background:transparent;box-shadow:none}
+.soopi-store.soopi-interior .faq-reading-content .ht-faq-question{padding:22px 0;font:500 16px/1.6 var(--ht-sans);color:#432e3b}
+.soopi-store .faq-reading-content .ht-faq-chevron{width:28px;height:28px;background:#f0e5e9;color:#785268}
+.soopi-store .faq-reading-content .ht-faq-item.open .ht-faq-chevron{background:#58374b;color:#fff}
+.soopi-store.soopi-interior .faq-reading-content .ht-faq-answer-inner{padding:0 42px 24px 0;font-size:15px;line-height:1.9;color:#715d68}
+.soopi-store .ht-faq-page .ht-faq-cta{margin-top:12px;border:1px solid #dfcdd6;border-radius:12px;padding:36px;background:#f5edef}
+.soopi-store .ht-faq-page .ht-faq-social-link svg{fill:currentColor}
+.soopi-store .ht-faq-page a:focus-visible{outline:2px solid #895e77;outline-offset:4px}
+
+.soopi-store.soopi-interior .ht-compare-empty.compare-invitation{display:grid;grid-template-columns:1fr 1.15fr;padding:0;text-align:left;background:#fffcf9;border:1px solid #e4d5dc;border-radius:12px;box-shadow:none}
+.compare-invitation-art{min-width:0;background:#f0e8e4;padding:32px;display:flex;flex-direction:column;justify-content:space-between;gap:24px}
+.compare-preview-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;color:#452d3c;text-decoration:none}
+.compare-preview-pair figure{margin:0;min-width:0;transition:transform .25s}
+.compare-preview-pair figure:nth-child(2){padding-top:32px}
+.compare-preview-pair:hover figure{transform:translateY(-4px)}
+.compare-preview-pair img,.compare-preview-placeholder{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;display:block;border-radius:70px 70px 4px 4px;background:#fffaf7}
+.compare-preview-placeholder{display:grid;place-items:center}
+.compare-preview-pair figcaption{padding-top:16px}
+.compare-preview-pair figcaption small{display:block;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:#7e6271;margin-bottom:7px}
+.compare-preview-pair figcaption>span{font:400 20px/1.3 var(--ht-serif);overflow-wrap:anywhere}
+.compare-art-caption{font:italic 400 21px/1.4 var(--ht-serif);color:#805b70}
+.compare-invitation-still{width:100%;height:300px;object-fit:cover;border-radius:8px}
+.compare-invitation-copy{padding:clamp(26px,4vw,58px);align-self:center;min-width:0}
+.soopi-store .compare-invitation h3{font:400 clamp(28px,2.6vw,40px)/1.2 var(--ht-serif);margin:18px 0;color:#422738}
+.soopi-store .compare-invitation p{font-size:14px;line-height:1.8;margin:0 0 24px;color:#78616e}
+.compare-howto{list-style:none;margin:0 0 26px;padding:0;border-top:1px solid #e4d5dc}
+.compare-howto li{display:flex;gap:14px;align-items:baseline;border-bottom:1px solid #e4d5dc;padding:15px 0;font-size:13px;line-height:1.7;color:#674b5d}
+.compare-howto li>span{font:italic 18px var(--ht-serif);color:#98748a}
+.compare-invitation .preset-links{justify-content:flex-start;gap:10px}
+.soopi-store.soopi-interior .compare-invitation .preset-links .ht-button{font-size:12px;text-align:left;min-height:44px;padding:10px 16px;white-space:normal;overflow-wrap:anywhere}
+.compare-preview-pair:focus-visible{outline:2px solid #895e77;outline-offset:8px}
+
+.soopi-store.soopi-interior .interior-finder .interior-heading{min-height:300px;grid-template-columns:1.4fr 1fr;margin-bottom:24px}
+.interior-finder .interior-heading-copy{padding:0 40px 24px 0}
+.interior-finder .interior-back{margin-bottom:24px}
+.interior-finder .interior-heading-art{min-height:300px;border-radius:4px}
+.soopi-store.soopi-interior .interior-finder .interior-heading h1{font-size:clamp(36px,4vw,60px);margin-bottom:18px}
+.soopi-store.soopi-interior .interior-finder .ht-finder-form{background:#fffcfa;border-radius:12px;box-shadow:none;gap:20px}
+.soopi-store.soopi-interior .interior-finder .ht-finder-form :is(input,select){min-height:48px;border-color:#d9c7d1;border-radius:6px}
+.interior-finder .ht-finder-form :is(input,select):focus-visible{outline:2px solid #896076;outline-offset:3px}
+
+@media(max-width:900px){
+ .faq-reading-layout{grid-template-columns:180px minmax(0,1fr);gap:32px}
+ .soopi-store.soopi-interior .ht-compare-empty.compare-invitation{grid-template-columns:1fr 1fr}
+ .compare-invitation-art{padding:24px;gap:20px}.compare-preview-pair{gap:12px}.compare-preview-pair figcaption>span{font-size:18px}
+}
+@media(max-width:600px){
+ .soopi-store.soopi-interior .public-main .ht-faq-page>header{padding:12px 0 24px;margin-bottom:24px}
+ .faq-reading-layout{grid-template-columns:1fr;gap:30px}
+ .soopi-store .faq-reading-layout .ht-faq-tabs{position:static;flex-direction:row;flex-wrap:wrap;gap:8px;padding:0 0 20px;border-right:0;border-bottom:1px solid #e2d4db}
+ .faq-topic-label{width:100%;margin-bottom:4px}
+ .soopi-store.soopi-interior .faq-reading-layout .ht-faq-tab{font-size:12px;padding:10px 14px;border:1px solid #e2d4db;min-height:44px;border-radius:999px}
+ .faq-reading-layout .ht-faq-tab:after{display:none}
+ .soopi-store.soopi-interior .faq-reading-content .ht-faq-question{font-size:14px;padding:18px 0;gap:14px}
+ .soopi-store.soopi-interior .faq-reading-content .ht-faq-answer-inner{font-size:14px;padding-right:0}
+ .soopi-store .ht-faq-page .ht-faq-cta{padding:26px 20px}
+ .soopi-store.soopi-interior .ht-compare-empty.compare-invitation{grid-template-columns:1fr}
+ .compare-invitation-copy{padding:26px 22px;grid-row:1}
+ .compare-invitation-art{padding:24px}.compare-preview-pair{gap:24px;max-width:380px;width:100%;margin-inline:auto}
+ .compare-preview-pair figcaption>span{font-size:20px}
+ .soopi-store.soopi-interior .interior-finder .interior-heading{display:block;min-height:0;margin-bottom:0}
+ .interior-finder .interior-heading-copy{padding:0 0 22px}
+ .interior-finder .interior-back{margin-bottom:20px}
+ .interior-finder .interior-heading-art{display:none}
+ .interior-finder .interior-heading-copy>p{font-size:13px;line-height:1.8;margin-bottom:0}
+ .interior-finder .interior-section-label{padding:16px 0;margin-bottom:18px;font-size:9px;gap:12px}
+ .interior-finder .interior-section-label>span:last-child{display:none}
+ .soopi-store.soopi-interior .interior-finder .ht-finder-form{padding:20px;gap:16px}
+ .soopi-store.soopi-interior .interior-finder .ht-finder-form :is(input,select){margin-top:6px}
+ .soopi-store.soopi-interior .interior-finder .ht-finder-form label{display:block}
+ .interior-finder .interior-field-number{display:inline;font-size:15px;margin:0 6px 0 0}
+}
+@media(prefers-reduced-motion:reduce){.compare-preview-pair figure{transition:none;transform:none!important}}

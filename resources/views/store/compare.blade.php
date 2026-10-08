@@ -15,15 +15,40 @@
     </header>
 
     @if($perfumes->isEmpty())
-    <div class="ht-compare-empty">
-        <div class="empty-icon">@include('partials.icon', ['name' => 'scale', 'size' => '1em'])</div>
+    @php
+        $samplePairs = \App\Models\Perfume::where('is_active', true)->take(6)->get();
+    @endphp
+    <div class="ht-compare-empty compare-invitation">
+        <div class="compare-invitation-art">
+            <span class="interior-kicker">SOOPI / {{ __('HAI DẤU HƯƠNG') }}</span>
+            @if($samplePairs->count() >= 2)
+            <a class="compare-preview-pair" href="{{ route('store.compare', ['ids' => $samplePairs->take(2)->pluck('id')->join(',')]) }}" aria-label="{{ __('So sánh:') }} {{ $samplePairs[0]->localized_name }} & {{ $samplePairs[1]->localized_name }}">
+                @foreach($samplePairs->take(2) as $sample)
+                <figure>
+                    @if($sample->image_src)
+                    <img src="{{ $sample->image_src }}" alt="" width="220" height="280" loading="lazy">
+                    @else
+                    <div class="compare-preview-placeholder">@include('partials.brand-mark', ['size' => 48])</div>
+                    @endif
+                    <figcaption><small>{{ $sample->brand }}</small><span>{{ $sample->localized_name }}</span></figcaption>
+                </figure>
+                @endforeach
+            </a>
+            @else
+            <img class="compare-invitation-still" src="{{ asset('images/journal/detail.webp') }}" alt="" width="600" height="500">
+            @endif
+            <span class="compare-art-caption">{{ __('Mỗi mùi hương, một cá tính.') }}</span>
+        </div>
+        <div class="compare-invitation-copy">
+        <span class="interior-kicker">{{ __('BẮT ĐẦU KHÁM PHÁ') }}</span>
         <h3>{{ __('Bạn chưa chọn sản phẩm nào để so sánh') }}</h3>
-        <p>{{ __('Bấm nút') }} <strong>"@include('partials.icon', ['name' => 'scale', 'size' => '1em']) {{ __('So sánh"') }}</strong> {{ __('trên các chai nước hoa ở trang chủ, hoặc bấm vào các bộ so sánh kinh điển bên dưới để khám phá ngay:') }}</p>
+        <p>{{ __('Chọn hai hoặc ba mùi hương. Đặt cạnh nhau để tìm ra lựa chọn hợp với bạn hơn.') }}</p>
+        <ol class="compare-howto">
+            <li><span>01</span>{{ __('Chọn sản phẩm bằng nút So sánh trong bộ sưu tập.') }}</li>
+            <li><span>02</span>{{ __('Đối chiếu tầng hương, độ lưu hương và giá.') }}</li>
+        </ol>
         
         <div class="preset-compares">
-            @php
-                $samplePairs = \App\Models\Perfume::where('is_active', true)->take(6)->get();
-            @endphp
             @if($samplePairs->count() >= 2)
             <div class="preset-links">
                 <a href="{{ route('store.compare', ['ids' => $samplePairs->take(2)->pluck('id')->join(',')]) }}" class="ht-button ht-button-outline">
@@ -39,6 +64,7 @@
         </div>
         <div style="margin-top: 24px;">
             <a href="{{ route('home') }}#san-pham" class="ht-button ht-button-primary">{{ __('Khám Phá Danh Mục Nước Hoa') }}</a>
+        </div>
         </div>
     </div>
     @else

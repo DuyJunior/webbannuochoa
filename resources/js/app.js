@@ -1,3 +1,4 @@
+import './customer-experience.js';
 import './bootstrap';
 import '../css/store-information.css';
 import '../css/order-reviews.css';

@@ -251,7 +251,8 @@ class GHNTest extends TestCase
         $responseHistory = $this->actingAs($user)->get(route('orders.index'));
         $responseHistory->assertOk()
             ->assertSee('GHNTEST123')
-            ->assertSee('Đơn hàng của bạn');
+            ->assertSee('Tuyển chọn của bạn')
+            ->assertSee(route('orders.show', $order->id));
 
         $responseShow = $this->actingAs($user)->get(route('orders.show', $order->id));
         $responseShow->assertOk()

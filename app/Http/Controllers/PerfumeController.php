@@ -87,8 +87,29 @@ class PerfumeController extends Controller
         $perfume->load(['category', 'shopPhotos']);
         $bundleSamples = app(GiftBundleService::class)->availableSamples($perfume, session('cart', []));
         $bundleMainAvailable = CartStockService::remaining($perfume, (int) $perfume->volume_ml, session('cart', []));
-        $reviews = $perfume->reviews()->with('user:id,name')->latest()->paginate(5);
+        $reviews = $perfume->reviews()->with('user:id,name')->latest()->paginate(5)->fragment('danh-gia');
         $averageRating = round((float) $perfume->reviews()->avg('rating'), 1);
+        $ratingCounts = $perfume->reviews()->selectRaw('rating, COUNT(*) AS total')->groupBy('rating')->pluck('total', 'rating');
+        $buyerIds = $reviews->pluck('user_id')->push(auth()->id())->filter()->unique();
+        $verifiedBuyerIds = \App\Models\Order::whereIn('user_id', $buyerIds)->reviewable()->with('items')->get()
+            ->filter(fn ($order) => $order->items->contains(fn ($item) => in_array((int) $perfume->id, $item->reviewProductIds(), true)))
+            ->pluck('user_id')->unique();
+        $reviewSelection = request()->validate(['review_item' => 'nullable|integer|min:1', 'legacy_review' => 'nullable|integer|min:1']);
+        $reviewPurchases = auth()->check() ? \App\Services\OrderReviewService::eligibleItems(auth()->id(), $perfume) : collect();
+        $canReview = $reviewPurchases->isNotEmpty();
+        $ownReviews = auth()->check() ? $perfume->reviews()->where('user_id', auth()->id())->get() : collect();
+        $legacyReviews = $ownReviews->whereNull('order_item_id');
+        $reviewPurchase = isset($reviewSelection['review_item'])
+            ? $reviewPurchases->firstWhere('id', $reviewSelection['review_item'])
+            : ($reviewPurchases->first(fn ($item) => ! $ownReviews->contains('order_item_id', $item->id)) ?? $reviewPurchases->first());
+        $myReview = $reviewPurchase ? $ownReviews->firstWhere('order_item_id', $reviewPurchase->id) : null;
+        if (isset($reviewSelection['legacy_review'])) {
+            $myReview = $legacyReviews->firstWhere('id', $reviewSelection['legacy_review']);
+            abort_unless($myReview, 404);
+            $reviewPurchase = null;
+        } elseif (isset($reviewSelection['review_item'])) {
+            abort_unless($reviewPurchase, 404);
+        }
         $isFavorite = auth()->check() && DB::table('wishlists')
             ->where('user_id', auth()->id())->where('perfume_id', $perfume->id)->exists();
 
@@ -129,7 +150,7 @@ class PerfumeController extends Controller
         $inWardrobe = auth()->check() && ScentWardrobe::where('user_id', auth()->id())
             ->where('perfume_id', $perfume->id)->exists();
 
-        return view('perfumes.show', compact('perfume', 'reviews', 'averageRating', 'isFavorite', 'related', 'recentlyViewed', 'inWardrobe', 'bundleSamples', 'bundleMainAvailable'));
+        return view('perfumes.show', compact('perfume', 'reviews', 'averageRating', 'ratingCounts', 'verifiedBuyerIds', 'canReview', 'myReview', 'reviewPurchase', 'reviewPurchases', 'legacyReviews', 'isFavorite', 'related', 'recentlyViewed', 'inWardrobe', 'bundleSamples', 'bundleMainAvailable'));
     }
 
     public function edit(Perfume $perfume): View

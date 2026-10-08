@@ -427,28 +427,7 @@
         </section>
         @endif
 
-        <section class="ht-reviews" id="danh-gia">
-            <div class="ht-section-heading"><div><span class="ht-eyebrow">{{ __('CẢM NHẬN THỰC TẾ') }}</span><h2>{{ __('Đánh giá từ khách hàng') }}</h2><p>{{ $reviews->total() }} {{ __('đánh giá ·') }} {{ $averageRating ?: __('Chưa có điểm') }}{{ $averageRating ? '/5 sao' : '' }}</p></div></div>
-            <div class="ht-review-grid">
-                <div>
-                    @forelse($reviews as $review)
-                    <article class="ht-review-card"><div><strong>{{ $review->user?->name ?? __('Khách hàng') }}</strong><span role="img" aria-label="{{ __(':rating trên 5 sao', ['rating' => $review->rating]) }}">@for($star = 1; $star <= 5; $star++)@include('partials.icon', ['name' => $star <= $review->rating ? 'star-filled' : 'star', 'size' => '1em'])@endfor</span></div><p>{{ $review->body }}</p>@if($review->image_path)<img src="{{ asset($review->image_path) }}" alt="{{ __('Ảnh do khách hàng chia sẻ') }}" loading="lazy">@endif<small>{{ $review->created_at->format('d/m/Y') }}</small></article>
-                    @empty<p>{{ __('Chưa có đánh giá nào. Hãy là người đầu tiên chia sẻ cảm nhận.') }}</p>@endforelse
-                    {{ $reviews->links() }}
-                </div>
-                <div class="ht-feature-panel">
-                    <h3>{{ __('Chia sẻ cảm nhận của bạn') }}</h3>
-                    @auth
-                    <form method="POST" action="{{ route('store.review', $perfume) }}" enctype="multipart/form-data" class="ht-review-form">@csrf
-                        <label>{{ __('Đánh giá') }}<select name="rating" required><option value="5">{{ __('5 sao · Rất thích') }}</option><option value="4">{{ __('4 sao · Hài lòng') }}</option><option value="3">{{ __('3 sao · Khá') }}</option><option value="2">{{ __('2 sao · Chưa hợp') }}</option><option value="1">{{ __('1 sao · Không hợp') }}</option></select></label>
-                        <label>{{ __('Cảm nhận') }}<textarea name="body" minlength="10" maxlength="2000" rows="5" required placeholder="{{ __('Bạn cảm nhận mùi hương như thế nào?') }}">{{ old('body') }}</textarea></label>
-                        <label>{{ __('Ảnh trải nghiệm (không bắt buộc)') }}<input type="file" name="image" accept="image/jpeg,image/png,image/webp"></label>
-                        <button class="ht-button" type="submit">{{ __('Gửi đánh giá') }}</button>
-                    </form>
-                    @else<a class="ht-button" href="{{ route('login') }}">{{ __('Đăng nhập để đánh giá') }}</a>@endauth
-                </div>
-            </div>
-        </section>
+        @include('partials.product-reviews')
     </section>
 
     @include('partials.gift-bundle')

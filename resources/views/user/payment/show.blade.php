@@ -51,7 +51,7 @@
                 <div class="of-seal" aria-hidden="true">@include('partials.brand-mark', ['size' => '34px', 'light' => true])</div>
                 <div class="of-journey-copy">
                     <p class="of-eyebrow">{{ __('TRẠNG THÁI ĐƠN HÀNG') }}</p>
-                    <h2 id="order-journey-title">{{ $statusLabel }}</h2>
+                    <h2 id="order-journey-title" style="scroll-margin-top:150px">{{ $statusLabel }}</h2>
                     <p>{{ $statusDescription }}</p>
                 </div>
                 <div class="of-carrier">

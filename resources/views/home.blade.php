@@ -26,7 +26,7 @@
         <strong>{{ $onAir ? $livestream->title : __('Soopi đang livestream') }}</strong>
         <span>{{ __('Xem và trò chuyện cùng Soopi ngay trên website.') }}</span>
     </div>
-    <a class="ht-button" href="{{ route('livestream.show') }}">Xem livestream →</a>
+    <a class="ht-button" href="{{ route('livestream.show') }}">{{ __('Xem livestream →') }}</a>
 </section>
 
 @if(!$isFiltered)

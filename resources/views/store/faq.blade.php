@@ -183,7 +183,9 @@
         <p>{{ __('Giải đáp mọi thắc mắc để bạn an tâm mua hàng tại Soopi.') }}</p>
     </header>
 
+    <div class="faq-reading-layout">
     <nav class="ht-faq-tabs" aria-label="{{ __('Chủ đề câu hỏi') }}">
+        <span class="faq-topic-label">{{ __('Chủ đề câu hỏi') }}</span>
         <a class="ht-faq-tab active" href="#chinh-hang">{{ __('Chính hãng') }}</a>
         <a class="ht-faq-tab" href="#giao-hang">{{ __('Giao hàng') }}</a>
         <a class="ht-faq-tab" href="#thanh-toan">{{ __('Thanh toán') }}</a>
@@ -191,6 +193,7 @@
         <a class="ht-faq-tab" href="#bao-quan">{{ __('Bảo quản') }}</a>
     </nav>
 
+    <div class="faq-reading-content">
     {{-- NHÓM 1: Chính hãng --}}
     <div class="ht-faq-group" id="chinh-hang">
         <div class="ht-faq-group-title">@include('partials.icon', ['name' => 'shield', 'size' => '1em']) {{ __('Chính hãng & nguồn gốc') }}</div>
@@ -394,6 +397,8 @@
         </div>
     </div>
 
+    </div>
+    </div>
     {{-- CTA liên hệ --}}
     <div class="ht-faq-cta">
         <span style="font-size:32px;">@include('partials.icon', ['name' => 'chat', 'size' => '1em'])</span>
