@@ -1,0 +1,110 @@
+/* Scoped refinements: quiet surfaces, visible actions and shorter mobile pages. */
+body.soopi-store .checkout-section-nav {
+    display:flex; gap:28px; border-bottom:1px solid #e8dce1; padding:0 0 20px; margin:0 0 28px;
+}
+body.soopi-store .checkout-section-nav a { display:flex; align-items:center; gap:9px; color:#59404e; font-size:13px; min-height:44px; text-decoration:none; }
+body.soopi-store .checkout-section-nav span { font-size:10px; color:#9b7587; }
+body.soopi-store .checkout-page-wrapper .checkout-card { padding:28px; border-radius:16px; box-shadow:none; scroll-margin-top:130px; }
+body.soopi-store .checkout-page-wrapper .card-section-header { padding-bottom:18px; margin-bottom:22px; }
+body.soopi-store .checkout-page-wrapper .card-section-header h2 { font-size:27px; }
+body.soopi-store .checkout-page-wrapper .delivery-location { padding:22px; border-radius:12px; background:#faf7f4; }
+body.soopi-store .checkout-page-wrapper .delivery-location__main { grid-template-columns:minmax(0,.8fr) minmax(0,1fr); gap:22px; }
+body.soopi-store .checkout-page-wrapper .delivery-location__map-canvas { height:175px; }
+body.soopi-store .checkout-page-wrapper .delivery-location__intro h3 { font-size:25px; line-height:1.25; }
+body.soopi-store .checkout-page-wrapper .delivery-location__intro>p { font-size:12px; line-height:1.7; }
+body.soopi-store .checkout-page-wrapper .delivery-location__eyebrow { font-size:9px; }
+body.soopi-store .checkout-page-wrapper .delivery-location__steps { margin-top:20px; padding-top:16px; }
+body.soopi-store .checkout-page-wrapper .delivery-location__footer { margin-top:16px; }
+body.soopi-store .checkout-page-wrapper .ghn-partner-banner { background:transparent; border:0; padding:14px 0; }
+body.soopi-store .checkout-gift-choice { border-top:1px solid #eadde3; padding:16px 0 0; margin-bottom:16px; }
+body.soopi-store .checkout-page-wrapper .summary-box { box-shadow:none; }
+
+body.soopi-store .ht-member-page .ht-member-header { margin-bottom:30px; }
+body.soopi-store .ht-member-page .ht-member-title { font-size:clamp(32px,4vw,50px); }
+body.soopi-store .ht-member-page .ht-member-subtitle { max-width:580px; margin:14px auto; font-size:15px; }
+body.soopi-store .member-program-rules { max-width:680px; margin:0 auto; color:#73616b; font:13px/1.8 var(--ht-sans); }
+body.soopi-store .member-program-rules summary { cursor:pointer; padding:10px; text-decoration:underline; text-underline-offset:4px; }
+body.soopi-store .member-program-rules p { text-align:left; padding:16px 20px; background:#f7f1f3; border-radius:12px; }
+body.soopi-store .ht-member-page .ht-member-top-grid { grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr); align-items:stretch; gap:24px; }
+body.soopi-store .ht-member-page .ht-vip-card { background:#f4eceb; color:#49303d; border:1px solid #e7d9de; border-radius:16px; box-shadow:none; padding:30px; min-height:0; aspect-ratio:auto; transform:none; }
+body.soopi-store .ht-member-page .ht-vip-card::before,body.soopi-store .ht-member-page .ht-vip-card::after { display:none; }
+body.soopi-store .member-card-label { font:500 10px var(--ht-sans); letter-spacing:2px; }
+body.soopi-store .ht-member-page .card-middle-row { margin:30px 0; flex-direction:column; align-items:flex-start; gap:6px; }
+body.soopi-store .ht-member-page .card-tier-badge { font-size:22px; letter-spacing:0; }
+body.soopi-store .ht-member-page .card-discount-tag { background:transparent; padding:0; margin-top:10px; font-size:12px; }
+body.soopi-store .ht-member-page .card-bottom-row { border-top:1px solid #ddcbd3; padding-top:20px; gap:16px; flex-wrap:wrap; }
+body.soopi-store .ht-member-page .card-bottom-row strong { font-size:14px; letter-spacing:0; overflow-wrap:anywhere; }
+body.soopi-store .ht-member-page .ht-points-summary-box { border-color:#e8dce1; border-radius:16px; box-shadow:none; }
+body.soopi-store .ht-member-page .points-number .num { font-size:48px; font-weight:500; }
+body.soopi-store .ht-member-page .tier-progress-card { padding:18px 0; background:transparent; border-top:1px solid #eadde3; border-bottom:1px solid #eadde3; border-radius:0; }
+body.soopi-store .ht-member-page .progress-labels { gap:12px; flex-wrap:wrap; }
+body.soopi-store .ht-member-page .progress-bar-fill { background:linear-gradient(90deg,#d7acba,#8c5c74); }
+body.soopi-store .ht-member-page .tier-perk-card { border-radius:14px; box-shadow:none; border-color:#e8dce1; }
+body.soopi-store .ht-member-page .tier-perk-card.current-tier { border:1px solid #94657b; background:#fcf8f9; box-shadow:none; }
+body.soopi-store .ht-member-page .current-tag { background:#875a70; }
+
+body.soopi-store .atelier-footer .footer-link-group { min-width:0; }
+body.soopi-store .atelier-footer .footer-link-group summary { list-style:none; display:flex; justify-content:space-between; align-items:center; cursor:pointer; min-height:44px; }
+body.soopi-store .atelier-footer .footer-link-group summary::-webkit-details-marker { display:none; }
+body.soopi-store .atelier-footer .footer-link-group summary h2 { margin:0; }
+body.soopi-store .atelier-footer .footer-link-group summary>span { color:#dec5d1; font-size:21px; line-height:1; }
+body.soopi-store .atelier-footer .footer-link-group[open] summary>span { transform:rotate(45deg); }
+body.soopi-store .atelier-footer .footer-group-links { padding-top:9px; }
+body.soopi-store .atelier-footer .footer-group-links>a { display:flex; align-items:center; min-height:42px; padding:8px 0; color:#d2c1c8; font:13px/1.5 var(--ht-sans); text-decoration:none; }
+body.soopi-store .atelier-footer .footer-link-group summary:focus-visible { outline:2px solid #e9cedb; outline-offset:4px; }
+
+body.soopi-store.soopi-homepage .soopi-journal { padding-top:64px; padding-bottom:24px; }
+body.soopi-store.soopi-homepage .journal-video-library { margin-top:48px; padding-top:36px; }
+body.soopi-store.soopi-homepage .journal-video-heading h2 { font-size:clamp(28px,3vw,42px); line-height:1.15; }
+body.soopi-store.soopi-homepage .journal-video-intro p { display:none; }
+body.soopi-store.soopi-homepage .journal-live { grid-template-columns:minmax(0,1fr) auto; padding:28px 32px; margin-top:36px; background:#f3eceb; gap:28px; }
+body.soopi-store.soopi-homepage .journal-live-art,body.soopi-store.soopi-homepage .journal-signature { display:none; }
+body.soopi-store.soopi-homepage .journal-live-copy { padding:0; }
+body.soopi-store.soopi-homepage .journal-live-copy h3 { font-size:30px; margin:12px 0; }
+body.soopi-store.soopi-homepage .journal-live-action { padding:0; }
+body.soopi-store.soopi-homepage .soopi-moments { padding-top:48px; padding-bottom:36px; }
+body.soopi-store.soopi-homepage .moments-heading h2 { font-size:clamp(30px,3.4vw,46px); }
+body.soopi-store.soopi-homepage .atelier-brands { padding-block:24px; margin-top:24px; }
+body.soopi-store.soopi-homepage .soopi-gifting { padding-top:40px; padding-bottom:48px; }
+
+@media(max-width:700px) {
+    body.soopi-store .checkout-page-wrapper .checkout-header-title { margin-bottom:18px; }
+    body.soopi-store .checkout-page-wrapper .checkout-header-title h1 { font-size:36px; }
+    body.soopi-store .checkout-section-nav { justify-content:space-between; gap:8px; padding-bottom:12px; margin-bottom:20px; }
+    body.soopi-store .checkout-section-nav a { font-size:12px; gap:5px; }
+    body.soopi-store .checkout-page-wrapper .checkout-card { padding:20px 16px; }
+    body.soopi-store .checkout-page-wrapper .card-section-header h2 { font-size:25px; }
+    body.soopi-store .checkout-page-wrapper .delivery-location { padding:16px; }
+    body.soopi-store .checkout-page-wrapper .delivery-location__main { grid-template-columns:1fr; gap:18px; }
+    body.soopi-store .checkout-page-wrapper .delivery-location__intro { grid-row:1; }
+    body.soopi-store .checkout-page-wrapper .delivery-location__map-canvas { height:150px; }
+    body.soopi-store .checkout-page-wrapper .delivery-location__steps { gap:8px; font-size:10px; }
+    body.soopi-store .checkout-page-wrapper .form-group-item :is(input,select,textarea) { font-size:16px; }
+    body.soopi-store .ht-member-page .ht-member-top-grid { grid-template-columns:1fr; gap:18px; }
+    body.soopi-store .ht-member-page .ht-points-summary-box { grid-row:1; padding:22px; }
+    body.soopi-store .ht-member-page .ht-vip-card { padding:24px; }
+    body.soopi-store .ht-member-page .card-middle-row { margin:18px 0; }
+    body.soopi-store .ht-member-page .perks-cards-grid { grid-template-columns:minmax(0,1fr); gap:20px; }
+    body.soopi-store .ht-member-page .progress-milestones { font-size:10px; gap:8px; }
+    body.soopi-store .order-archive .oa-hero-art { display:none; }
+    body.soopi-store .order-archive .oa-hero { padding:0 0 22px; }
+    body.soopi-store.soopi-interior .public-main .oa-hero h1 { font-size:36px; margin:12px 0; }
+    body.soopi-store .order-archive .oa-hero-copy>p { margin-bottom:12px; line-height:1.7; }
+    body.soopi-store .order-archive .oa-breadcrumb { margin-bottom:18px; }
+    body.soopi-store .order-archive .oa-section-heading { padding:18px 0; }
+    body.soopi-store .atelier-footer .ht-footer-grid { grid-template-columns:1fr; gap:0; padding-block:28px 20px; }
+    body.soopi-store .atelier-footer .ht-footer-about { padding-bottom:22px; border-bottom:1px solid #604555; }
+    body.soopi-store .atelier-footer .ht-footer-about .footer-logo { max-width:145px; }
+    body.soopi-store .atelier-footer .ht-footer-about p { margin:12px 0; }
+    body.soopi-store .atelier-footer .ht-footer-signature { display:none; }
+    body.soopi-store .atelier-footer .footer-link-group { border-bottom:1px solid #604555; padding:7px 0; }
+    body.soopi-store .atelier-footer .footer-group-links { padding:0 0 8px; }
+    body.soopi-store .atelier-footer .footer-group-links>a { min-height:44px; }
+    body.soopi-store .atelier-footer .ht-footer-help { border:0; padding-top:22px; }
+    body.soopi-store .atelier-footer .ht-footer-help .footer-shop-contact p { display:block; margin:8px 0; font-size:12px; }
+    body.soopi-store.soopi-homepage .journal-live { grid-template-columns:1fr; padding:24px; gap:16px; }
+    body.soopi-store.soopi-homepage .journal-live-action p { display:none; }
+    body.soopi-store.soopi-homepage .journal-video-heading { gap:16px; }
+    body.soopi-store.soopi-homepage .soopi-journal { padding-top:40px; }
+    body.soopi-store.soopi-homepage .soopi-moments { padding-top:32px; }
+}

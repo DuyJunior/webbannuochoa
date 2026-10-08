@@ -15,6 +15,15 @@
     <div class="d-flex flex-wrap" style="gap:8px"><a href="#product-variants" class="btn btn-primary"><i class="fa-solid fa-plus mr-1" aria-hidden="true"></i> {{ __('Thêm dung tích') }}</a><a href="{{ route('admin.products.index') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left mr-1" aria-hidden="true"></i> {{ __('Danh sách sản phẩm') }}</a></div>
 </div>
 
+<nav class="studio-product-nav" aria-label="{{ __('Các phần thông tin sản phẩm') }}">
+    <a href="#product-basics">{{ __('Thông tin') }}</a>
+    <a href="#product-pricing">{{ __('Quy cách') }}</a>
+    <a href="#product-stock">{{ __('Giá & tồn kho') }}</a>
+    <a href="#product-variants">{{ __('Dung tích bổ sung') }}</a>
+    <a href="#product-media">{{ __('Ảnh & video') }}</a>
+    <a href="#product-visibility">{{ __('Hiển thị') }}</a>
+</nav>
+
 <form action="{{ $editing ? route('admin.products.update', $product) : route('admin.products.store') }}" method="POST" enctype="multipart/form-data" id="studio-product-form">
     @csrf
     @if($editing) @method('PUT') @endif

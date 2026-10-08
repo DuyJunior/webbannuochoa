@@ -9,7 +9,7 @@
         <div class="delivery-location__intro">
             <span class="delivery-location__eyebrow">{{ __('MỘT CHẠM · GẦN BẠN HƠN') }}</span>
             <h3 id="delivery-location-title">{{ __('Điền địa chỉ bằng vị trí của bạn.') }}</h3>
-            <p>{{ __('Bấm định vị và cho phép truy cập vị trí để tự điền tỉnh/thành, quận/huyện, phường/xã và tên đường tìm được vào biểu mẫu bên dưới. Bạn chỉ cần kiểm tra, bổ sung số nhà hoặc căn hộ.') }}</p>
+            <p>{{ __('Gợi ý khu vực và tên đường tìm được. Bạn kiểm tra và bổ sung số nhà, căn hộ.') }}</p>
             <div class="delivery-location__controls">
                 <button type="button" class="delivery-location__locate" data-locate>
                     <svg class="delivery-location__target" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2V5M12 19V22M2 12H5M19 12H22"/></svg>

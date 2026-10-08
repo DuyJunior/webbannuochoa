@@ -25,9 +25,14 @@
         <div class="checkout-header-title">
             <span class="badge-tag">Soopi Delivery</span>
             <h1>{{ __('Hoàn tất đơn hàng') }}</h1>
-            <p>{{ __('Tính cước phí vận chuyển chính xác thời gian thực qua Giao Hàng Nhanh (GHN)') }}</p>
+            <p>{{ __('Kiểm tra thông tin nhận hàng và chọn cách thanh toán.') }}</p>
         </div>
 
+        <nav class="checkout-section-nav" aria-label="{{ __('Các bước thanh toán') }}">
+            <a href="#checkout-recipient"><span>01</span>{{ __('Người nhận') }}</a>
+            <a href="#checkout-delivery"><span>02</span>{{ __('Giao hàng') }}</a>
+            <a href="#checkout-payment"><span>03</span>{{ __('Thanh toán') }}</a>
+        </nav>
         @if ($errors->any())
             <div class="checkout-alert-error">
                 <strong>{{ __('Đã có lỗi xảy ra:') }}</strong>
@@ -50,7 +55,7 @@
 
             {{-- Cột Trái: Thông tin nhận hàng & Địa chỉ GHN --}}
             <div class="checkout-col-main">
-                <div class="checkout-card">
+                <div class="checkout-card" id="checkout-recipient">
                     <div class="card-section-header">
                         <div class="icon-circle">1</div>
                         <div>
@@ -77,7 +82,7 @@
                     </div>
                 </div>
 
-                <div class="checkout-card">
+                <div class="checkout-card" id="checkout-delivery">
                     <div class="card-section-header">
                         <div class="icon-circle">2</div>
                         <div>
@@ -139,12 +144,12 @@
                     <div class="card-section-header">
                         <div class="icon-circle">@include('partials.icon', ['name' => 'gift', 'size' => '1em'])</div>
                         <div>
-                            <h2>{{ __('Dịch Vụ Gói Quà Cao Cấp & Thiệp Chúc Mừng') }}</h2>
+                            <h2>{{ __('Gói quà & thiệp nhắn') }}</h2>
                             <small>{{ __('Món quà hoàn hảo trao tận tay người thương') }}</small>
                         </div>
                     </div>
 
-                    <div style="background: #fff8fb; border: 1.5px solid #fbcfe8; border-radius: 14px; padding: 16px; margin-bottom: 16px;">
+                    <div class="checkout-gift-choice">
                         <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; color: #be185d; font-size: 15px;">
                             <input type="checkbox" id="giftWrapToggle" name="enable_gift_service" value="1" @checked($giftRequested) style="width: 18px; height: 18px; accent-color: #be185d;">
                             <span>{{ __('Yêu cầu Gói Quà Cao Cấp & Thiệp Chúc Mừng') }}</span>
@@ -186,7 +191,7 @@
                     </div>
                 </div>
 
-                <div class="checkout-card">
+                <div class="checkout-card" id="checkout-payment">
                     <div class="card-section-header">
                         <div class="icon-circle">3</div>
                         <div>

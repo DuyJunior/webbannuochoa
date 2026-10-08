@@ -61,3 +61,35 @@
 @media(max-width:600px) { .product-inventory-grid { grid-template-columns:1fr; } }
 @media(max-width:600px) { .boutique-admin .variant-heading { flex-direction:column; gap:0; margin-bottom:20px; } .boutique-admin .variant-row-footer { flex-wrap:wrap; } }
 @media(max-width:380px) { .boutique-admin .variant-fields { grid-template-columns:1fr; } }
+
+/* Product editing keeps navigation and save actions within easy reach. */
+.studio-product-nav { display:flex; flex-wrap:wrap; gap:8px; padding:0 0 20px; }
+.studio-product-nav a { display:inline-flex; align-items:center; min-height:40px; padding:8px 13px; border:1px solid #e4d8e0; background:#fff; border-radius:8px; color:#6b4c61; font-size:12px; text-decoration:none; }
+.studio-product-nav a:hover,.studio-product-nav a:focus-visible { background:#f6edf2; border-color:#aa879c; }
+.boutique-admin #studio-product-form :is(h3,input,select,textarea) { scroll-margin-top:130px; }
+.boutique-admin #studio-product-form .studio-form-actions { position:sticky; bottom:12px; z-index:30; justify-content:space-between; padding:14px 18px; background:#fff; border:1px solid #e0d3dc; border-radius:12px; box-shadow:0 5px 25px #35283812; margin-top:8px; }
+.boutique-admin #studio-product-form .studio-form-actions .studio-field-help { margin:0; }
+.studio-chat-slot:empty { display:none; }
+@media(min-width:761px) {
+    .boutique-admin:has(#studio-product-form) #admin-chat-box { bottom:108px; }
+}
+@media(max-width:760px) {
+    .boutique-admin .admin-topbar { backdrop-filter:none; }
+    .boutique-admin .studio-chat-slot { display:flex; }
+    .boutique-admin .studio-chat-slot #admin-chat-box { position:static; }
+    .boutique-admin .studio-chat-slot #admin-chat-box #chat-toggle { width:38px; height:38px; padding:0; display:grid; place-items:center; border-radius:10px; box-shadow:none; }
+    .boutique-admin .studio-chat-slot #chat-toggle span { display:none; }
+    .boutique-admin .studio-chat-slot #admin-chat-box #chat-popup { position:fixed; top:auto; bottom:12px; right:12px; width:calc(100vw - 24px); max-width:420px; height:min(590px,calc(100dvh - 120px)); }
+    .boutique-admin #studio-product-form .studio-form-actions { bottom:8px; padding:12px; }
+    .boutique-admin #studio-product-form .studio-form-actions>span { display:none; }
+    .boutique-admin #studio-product-form .studio-form-actions>div { display:flex; gap:8px; width:100%; }
+    .boutique-admin #studio-product-form .studio-form-actions .btn { min-width:0; margin:0!important; font-size:12px; min-height:44px; }
+    .studio-product-nav { gap:6px; }
+    .studio-product-nav a { font-size:11px; min-height:44px; padding-inline:10px; }
+}
+@media(max-width:540px) {
+    .boutique-admin .admin-topbar { display:grid; grid-template-columns:minmax(0,1fr); gap:10px; }
+    .boutique-admin .topbar-right { justify-content:space-between; width:100%; }
+    .boutique-admin .topbar-left h1 { max-width:none; white-space:normal; }
+}
+@media print { .studio-product-nav,.boutique-admin #studio-product-form .studio-form-actions { display:none; } }

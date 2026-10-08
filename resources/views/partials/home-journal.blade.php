@@ -39,7 +39,7 @@
     @if($homeVideos->isNotEmpty())
         <section class="journal-video-library" id="video-soopi" aria-labelledby="journal-video-heading">
             <header class="journal-video-heading">
-                <div><span class="journal-eyebrow">SOOPI / VIDEO STORIES</span><h2 id="journal-video-heading">{{ __('Nhìn gần hơn.') }}<br><em>{{ __('Cảm nhận nhiều hơn.') }}</em></h2></div>
+                <div><span class="journal-eyebrow">SOOPI / VIDEO STORIES</span><h2 id="journal-video-heading">{{ __('Thước phim về mùi hương') }}</h2></div>
                 <div class="journal-video-intro"><span class="journal-library-count">{{ str_pad((string) $homeVideos->count(), 2, '0', STR_PAD_LEFT) }} {{ __('VIDEO TỪ SOOPI') }}</span><p>{{ __('Chọn một thước phim.') }} <br>{{ __('Khám phá câu chuyện phía sau.') }}</p></div>
             </header>
             <div class="journal-video-navigation" data-video-navigation hidden>
@@ -68,7 +68,7 @@
         <div class="journal-live-art"><img src="{{ asset('images/journal/live.webp') }}" alt="{{ __('Chai nước hoa hồng bên vòng pha lê và cánh lụa') }}" width="960" height="640" loading="lazy" decoding="async"></div>
         <div class="journal-live-copy">
             <span class="journal-eyebrow">SOOPI / LIVE STUDIO</span>
-            <h3 id="journal-live-heading">{{ __('Một cuộc hẹn.') }}<br>{{ __('Muôn tầng hương.') }}</h3>
+            <h3 id="journal-live-heading">{{ __('Hẹn bạn tại Soopi Live') }}</h3>
             <p>{{ __('Cùng khám phá và trò chuyện về mùi hương bạn yêu.') }}</p>
             <span class="journal-live-status" data-journal-live-status @unless($onAir) hidden @endunless><i aria-hidden="true"></i> {{ __('Đang trực tiếp') }}</span>
         </div>

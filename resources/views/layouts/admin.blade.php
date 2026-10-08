@@ -55,6 +55,7 @@
                 </div>
             </div>
             <div class="topbar-right">
+                @if(Auth::user()->role === 'admin')<span class="studio-chat-slot" data-admin-chat-slot></span>@endif
                 @include('partials.language-switcher')
                 <button type="button" class="studio-command-open" aria-label="{{ __('Tìm chức năng quản trị') }}" aria-haspopup="dialog" aria-controls="studio-command-menu"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i><span>{{ __('Tìm chức năng') }}</span><kbd>Ctrl K</kbd></button>
                 <button type="button" class="studio-motion-toggle" aria-pressed="true" title="{{ __('Bật hoặc tắt hiệu ứng chuyển động') }}">

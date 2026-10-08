@@ -49,7 +49,7 @@ function chat() {
     const window = { location: { href: 'https://store.example/admin/dashboard' }, addEventListener() {} };
     vm.runInNewContext(source, {
         window,
-        document: { hidden: false, getElementById: id => nodes[id], querySelector: () => ({ content: 'test-token' }), createElement: tag => new Element(tag), createDocumentFragment: () => new Element('#fragment') },
+        document: { hidden: false, getElementById: id => nodes[id], querySelector: selector => selector === 'meta[name="csrf-token"]' ? { content: 'test-token' } : null, createElement: tag => new Element(tag), createDocumentFragment: () => new Element('#fragment') },
         fetch: (url, options) => new Promise(resolve => requests.push({ url: String(url), options, resolve })),
         URL, AbortController, setTimeout: () => 1, clearTimeout() {}, setInterval: callback => { polls.push(callback); return 1; }, clearInterval() {},
     });

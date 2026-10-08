@@ -1,6 +1,17 @@
 const root = document.getElementById('admin-chat-box');
 
 if (root) {
+    const slot = document.querySelector('[data-admin-chat-slot]');
+    if (slot) {
+        const originalParent = root.parentNode;
+        const mobile = window.matchMedia('(max-width: 760px)');
+        const placeChat = () => {
+            if (mobile.matches) slot.append(root);
+            else originalParent.append(root);
+        };
+        placeChat();
+        mobile.addEventListener('change', placeChat);
+    }
     const find = id => root.querySelector(`#${id}`);
     const toggle = find('chat-toggle');
     const popup = find('chat-popup');

@@ -8,14 +8,15 @@
     <header class="ht-member-header">
         <span class="ht-badge-pill">@include('partials.icon', ['name' => 'gem', 'size' => '1em']) {{ __('CHƯƠNG TRÌNH KHÁCH HÀNG THÂN THIẾT') }}</span>
         <h1 class="ht-member-title">{{ __('Đặc Quyền Thành Viên') }} <em>Soopi Club</em></h1>
-        <p class="ht-member-subtitle">{{ __('100.000đ chi tiêu hợp lệ tích 1 điểm; 1 điểm giảm 1.000đ, tối đa 20% tiền hàng sau mã giảm giá. Chỉ tính đơn hoàn tất và đã thanh toán; đơn cũ nhập vào không có giao dịch được tính khi đã hoàn tất. Đơn hủy hoặc hoàn trả không tích điểm. Điểm demo và điểm thật được tách riêng.') }}</p>
+        <p class="ht-member-subtitle">{{ __('Điểm thưởng của bạn, dành cho mùi hương tiếp theo.') }}</p>
+        <details class="member-program-rules"><summary>{{ __('Cách tích điểm & sử dụng') }}</summary><p>{{ __('100.000đ chi tiêu hợp lệ tích 1 điểm; 1 điểm giảm 1.000đ, tối đa 20% tiền hàng sau mã giảm giá. Chỉ tính đơn hoàn tất và đã thanh toán; đơn cũ nhập vào không có giao dịch được tính khi đã hoàn tất. Đơn hủy hoặc hoàn trả không tích điểm. Điểm demo và điểm thật được tách riêng.') }}</p></details>
     </header>
 
     <div class="ht-member-top-grid">
-        {{-- Virtual VIP Metallic Card --}}
-        <div class="ht-vip-card" style="background: {{ $tier['gradient'] }}; color: {{ $tier['text_color'] }}">
+        {{-- Personal membership summary --}}
+        <div class="ht-vip-card">
             <div class="card-chip-row">
-                <span class="card-chip"></span>
+                <span class="member-card-label">SOOPI CLUB</span>
                 <span class="member-card-brand">@include('partials.brand-logo', ['class' => 'member-brand-logo'])</span>
             </div>
             <div class="card-middle-row">

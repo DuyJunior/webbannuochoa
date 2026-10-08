@@ -1,3 +1,4 @@
+import './store-footer.js';
 import './customer-experience.js';
 import './bootstrap';
 import '../css/store-information.css';

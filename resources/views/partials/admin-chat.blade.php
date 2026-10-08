@@ -1,7 +1,7 @@
     @if(Auth::user()->role === 'admin')
     {{-- LAB 7: ADMIN LIVECHAT POPUP (PDF Trang 13 - 14 + Chủ động nhắn tin) --}}
     <div id="admin-chat-box" data-users-url="{{ route('admin.chat.users') }}" data-messages-url="{{ route('admin.chat.messages', ['userId' => '__USER__']) }}" data-send-url="{{ route('admin.chat.send') }}" data-admin-id="{{ Auth::id() }}">
-        <button type="button" id="chat-toggle" aria-expanded="false" aria-controls="chat-popup" class="btn btn-dark shadow">@include('partials.icon', ['name' => 'chat', 'size' => '1em']) <span>{{ __('Tin nhắn') }}</span></button>
+        <button type="button" id="chat-toggle" aria-label="{{ __('Tin nhắn') }}" title="{{ __('Tin nhắn') }}" aria-expanded="false" aria-controls="chat-popup" class="btn btn-dark shadow">@include('partials.icon', ['name' => 'chat', 'size' => '1em']) <span>{{ __('Tin nhắn') }}</span></button>
         <div id="chat-popup" role="region" aria-label="{{ __('Hỗ trợ khách hàng') }}" class="card shadow-lg" style="display:none;">
             <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-2 px-3">
                 <div class="d-flex align-items-center gap-2">

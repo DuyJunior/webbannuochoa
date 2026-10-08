@@ -6,7 +6,7 @@
     ];
 @endphp
 <section class="store-container soopi-moments" id="bo-suu-tap" aria-labelledby="moments-title">
-    <header class="moments-heading"><span class="atelier-kicker">SOOPI / THE MOMENTS COLLECTION</span><h2 id="moments-title">{{ __('Bạn muốn được nhớ đến,') }}<br><em>{{ __('trong khoảnh khắc nào?') }}</em></h2><p>{{ __('Một ngày. Nhiều phiên bản của bạn.') }}</p></header>
+    <header class="moments-heading"><span class="atelier-kicker">SOOPI / THE MOMENTS COLLECTION</span><h2 id="moments-title">{{ __('Mùi hương cho từng khoảnh khắc') }}</h2><p>{{ __('Một ngày. Nhiều phiên bản của bạn.') }}</p></header>
     <div class="moment-selector" aria-label="{{ __('Chọn khoảnh khắc') }}">
         @foreach($moments as $moment)<a href="#moment-{{ $moment['key'] }}" data-moment-choice="{{ $moment['key'] }}"><span>{{ $moment['time'] }}</span>{{ $moment['label'] }}<span aria-hidden="true">↗</span></a>@endforeach
     </div>
