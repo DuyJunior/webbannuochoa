@@ -23,4 +23,4 @@ Run-Step $Php @("artisan", "db:seed", "--class=LocalDemoSeeder", "--force")
 Run-Step "npm.cmd" @("ci", "--no-audit", "--no-fund")
 Run-Step "npm.cmd" @("run", "build")
 Write-Host "Ready. Run scripts/start-local.ps1. Existing .env and populated catalog were preserved."
-Write-Host "AI requires your local GROQ_API_KEY and the Free-plan flags described in README.md."
+Write-Host "AI requires your local AI_CHAT_API_KEY described in README.md."

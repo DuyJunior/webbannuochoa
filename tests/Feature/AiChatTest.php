@@ -30,9 +30,9 @@ class AiChatTest extends TestCase
 
         config([
             'ai_chat.enabled' => true,
-            'ai_chat.free_plan_confirmed' => true,
             'ai_chat.api_key' => 'test-key-do-not-expose',
-            'ai_chat.model' => 'openai/gpt-oss-20b',
+            'ai_chat.base_url' => 'https://aixingialaire.com/v1',
+            'ai_chat.model' => 'gpt-5.6-sol',
         ]);
 
         Http::preventStrayRequests();
@@ -117,7 +117,7 @@ class AiChatTest extends TestCase
     public function test_ai_reply_is_saved_once_in_the_original_customer_conversation(): void
     {
         $incoming = $this->incoming('Tôi thích mùi nhẹ nhàng.');
-        Http::fake(['api.groq.com/openai/v1/chat/completions' => Http::response($this->completion('Bạn có thể chọn mùi hương hoa nhẹ để đi làm.'))]);
+        Http::fake(['aixingialaire.com/v1/chat/completions' => Http::response($this->completion('Bạn có thể chọn mùi hương hoa nhẹ để đi làm.'))]);
 
         $this->runReply($incoming);
 
@@ -132,9 +132,9 @@ class AiChatTest extends TestCase
         $this->actingAs($this->customer)->getJson(route('user.chat.messages'))
             ->assertOk()
             ->assertJsonFragment(['is_ai' => true, 'reply_to_id' => $incoming->id]);
-        Http::assertSent(fn (Request $request) => $request->url() === 'https://api.groq.com/openai/v1/chat/completions'
+        Http::assertSent(fn (Request $request) => $request->url() === 'https://aixingialaire.com/v1/chat/completions'
             && $request->hasHeader('Authorization', 'Bearer test-key-do-not-expose')
-            && $request['model'] === 'openai/gpt-oss-20b');
+            && $request['model'] === 'gpt-5.6-sol');
     }
 
     public function test_ai_uses_active_catalog_and_this_customers_history_only(): void
@@ -158,7 +158,7 @@ class AiChatTest extends TestCase
             'status' => 'pending',
         ]);
         $incoming = $this->incoming('Tư vấn Public Rose Perfume cho tôi.');
-        Http::fake(['api.groq.com/openai/v1/chat/completions' => Http::response($this->completion('Shop có Public Rose Perfume.'))]);
+        Http::fake(['aixingialaire.com/v1/chat/completions' => Http::response($this->completion('Shop có Public Rose Perfume.'))]);
 
         $this->runReply($incoming);
 
@@ -181,7 +181,7 @@ class AiChatTest extends TestCase
     public function test_api_failure_keeps_customer_message_and_creates_no_fake_ai_reply(): void
     {
         $incoming = $this->incoming('Tôi cần tư vấn.');
-        Http::fake(['api.groq.com/openai/v1/chat/completions' => Http::response([
+        Http::fake(['aixingialaire.com/v1/chat/completions' => Http::response([
             'error' => ['message' => 'PRIVATE_PROVIDER_ERROR test-key-do-not-expose'],
         ], 429)]);
 
@@ -200,7 +200,7 @@ class AiChatTest extends TestCase
     public function test_empty_model_output_is_not_saved_as_an_ai_message(): void
     {
         $incoming = $this->incoming('Xin chào.');
-        Http::fake(['api.groq.com/openai/v1/chat/completions' => Http::response($this->completion('   '))]);
+        Http::fake(['aixingialaire.com/v1/chat/completions' => Http::response($this->completion('   '))]);
 
         $this->runReply($incoming);
 
@@ -213,7 +213,7 @@ class AiChatTest extends TestCase
         $source = $this->incoming('Xin chào');
         $response = $this->completion('Câu trả lời bị cắt');
         $response['choices'][0]['finish_reason'] = 'length';
-        Http::fake(['api.groq.com/*' => Http::response($response)]);
+        Http::fake(['aixingialaire.com/*' => Http::response($response)]);
         $this->runReply($source);
         $this->assertSame('failed', $source->fresh()->ai_status);
         $this->assertDatabaseCount('messages', 1);
@@ -299,7 +299,7 @@ class AiChatTest extends TestCase
     public function test_replaying_the_same_job_does_not_duplicate_reply_or_provider_request(): void
     {
         $incoming = $this->incoming('Xin chào.');
-        Http::fake(['api.groq.com/openai/v1/chat/completions' => Http::response($this->completion('Chào bạn!'))]);
+        Http::fake(['aixingialaire.com/v1/chat/completions' => Http::response($this->completion('Chào bạn!'))]);
 
         $this->runReply($incoming);
         $this->runReply($incoming);
@@ -313,7 +313,7 @@ class AiChatTest extends TestCase
     {
         $older = $this->incoming('Tôi muốn nước hoa.');
         $newer = $this->incoming('Ngân sách của tôi là một triệu.');
-        Http::fake(['api.groq.com/openai/v1/chat/completions' => Http::response($this->completion('Tôi sẽ tư vấn theo ngân sách của bạn.'))]);
+        Http::fake(['aixingialaire.com/v1/chat/completions' => Http::response($this->completion('Tôi sẽ tư vấn theo ngân sách của bạn.'))]);
 
         $this->runReply($older);
 
@@ -354,9 +354,9 @@ class AiChatTest extends TestCase
         Http::assertNothingSent();
     }
 
-    public function test_free_plan_confirmation_is_required_before_any_call(): void
+    public function test_non_https_provider_is_never_called(): void
     {
-        config(['ai_chat.free_plan_confirmed' => false]);
+        config(['ai_chat.base_url' => 'http://aixingialaire.com/v1']);
         Queue::fake();
         $this->actingAs($this->customer)->postJson(route('user.chat.send'), ['message' => 'Xin chào'])->assertOk();
         $this->getJson(route('user.chat.status'))->assertJson(['ai_available' => false]);
@@ -367,7 +367,7 @@ class AiChatTest extends TestCase
     public function test_daily_limit_is_shared_between_customers_and_fails_closed(): void
     {
         config(['ai_chat.daily_request_limit' => 1]);
-        Http::fake(['api.groq.com/*' => Http::response($this->completion('Chào bạn!'))]);
+        Http::fake(['aixingialaire.com/*' => Http::response($this->completion('Chào bạn!'))]);
         $this->runReply($this->incoming('Xin chào'));
         $other = User::factory()->create(['role' => 'user']);
         $blocked = $this->incoming('Tư vấn giúp tôi', $other);
@@ -379,7 +379,7 @@ class AiChatTest extends TestCase
 
     public function test_rate_limit_stops_subsequent_calls_without_retry_or_fallback(): void
     {
-        Http::fake(['api.groq.com/*' => Http::response([], 429, ['retry-after' => '120'])]);
+        Http::fake(['aixingialaire.com/*' => Http::response([], 429, ['retry-after' => '120'])]);
         $first = $this->incoming('Xin chào');
         $this->runReply($first);
         $second = $this->incoming('Tư vấn giúp tôi');
@@ -410,7 +410,7 @@ class AiChatTest extends TestCase
 
     public function test_database_queue_can_deliver_reply_using_a_real_serialized_job(): void
     {
-        Http::fake(['api.groq.com/*' => Http::response($this->completion('Chào bạn!'))]);
+        Http::fake(['aixingialaire.com/*' => Http::response($this->completion('Chào bạn!'))]);
         $response = $this->actingAs($this->customer)->postJson(route('user.chat.send'), ['message' => 'Xin chào'])->assertOk();
         Http::assertNothingSent();
         $this->assertDatabaseHas('jobs', ['queue' => 'ai-chat']);
@@ -443,7 +443,7 @@ class AiChatTest extends TestCase
     {
         $this->actingAs($this->customer);
         $html = view('partials.chat_popup')->render();
-        $this->assertStringContainsString('Groq', $html);
+        $this->assertStringContainsString('aixingialaire.com', $html);
         $this->assertStringContainsString('Gặp nhân viên', $html);
         $this->assertStringContainsString('js/customer-chat.js', $html);
         $this->assertStringNotContainsString('test-key-do-not-expose', $html);

@@ -51,7 +51,7 @@
     function renderState(value) {
         state = value;
         const human = value.mode === 'human';
-        el('chat-mode-label').textContent = human ? (window.soopiT || (text => text))("Hỗ trợ từ nhân viên") : (value.ai_available ? (window.soopiT || (text => text))("Trợ lý AI · Groq") : (window.soopiT || (text => text))("Hỗ trợ khách hàng"));
+        el('chat-mode-label').textContent = human ? (window.soopiT || (text => text))("Hỗ trợ từ nhân viên") : (value.ai_available ? (window.soopiT || (text => text))("Trợ lý AI") : (window.soopiT || (text => text))("Hỗ trợ khách hàng"));
         el('chat-assistant-label').textContent = value.pending ? (window.soopiT || (text => text))("AI đang soạn câu trả lời…") : (window.soopiT || (text => text))("Tư vấn mùi hương và mua hàng");
         modeButton.textContent = human ? (window.soopiT || (text => text))("Bật lại AI") : (window.soopiT || (text => text))("Gặp nhân viên");
         modeButton.hidden = human && !value.ai_available;
@@ -78,7 +78,7 @@
             if (!mine) {
                 const author = document.createElement('div');
                 author.className = 'bubble-author';
-                author.textContent = message.is_ai ? (window.soopiT || (text => text))("Trợ lý AI · Groq") : (window.soopiT || (text => text))("Nhân viên Soopi");
+                author.textContent = message.is_ai ? (window.soopiT || (text => text))("Trợ lý AI") : (window.soopiT || (text => text))("Nhân viên Soopi");
                 bubble.append(author);
             }
             const text = document.createElement('div');

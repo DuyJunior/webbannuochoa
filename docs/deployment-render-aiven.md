@@ -107,7 +107,7 @@ php artisan schedule:work --no-interaction
 
 Lịch trong `routes/console.php` chạy `orders:expire-unpaid` mỗi phút, có khóa chống chồng lặp. Cả worker và scheduler chạy dưới `www-data`. Supervisor dùng Tini và process groups; SIGTERM đóng Nginx/FPM theo cách chờ request, báo dừng worker, dừng scheduler rồi cho tối đa 45 giây trước khi buộc dừng tiến trình còn lại. Nhà cung cấp vẫn có thể cưỡng chế dừng sớm hơn. Job đang bị gián đoạn có thể được thử lại theo cơ chế database queue. Giữ một web instance cho cấu hình lab này.
 
-AI tắt mặc định. Để bật sau khi tự xác minh Groq organization đang dùng Free plan, cấu hình `AI_CHAT_ENABLED=true`, `GROQ_FREE_PLAN_CONFIRMED=true`, `GROQ_API_KEY`, model hỗ trợ và quota ứng dụng `AI_CHAT_DAILY_LIMIT`. Biến xác nhận là cam kết của người vận hành; mã không kiểm tra được billing plan. Không tạo thêm worker trả phí. Khi dịch vụ Render ngủ, các job chờ nằm trong Aiven nhưng không được xử lý cho tới lúc container thức.
+AI tắt mặc định. Để bật, cấu hình `AI_CHAT_ENABLED=true`, `AI_CHAT_API_KEY`, `AI_CHAT_BASE_URL`, `AI_CHAT_MODEL` và quota ứng dụng `AI_CHAT_DAILY_LIMIT`. Không tạo thêm worker trả phí. Khi dịch vụ Render ngủ, các job chờ nằm trong Aiven nhưng không được xử lý cho tới lúc container thức.
 
 `DEMO_MODE` chỉ có hiệu lực ở local/testing; deployment production không có mô phỏng thanh toán/giao hàng. Để kiểm thử checkout online, cần cấu hình sandbox/merchant của nhà cung cấp trước:
 

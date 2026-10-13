@@ -85,7 +85,7 @@
                 </button>
             </form>
             <div class="chat-footer-note">
-                {{ __('Khi bật AI, lịch sử chat được Groq xử lý để tư vấn. AI có thể trả lời sai. Không gửi mật khẩu, OTP hoặc thông tin thẻ.') }}
+                {{ __('Khi bật AI, lịch sử chat được dịch vụ AI bên thứ ba (aixingialaire.com) xử lý để tư vấn. AI có thể trả lời sai. Không gửi mật khẩu, OTP hoặc thông tin thẻ.') }}
             </div>
         </div>
     </div>

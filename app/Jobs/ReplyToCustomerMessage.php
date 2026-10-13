@@ -93,6 +93,6 @@ class ReplyToCustomerMessage implements ShouldQueue
     public function failed(?Throwable $error): void
     {
         Message::whereKey($this->messageId)->where('ai_status', 'pending')->update(['ai_status' => 'failed']);
-        Log::warning('Groq chat reply unavailable', ['message_id' => $this->messageId]);
+        Log::warning('AI chat reply unavailable', ['message_id' => $this->messageId]);
     }
 }

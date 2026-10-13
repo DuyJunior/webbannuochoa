@@ -14,13 +14,13 @@ class AiChatService
 {
     public function available(): bool
     {
-        return (bool) config('ai_chat.enabled') && (bool) config('ai_chat.free_plan_confirmed')
-            && trim((string) config('ai_chat.api_key')) !== '';
+        return (bool) config('ai_chat.enabled') && trim((string) config('ai_chat.api_key')) !== ''
+            && str_starts_with((string) config('ai_chat.base_url'), 'https://');
     }
 
     public function reply(Message $incoming): string
     {
-        if (! $this->available() || Cache::has('groq-chat-cooldown')) {
+        if (! $this->available() || Cache::has('ai-chat-cooldown')) {
             throw new RuntimeException('AI unavailable');
         }
         // Only public product data and this customer's conversation leave the server.
@@ -54,7 +54,7 @@ class AiChatService
 
         $messages = [[
             'role' => 'system',
-            'content' => 'Bạn là trợ lý AI tư vấn nước hoa của Soopi. Trả lời tiếng Việt ngắn gọn, lịch sự, dùng văn bản thuần. '
+            'content' => 'Bạn là trợ lý AI tư vấn nước hoa của Soopi. Trả lời tiếng Việt ngắn gọn, lịch sự, dùng văn bản thuần, không dùng Markdown như ** hoặc #. '
                 .'Hỏi nhu cầu, ngân sách khi chưa rõ. Chỉ khẳng định tên hàng, giá, dung tích và tồn kho từ dữ liệu được cung cấp. '
                 .'Danh mục chỉ là một phần: không thấy sản phẩm không có nghĩa shop không bán. Không tự bịa chính sách, mã giảm giá, phí giao hàng hay cam kết độ lưu hương. '
                 .'Bạn không có quyền tra cứu đơn hàng, dữ liệu cá nhân, đặt/hủy đơn, thanh toán hay thao tác hệ thống; khi được yêu cầu hãy hướng dẫn khách xem trang đơn hàng của mình hoặc bấm Gặp nhân viên. '
@@ -81,8 +81,8 @@ class AiChatService
             throw new RuntimeException('Local AI quota reached');
         }
         $response = Http::withToken(config('ai_chat.api_key'))->acceptJson()
-            ->connectTimeout(5)->timeout(25)
-            ->post('https://api.groq.com/openai/v1/chat/completions', [
+            ->connectTimeout(5)->timeout(30)
+            ->post(rtrim((string) config('ai_chat.base_url'), '/').'/chat/completions', [
                 'model' => config('ai_chat.model'),
                 'messages' => $messages,
                 'temperature' => 0.3,
@@ -96,7 +96,7 @@ class AiChatService
         // Never propagate a provider response body (which may include secrets) to logs or the browser.
         if ($response->status() === 429) {
             $wait = max(60, min(86400, (int) $response->header('retry-after')));
-            Cache::put('groq-chat-cooldown', true, $wait);
+            Cache::put('ai-chat-cooldown', true, $wait);
         }
         $text = $response->json('choices.0.message.content');
         if (! $response->successful() || ! is_string($text) || trim($text) === ''
@@ -104,6 +104,7 @@ class AiChatService
             throw new RuntimeException('AI provider unavailable');
         }
 
-        return Str::limit(trim($text), 6000);
+        // The chat renders plain text; drop bold markers some models add anyway.
+        return Str::limit(trim(str_replace('**', '', $text)), 6000);
     }
 }

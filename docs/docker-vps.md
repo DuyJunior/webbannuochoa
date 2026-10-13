@@ -130,7 +130,7 @@ quy trình triển khai riêng. Rollback image không tự rollback schema. Heal
 HTTP kiểm tra app boot; không thay thế monitoring database, disk và backup.
 
 Production không mô phỏng checkout: cần cấu hình GHN/SePay trước khi nghiệm thu
-luồng mua hàng, SMTP để gửi mail, Groq/LiveKit nếu dùng AI/livestream. Không coi các
+luồng mua hàng, SMTP để gửi mail, AI_CHAT_API_KEY/LiveKit nếu dùng AI/livestream. Không coi các
 tích hợp ngoài đã hoạt động chỉ vì container healthy.
 
 ## Kết quả kiểm tra local ngày 29/09/2026

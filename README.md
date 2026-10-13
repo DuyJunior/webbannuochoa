@@ -1,6 +1,6 @@
 # Soopi — Bài tập lớn web bán nước hoa
 
-Laravel 12 · PHP 8.2+ · Blade/Vite · SQLite (demo) · Groq AI chat.
+Laravel 12 · PHP 8.2+ · Blade/Vite · SQLite (demo) · AI chat (API chuẩn OpenAI).
 
 ## Chạy hoàn toàn bằng Docker (khuyến nghị)
 
@@ -46,20 +46,19 @@ Trang quản trị: /admin/login. Nếu email demo đã tồn tại từ trướ
 Nếu có .env cũ, tự thêm DEMO_MODE=true để bật chế độ này. Không đổi APP_KEY trên database đã có dữ liệu.
 Kho mẫu 5ml mới mặc định 0: admin phải nhập kho để đặt Discovery Box. Không tự suy ra tồn kho 10/50ml từ số chai lớn nữa.
 
-## Bật AI Groq (không bắt buộc để chạy cửa hàng)
+## Bật chat AI (không bắt buộc để chạy cửa hàng)
 
 Điền trực tiếp trong .env, không đưa khóa lên Git:
 
 ```dotenv
 AI_CHAT_ENABLED=true
-GROQ_FREE_PLAN_CONFIRMED=true
-GROQ_API_KEY=your_local_key
-GROQ_MODEL=openai/gpt-oss-20b
+AI_CHAT_BASE_URL=https://aixingialaire.com/v1
+AI_CHAT_API_KEY=your_local_key
+AI_CHAT_MODEL=gpt-5.6-sol
 AI_CHAT_DAILY_LIMIT=50
 ```
 
-Chỉ đặt GROQ_FREE_PLAN_CONFIRMED=true sau khi tự kiểm tra tài khoản đang ở Free plan. Cờ này không thay đổi gói tài khoản tại Groq.
-AI cần Internet, khóa hợp lệ và quota còn khả dụng. 50 lần thử/ngày là giới hạn bổ sung của ứng dụng, không phải cam kết quota từ Groq.
+API chuẩn OpenAI bất kỳ đều dùng được (bắt buộc HTTPS). AI cần Internet, khóa hợp lệ và quota còn khả dụng. 50 lần thử/ngày là giới hạn bổ sung của ứng dụng.
 Script start-local chạy web, worker email/ai-chat và lịch dọn đơn hết hạn, khôi phục thư chờ. Nếu chạy thủ công phải mở ba tiến trình:
 
 ```powershell
@@ -124,7 +123,7 @@ Phạm vi còn lại: quy trình khách yêu cầu đổi trả/hoàn tiền th�
 - [Lab 09 — Finance: chức năng, quy tắc đối soát và kịch bản kiểm thử](docs/finance-lab09.md)
 - [Lab 10 — Docker, Render và Aiven: cấu hình chuẩn bị triển khai](docs/deployment-render-aiven.md)
 - [5 mục thiết kế thành phần, sơ đồ tổng thể và kịch bản bảo vệ](docs/architecture-and-demo.md)
-- [Cấu hình AI](docs/ai-chat-groq.md)
+- [Cấu hình AI](docs/ai-chat.md)
 - [Livestream LiveKit](docs/livestream-livekit.md)
 
 Đây là bản bài tập local, chưa phải hệ thống thương mại đã kiểm định. Hoàn tiền thực, kiểm thử tải đồng thời trên MySQL và vận hành cổng thật cần triển khai/kiểm tra riêng.

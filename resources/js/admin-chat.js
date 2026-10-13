@@ -170,7 +170,7 @@ if (root) {
                 messages.forEach(message => {
                     const isAi = message.is_ai === true || message.is_ai === 1 || message.is_ai === '1';
                     const isAdmin = isAi || message.sender?.role === 'admin' || Number(message.sender_id) === adminId;
-                    const author = isAi ? (window.soopiT || (text => text))("Trợ lý AI · Groq") : Number(message.sender_id) === adminId ? (window.soopiT || (text => text))("Bạn (Admin)") : message.sender?.name || (window.soopiT || (text => text))("Khách hàng");
+                    const author = isAi ? (window.soopiT || (text => text))("Trợ lý AI") : Number(message.sender_id) === adminId ? (window.soopiT || (text => text))("Bạn (Admin)") : message.sender?.name || (window.soopiT || (text => text))("Khách hàng");
                     const row = element('div', `msg-row ${isAdmin ? 'msg-admin' : 'msg-customer'}`);
                     const meta = element('div', 'msg-meta-header');
                     meta.append(element('span', 'msg-author', author), element('span', 'msg-time', formatTime(message.created_at)));

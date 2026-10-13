@@ -11,7 +11,7 @@ Tài liệu mô tả mã nguồn hiện tại; không coi phần mô phỏng là
 - Inventory: OrderInventoryService là nơi dùng chung để trừ/hoàn kho theo từng dung tích; khóa dữ liệu trong transaction.
 - Payment: SePayController/SePayService xử lý VietQR và webhook HMAC. Thanh toán mô phỏng là nhánh riêng cho đơn is_demo.
 - Shipping: GHNService lấy địa chỉ/phí; GHNOrderService tạo vận đơn. Đơn demo dùng địa chỉ mẫu, phí 30.000đ và mã DEMO-{id}, không tạo vận đơn thật.
-- Chat: ChatController lưu tin; ReplyToCustomerMessage chạy hàng đợi; AiChatService gọi Groq. Người dùng có thể chọn nhân viên.
+- Chat: ChatController lưu tin; ReplyToCustomerMessage chạy hàng đợi; AiChatService gọi API AI chuẩn OpenAI. Người dùng có thể chọn nhân viên.
 - Review: StoreExperienceController::review yêu cầu có đơn đã nhận của đúng khách và sản phẩm.
 - Report: ReportController tổng hợp đơn đã thu tiền, tách demo/thực và xuất CSV.
 - Persistence: Eloquent và SQLite cho demo (dự án cũng có cấu hình MySQL). Không có tầng Repository riêng trong phiên bản này.
@@ -25,7 +25,7 @@ Mũi tên A → B nghĩa là A dùng hàm hoặc dữ liệu của B, không ph�
 - AdminOrderController / UserOrderController → OrderInventoryService::release: hủy chỉ hoàn kho đã được hệ thống ghi nhận trừ, không cộng lặp.
 - Payment → Order và PaymentTransaction: kiểm tra chủ đơn, số tiền, trạng thái; không thanh toán lại đơn kết thúc. Callback đến sau hủy chuyển giao dịch sang chờ hoàn tiền, không mở lại đơn.
 - Order → OrderEvent: ghi trạng thái trước/sau và thời điểm; giao diện khách/admin cùng đọc một lịch sử.
-- Chat → Queue → Groq: không giữ khóa DB trong lúc chờ mạng; chỉ gửi nội dung hội thoại liên quan và dữ liệu sản phẩm công khai, không gửi toàn bộ hồ sơ khách.
+- Chat → Queue → AI API: không giữ khóa DB trong lúc chờ mạng; chỉ gửi nội dung hội thoại liên quan và dữ liệu sản phẩm công khai, không gửi toàn bộ hồ sơ khách.
 - Chat → Perfume: thẻ sản phẩm khớp tên đầy đủ được nhắc trong câu trả lời; ảnh/giá/link lấy từ DB, không dùng link AI tự viết.
 - Report → Order/PaymentTransaction: tính mỗi đơn một lần và xuất cùng bộ lọc.
 - Review → OrderItem/Order: xác minh đã mua và nhận hàng trước khi lưu đánh giá.
@@ -60,7 +60,7 @@ Interface trong bài là hợp đồng hàm cung cấp, không phải giao diệ
 | Order | Vòng đời đơn | processPayment(), cancel(), update(), bulkUpdate() | User, CartQuote, Inventory, Payment, Shipping | Kiểm tra quyền, trạng thái và tính nhất quán |
 | Payment | Chuyển khoản VietQR hoặc demo | show(), webhook(), confirmPayment() | Order, PaymentTransaction, SePay | Demo và callback có xác thực là hai luồng khác nhau |
 | Shipping | Địa chỉ, cước, vận đơn | calculateFee(), create(), cancelOrder() | Order, GHN | Demo không cần tài khoản GHN |
-| Chat | Tư vấn và chuyển nhân viên | send(), getMessages(), mode(), reply() | User, Message, Queue, Catalog, Groq | Hết quota vẫn lưu tin, cho phép nhân viên trả lời |
+| Chat | Tư vấn và chuyển nhân viên | send(), getMessages(), mode(), reply() | User, Message, Queue, Catalog, AI API | Hết quota vẫn lưu tin, cho phép nhân viên trả lời |
 | Review | Nhận xét sau mua | review() | User, Order, OrderItem, PerfumeReview | Chỉ khách đã nhận sản phẩm được đánh giá |
 | Report | Thống kê/xuất dữ liệu | index(), charts(), export() | Order, PaymentTransaction, Category | Tách đơn demo; tổng thu không đồng nghĩa lợi nhuận |
 | Audit | Lịch sử đơn | Order::events() | OrderEvent, DB | Hiển thị cùng lịch sử cho khách và admin |
@@ -89,7 +89,7 @@ flowchart TB
         Audit["OrderEvent / Timeline"]
         DB[("Database")]
     end
-    Groq["Groq API — cần Internet / có hạn mức"]
+    AIAPI["AI API (aixingialaire.com) — cần Internet / có hạn mức"]
     SePay["SePay / BIDV đã cấu hình"]
     GHN["GHN API — không gọi khi demo"]
 
@@ -124,7 +124,7 @@ flowchart TB
     Chat -->|"Dispatch job"| Queue
     Queue -->|"reply(message)"| AI
     AI -->|"Dữ liệu sản phẩm công khai"| Catalog
-    AI -->|"Chat completions"| Groq
+    AI -->|"Chat completions"| AIAPI
     Chat -->|"Thẻ ảnh, giá, link từ DB"| Catalog
     Report -->|"Đơn đã thanh toán / bộ lọc demo"| DB
 ```
@@ -147,5 +147,5 @@ flowchart TB
 - Hủy đơn đã trả tiền đánh dấu refund_pending; hoàn tiền qua ngân hàng/cổng cần quy trình riêng, chưa được tự động thực hiện.
 - GHN webhook mặc định chặn. Nếu triển khai thật phải có relay xác thực nguồn và gắn X-Webhook-Token khớp GHN_WEBHOOK_TOKEN; đây là hợp đồng của ứng dụng, không phải tuyên bố GHN tự gửi header này.
 - Đặt lại sau hủy phải tạo đơn mới; không “khôi phục” đơn terminal.
-- Mã/khóa API trong .env của từng máy; không đóng gói khóa với Git. Không thể bảo đảm Groq miễn phí vô hạn hay luôn sẵn sàng.
+- Mã/khóa API trong .env của từng máy; không đóng gói khóa với Git. Không thể bảo đảm dịch vụ AI luôn sẵn sàng.
 - Tồn kho/transaction được kiểm thử tuần tự với SQLite; cần thêm load test trên MySQL và đối soát cổng trước khi dùng thương mại.
